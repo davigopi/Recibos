@@ -16,3 +16,5 @@ for key, value in enumerate(lista):
 # for value in keys:
 #     if len(keys[value]) > 1:
 #         print(value, keys[value])
+    
+    
