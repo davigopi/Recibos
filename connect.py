@@ -87,15 +87,18 @@ class Connect:
                 # sleep(0.5)
 
     def commissionSirconValue(self, listXpath):
-        func = MouseKeyboard(driver=self.driver) 
-        for key, xpathList in enumerate(listXpath):
-            for xpathFather in xpathList[0]:
-                for xpathSon in xpathList[1]:
-                    valueRetorno = ValueRetorno(driver=self.driver)
-
-                    valueRetorno.xpathValue = xpathFather, xpathSon
-                    value = valueRetorno.xpathValue
-                    print(f'##################### {value} #####################')
+        # func = MouseKeyboard(driver=self.driver) 
+        for xpathFather in listXpath[0]:
+            print(xpathFather)
+            for xpathSon in listXpath[1]:
+                print(xpathSon)
+                valueRetorno = ValueRetorno(driver=self.driver)
+                print('entrar no father')
+                valueRetorno.xpathFatherValue = xpathFather
+                print('entrar no son')
+                valueRetorno.xpathSonValue = xpathSon
+                value = valueRetorno.xpathValue
+                print(f'##################### {value} #####################')
 
 
 class FileManip:
@@ -182,6 +185,8 @@ class ImageManip:
 class ValueRetorno:
     def __init__(self, *args, **kwargs) -> None:
         self.driver = kwargs.get('driver')
+        self.xpathFather = None
+        self.xpathSon = None
         self.value = None
 
     @property
@@ -191,10 +196,30 @@ class ValueRetorno:
     @xpathValue.setter
     def xpathValue(self, xpathFather, xpathSon):
         print(f'############ xpathFather: {xpathFather} #####  xpathSon: {xpathSon} ##########')
-        father = self.driver.find_element(By.XPATH, xpathFather)
-        son = father.find_element(By.XPATH, xpathSon)
-        self.value = son.get_attribute('value')
+        self.value = self.xpathSon.get_attribute('value')
         print(self.value)
+    
+    @property
+    def xpathFatherValue(self):
+        return self.xpathFather
+    
+    @xpathFatherValue.setter
+    def xpathFatherValue(self, xpathFather):
+        print(f'########111 xpathFather: ({xpathFather})')
+        self.xpathFather = self.driver.find_element(By.XPATH, xpathFather)
+        print(f' 1##########11111111111 self.xpathFather: ({self.xpathFather})  #################')
+        sleep(5)
+
+    @property
+    def xpathSonValue(self):
+        return self.xpathSon
+    
+    @xpathSonValue.setter
+    def xpathSonValue(self, xpathSon):
+        print(f' 2##########2222 self.xpathFather: ({self.xpathFather})   #################')
+        sleep(5)
+        self.xpathSon = self.xpathFather.find_element(By.XPATH, xpathSon)
+
         
 
 

@@ -44,14 +44,13 @@ listXpath3 = [
             , '//*[@id="frm:cbCargo"]'  # Cargo
             , '//*[@id="frm:cbCargo"]/option[5]'  # Consultor CLR - a partir jan-2018
             ]
-listXpath4 = [
-            ['//*[@id="frm:pnlEsacalas"]/div[1]'  # campo de 0 a 2 
+listCampo = ['//*[@id="frm:pnlEsacalas"]/div[1]'  # campo de 0 a 2 
                 , '//*[@id="frm:pnlEsacalas"]/div[2]'  # campo de 3 a 5
                 , '//*[@id="frm:pnlEsacalas"]/div[3]'  # campo de 6 a 9
                 , '//*[@id="frm:pnlEsacalas"]/div[4]'  # campo de 10 a 14
                 , '//*[@id="frm:pnlEsacalas"]/div[5]'  # campo de 15 a 100000000
             ]
-            , ['//*[@id="frm:j_idt124:0:j_idt149"]'  # parcela 1
+listParcela = ['//*[@id="frm:j_idt124:0:j_idt149"]'  # parcela 1
                 , '//*[@id="frm:j_idt124:0:j_idt156"]'  # parcela 2
                 , '//*[@id="frm:j_idt124:0:j_idt158"]'  # parcela 3
                 , '//*[@id="frm:j_idt124:0:j_idt160"]'  # parcela 4
@@ -63,9 +62,8 @@ listXpath4 = [
                 , '//*[@id="frm:j_idt124:0:j_idt172"]'  # parcela 10
                 , '//*[@id="frm:j_idt124:0:j_idt174"]'  # parcela 11
                 , '//*[@id="frm:j_idt124:0:j_idt176"]'  # parcela 12
-            ]    
-            ]
-
+            ]  
+listXpath4 = [listCampo, listParcela]
 
 options = webdriver.ChromeOptions()
 options.add_argument('--ignore-certificate-errors')
