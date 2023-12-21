@@ -2,6 +2,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 from connect import Connect
+from selenium.common.exceptions import TimeoutException
 import os
 from time import sleep
 
@@ -10,8 +11,7 @@ user = 'davigopi@gmail.com'
 password = '36vad28'
 security = [user, password]
 
-listXpath1 = [
-            '//*[@id="form:txtUsuarioSircon"]'  # campo usuario
+listXpathLog = ['//*[@id="form:txtUsuarioSircon"]'  # campo usuario
             , '//*[@id="form:txtSenhaSircon"]'  # campo senha
             , '//*[@id="form:btLogar"]'  # botao confirmar
             ]
@@ -31,52 +31,112 @@ xp7 = '//*[@id="btnConsultar"]'  # botao consultar
 xp8 = '//*[@id="btnGerarXls"]'  # botao de download
 listXpath2 = [xp0, xp1, xp2, xp3, xp4, xp5, xp6, xp3, xp4, xp5, xp7, xp8]
 
+# listAdm =[]
+# for key in range(2, 20, 1):
+#     listAQdmExistente = f'//*[@id="frm:cbAdministradora"]/option[{key}]'
+#     listAdm.append(listAQdmExistente)
 
-listXpath3 = [
-            '//*[@id="menufinan"]'  # comissões
-            , '//*[@id="menufinan"]/ul/li[2]'  # Configuração
-            , '//*[@id="frm:tpComissao"]'  # Tipo Comissão
-            , '//*[@id="frm:tpComissao"]/option[2]'  # Pagamento
-            , '//*[@id="frm:cbAdministradora"]'  # Administradora
-            , '//*[@id="frm:cbAdministradora"]/option[4]'  # Disal
-            , '//*[@id="frm:cbTabelaRecebimento"]'  # Tabela de Recebimento
-            , '//*[@id="frm:cbTabelaRecebimento"]/option[2]'  # Tabela disal normal
-            , '//*[@id="frm:cbCargo"]'  # Cargo
-            , '//*[@id="frm:cbCargo"]/option[5]'  # Consultor CLR - a partir jan-2018
-            ]
+tagSon = 'option'
+tagFather = 'select'
+
+listXpathComissoesConfiguracao = ['//*[@id="menufinan"]'  # comissões
+                                , '//*[@id="menufinan"]/ul/li[2]'  # Configuração
+                                ]
+xpathTipoComissao = ['//*[@id="frm:tpComissao"]'
+                    , '//*[@id="frm:tpComissao"]/option[2]'  # Pagamento
+                    ]
+xpathAdministradora = '//*[@id="frm:cbAdministradora"]'
+            # , listAdm  # Disal
+xpathTabelaRecebimento = '//*[@id="frm:cbTabelaRecebimento"]'
+                        # , '//*[@id="frm:cbTabelaRecebimento"]/option[2]'  # Tabela disal normal
+xpathCargo = '//*[@id="frm:cbCargo"]'
+            # , '//*[@id="frm:cbCargo"]/option[5]'  # Consultor CLR - a partir jan-2018
 listCampo = ['//*[@id="frm:pnlEsacalas"]/div[1]'  # campo de 0 a 2 
                 , '//*[@id="frm:pnlEsacalas"]/div[2]'  # campo de 3 a 5
                 , '//*[@id="frm:pnlEsacalas"]/div[3]'  # campo de 6 a 9
                 , '//*[@id="frm:pnlEsacalas"]/div[4]'  # campo de 10 a 14
                 , '//*[@id="frm:pnlEsacalas"]/div[5]'  # campo de 15 a 100000000
             ]
-listParcela = ['//*[@id="frm:j_idt124:0:j_idt149"]'  # parcela 1
-                , '//*[@id="frm:j_idt124:0:j_idt156"]'  # parcela 2
-                , '//*[@id="frm:j_idt124:0:j_idt158"]'  # parcela 3
-                , '//*[@id="frm:j_idt124:0:j_idt160"]'  # parcela 4
-                , '//*[@id="frm:j_idt124:0:j_idt162"]'  # parcela 5
-                , '//*[@id="frm:j_idt124:0:j_idt164"]'  # parcela 6
-                , '//*[@id="frm:j_idt124:0:j_idt166"]'  # parcela 7
-                , '//*[@id="frm:j_idt124:0:j_idt168"]'  # parcela 8
-                , '//*[@id="frm:j_idt124:0:j_idt170"]'  # parcela 9
-                , '//*[@id="frm:j_idt124:0:j_idt172"]'  # parcela 10
-                , '//*[@id="frm:j_idt124:0:j_idt174"]'  # parcela 11
-                , '//*[@id="frm:j_idt124:0:j_idt176"]'  # parcela 12
-            ]  
-listXpath4 = [listCampo, listParcela]
+listParcela =[]
+for num in range(5):
+    listParcelaEsp = [f'//*[@id="frm:j_idt124:{num}:j_idt149"]'  # parcela 1
+                    , f'//*[@id="frm:j_idt124:{num}:j_idt156"]'  # parcela 2
+                    , f'//*[@id="frm:j_idt124:{num}:j_idt158"]'  # parcela 3
+                    , f'//*[@id="frm:j_idt124:{num}:j_idt160"]'  # parcela 4
+                    , f'//*[@id="frm:j_idt124:{num}:j_idt162"]'  # parcela 5
+                    , f'//*[@id="frm:j_idt124:{num}:j_idt164"]'  # parcela 6
+                    , f'//*[@id="frm:j_idt124:{num}:j_idt166"]'  # parcela 7
+                    , f'//*[@id="frm:j_idt124:{num}:j_idt168"]'  # parcela 8
+                    , f'//*[@id="frm:j_idt124:{num}:j_idt170"]'  # parcela 9
+                    , f'//*[@id="frm:j_idt124:{num}:j_idt172"]'  # parcela 10
+                    , f'//*[@id="frm:j_idt124:{num}:j_idt174"]'  # parcela 11
+                    , f'//*[@id="frm:j_idt124:{num}:j_idt176"]'  # parcela 12
+    ]
+    listParcela.append(listParcelaEsp)
+listXpath5 = [listCampo, listParcela]
 
 options = webdriver.ChromeOptions()
 options.add_argument('--ignore-certificate-errors')
 options.add_experimental_option('excludeSwitches', ['enable-automation'])
 options.add_experimental_option('excludeSwitches', ['enable-logging'])
 
-
 driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 driver.get(siteSircon)
 connect = Connect(driver=driver)
-connect.logarSircon(security=security, listXpath=listXpath1)
-# df = connect.dfSircon(arqCons=arqCons, months=months, listXpath=listXpath2)
-# print(df)
-connect.commissionSircon(listXpath=listXpath3)
-connect.commissionSirconValue(listXpath=listXpath4)
-sleep(600)
+while True:
+    connect.logarSircon(security=security, listXpath=listXpathLog)
+    try:  # saber se deu certo logar
+        connect.locateXpath(xpath=listXpathComissoesConfiguracao[0]) 
+        break
+    except TimeoutException:
+        continue
+while True:
+    connect.pressListXpath(listXpath=listXpathComissoesConfiguracao)
+    try:  # saber se deu certo logar
+        connect.locateXpath(xpath=xpathTipoComissao[0]) 
+        break
+    except TimeoutException:
+        continue
+while True:
+    connect.pressListXpath(listXpath=xpathTipoComissao)
+    try:  # saber se deu certo logar
+        connect.locateXpath(xpath=xpathAdministradora) 
+        break
+    except TimeoutException:
+        continue
+while True:
+    listaValue = connect.pressXpathRetuneListValue(xpath=xpathAdministradora)
+    try:  # saber se deu certo logar
+        connect.locateXpath(xpath=xpathTabelaRecebimento) 
+        break
+    except TimeoutException:
+        continue
+while True:
+    # listaValue = connect.commissionSircon(listXpath=listXpath3)
+    listValueAll = connect.pressListValueXpathRetuneListValueAll(xpath=xpathTabelaRecebimento, listValue=listaValue, tagSon=tagSon, tagFather=tagFather)
+    try:
+        connect.locateXpath(xpath=xpathCargo)
+        break
+    except TimeoutException:
+        continue
+
+# listaValue = connect.commissionSircon(listXpath=listXpath3)
+listValueAllDouble = connect.pressListValueAllXpathRetuneListValueAllDoucle(xpath=xpathCargo, listValueAll=listValueAll, tagSon=tagSon, tagFather=tagFather)
+
+listLineTable = connect.formatListaLineTable(listValueAllDouble=listValueAllDouble)
+
+listColumnTable = connect.formatListaColumnTable(listLineTable=listLineTable)
+
+table = connect.formatTable(listColumnTable=listColumnTable)
+
+
+print(table)
+sleep(50)
+# connect.commissionSirconValue(listXpath=listXpath5)
+
+
+# //*[@id="frm:pnlEsacalas"]/div[2]
+
+# //*[@id="frm:j_idt124:1:j_idt156"]
+
+# //*[@id="frm:j_idt124:2:j_idt156"]
