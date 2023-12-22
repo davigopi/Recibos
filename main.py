@@ -110,7 +110,7 @@ sleep(60)
 
 # table = connect.formatTable(listColumnTable=listColumnTable)
 
-
+table.to_csv('pagamento.csv')
 # print(table)
 
 # connect.commissionSirconValue(listXpath=listXpath5)

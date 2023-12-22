@@ -21,12 +21,15 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 
 
+<<<<<<< HEAD
 excecaoAll = (NoSuchElementException
             , ElementNotInteractableException
             , ElementClickInterceptedException
             , StaleElementReferenceException
             )
 
+=======
+>>>>>>> 72e381972368a6b953298c8cff11c4c8299ce4ef
 class Connect:
     def __init__(self, *args, **kwargs) -> None:
         self.driver = kwargs.get('driver')
@@ -254,7 +257,7 @@ class Connect:
         for key, column in enumerate(listColumnTable):
             if key == 0:
                 table = pd.DataFrame(index=column, columns=['index'])
-                table['index'] = column
+                # table['index'] = column
                 continue
             nameColumn = 'column' + str(key)
             table[nameColumn] = column
@@ -312,9 +315,11 @@ class ReturnValue:
     @tagValue.setter
     def tagValue(self, xpath):
         while True:
-            try:
+            try: 
                 self.value = self.driver.find_element(By.XPATH, xpath).get_attribute('outerHTML')  # retornar o outerHTML
+                # pip install lxml
                 self.value = BeautifulSoup(self.value, "lxml").find(self.tagFather).findAll(self.tagSon)  # formatar outerHTMl
+
                 listValue = []
                 for key in range(1, len(self.value), 1):
                     listValue.append(self.value[key].find(text=True))  # pega cada valro 
