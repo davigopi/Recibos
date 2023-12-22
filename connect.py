@@ -198,6 +198,8 @@ class Connect:
                 if clickOk is True:
                     break
             sleep(0.5)
+            if valueAdministradora != 'DISAL':
+                continue
             for listValueTablarecebimentoCargo in listValueAdministradoraTablarecebimentoCargo[1]:
                 valueTablarecebimento = listValueTablarecebimentoCargo[0]
                 while True:
