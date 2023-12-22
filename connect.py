@@ -16,12 +16,16 @@ from bs4 import BeautifulSoup
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.actions.wheel_input import ScrollOrigin
-from selenium.common.exceptions import NoSuchElementException, ElementNotInteractableException, ElementClickInterceptedException, StaleElementReferenceException, NoSuchElementException
+from selenium.common.exceptions import NoSuchElementException, ElementNotInteractableException, ElementClickInterceptedException, StaleElementReferenceException
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 
 
-
+excecaoAll = (NoSuchElementException
+            , ElementNotInteractableException
+            , ElementClickInterceptedException
+            , StaleElementReferenceException
+            )
 
 class Connect:
     def __init__(self, *args, **kwargs) -> None:
@@ -87,7 +91,7 @@ class Connect:
                     break
                 clickOk = mousekeyboard.clickXpath(xpath)
 
-    def pressXpathRetuneListValue(self, xpath):
+    def pressXpathReturnListValue(self, xpath):
         mousekeyboard = MouseKeyboard(driver=self.driver)
         returnValue = ReturnValue(driver=self.driver)
         clickOk = False
@@ -98,8 +102,8 @@ class Connect:
             returnValue.tagSonValue = 'option'
             returnValue.tagFatherValue = 'select'
             returnValue.tagValue = xpath
-            listaValue = returnValue.tagValue
-        return listaValue
+            listValue = returnValue.tagValue
+        return listValue
 
     # def commissionSircon(self, listXpath):
     #     mousekeyboard = MouseKeyboard(driver=self.driver)
@@ -115,11 +119,11 @@ class Connect:
     #                 returnValue.tagSonValue = 'option'
     #                 returnValue.tagFatherValue = 'select'
     #                 returnValue.tagValue = xpath
-    #                 listaValue = returnValue.tagValue
-    #     return listaValue
+    #                 listValue = returnValue.tagValue
+    #     return listValue
 
-    def pressListValueXpathRetuneListValueAll(self, xpath, listValue, tagSon, tagFather):
-        listValueAll = []
+    def pressListValueXpathReturnListValue(self, xpath, listValue, tagSon, tagFather):
+        listValueTemp = []
         for value in listValue:
             mousekeyboard = MouseKeyboard(driver=self.driver)
             mousekeyboard.locationSearchTag = tagSon
@@ -135,31 +139,32 @@ class Connect:
                 returnValue.tagFatherValue = tagFather
                 returnValue.tagValue = xpath
                 listValueTemporary = returnValue.tagValue
-                listValueAll.append([value, listValueTemporary])
+                listValueTemp.append([value, listValueTemporary])
                 if clickOk >= 10 or clickOk is True:
                     break
                 # sleep(1)
-        return listValueAll
+        return listValueTemp
 
-
-    def pressListValueAllXpathRetuneListValueAllDoucle(self, xpath, listValueAll, tagSon, tagFather):
-        listValueAllDouble = []
-        for listValueAdministradoraTablarecebimento in listValueAll:
-            mousekeyboard = MouseKeyboard(driver=self.driver)
-            mousekeyboard.locationSearchTag = tagSon
+    def pressListValueXpathReturnListValueDouble(self, xpath, listValue, tagSon, tagFather):
+        listValueTemp = []
+        mousekeyboard = MouseKeyboard(driver=self.driver)
+        mousekeyboard.locationSearchTag = tagSon
+        for listValueAdministradoraTablarecebimento in listValue:
+            # mousekeyboard = MouseKeyboard(driver=self.driver)
+            # mousekeyboard.locationSearchTag = tagSon
             valueAdministradora = listValueAdministradoraTablarecebimento[0]
             while True:
                 mousekeyboard.clickValue = valueAdministradora
                 clickOk = mousekeyboard.clickValue
                 if clickOk is True:
                     break
-            listValue = listValueAdministradoraTablarecebimento[1]
-            listValueAll2 = []
-            for value in listValue:
-                mousekeyboard = MouseKeyboard(driver=self.driver)
-                mousekeyboard.locationSearchTag = tagSon
+            listValueTabelarecebimentoCargo = []
+            sleep(0.5)
+            for valueTablarecebimento in listValueAdministradoraTablarecebimento[1]:
+                # mousekeyboard = MouseKeyboard(driver=self.driver)
+                # mousekeyboard.locationSearchTag = tagSon
                 while True:
-                    mousekeyboard.clickValue = value
+                    mousekeyboard.clickValue = valueTablarecebimento
                     clickOk = mousekeyboard.clickValue
                     if clickOk is True:
                         break
@@ -169,18 +174,61 @@ class Connect:
                     returnValue.tagSonValue = tagSon
                     returnValue.tagFatherValue = tagFather
                     returnValue.tagValue = xpath
-                    listValueTemporary = returnValue.tagValue
-                    listValueAll2.append([value, listValueTemporary])
+                    listValueCargo = returnValue.tagValue
+                    listValueTabelarecebimentoCargo.append([valueTablarecebimento, listValueCargo])
                     if clickOk >= 10 or clickOk is True:
                         break
                     # sleep(1)
-            listValueAllDouble.append([valueAdministradora, listValueAll2])
-        return listValueAllDouble
+            listValueTemp.append([valueAdministradora, listValueTabelarecebimentoCargo])
+        return listValueTemp
     
-    def formatListaLineTable(self, listValueAllDouble):
+    def pressListValueReturnListValueTriple(self, listXpath, listValue, tagSon):
+        listValueTemp = []
+        mousekeyboard = MouseKeyboard(driver=self.driver)
+        mousekeyboard.locationSearchTag = tagSon
+        returnValue = ReturnValue(driver=self.driver)
+        for listValueAdministradoraTablarecebimentoCargo in listValue:
+            valueAdministradora = listValueAdministradoraTablarecebimentoCargo[0]
+            while True:
+                mousekeyboard.clickValue = valueAdministradora
+                clickOk = mousekeyboard.clickValue
+                if clickOk is True:
+                    break
+            sleep(0.5)
+            for listValueTablarecebimentoCargo in listValueAdministradoraTablarecebimentoCargo[1]:
+                valueTablarecebimento = listValueTablarecebimentoCargo[0]
+                while True:
+                    mousekeyboard.clickValue = valueTablarecebimento
+                    clickOk = mousekeyboard.clickValue
+                    if clickOk is True:
+                        break
+                sleep(0.5)
+                for valueCargo in listValueTablarecebimentoCargo[1]:
+                    while True:
+                        mousekeyboard.clickValue = valueCargo
+                        clickOk = mousekeyboard.clickValue
+                        if clickOk is True:
+                            break
+                    listComission = []
+                    for key, xpathFather in enumerate(listXpath[0]):
+                        listComission.append(key+1)
+                        for xpath in listXpath[1][key]:
+                            returnValue.xpathFatherValue = xpathFather
+                            returnValue.xpathValue = xpath
+                            value = returnValue.xpathValue
+                            if value is False:
+                                break
+                            listComission.append(value)
+                        if value is False:
+                            break
+                            
+                    listValueTemp.append([valueAdministradora, valueTablarecebimento, valueCargo, listComission])
+        return listValueTemp
+    
+    def formatListaLineTable(self, listValue):
         listLineTable = []
         index = 0
-        for valueAdministradoraTabelaRecebimentoCargo in listValueAllDouble:
+        for valueAdministradoraTabelaRecebimentoCargo in listValue:
             valueAdministrador = valueAdministradoraTabelaRecebimentoCargo[0]
             for valueTabelaRecebimentoCargo in valueAdministradoraTabelaRecebimentoCargo[1]:
                 valueTabelaRecebimento = valueTabelaRecebimentoCargo[0]
@@ -226,8 +274,6 @@ class Connect:
         print(f'##################### {listComission} #####################')
 
 
-
-
 class ReturnValue:
     def __init__(self, *args, **kwargs) -> None:
         self.driver = kwargs.get('driver')
@@ -236,18 +282,22 @@ class ReturnValue:
         self.tagSon = None
         self.value = None
        
-
     @property
     def xpathValue(self):
         return self.value
     @xpathValue.setter
     def xpathValue(self, xpath):
+        count = 0
         while True:
             try:
+                count += 1
                 self.value = self.driver.find_element(By.XPATH, self.xpathFather).find_element(By.XPATH, xpath).get_attribute('value')
                 break
-            except NoSuchElementException:
-                pass
+            except excecaoAll:
+                if count >= 3:
+                    self.value = False
+                    break
+                sleep(0.2)
 
     @property
     def xpathFatherValue(self):
@@ -287,9 +337,6 @@ class ReturnValue:
     def tagFatherValue(self, tagFather):
         self.tagFather = tagFather
 
-
-
-
 class XpathManip:
     def __init__(self, *args, **kwargs) -> None:
         self.driver = kwargs.get('driver')
@@ -309,10 +356,8 @@ class XpathManip:
             try:   
                 self.driver.find_element(By.XPATH, xpath).location_once_scrolled_into_view
                 break
-            except self.excecao:
+            except excecaoAll:
                 continue
-
-
 
 class FileManip:
     def __init__(self, arqCons) -> None:
@@ -396,11 +441,6 @@ class ImageManip:
 
 
 
-
-
-
-
-
 class MouseKeyboard:
     def __init__(self, *args, **kwargs) -> None:
         self.driver = kwargs.get('driver')
@@ -448,14 +488,15 @@ class MouseKeyboard:
     
     @clickValue.setter
     def clickValue(self, value):
+        self.clickOk = False
         try:
             self.driver.find_element(By.XPATH, f"//{self.locationSearchTag}[contains(text(),'{value}')]").click()
             self.clickOk = True
         except self.excecao:
-            self.clickOk = False
+            pass
+            
 
     def keys(self, xpath, writeSec):
-        
         while True:
             try:
                 self.driver.find_element(By.XPATH, xpath).clear()

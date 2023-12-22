@@ -73,7 +73,7 @@ for num in range(5):
                     , f'//*[@id="frm:j_idt124:{num}:j_idt176"]'  # parcela 12
     ]
     listParcela.append(listParcelaEsp)
-listXpath5 = [listCampo, listParcela]
+listXpathCampoParcela = [listCampo, listParcela]
 
 options = webdriver.ChromeOptions()
 options.add_argument('--ignore-certificate-errors')
@@ -97,41 +97,22 @@ while True:
         break
     except TimeoutException:
         continue
-while True:
-    connect.pressListXpath(listXpath=xpathTipoComissao)
-    try:  # saber se deu certo logar
-        connect.locateXpath(xpath=xpathAdministradora) 
-        break
-    except TimeoutException:
-        continue
-while True:
-    listaValue = connect.pressXpathRetuneListValue(xpath=xpathAdministradora)
-    try:  # saber se deu certo logar
-        connect.locateXpath(xpath=xpathTabelaRecebimento) 
-        break
-    except TimeoutException:
-        continue
-while True:
-    # listaValue = connect.commissionSircon(listXpath=listXpath3)
-    listValueAll = connect.pressListValueXpathRetuneListValueAll(xpath=xpathTabelaRecebimento, listValue=listaValue, tagSon=tagSon, tagFather=tagFather)
-    try:
-        connect.locateXpath(xpath=xpathCargo)
-        break
-    except TimeoutException:
-        continue
+connect.pressListXpath(listXpath=xpathTipoComissao)
+listValue = connect.pressXpathReturnListValue(xpath=xpathAdministradora)
+listValue = connect.pressListValueXpathReturnListValue(xpath=xpathTabelaRecebimento, listValue=listValue, tagSon=tagSon, tagFather=tagFather)
+listValue = connect.pressListValueXpathReturnListValueDouble(xpath=xpathCargo, listValue=listValue, tagSon=tagSon, tagFather=tagFather)
+listValue = connect.pressListValueReturnListValueTriple(listXpath=listXpathCampoParcela, listValue=listValue, tagSon=tagSon)
+print(listValue)
+sleep(60)
+# listLineTable = connect.formatListaLineTable(listValueDouble=listValueDouble)
 
-# listaValue = connect.commissionSircon(listXpath=listXpath3)
-listValueAllDouble = connect.pressListValueAllXpathRetuneListValueAllDoucle(xpath=xpathCargo, listValueAll=listValueAll, tagSon=tagSon, tagFather=tagFather)
+# listColumnTable = connect.formatListaColumnTable(listLineTable=listLineTable)
 
-listLineTable = connect.formatListaLineTable(listValueAllDouble=listValueAllDouble)
-
-listColumnTable = connect.formatListaColumnTable(listLineTable=listLineTable)
-
-table = connect.formatTable(listColumnTable=listColumnTable)
+# table = connect.formatTable(listColumnTable=listColumnTable)
 
 
-print(table)
-sleep(50)
+# print(table)
+
 # connect.commissionSirconValue(listXpath=listXpath5)
 
 
