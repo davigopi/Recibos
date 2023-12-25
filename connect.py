@@ -1,5 +1,7 @@
 # "ferramenta de captura"  do windows para pegar imagens
+from ast import Break
 from asyncio.windows_events import NULL
+# from cgitb import text
 from contextlib import nullcontext
 import re
 import sys
@@ -16,20 +18,18 @@ from bs4 import BeautifulSoup
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.actions.wheel_input import ScrollOrigin
-from selenium.common.exceptions import NoSuchElementException, ElementNotInteractableException, ElementClickInterceptedException, StaleElementReferenceException
+from selenium.common.exceptions import NoSuchElementException, ElementNotInteractableException, ElementClickInterceptedException, StaleElementReferenceException, InvalidArgumentException
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 
 
-<<<<<<< HEAD
 excecaoAll = (NoSuchElementException
             , ElementNotInteractableException
             , ElementClickInterceptedException
             , StaleElementReferenceException
+            , InvalidArgumentException
             )
 
-=======
->>>>>>> 72e381972368a6b953298c8cff11c4c8299ce4ef
 class Connect:
     def __init__(self, *args, **kwargs) -> None:
         self.driver = kwargs.get('driver')
@@ -55,6 +55,8 @@ class Connect:
     def locateXpath(self, xpath):
         xpathManip = XpathManip(driver=self.driver)
         xpathManip.locate = xpath
+        xpathOk = xpathManip.locate
+        return xpathOk
     
     def dfSircon(self, arqCons, months, listXpath):  
         file = FileManip(arqCons)
@@ -97,6 +99,7 @@ class Connect:
     def pressXpathReturnListValue(self, xpath):
         mousekeyboard = MouseKeyboard(driver=self.driver)
         returnValue = ReturnValue(driver=self.driver)
+        # returnValue.tagValueGet = 'value'
         clickOk = False
         while clickOk is False:
             if clickOk >= 10:
@@ -104,6 +107,7 @@ class Connect:
             clickOk = mousekeyboard.clickXpath(xpath)
             returnValue.tagSonValue = 'option'
             returnValue.tagFatherValue = 'select'
+            returnValue.tagValueGet = 'outerHTML'
             returnValue.tagValue = xpath
             listValue = returnValue.tagValue
         return listValue
@@ -126,12 +130,16 @@ class Connect:
     #     return listValue
 
     def pressListValueXpathReturnListValue(self, xpath, listValue, tagSon, tagFather):
-        listValueTemp = []
-        for value in listValue:
+        listValueAdministradoraTablarecebimento = []
+        for valueAdministradora in listValue:
             mousekeyboard = MouseKeyboard(driver=self.driver)
             mousekeyboard.locationSearchTag = tagSon
+
+            if valueAdministradora != 'DISAL':
+                continue
+            
             while True:
-                mousekeyboard.clickValue = value
+                mousekeyboard.clickValue = valueAdministradora
                 clickOk = mousekeyboard.clickValue
                 if clickOk is True:
                     break
@@ -140,13 +148,14 @@ class Connect:
                 clickOk = mousekeyboard.clickXpath(xpath)
                 returnValue.tagSonValue = tagSon
                 returnValue.tagFatherValue = tagFather
+                returnValue.tagValueGet = 'outerHTML'
                 returnValue.tagValue = xpath
-                listValueTemporary = returnValue.tagValue
-                listValueTemp.append([value, listValueTemporary])
+                listValueTablarecebimento = returnValue.tagValue
+                listValueAdministradoraTablarecebimento.append([valueAdministradora, listValueTablarecebimento])
                 if clickOk >= 10 or clickOk is True:
                     break
                 # sleep(1)
-        return listValueTemp
+        return listValueAdministradoraTablarecebimento
 
     def pressListValueXpathReturnListValueDouble(self, xpath, listValue, tagSon, tagFather):
         listValueTemp = []
@@ -176,6 +185,7 @@ class Connect:
                     clickOk = mousekeyboard.clickXpath(xpath)
                     returnValue.tagSonValue = tagSon
                     returnValue.tagFatherValue = tagFather
+                    returnValue.tagValueGet = 'outerHTML'
                     returnValue.tagValue = xpath
                     listValueCargo = returnValue.tagValue
                     listValueTabelarecebimentoCargo.append([valueTablarecebimento, listValueCargo])
@@ -190,6 +200,7 @@ class Connect:
         mousekeyboard = MouseKeyboard(driver=self.driver)
         mousekeyboard.locationSearchTag = tagSon
         returnValue = ReturnValue(driver=self.driver)
+        renameText = RenameText()
         for listValueAdministradoraTablarecebimentoCargo in listValue:
             valueAdministradora = listValueAdministradoraTablarecebimentoCargo[0]
             while True:
@@ -198,8 +209,6 @@ class Connect:
                 if clickOk is True:
                     break
             sleep(0.5)
-            if valueAdministradora != 'DISAL':
-                continue
             for listValueTablarecebimentoCargo in listValueAdministradoraTablarecebimentoCargo[1]:
                 valueTablarecebimento = listValueTablarecebimentoCargo[0]
                 while True:
@@ -209,51 +218,112 @@ class Connect:
                         break
                 sleep(0.5)
                 for valueCargo in listValueTablarecebimentoCargo[1]:
+                    # if valueCargo != 'CONSULTOR CLT - A PARTIR JAN-2018':
+                    #     continue
                     while True:
                         mousekeyboard.clickValue = valueCargo
                         clickOk = mousekeyboard.clickValue
                         if clickOk is True:
                             break
-                    listComission = []
-                    for key, xpathFather in enumerate(listXpath[0]):
-                        listComission.append(key+1)
-                        for xpath in listXpath[1][key]:
-                            returnValue.xpathFatherValue = xpathFather
-                            returnValue.xpathValue = xpath
+                        sleep(0.5)
+                    listCampoParcela = []
+                    for key, xpathCampoParcela in enumerate(listXpath):
+                        returnValue.xpathFatherValue = xpathCampoParcela[0]
+                        returnValue.xpathValueText = xpathCampoParcela[0]
+                        valueHeader = returnValue.xpathValueText
+                        if valueHeader is False:
+                            break
+                        renameText.renameHeader = valueHeader
+                        valueHeader = renameText.renameHeader
+                        listCampoParcela.append(valueHeader)
+                        returnValue.tagValueGet = 'value'
+                        # listParcela = []
+                        for xpathParcela in xpathCampoParcela[1]:
+                            returnValue.xpathValue = xpathParcela
                             value = returnValue.xpathValue
                             if value is False:
                                 break
-                            listComission.append(value)
-                        if value is False:
-                            break
-                            
-                    listValueTemp.append([valueAdministradora, valueTablarecebimento, valueCargo, listComission])
+                            listCampoParcela.append(value)
+                        # listCampoParcela.append([valueHeader, listParcela])        
+                    listValueTemp.append([valueAdministradora, valueTablarecebimento, valueCargo, listCampoParcela])
         return listValueTemp
     
-    def formatListaLineTable(self, listValue):
-        listLineTable = []
-        index = 0
-        for valueAdministradoraTabelaRecebimentoCargo in listValue:
-            valueAdministrador = valueAdministradoraTabelaRecebimentoCargo[0]
-            for valueTabelaRecebimentoCargo in valueAdministradoraTabelaRecebimentoCargo[1]:
-                valueTabelaRecebimento = valueTabelaRecebimentoCargo[0]
-                for valueCargo in valueTabelaRecebimentoCargo[1]:
-                    index += 1
-                    listLineTable.append([index, valueAdministrador, valueTabelaRecebimento, valueCargo])
-        return listLineTable
+    def formatListLineTable(self, listValue):
+        listValueAll = []
+        for listValueTemp in listValue:
+            listLineTemp = []
+            for key, value in enumerate(listValueTemp):
+                if key == 3:
+                    for valuePercentage in value:
+                        if valuePercentage != '':
+                            listLineTemp.append(valuePercentage)
+                else: 
+                    listLineTemp.append(value)
+            listValueAll.append(listLineTemp)
+        return listValueAll
 
-    def formatListaColumnTable(self, listLineTable):
-        listColumnTable = []
-        index = []
-        column1 = []
-        column2 = []
-        column3 = []
-        columns = [index, column1, column2, column3]
-        for lineTable in listLineTable:
-            for key in range(4):
-                columns[key].append(lineTable[key])
-        listColumnTable.append([index, column1, column2, column3])
-        return listColumnTable    
+    def formatListEqualValueLineTable(self, listValue):
+        listValueAll = []
+        maximumNumberColumm = 0
+        for listValueTemp in listValue:
+            nuberColumn = len(listValueTemp)
+            if maximumNumberColumm < nuberColumn:
+                maximumNumberColumm = nuberColumn
+        maximumNumberColumm += 1
+        print(f'maximumNumberColumm: {maximumNumberColumm}')
+
+        for listValueTemp in listValue:
+            listValueTemp.append('endValue')
+            listLineTemp = []
+            for valueTemp in listValueTemp:
+                listLineTemp.append(valueTemp)
+                if valueTemp == 'endValue':
+                    numberColumnMiss = maximumNumberColumm - len(listValueTemp)
+                    for _ in range(numberColumnMiss):
+                        listLineTemp.append('none')
+            listValueAll.append(listLineTemp)
+
+        for listValueTemp in listValueAll:
+            nuberColumn = len(listValueTemp)
+            if maximumNumberColumm < nuberColumn:
+                maximumNumberColumm = nuberColumn
+        print(f'maximumNumberColumm: {maximumNumberColumm}')
+
+        return listValueAll
+
+    def formatListaColumnTable(self, listValue):
+        listValueAll = []
+        column = []
+        for key, _ in enumerate(listValue):
+            column.append(key)
+        listValueAll.append(column)
+        
+        countLine = 0 
+        column = []
+        listLast = False
+        listValue.append('outWhile')
+        outWhile = False
+        while True:
+            countColunm = 0
+            column.append(listValue[countColunm][countLine]) 
+            countColunm += 1
+            if listValue[countColunm] == listValue[-1]:
+                listLast = True
+                
+            if listLast is True:
+                listValueAll.append(column)
+                countLine += 1
+                column = []
+                listLast = False
+                # if outWhile is True:
+            if listValue[countColunm][countLine] == listValue[-1][-1]:
+                break
+            
+                    
+
+
+
+        return listValueAll    
     
     def formatTable(self, listColumnTable):
         for key, column in enumerate(listColumnTable):
@@ -270,9 +340,9 @@ class Connect:
         listComission = []
         for key, xpathFather in enumerate(listXpath[0]):
             listComission.append(key+1)
+            returnValue = ReturnValue(driver=self.driver)
+            returnValue.xpathFatherValue = xpathFather
             for xpath in listXpath[1][key]:
-                returnValue = ReturnValue(driver=self.driver)
-                returnValue.xpathFatherValue = xpathFather
                 returnValue.xpathValue = xpath
                 value = returnValue.xpathValue
                 listComission.append(value)
@@ -285,6 +355,7 @@ class ReturnValue:
         self.xpathFather = None
         self.tagFather = None
         self.tagSon = None
+        self.tagGet = None
         self.value = None
        
     @property
@@ -296,7 +367,7 @@ class ReturnValue:
         while True:
             try:
                 count += 1
-                self.value = self.driver.find_element(By.XPATH, self.xpathFather).find_element(By.XPATH, xpath).get_attribute('value')
+                self.value = self.driver.find_element(By.XPATH, self.xpathFather).find_element(By.XPATH, xpath).get_attribute(self.tagGet)
                 break
             except excecaoAll:
                 if count >= 3:
@@ -305,11 +376,21 @@ class ReturnValue:
                 sleep(0.2)
 
     @property
-    def xpathFatherValue(self):
-        return self.xpathFather
-    @xpathFatherValue.setter
-    def xpathFatherValue(self, xpathFather):
-        self.xpathFather = xpathFather
+    def xpathValueText(self):
+        return self.value
+    @xpathValueText.setter
+    def xpathValueText(self, xpath):
+        count = 0
+        while True:
+            count += 1
+            try:
+                self.value = self.driver.find_element(By.XPATH, xpath).text
+                break
+            except excecaoAll as e:
+                if count >= 3:
+                    self.value = False
+                    break
+                sleep(0.5)
 
     @property
     def tagValue(self):
@@ -318,7 +399,7 @@ class ReturnValue:
     def tagValue(self, xpath):
         while True:
             try: 
-                self.value = self.driver.find_element(By.XPATH, xpath).get_attribute('outerHTML')  # retornar o outerHTML
+                self.value = self.driver.find_element(By.XPATH, xpath).get_attribute(self.tagGet)  # retornar o outerHTML
                 # pip install lxml
                 self.value = BeautifulSoup(self.value, "lxml").find(self.tagFather).findAll(self.tagSon)  # formatar outerHTMl
 
@@ -331,11 +412,11 @@ class ReturnValue:
                 pass
 
     @property
-    def tagSonValue(self):
-        return self.tagSon
-    @tagSonValue.setter
-    def tagSonValue(self, tagSon):
-        self.tagSon = tagSon
+    def xpathFatherValue(self):
+        return self.xpathFather
+    @xpathFatherValue.setter
+    def xpathFatherValue(self, xpathFather):
+        self.xpathFather = xpathFather
 
     @property
     def tagFatherValue(self):
@@ -343,6 +424,55 @@ class ReturnValue:
     @tagFatherValue.setter
     def tagFatherValue(self, tagFather):
         self.tagFather = tagFather
+
+    @property
+    def tagSonValue(self):
+        return self.tagSon
+    @tagSonValue.setter
+    def tagSonValue(self, tagSon):
+        self.tagSon = tagSon
+
+    @property
+    def tagValueGet(self):
+        return self.tagGet
+    @tagValueGet.setter
+    def tagValueGet(self, tagValue):
+        self.tagGet = tagValue
+
+class RenameText:
+    def __init__(self, *args, **kwargs) -> None:
+        self.text = None
+
+    @property
+    def renameHeader(self):
+        return self.text
+    
+    @renameHeader.setter
+    def renameHeader(self, text):
+        text = text.replace('\n', '&&&&&')
+        for key in range(10):
+            text = text.replace('  ', ' ')
+        text = text.replace('- ', '#####')
+        self.text = ''
+        countStart = 0
+        countEnd = 0
+        textStart = False
+        for letter in text:
+            if letter == '#':
+                countStart += 1
+                if countStart >= 3:
+                    textStart = True
+                continue
+            elif letter == '&':
+                countEnd += 1
+                if countEnd >= 3:
+                    break
+                continue
+            else: 
+                if textStart is True:
+                    self.text += letter
+                countStart = 0
+                countEnd = 0
 
 class XpathManip:
     def __init__(self, *args, **kwargs) -> None:
@@ -352,19 +482,28 @@ class XpathManip:
                         , ElementClickInterceptedException
                         , StaleElementReferenceException
                         )
+        self.xpathOk = None
 
     @property
     def locate(self):
-        return True
+        return self.xpathOk
 
     @locate.setter
     def locate(self, xpath):
+        count = 0
         while True:
             try:   
                 self.driver.find_element(By.XPATH, xpath).location_once_scrolled_into_view
+                self.xpathOk = True
                 break
             except excecaoAll:
+                count += 1
+                if count >= 3:
+                    self.xpathOk = False
+                    break
+                sleep(0.5)
                 continue
+
 
 class FileManip:
     def __init__(self, arqCons) -> None:

@@ -51,29 +51,28 @@ xpathTabelaRecebimento = '//*[@id="frm:cbTabelaRecebimento"]'
                         # , '//*[@id="frm:cbTabelaRecebimento"]/option[2]'  # Tabela disal normal
 xpathCargo = '//*[@id="frm:cbCargo"]'
             # , '//*[@id="frm:cbCargo"]/option[5]'  # Consultor CLR - a partir jan-2018
-listCampo = ['//*[@id="frm:pnlEsacalas"]/div[1]'  # campo de 0 a 2 
-                , '//*[@id="frm:pnlEsacalas"]/div[2]'  # campo de 3 a 5
-                , '//*[@id="frm:pnlEsacalas"]/div[3]'  # campo de 6 a 9
-                , '//*[@id="frm:pnlEsacalas"]/div[4]'  # campo de 10 a 14
-                , '//*[@id="frm:pnlEsacalas"]/div[5]'  # campo de 15 a 100000000
-            ]
-listParcela =[]
-for num in range(5):
-    listParcelaEsp = [f'//*[@id="frm:j_idt124:{num}:j_idt149"]'  # parcela 1
-                    , f'//*[@id="frm:j_idt124:{num}:j_idt156"]'  # parcela 2
-                    , f'//*[@id="frm:j_idt124:{num}:j_idt158"]'  # parcela 3
-                    , f'//*[@id="frm:j_idt124:{num}:j_idt160"]'  # parcela 4
-                    , f'//*[@id="frm:j_idt124:{num}:j_idt162"]'  # parcela 5
-                    , f'//*[@id="frm:j_idt124:{num}:j_idt164"]'  # parcela 6
-                    , f'//*[@id="frm:j_idt124:{num}:j_idt166"]'  # parcela 7
-                    , f'//*[@id="frm:j_idt124:{num}:j_idt168"]'  # parcela 8
-                    , f'//*[@id="frm:j_idt124:{num}:j_idt170"]'  # parcela 9
-                    , f'//*[@id="frm:j_idt124:{num}:j_idt172"]'  # parcela 10
-                    , f'//*[@id="frm:j_idt124:{num}:j_idt174"]'  # parcela 11
-                    , f'//*[@id="frm:j_idt124:{num}:j_idt176"]'  # parcela 12
-    ]
-    listParcela.append(listParcelaEsp)
-listXpathCampoParcela = [listCampo, listParcela]
+
+listXpathCampoParcela =[]
+for num in range(30):
+    listCampo = f'//*[@id="frm:pnlEsacalas"]/div[{str(num+1)}]'  # campo de 0 a 2 
+    listParcela = [f'//*[@id="frm:j_idt124:{num}:j_idt149"]'  # parcela 1
+                , f'//*[@id="frm:j_idt124:{num}:j_idt156"]'  # parcela 2
+                , f'//*[@id="frm:j_idt124:{num}:j_idt158"]'  # parcela 3
+                , f'//*[@id="frm:j_idt124:{num}:j_idt160"]'  # parcela 4
+                , f'//*[@id="frm:j_idt124:{num}:j_idt162"]'  # parcela 5
+                , f'//*[@id="frm:j_idt124:{num}:j_idt164"]'  # parcela 6
+                , f'//*[@id="frm:j_idt124:{num}:j_idt166"]'  # parcela 7
+                , f'//*[@id="frm:j_idt124:{num}:j_idt168"]'  # parcela 8
+                , f'//*[@id="frm:j_idt124:{num}:j_idt170"]'  # parcela 9
+                , f'//*[@id="frm:j_idt124:{num}:j_idt172"]'  # parcela 10
+                , f'//*[@id="frm:j_idt124:{num}:j_idt174"]'  # parcela 11
+                , f'//*[@id="frm:j_idt124:{num}:j_idt176"]'  # parcela 12
+                ]
+    listXpathCampoParcela.append([listCampo, listParcela])
+
+# //*[@id="frm:pnlEsacalas"]/div[1]
+
+
 
 options = webdriver.ChromeOptions()
 options.add_argument('--ignore-certificate-errors')
@@ -85,33 +84,28 @@ driver.get(siteSircon)
 connect = Connect(driver=driver)
 while True:
     connect.logarSircon(security=security, listXpath=listXpathLog)
-    try:  # saber se deu certo logar
-        connect.locateXpath(xpath=listXpathComissoesConfiguracao[0]) 
+    xpathOk = connect.locateXpath(xpath=listXpathComissoesConfiguracao[0]) 
+    if xpathOk is True:
         break
-    except TimeoutException:
-        continue
 while True:
     connect.pressListXpath(listXpath=listXpathComissoesConfiguracao)
-    try:  # saber se deu certo logar
-        connect.locateXpath(xpath=xpathTipoComissao[0]) 
+    xpathOk = connect.locateXpath(xpath=xpathTipoComissao[0]) 
+    if xpathOk is True:
         break
-    except TimeoutException:
-        continue
 connect.pressListXpath(listXpath=xpathTipoComissao)
 listValue = connect.pressXpathReturnListValue(xpath=xpathAdministradora)
 listValue = connect.pressListValueXpathReturnListValue(xpath=xpathTabelaRecebimento, listValue=listValue, tagSon=tagSon, tagFather=tagFather)
 listValue = connect.pressListValueXpathReturnListValueDouble(xpath=xpathCargo, listValue=listValue, tagSon=tagSon, tagFather=tagFather)
 listValue = connect.pressListValueReturnListValueTriple(listXpath=listXpathCampoParcela, listValue=listValue, tagSon=tagSon)
-print(listValue)
-sleep(60)
-# listLineTable = connect.formatListaLineTable(listValueDouble=listValueDouble)
+listValue = connect.formatListLineTable(listValue=listValue)
+# listValue = connect.formatListEqualValueLineTable(listValue=listValue)
 
-# listColumnTable = connect.formatListaColumnTable(listLineTable=listLineTable)
+# listValue = connect.formatListaColumnTable(listValue=listValue)
 
 # table = connect.formatTable(listColumnTable=listColumnTable)
 
-table.to_csv('pagamento.csv')
-# print(table)
+listValue.to_txt('listValue.txt')
+print(listValue)
 
 # connect.commissionSirconValue(listXpath=listXpath5)
 
@@ -121,3 +115,6 @@ table.to_csv('pagamento.csv')
 # //*[@id="frm:j_idt124:1:j_idt156"]
 
 # //*[@id="frm:j_idt124:2:j_idt156"]
+
+# print(listValue)
+sleep(3)
