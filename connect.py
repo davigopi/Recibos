@@ -218,8 +218,8 @@ class Connect:
                         break
                 sleep(0.5)
                 for valueCargo in listValueTablarecebimentoCargo[1]:
-                    # if valueCargo != 'CONSULTOR CLT - A PARTIR JAN-2018':
-                    #     continue
+                    if valueCargo != 'CONSULTOR CLT - A PARTIR JAN-2018':
+                        continue
                     while True:
                         mousekeyboard.clickValue = valueCargo
                         clickOk = mousekeyboard.clickValue

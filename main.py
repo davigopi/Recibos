@@ -103,8 +103,10 @@ listValue = connect.formatListLineTable(listValue=listValue)
 # listValue = connect.formatListaColumnTable(listValue=listValue)
 
 # table = connect.formatTable(listColumnTable=listColumnTable)
-
-listValue.to_txt('listValue.txt')
+conteudo = os.listdir('/')
+with open('listValue.txt', 'w') as listValue:
+    listValue.write(str(conteudo))
+# arqListValue.write(listValue)
 print(listValue)
 
 # connect.commissionSirconValue(listXpath=listXpath5)

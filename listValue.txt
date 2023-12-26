@@ -1,0 +1,1 @@
+['$RECYCLE.BIN', 'avast! sandbox', 'FlutterFlow', 'PenDriver', 'Python', 'System Volume Information']
