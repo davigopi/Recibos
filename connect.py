@@ -35,6 +35,7 @@ class Connect:
         self.driver = kwargs.get('driver')
         self.df = pd.DataFrame()
         self.dfNew = None
+        self.listValue = None
 
     def logarSircon(self, security, listXpath):
         func = MouseKeyboard(driver=self.driver)
@@ -218,8 +219,8 @@ class Connect:
                         break
                 sleep(0.5)
                 for valueCargo in listValueTablarecebimentoCargo[1]:
-                    if valueCargo != 'CONSULTOR CLT - A PARTIR JAN-2018':
-                        continue
+                    # if valueCargo != 'CONSULTOR CLT - A PARTIR JAN-2018':
+                    #     continue
                     while True:
                         mousekeyboard.clickValue = valueCargo
                         clickOk = mousekeyboard.clickValue
@@ -248,8 +249,13 @@ class Connect:
                     listValueTemp.append([valueAdministradora, valueTablarecebimento, valueCargo, listCampoParcela])
         return listValueTemp
     
-    def formatListLineTable(self, listValue):
-        listValueAll = []
+    @property
+    def removeEmpty(self):
+        return self.listValue
+    
+    @removeEmpty.setter
+    def removeEmpty(self, listValue):
+        self.listValue = []
         for listValueTemp in listValue:
             listLineTemp = []
             for key, value in enumerate(listValueTemp):
@@ -259,37 +265,64 @@ class Connect:
                             listLineTemp.append(valuePercentage)
                 else: 
                     listLineTemp.append(value)
-            listValueAll.append(listLineTemp)
-        return listValueAll
-
-    def formatListEqualValueLineTable(self, listValue):
-        listValueAll = []
+            self.listValue.append(listLineTemp)
+    
+    @property
+    def addNone(self):
+        return self.listValue
+    
+    @addNone.setter
+    def addNone(self, listValue):
         maximumNumberColumm = 0
         for listValueTemp in listValue:
-            nuberColumn = len(listValueTemp)
-            if maximumNumberColumm < nuberColumn:
-                maximumNumberColumm = nuberColumn
+            if maximumNumberColumm < len(listValueTemp):
+                maximumNumberColumm = len(listValueTemp)
         maximumNumberColumm += 1
-        print(f'maximumNumberColumm: {maximumNumberColumm}')
 
+        self.listValue = []
         for listValueTemp in listValue:
-            listValueTemp.append('endValue')
+            listValueTemp.append('none')  
             listLineTemp = []
             for valueTemp in listValueTemp:
                 listLineTemp.append(valueTemp)
-                if valueTemp == 'endValue':
+                if valueTemp == 'none':
                     numberColumnMiss = maximumNumberColumm - len(listValueTemp)
                     for _ in range(numberColumnMiss):
                         listLineTemp.append('none')
-            listValueAll.append(listLineTemp)
+            self.listValue.append(listLineTemp)
+    
+    @property
+    def addEndValue(self):
+        return self.listValue
+    
+    @addEndValue.setter
+    def addEndValue(self, listValue):
+        self.listValue = []
+        for listValueTemp in listValue:
+            listValueTemp[-1] = 'endValue'
+            self.listValue.append(listValueTemp)
+        self.listValue[-1][-1] = 'endValueLast'
 
-        for listValueTemp in listValueAll:
-            nuberColumn = len(listValueTemp)
-            if maximumNumberColumm < nuberColumn:
-                maximumNumberColumm = nuberColumn
-        print(f'maximumNumberColumm: {maximumNumberColumm}')
-
-        return listValueAll
+    @property
+    def formatLineToColumn(self):
+        return self.listValue
+    
+    @formatLineToColumn.setter
+    def formatLineToColumn(self, listValue):
+        self.listValue = []
+        line = -1
+        column = 0
+        listValueTemp = []
+        while True:
+            line += 1
+            if listValue[line][column] == 'endValue':
+                break
+            listValueTemp.append(listValue[line][column])
+            if listValue[line][-1] == 'endValueLast':
+                self.listValue.append(listValueTemp)
+                listValueTemp = []
+                line = -1
+                column += 1
 
     def formatListaColumnTable(self, listValue):
         listValueAll = []

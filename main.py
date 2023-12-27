@@ -97,17 +97,20 @@ listValue = connect.pressXpathReturnListValue(xpath=xpathAdministradora)
 listValue = connect.pressListValueXpathReturnListValue(xpath=xpathTabelaRecebimento, listValue=listValue, tagSon=tagSon, tagFather=tagFather)
 listValue = connect.pressListValueXpathReturnListValueDouble(xpath=xpathCargo, listValue=listValue, tagSon=tagSon, tagFather=tagFather)
 listValue = connect.pressListValueReturnListValueTriple(listXpath=listXpathCampoParcela, listValue=listValue, tagSon=tagSon)
-listValue = connect.formatListLineTable(listValue=listValue)
+# listValue = connect.removerEmpty(listValue=listValue)
 # listValue = connect.formatListEqualValueLineTable(listValue=listValue)
 
 # listValue = connect.formatListaColumnTable(listValue=listValue)
 
 # table = connect.formatTable(listColumnTable=listColumnTable)
-conteudo = os.listdir('/')
-with open('listValue.txt', 'w') as listValue:
-    listValue.write(str(conteudo))
-# arqListValue.write(listValue)
-print(listValue)
+# conteudo = os.listdir('/')
+# with open('listValue.txt', 'w') as listValue:
+#     listValue.write(str(conteudo))
+
+
+arquivo = open("listValue.txt", "w")
+arquivo.write(str(listValue))
+# print(listValue)
 
 # connect.commissionSirconValue(listXpath=listXpath5)
 
