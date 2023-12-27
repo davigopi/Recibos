@@ -36,6 +36,7 @@ class Connect:
         self.df = pd.DataFrame()
         self.dfNew = None
         self.listValue = None
+        self.table = None
 
     def logarSircon(self, security, listXpath):
         func = MouseKeyboard(driver=self.driver)
@@ -250,23 +251,39 @@ class Connect:
         return listValueTemp
     
     @property
-    def removeEmpty(self):
+    def removeListInside(self):
         return self.listValue
     
-    @removeEmpty.setter
-    def removeEmpty(self, listValue):
+    @removeListInside.setter
+    def removeListInside(self, listValue):
         self.listValue = []
         for listValueTemp in listValue:
             listLineTemp = []
             for key, value in enumerate(listValueTemp):
-                if key == 3:
+                if key == 3:  # local que esta o valor que é outra lista
                     for valuePercentage in value:
-                        if valuePercentage != '':
-                            listLineTemp.append(valuePercentage)
+                        listLineTemp.append(valuePercentage)
                 else: 
                     listLineTemp.append(value)
             self.listValue.append(listLineTemp)
     
+    @property
+    def killAllEmpty(self):
+        return self.listValue
+    
+    @killAllEmpty.setter
+    def killAllEmpty(self, listValue):
+        self.listValue = []
+        for listValueTemp in listValue:
+            listValueNoEmpty = []
+            haveValueNoEmpty = False
+            for value in listValueTemp:
+                listValueNoEmpty.append(value)
+                if value != '':
+                    haveValueNoEmpty = True
+            if haveValueNoEmpty is True:
+                self.listValue.append(listValueNoEmpty)
+
     @property
     def addNone(self):
         return self.listValue
@@ -281,34 +298,47 @@ class Connect:
 
         self.listValue = []
         for listValueTemp in listValue:
-            listValueTemp.append('none')  
+            listValueTemp.append('None')  
             listLineTemp = []
             for valueTemp in listValueTemp:
                 listLineTemp.append(valueTemp)
-                if valueTemp == 'none':
+                if valueTemp == 'None':
                     numberColumnMiss = maximumNumberColumm - len(listValueTemp)
                     for _ in range(numberColumnMiss):
-                        listLineTemp.append('none')
+                        listLineTemp.append('None')
             self.listValue.append(listLineTemp)
-    
+
     @property
-    def addEndValue(self):
+    def addIndex(self):
         return self.listValue
     
-    @addEndValue.setter
-    def addEndValue(self, listValue):
+    @addIndex.setter
+    def addIndex(self, listValue):
+        self.listValue = []
+        for key, listValueTemp in enumerate(listValue):
+            key = str(key)
+            key = key.rjust(6, '0') 
+            listValueTemp[-1] = key  # substituir o ultimo 'None' pelo key
+            self.listValue.append(listValueTemp)
+    
+    @property
+    def addEnd(self):
+        return self.listValue
+    
+    @addEnd.setter
+    def addEnd(self, listValue):
         self.listValue = []
         for listValueTemp in listValue:
-            listValueTemp[-1] = 'endValue'
+            listValueTemp.append('endValue')
             self.listValue.append(listValueTemp)
         self.listValue[-1][-1] = 'endValueLast'
 
     @property
-    def formatLineToColumn(self):
+    def lineToColumn(self):
         return self.listValue
     
-    @formatLineToColumn.setter
-    def formatLineToColumn(self, listValue):
+    @lineToColumn.setter
+    def lineToColumn(self, listValue):
         self.listValue = []
         line = -1
         column = 0
@@ -322,51 +352,43 @@ class Connect:
                 self.listValue.append(listValueTemp)
                 listValueTemp = []
                 line = -1
-                column += 1
+                column += 1 
 
-    def formatListaColumnTable(self, listValue):
-        listValueAll = []
-        column = []
-        for key, _ in enumerate(listValue):
-            column.append(key)
-        listValueAll.append(column)
-        
-        countLine = 0 
-        column = []
-        listLast = False
-        listValue.append('outWhile')
-        outWhile = False
-        while True:
-            countColunm = 0
-            column.append(listValue[countColunm][countLine]) 
-            countColunm += 1
-            if listValue[countColunm] == listValue[-1]:
-                listLast = True
-                
-            if listLast is True:
-                listValueAll.append(column)
-                countLine += 1
-                column = []
-                listLast = False
-                # if outWhile is True:
-            if listValue[countColunm][countLine] == listValue[-1][-1]:
-                break
-            
-                    
-
-
-
-        return listValueAll    
+    @property
+    def noneToEmpty(self):
+        return self.listValue
     
-    def formatTable(self, listColumnTable):
-        for key, column in enumerate(listColumnTable):
-            if key == 0:
-                table = pd.DataFrame(index=column, columns=['index'])
-                # table['index'] = column
-                continue
-            nameColumn = 'column' + str(key)
-            table[nameColumn] = column
-        return table
+    @lineToColumn.setter
+    def noneToEmpty(self, listValue):
+        self.listValue = []
+        for listValueTemp in listValue:
+            listValueEmpty = []
+            for value in listValueTemp:
+                if value == 'None':
+                    listValueEmpty.append('')
+                else:
+                    listValueEmpty.append(value)
+            self.listValue.append(listValueEmpty)
+
+    @property
+    def listToTable(self):
+        return self.table
+    
+    @listToTable.setter
+    def listToTable(self, listValue):
+        self.table = pd.DataFrame(index=listValue[-1], columns=['Index'])
+        self.table['Index'] = listValue[-1]
+        for number in range(100):
+            if len(listValue)/(10**number) < 1:
+                nStr = number
+                break
+        for key, column in enumerate(listValue):
+            if column == listValue[-1]:
+                break
+            key = str(key)
+            key = key.rjust(nStr, '0') 
+            nameColumn = 'Column' + '-' + key
+            self.table[nameColumn] = column
 
     def commissionSirconValue(self, listXpath):
         # func = MouseKeyboard(driver=self.driver) 

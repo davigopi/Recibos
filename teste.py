@@ -20,21 +20,30 @@ with open('listValue.txt', "r") as arquivo:
 
 listValue = ast.literal_eval(listValue)
 
-connect.removeEmpty = listValue
-listValue = connect.removeEmpty
+connect.removeListInside = listValue
+listValue = connect.removeListInside
 connect.addNone = listValue
 listValue = connect.addNone
-connect.addEndValue = listValue
-listValue = connect.addEndValue
-connect.formatLineToColumn = listValue
-listValue = connect.formatLineToColumn
-# listValue = connect.formatListEqualValueLineTable(listValue=listValue)
+connect.addIndex = listValue
+listValue = connect.addIndex
+connect.addEnd = listValue
+listValue = connect.addEnd
+connect.lineToColumn = listValue
+listValue = connect.lineToColumn
+connect.noneToEmpty = listValue
+listValue = connect.noneToEmpty
+connect.killAllEmpty = listValue
+listValue = connect.killAllEmpty
+# for value in listValue:
+# 	print(value)
+connect.listToTable = listValue
+table = connect.listToTable
 
-# print(listValue)
+table.to_csv("table.csv", index=False, header=True)
 
 
-for value in listValue:
-	print(value)
+print(table)
+
 	# for x in value:
 	#     print(x)
 # listValue = listValue.split()
