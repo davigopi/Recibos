@@ -137,4 +137,4 @@ table = connect.listToTable
 print(table)
 table.to_csv("table.csv", index=False, header=True)
 
-sleep(3)
+sleep(4)

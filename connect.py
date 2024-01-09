@@ -510,6 +510,7 @@ class ReturnValue:
                     break
                 sleep(0.5)
 
+
     @property
     def tagValue(self):
         return self.value
