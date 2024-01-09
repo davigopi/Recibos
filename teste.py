@@ -18,7 +18,7 @@ with open('listValue.txt', "r") as arquivo:
 	listValue = arquivo.read()
 
 
-listValue = ast.literal_eval(listValue)
+listValue = ast.literal_eval(listValue)  # convert str em list
 
 connect.removeListInside = listValue
 listValue = connect.removeListInside
