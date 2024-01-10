@@ -42,14 +42,13 @@ class Connect:
         self.password = None
         self.tagSon = None
         self.tagFather = None
-        self.tagValueGet = None
+        self.tagGet = None
         self.file = None
         self.month = None
         self.valueAdministradora = None
         self.valueCargo = None
         self.mouseKeyboard = MouseKeyboard(driver=self.driver)
         self.returnValue = ReturnValue(driver=self.driver)
-
 
     @property
     def users(self):
@@ -84,12 +83,12 @@ class Connect:
         self.tagFather = tagFather
 
     @property
-    def tagValueGets(self):
+    def tagGets(self):
         return None
     
-    @tagValueGets.setter
-    def tagValueGets(self, tagValueGet):
-        self.tagValueGet = tagValueGet
+    @tagGets.setter
+    def tagGets(self, tagGet):
+        self.tagGet = tagGet
 
     @property
     def listValues(self):
@@ -132,6 +131,12 @@ class Connect:
         self.valueCargo = valueCargo
 
     @property
+    def tagReturnValue(self):
+        self.returnValue.tagSons = self.tagSon
+        self.returnValue.tagFathers = self.tagFather
+        self.returnValue.tagGets = self.tagGet
+
+    @property
     def logarSircon(self):
         return None
 
@@ -159,6 +164,7 @@ class Connect:
                     self.clickOk = self.mouseKeyboard.clickXpath
                     if self.clickOk is True:
                         break   
+
     @property
     def dfSircon(self): 
         return self.dfNew
@@ -213,9 +219,9 @@ class Connect:
             self.clickOk = self.mouseKeyboard.clickXpath
             if self.clickOk is True:
                 break
-        self.returnValue.tagSonValue = self.tagSon
-        self.returnValue.tagFatherValue = self.tagFather
-        self.returnValue.tagValueGet = self.tagValueGet
+        # self.returnValue.tagSons = self.tagSon
+        # self.returnValue.tagFathers = self.tagFather
+        # self.returnValue.tagGets = self.tagGet
         self.returnValue.tagValue = xpath
         self.listValue = self.returnValue.tagValue
 
@@ -245,9 +251,9 @@ class Connect:
                 self.clickOk = self.mouseKeyboard.clickXpath
                 if self.clickOk is True:
                     break
-            self.returnValue.tagSonValue = self.tagSon
-            self.returnValue.tagFatherValue = self.tagFather
-            self.returnValue.tagValueGet = 'outerHTML'
+            # self.returnValue.tagSons = self.tagSon
+            # self.returnValue.tagFathers = self.tagFather
+            # self.returnValue.tagGets = self.tagGet
             self.returnValue.tagValue = xpath
             listValueTablarecebimento = self.returnValue.tagValue
             listValueAdministradoraTablarecebimento.append([valueAdministradora, listValueTablarecebimento])
@@ -281,9 +287,9 @@ class Connect:
                     self.clickOk = self.mouseKeyboard.clickXpath
                     if self.clickOk is True:
                         break
-                self.returnValue.tagSonValue = self.tagSon
-                self.returnValue.tagFatherValue = self.tagFather
-                self.returnValue.tagValueGet = 'outerHTML'
+                # self.returnValue.tagSons = self.tagSon
+                # self.returnValue.tagFathers = self.tagFather
+                # self.returnValue.tagGets = self.tagGet
                 self.returnValue.tagValue = xpath
                 listValueCargo = self.returnValue.tagValue
                 listValueTabelarecebimentoCargo.append([valueTablarecebimento, listValueCargo])
@@ -320,7 +326,7 @@ class Connect:
                         jumpCargo = True
                         for valueCargo2 in self.valueCargo:
                             if valueCargo2 == valueCargo:
-                                print('############  ', valueCargo2, ' = ', valueCargo, '  ############')
+                                # print('############  ', valueCargo2, ' = ', valueCargo, '  ############')
                                 jumpCargo = False
                         if jumpCargo is True:
                             continue
@@ -332,19 +338,22 @@ class Connect:
                         sleep(0.5)
                     listCampoParcela = []
                     for xpathCampoParcela in listXpath:
-                        self.returnValue.xpathFatherValue = xpathCampoParcela[0]  # indica qual cabecalho pai
-                        self.returnValue.xpathValueText = xpathCampoParcela[0]  # seleeciona o texto da xpath
-                        valueHeader = self.returnValue.xpathValueText  # pegar o texto do cabecalho
+                        self.returnValue.xpathFathers = xpathCampoParcela[0]  # indica qual cabecalho pai
+                        self.returnValue.xpathTexts = xpathCampoParcela[0]  # seleciona o texto da xpath
+                        valueHeader = self.returnValue.xpathTexts  # retorna texto do cabecalho
                         if valueHeader is False:
                             break
                         renameText.renameHeader = valueHeader
                         valueHeader = renameText.renameHeader
                         listCampoParcela.append(valueHeader)
-                        valueHeader = ''
-                        self.returnValue.tagValueGet = 'value'
-                        for xpathParcela in xpathCampoParcela[1]:
-                            self.returnValue.xpathValue = xpathParcela
-                            value = self.returnValue.xpathValue
+                        # self.returnValue.tagGets = 'value'
+                        for key, xpathNameCotaPeriodoParcela in enumerate(xpathCampoParcela[1]):
+                            if key <= 1:
+                                self.returnValue.nameValue = xpathNameCotaPeriodoParcela
+                                value = self.returnValue.nameValue
+                            else:
+                                self.returnValue.xpathValue = xpathNameCotaPeriodoParcela
+                                value = self.returnValue.xpathValue
                             if value is False:
                                 break
                             listCampoParcela.append(value)     
@@ -474,10 +483,43 @@ class ReturnValue:
         self.tagSon = None
         self.tagGet = None
         self.value = None
-       
+
+    @property
+    def xpathFathers(self):
+        return None
+    
+    @xpathFathers.setter
+    def xpathFathers(self, xpathFather):
+        self.xpathFather = xpathFather
+
+    @property
+    def tagFathers(self):
+        return None
+    
+    @tagFathers.setter
+    def tagFathers(self, tagFather):
+        self.tagFather = tagFather
+
+    @property
+    def tagSons(self):
+        return None
+    
+    @tagSons.setter
+    def tagSons(self, tagSon):
+        self.tagSon = tagSon
+
+    @property
+    def tagGets(self):
+        return None
+    
+    @tagGets.setter
+    def tagGets(self, tagValue):
+        self.tagGet = tagValue
+
     @property
     def xpathValue(self):
         return self.value
+    
     @xpathValue.setter
     def xpathValue(self, xpath):
         count = 0
@@ -493,11 +535,29 @@ class ReturnValue:
                 sleep(0.2)
 
     @property
-    def xpathValueText(self):
+    def nameValue(self):
         return self.value
     
-    @xpathValueText.setter
-    def xpathValueText(self, xpath):
+    @nameValue.setter
+    def nameValue(self, name):
+        count = 0
+        while True:
+            try:
+                count += 1
+                self.value = self.driver.find_element(By.XPATH, self.xpathFather).find_element(By.NAME, name).get_attribute(self.tagGet)
+                break
+            except excecaoAll:
+                if count >= 3:
+                    self.value = False
+                    break
+                sleep(0.2)
+
+    @property
+    def xpathTexts(self):
+        return self.value
+    
+    @xpathTexts.setter
+    def xpathTexts(self, xpath):
         count = 0
         while True:
             count += 1
@@ -508,8 +568,7 @@ class ReturnValue:
                 if count >= 3:
                     self.value = False
                     break
-                sleep(0.5)
-
+                sleep(0.2)
 
     @property
     def tagValue(self):
@@ -522,46 +581,14 @@ class ReturnValue:
                 self.value = self.driver.find_element(By.XPATH, xpath).get_attribute(self.tagGet)  # retornar o outerHTML
                 # pip install lxml
                 self.value = BeautifulSoup(self.value, "lxml").find(self.tagFather).findAll(self.tagSon)  # formatar outerHTMl
-
                 listValue = []
                 for key in range(1, len(self.value), 1):
                     listValue.append(self.value[key].find(text=True))  # pega cada valro 
                 self.value = listValue
                 break  
             except (AttributeError, Exception) as e:
-                pass
-
-    @property
-    def xpathFatherValue(self):
-        return self.xpathFather
-    
-    @xpathFatherValue.setter
-    def xpathFatherValue(self, xpathFather):
-        self.xpathFather = xpathFather
-
-    @property
-    def tagFatherValue(self):
-        return self.tagFather
-    
-    @tagFatherValue.setter
-    def tagFatherValue(self, tagFather):
-        self.tagFather = tagFather
-
-    @property
-    def tagSonValue(self):
-        return self.tagSon
-    
-    @tagSonValue.setter
-    def tagSonValue(self, tagSon):
-        self.tagSon = tagSon
-
-    @property
-    def tagValueGet(self):
-        return self.tagGet
-    
-    @tagValueGet.setter
-    def tagValueGet(self, tagValue):
-        self.tagGet = tagValue
+                sleep(0.2)
+   
 
 class RenameText:
     def __init__(self, *args, **kwargs) -> None:
@@ -574,29 +601,18 @@ class RenameText:
     @renameHeader.setter
     def renameHeader(self, text):
         text = text.replace('\n', '&&&&&')
-        for key in range(10):
+        for _ in range(10):
             text = text.replace('  ', ' ')
-        text = text.replace('- ', '#####')
         self.text = ''
-        countStart = 0
         countEnd = 0
-        textStart = False
         for letter in text:
-            if letter == '#':
-                countStart += 1
-                if countStart >= 3:
-                    textStart = True
-                continue
-            elif letter == '&':
+            if letter == '&':
                 countEnd += 1
                 if countEnd >= 3:
                     break
                 continue
             else: 
-                if textStart is True:
-                    self.text += letter
-                countStart = 0
-                countEnd = 0
+                self.text += letter
 
 class XpathManip:
     def __init__(self, *args, **kwargs) -> None:
@@ -684,29 +700,36 @@ class TableManip:
 
 
 class ImageManip:
-    def __init__(self, img) -> None:
-        self._img = img
+    def __init__(self) -> None:
+        self.img = None
+
+    @property
+    def images(self):
+        return self.img
+    
+    @images.setter
+    def images(self, img):
+        self.img = img
 
     @property
     def clickImg(self):
+        similariyImg = 1
+        waitImg = 0.9
         while True:
             try:
-                # tem que instalar 'pip install opencv-python' , em alguns programa usa confidencialidade
-                x, y = pyautogui.locateCenterOnScreen(self._img, confidence=0.9)
+                # Instalar 'pip install opencv-python' 
+                x, y = pyautogui.locateCenterOnScreen(self.img, confidence=similariyImg)
                 pyautogui.click(x, y)
-                return True
             except Exception:
-                return False
+                similariyImg -= 0.01
+                if similariyImg <= waitImg:
+                    sleep(1)
+                    waitImg -= 0.1
+                    if waitImg <= 0.6:
+                        similariyImg = 1
+                        waitImg = 0.9
 
-    @property
-    def wait(self):
-        try:
-            x, y = pyautogui.locateCenterOnScreen(self._img, confidence=0.9)
-            return True
-        except Exception:
-            return False
     
-
 class MouseKeyboard:
     def __init__(self, *args, **kwargs) -> None:
         self.driver = kwargs.get('driver')
@@ -722,8 +745,6 @@ class MouseKeyboard:
         self.clickOk = None
         self.locationSearch = '*'
         self.writeSec = None
-
-        # //*[@id="frm:pnlBloco"]/div[2]
 
     @property
     def writeSecs(self):

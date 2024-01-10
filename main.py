@@ -35,7 +35,8 @@ listXpath2 = [xp0, xp1, xp2, xp3, xp4, xp5, xp6, xp3, xp4, xp5, xp7, xp8]
 
 tagSon = 'option'
 tagFather = 'select'
-tagValueGet = 'outerHTML'
+tagGet = 'outerHTML'
+tagGetEnd = 'value'
 
 valueAdministradora = ['DISAL']
 valueCargo = ['CONSULTOR CLT - A PARTIR JAN-2018', 'CONSULTOR DE PARCEIRO']
@@ -74,8 +75,11 @@ for num in range(30):  # quantidade de campos comissões configuracao
 # //*[@id="collapse8444"]/div/div/div/div/div/div[4]/input
 # //*[@id="collapse8444"]/div/div/div/div/div/div[5]/input
 
-    listParcela = [ f'//*[@id="frm:j_idt124:{num}:j_idt182_input"]'  # data inicio
-                , f'//*[@id="frm:j_idt124:{num}:j_idt184_input"]'  # dat fim
+    listCotaPeriodoParcela = [ 
+                f'frm:j_idt124:{num}:j_idt194' # qtd cotas inicial
+                , f'frm:j_idt124:{num}:j_idt196'  # qtd cotas final
+                , f'//*[@id="frm:j_idt124:{num}:j_idt182_input"]'  # data venda inicio
+                , f'//*[@id="frm:j_idt124:{num}:j_idt184_input"]'  # data venda fim
                 , f'//*[@id="frm:j_idt124:{num}:j_idt149"]'  # parcela 1
                 , f'//*[@id="frm:j_idt124:{num}:j_idt156"]'  # parcela 2
                 , f'//*[@id="frm:j_idt124:{num}:j_idt158"]'  # parcela 3
@@ -89,7 +93,7 @@ for num in range(30):  # quantidade de campos comissões configuracao
                 , f'//*[@id="frm:j_idt124:{num}:j_idt174"]'  # parcela 11
                 , f'//*[@id="frm:j_idt124:{num}:j_idt176"]'  # parcela 12
                 ]
-    listXpathCampoParcela.append([listCampo, listParcela])
+    listXpathCampoParcela.append([listCampo, listCotaPeriodoParcela])
 
 options = webdriver.ChromeOptions()
 options.add_argument('--ignore-certificate-errors')
@@ -118,12 +122,15 @@ connect.pressListXpath = listXpathComissoesConfiguracao
 connect.pressListXpath = xpathTipoComissao
 connect.tagSons = tagSon
 connect.tagFathers = tagFather
-connect.tagValueGets = tagValueGet
+connect.tagGets = tagGet
+connect.tagReturnValue
 connect.pressXpathReturnListValue = xpathAdministradora
 connect.valueAdministradoras = valueAdministradora  # ira limitar a pesquiza
 connect.pressListValueXpathReturnListValue = xpathTabelaRecebimento
 connect.pressListValueXpathReturnListValueDouble = xpathCargo
 connect.valueCargos = valueCargo  # ira limitar a pesquiza
+connect.tagGets = tagGetEnd
+connect.tagReturnValue
 connect.pressListValueReturnListValueTriple = listXpathCampoParcela
 connect.removeListInside
 connect.addNone

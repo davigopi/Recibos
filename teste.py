@@ -1,61 +1,34 @@
-# # arqListValue = open('listValue', 'r')
-# arqListValue = open('listValue.txt', 'r')
-# print(str(arqListValue))
-# n = 10
-# x = 0
-# lista = [ (x+=1) for _ in range(n)]
+//*[@id="collapse8443"]/div/div/div/div/div/div[4]
 
-# print(lista)
-from connect import Connect
+//*[@id="collapse8443"]/div/div/div/div/div/div[3]
 
 
-import ast
+#collapse8443 > div > div > div > div > div > div:nth-child(4)
+
+//*[@id="collapse8443"]
+
+//*[@id="frm:pnlEsacalas"]/div[1]
 
 
-connect = Connect()
-
-with open('listValue.txt', "r") as arquivo:
-	listValue = arquivo.read()
+//*[@id="frm:j_idt124:0:j_idt184_input"]
 
 
-listValue = ast.literal_eval(listValue)  # convert str em list
+//*[@id="collapse8443"]/div/div/div/div/div/div[4]/input
+//*[@id="frm:pnlEsacalas"]
 
-connect.removeListInside = listValue
-listValue = connect.removeListInside
-connect.addNone = listValue
-listValue = connect.addNone
-connect.addIndex = listValue
-listValue = connect.addIndex
-connect.addEnd = listValue
-listValue = connect.addEnd
-connect.lineToColumn = listValue
-listValue = connect.lineToColumn
-connect.noneToEmpty = listValue
-listValue = connect.noneToEmpty
-connect.killAllEmpty = listValue
-listValue = connect.killAllEmpty
-# for value in listValue:
-# 	print(value)
-connect.listToTable = listValue
-table = connect.listToTable
+//*[@id="frm:pnlEsacalas"]/div[1]/div
 
-table.to_csv("table.csv", index=False, header=True)
+//*[@id="accordion"]/div
+//*[@id="collapse8443"]/div
+//*[@id="collapse8443"]/div/div/div/div/div
 
 
-print(table)
+"frm:j_idt124:0:j_idt194"
+"frm:j_idt124:0:j_idt196"
 
-	# for x in value:
-	#     print(x)
-# listValue = listValue.split()
-# listValue = listValue.replace('"', '')
-# 
-# listValue = list(listValue)
-
-# def noEmpty(x):
-#     return x != ""
-# # str = '0.4350    0.8798    0.0099         1';
-# print (list(filter(noEmpty, listValue.split(" "))));
+<input type="text" name="frm:j_idt124:1:j_idt194" value="6" class="form-control" maxlength="9" onkeyup="javascript:DigitaNumero(this)">
+<input type="text" name="frm:j_idt124:1:j_idt196" value="10" class="form-control" maxlength="9" onkeyup="javascript:DigitaNumero(this)">
 
 
-
-# print(listValue, type(listValue))
+<input type="text" name="frm:j_idt124:0:j_idt194" value="0" class="form-control" maxlength="9" onkeyup="javascript:DigitaNumero(this)">
+<input type="text" name="frm:j_idt124:0:j_idt196" value="5" class="form-control" maxlength="9" onkeyup="javascript:DigitaNumero(this)">
