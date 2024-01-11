@@ -48,35 +48,13 @@ xpathTipoComissao = ['//*[@id="frm:tpComissao"]'
                     , '//*[@id="frm:tpComissao"]/option[2]'  # Pagamento
                     ]
 xpathAdministradora = '//*[@id="frm:cbAdministradora"]'
-            # , listAdm  # Disal
 xpathTabelaRecebimento = '//*[@id="frm:cbTabelaRecebimento"]'
-                        # , '//*[@id="frm:cbTabelaRecebimento"]/option[2]'  # Tabela disal normal
 xpathCargo = '//*[@id="frm:cbCargo"]'
-            # , '//*[@id="frm:cbCargo"]/option[5]'  # Consultor CLR - a partir jan-2018
-
-listXpathCampoParcela =[]
+listCampoCotaPeriodoParcela = []
 for num in range(30):  # quantidade de campos comissões configuracao
-    listCampo = f'//*[@id="frm:pnlEsacalas"]/div[{str(num+1)}]'  # campo de 0 a 2 
-
-# //*[@id="accordion"]/div/div[1]/h4/a/span/span
-# //*[@id="accordion"]/div/div[1]/h4/a/span/span
-# //*[@id="accordion"]/div/div[1]/h4/a/span/span
-# //*[@id="frm:j_idt124:0:j_idt149"]
-# //*[@id="frm:j_idt124:1:j_idt149"]
-# //*[@id="frm:j_idt124:0:j_idt182_input"]
-# //*[@id="frm:j_idt124:0:j_idt184_input"]
-# //*[@id="collapse8443"]/div/div/div/div/div/div[4]/input
-# //*[@id="collapse8443"]/div/div/div/div/div/div[5]/input
-# //*[@id="collapse8444"]/div/div/div/div/div/div[4]/input
-# //*[@id="collapse8444"]/div/div/div/div/div/div[5]/input
-# //*[@id="collapse2351"]/div/div/div/div/div/div[4]/input
-# //*[@id="frm:j_idt124:1:j_idt182_input"]
-# //*[@id="frm:j_idt124:1:j_idt184_input"]
-# //*[@id="collapse8444"]/div/div/div/div/div/div[4]/input
-# //*[@id="collapse8444"]/div/div/div/div/div/div[5]/input
-
-    listCotaPeriodoParcela = [ 
-                f'frm:j_idt124:{num}:j_idt194' # qtd cotas inicial
+    listCampoCotaPeriodoParcela.append([ 
+                 f'//*[@id="frm:pnlEsacalas"]/div[{str(num+1)}]'  # campo de 0 a 2 
+                , f'frm:j_idt124:{num}:j_idt194' # qtd cotas inicial
                 , f'frm:j_idt124:{num}:j_idt196'  # qtd cotas final
                 , f'//*[@id="frm:j_idt124:{num}:j_idt182_input"]'  # data venda inicio
                 , f'//*[@id="frm:j_idt124:{num}:j_idt184_input"]'  # data venda fim
@@ -92,8 +70,8 @@ for num in range(30):  # quantidade de campos comissões configuracao
                 , f'//*[@id="frm:j_idt124:{num}:j_idt172"]'  # parcela 10
                 , f'//*[@id="frm:j_idt124:{num}:j_idt174"]'  # parcela 11
                 , f'//*[@id="frm:j_idt124:{num}:j_idt176"]'  # parcela 12
-                ]
-    listXpathCampoParcela.append([listCampo, listCotaPeriodoParcela])
+                ])
+    # listXpathCampoParcela.append([listCampo, listCotaPeriodoParcela])
 
 options = webdriver.ChromeOptions()
 options.add_argument('--ignore-certificate-errors')
@@ -131,8 +109,7 @@ connect.pressListValueXpathReturnListValueDouble = xpathCargo
 connect.valueCargos = valueCargo  # ira limitar a pesquiza
 connect.tagGets = tagGetEnd
 connect.tagReturnValue
-connect.pressListValueReturnListValueTriple = listXpathCampoParcela
-connect.removeListInside
+connect.pressListValueReturnListValueTriple = listCampoCotaPeriodoParcela
 connect.addNone
 connect.addIndex
 connect.addEnd
@@ -140,8 +117,9 @@ connect.lineToColumn
 connect.noneToEmpty
 connect.killAllEmpty
 table = connect.listToTable
-
 print(table)
 table.to_csv("table.csv", index=False, header=True)
+
+
 
 sleep(4)

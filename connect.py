@@ -17,7 +17,8 @@ from bs4 import BeautifulSoup
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.actions.wheel_input import ScrollOrigin
-from selenium.common.exceptions import NoSuchElementException, ElementNotInteractableException, ElementClickInterceptedException, StaleElementReferenceException, InvalidArgumentException, TimeoutException
+from selenium.common.exceptions import NoSuchElementException, ElementNotInteractableException, ElementClickInterceptedException
+from selenium.common.exceptions import StaleElementReferenceException, InvalidArgumentException, InvalidSelectorException, TimeoutException
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 
@@ -27,6 +28,8 @@ excecaoAll = (NoSuchElementException
             , ElementClickInterceptedException
             , StaleElementReferenceException
             , InvalidArgumentException
+            , InvalidSelectorException
+            , TimeoutException
             )
 
 class Connect:
@@ -219,9 +222,6 @@ class Connect:
             self.clickOk = self.mouseKeyboard.clickXpath
             if self.clickOk is True:
                 break
-        # self.returnValue.tagSons = self.tagSon
-        # self.returnValue.tagFathers = self.tagFather
-        # self.returnValue.tagGets = self.tagGet
         self.returnValue.tagValue = xpath
         self.listValue = self.returnValue.tagValue
 
@@ -241,19 +241,12 @@ class Connect:
                 if jumpAdministradora is True:
                     continue
             self.mouseKeyboard.locationSearchTag = self.tagSon
-            while True:
-                self.mouseKeyboard.clickValue = valueAdministradora
-                clickOk = self.mouseKeyboard.clickValue
-                if clickOk is True:
-                    break
+            self.mouseKeyboard.clickValue = valueAdministradora
             while True:
                 self.mouseKeyboard.clickXpath = xpath
                 self.clickOk = self.mouseKeyboard.clickXpath
                 if self.clickOk is True:
                     break
-            # self.returnValue.tagSons = self.tagSon
-            # self.returnValue.tagFathers = self.tagFather
-            # self.returnValue.tagGets = self.tagGet
             self.returnValue.tagValue = xpath
             listValueTablarecebimento = self.returnValue.tagValue
             listValueAdministradoraTablarecebimento.append([valueAdministradora, listValueTablarecebimento])
@@ -269,27 +262,15 @@ class Connect:
         self.mouseKeyboard.locationSearchTag = self.tagSon
         for listValueAdministradoraTablarecebimento in self.listValue:
             valueAdministradora = listValueAdministradoraTablarecebimento[0]
-            while True:
-                self.mouseKeyboard.clickValue = valueAdministradora
-                clickOk = self.mouseKeyboard.clickValue
-                if clickOk is True:
-                    break
+            self.mouseKeyboard.clickValue = valueAdministradora
             listValueTabelarecebimentoCargo = []
-            sleep(0.5)
             for valueTablarecebimento in listValueAdministradoraTablarecebimento[1]:
-                while True:
-                    self.mouseKeyboard.clickValue = valueTablarecebimento
-                    clickOk = self.mouseKeyboard.clickValue
-                    if clickOk is True:
-                        break
+                self.mouseKeyboard.clickValue = valueTablarecebimento
                 while True:
                     self.mouseKeyboard.clickXpath = xpath
                     self.clickOk = self.mouseKeyboard.clickXpath
                     if self.clickOk is True:
                         break
-                # self.returnValue.tagSons = self.tagSon
-                # self.returnValue.tagFathers = self.tagFather
-                # self.returnValue.tagGets = self.tagGet
                 self.returnValue.tagValue = xpath
                 listValueCargo = self.returnValue.tagValue
                 listValueTabelarecebimentoCargo.append([valueTablarecebimento, listValueCargo])
@@ -306,73 +287,47 @@ class Connect:
         self.mouseKeyboard.locationSearchTag = self.tagSon
         renameText = RenameText()
         for listValueAdministradoraTablarecebimentoCargo in self.listValue:
-            valueAdministradora = listValueAdministradoraTablarecebimentoCargo[0]
-            while True:
-                self.mouseKeyboard.clickValue = valueAdministradora
-                clickOk = self.mouseKeyboard.clickValue
-                if clickOk is True:
-                    break
-            sleep(0.5)
+            self.mouseKeyboard.clickValue = listValueAdministradoraTablarecebimentoCargo[0]
             for listValueTablarecebimentoCargo in listValueAdministradoraTablarecebimentoCargo[1]:
-                valueTablarecebimento = listValueTablarecebimentoCargo[0]
-                while True:
-                    self.mouseKeyboard.clickValue = valueTablarecebimento
-                    clickOk = self.mouseKeyboard.clickValue
-                    if clickOk is True:
-                        break
-                sleep(0.5)
+                self.mouseKeyboard.clickValue = listValueTablarecebimentoCargo[0]
                 for valueCargo in listValueTablarecebimentoCargo[1]:
-                    if self.valueCargo is not None:
+                    if self.valueCargo is not None:  # limitar pesquisa
                         jumpCargo = True
-                        for valueCargo2 in self.valueCargo:
+                        for valueCargo2 in self.valueCargo:  
                             if valueCargo2 == valueCargo:
-                                # print('############  ', valueCargo2, ' = ', valueCargo, '  ############')
                                 jumpCargo = False
                         if jumpCargo is True:
                             continue
-                    while True:
-                        self.mouseKeyboard.clickValue = valueCargo
-                        clickOk = self.mouseKeyboard.clickValue
-                        if clickOk is True:
+                    self.mouseKeyboard.clickValue = valueCargo
+                    listValueTemp2 = []
+                    listValueTemp2.append(listValueAdministradoraTablarecebimentoCargo[0])
+                    listValueTemp2.append(listValueTablarecebimentoCargo[0])
+                    listValueTemp2.append(valueCargo)
+                    listEnd = False
+                    for campoCotaPeriodoParcela in listXpath:
+                        if listEnd is True:
                             break
-                        sleep(0.5)
-                    listCampoParcela = []
-                    for xpathCampoParcela in listXpath:
-                        self.returnValue.xpathFathers = xpathCampoParcela[0]  # indica qual cabecalho pai
-                        self.returnValue.xpathTexts = xpathCampoParcela[0]  # seleciona o texto da xpath
-                        valueHeader = self.returnValue.xpathTexts  # retorna texto do cabecalho
-                        if valueHeader is False:
-                            break
-                        renameText.renameHeader = valueHeader
-                        valueHeader = renameText.renameHeader
-                        listCampoParcela.append(valueHeader)
-                        # self.returnValue.tagGets = 'value'
-                        for key, xpathNameCotaPeriodoParcela in enumerate(xpathCampoParcela[1]):
-                            if key <= 1:
-                                self.returnValue.nameValue = xpathNameCotaPeriodoParcela
+                        for key, xpathCampoCotaPeriodoParcela in enumerate(campoCotaPeriodoParcela):
+                            if key == 0:
+                                self.returnValue.xpathFathers = xpathCampoCotaPeriodoParcela  # indica qual cabecalho pai
+                                self.returnValue.xpathTexts = xpathCampoCotaPeriodoParcela  # seleciona o texto da xpath
+                                value = self.returnValue.xpathTexts  # retorna texto do cabecalho
+                                if value is False:
+                                    listEnd = True
+                                    break
+                                renameText.renameHeader = value
+                                value = renameText.renameHeader  # salvando cabeçalho
+                            elif key == 1 or key == 2:
+                                self.returnValue.nameValue = xpathCampoCotaPeriodoParcela
                                 value = self.returnValue.nameValue
                             else:
-                                self.returnValue.xpathValue = xpathNameCotaPeriodoParcela
+                                self.returnValue.xpathValue = xpathCampoCotaPeriodoParcela
                                 value = self.returnValue.xpathValue
                             if value is False:
                                 break
-                            listCampoParcela.append(value)     
-                    listValueTemp.append([valueAdministradora, valueTablarecebimento, valueCargo, listCampoParcela])
+                            listValueTemp2.append(value)
+                    listValueTemp.append(listValueTemp2)
         self.listValue = listValueTemp
-    
-    @property
-    def removeListInside(self):
-        listValue = []
-        for listValueTemp in self.listValue:
-            listLineTemp = []
-            for key, value in enumerate(listValueTemp):
-                if key == 3:  # local que esta o valor que é outra lista
-                    for valuePercentage in value:
-                        listLineTemp.append(valuePercentage)
-                else: 
-                    listLineTemp.append(value)
-            listValue.append(listLineTemp)
-        self.listValue = listValue
 
     @property
     def addNone(self):
@@ -475,6 +430,7 @@ class Connect:
             self.table[nameColumn] = column
         return self.table
 
+
 class ReturnValue:
     def __init__(self, *args, **kwargs) -> None:
         self.driver = kwargs.get('driver')
@@ -564,7 +520,7 @@ class ReturnValue:
             try:
                 self.value = self.driver.find_element(By.XPATH, xpath).text
                 break
-            except excecaoAll as e:
+            except excecaoAll:
                 if count >= 3:
                     self.value = False
                     break
@@ -790,16 +746,24 @@ class MouseKeyboard:
 
     @property
     def clickValue(self):
-        return self.clickOk
+        return None
     
     @clickValue.setter
-    def clickValue(self, value):
-        self.clickOk = False
-        try:
-            self.driver.find_element(By.XPATH, f"//{self.locationSearchTag}[contains(text(),'{value}')]").click()
-            self.clickOk = True
-        except self.excecao:
-            pass
+    def clickValue(self, text):
+        self.numberTimesRepeated = 0
+        while True:
+            try:
+                self.driver.find_element(By.XPATH, f"//{self.locationSearchTag}[contains(text(),'{text}')]").click()
+                sleep(0.5)
+                break
+            except self.excecao:
+                self.numberTimesRepeated += 1
+                if self.numberTimesRepeated >= 4:
+                    if self.numberTimesRepeated >= 10:
+                        print(f'Erro, mais de dez tentativas, em click no texto {text}')
+                        sys.exit()
+                    else:
+                        sleep(1)
             
     @property
     def keys(self):
