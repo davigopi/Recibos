@@ -54,8 +54,8 @@ listCampoCotaPeriodoParcela = []
 for num in range(30):  # quantidade de campos comissões configuracao
     listCampoCotaPeriodoParcela.append([ 
                  f'//*[@id="frm:pnlEsacalas"]/div[{str(num+1)}]'  # campo de 0 a 2 
-                , f'frm:j_idt124:{num}:j_idt194' # qtd cotas inicial
-                , f'frm:j_idt124:{num}:j_idt196'  # qtd cotas final
+                , [f'frm:j_idt124:{num}:j_idt194', f'frm:j_idt124:{num}:j_idt188'] # qtd cotas inicial
+                , [f'frm:j_idt124:{num}:j_idt196', f'frm:j_idt124:{num}:j_idt190']  # qtd cotas final
                 , f'//*[@id="frm:j_idt124:{num}:j_idt182_input"]'  # data venda inicio
                 , f'//*[@id="frm:j_idt124:{num}:j_idt184_input"]'  # data venda fim
                 , f'//*[@id="frm:j_idt124:{num}:j_idt149"]'  # parcela 1
@@ -90,11 +90,11 @@ while True:
     xpathOk = xpathManip.locate
     if xpathOk is True:
         break
-# connect.files = arqCons
-# connect.months = month
-# connect.dfSircon = listXpath2
-# df = connect.dfSircon
-# df.to_csv("df.csv", index=False, header=True)
+connect.files = arqCons
+connect.months = month
+connect.dfSircon = listXpath2
+df = connect.dfSircon
+df.to_csv("df.csv", index=False, header=True)
 
 connect.pressListXpath = listXpathComissoesConfiguracao
 connect.pressListXpath = xpathTipoComissao
@@ -103,10 +103,10 @@ connect.tagFathers = tagFather
 connect.tagGets = tagGet
 connect.tagReturnValue
 connect.pressXpathReturnListValue = xpathAdministradora
-connect.valueAdministradoras = valueAdministradora  # ira limitar a pesquiza
+# connect.valueAdministradoras = valueAdministradora  # ira limitar a pesquiza
 connect.pressListValueXpathReturnListValue = xpathTabelaRecebimento
 connect.pressListValueXpathReturnListValueDouble = xpathCargo
-connect.valueCargos = valueCargo  # ira limitar a pesquiza
+# connect.valueCargos = valueCargo  # ira limitar a pesquiza
 connect.tagGets = tagGetEnd
 connect.tagReturnValue
 connect.pressListValueReturnListValueTriple = listCampoCotaPeriodoParcela
@@ -116,10 +116,7 @@ connect.addEnd
 connect.lineToColumn
 connect.noneToEmpty
 connect.killAllEmpty
-table = connect.listToTable
+connect.listToTable
+table = connect.renameColumn
 print(table)
 table.to_csv("table.csv", index=False, header=True)
-
-
-
-sleep(4)

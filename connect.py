@@ -318,8 +318,15 @@ class Connect:
                                 renameText.renameHeader = value
                                 value = renameText.renameHeader  # salvando cabeçalho
                             elif key == 1 or key == 2:
-                                self.returnValue.nameValue = xpathCampoCotaPeriodoParcela
-                                value = self.returnValue.nameValue
+                                for xpathParcela in xpathCampoCotaPeriodoParcela:
+                                    self.returnValue.nameValue = xpathParcela
+                                    value = self.returnValue.nameValue
+                                    if value is False:
+                                        continue
+                                    else:
+                                        # if value == '':
+                                        #     value = 0
+                                        break
                             else:
                                 self.returnValue.xpathValue = xpathCampoCotaPeriodoParcela
                                 value = self.returnValue.xpathValue
@@ -422,13 +429,79 @@ class Connect:
                 nStr = number
                 break
         for key, column in enumerate(self.listValue):
-            if column == self.listValue[-1]:
-                break
             key = str(key)
             key = key.rjust(nStr, '0') 
             nameColumn = 'Column' + '-' + key
             self.table[nameColumn] = column
+        # return self.table
+
+    @property
+    def renameColumn(self):
+        count = 0
+        while True:
+            count += 1
+            print(count)                
+            match count:
+                case 1:
+                    nameColumn = 'Administradora'
+                case 2:
+                    nameColumn = 'Tabela de recebimento'
+                case 3:
+                    nameColumn = 'Cargo'
+            try:
+                self.table.columns.values[count] = nameColumn
+            except IndexError:
+                break
         return self.table
+
+        # nPeriodo = 1
+        # nDate = 1
+        # dateStart = True
+        # for key, column in enumerate(self.listValue):
+        #     if column == self.listValue[-1]:
+        #         break
+        #     match key:
+        #         case 0:
+        #             nameColumn = '
+        #         case 1:
+        #             nameColumn = 
+        #         case 2:
+        #             nameColumn = 
+        #         case _:
+        #             for column1 in column:
+        #                 nameColumnCondition = False
+        #                 if column1 != '':
+        #                     word = ''
+        #                     dataCondition = 0
+        #                     for key, letter in enumerate(column1):
+        #                         word += letter
+        #                         if word == 'Período Venda':
+        #                             print(f'################# {word} #################')
+        #                             nameColumn = 'Periodo valor qtd vendas ' + str(nPeriodo)
+        #                             nPeriodo += 1
+        #                             nameColumnCondition = True
+        #                             break
+        #                         if key == 2 or key == 5:
+        #                             if letter == '/':
+        #                                 dataCondition += 1
+        #                         if dataCondition == 2:
+        #                             print(f'################# {word} #################')
+        #                             if dateStart is True:
+        #                                 nameColumn = 'Data inicial ' + str(nDate)
+        #                                 dateStart = False
+        #                             else:
+        #                                 nameColumn = 'Data final ' + str(nDate)
+        #                                 dateStart = True
+        #                                 nDate += 1
+        #                             nameColumnCondition = True
+        #                             break
+        #                     # column1 = column1.replace('.', '')
+        #                     # column1 = column1.replace(',', '.')
+        #                 if nameColumnCondition is False:
+        #                     print(column1)
+                           
+        #                 else:
+        #                     break
 
 
 class ReturnValue:
