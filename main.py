@@ -90,11 +90,11 @@ while True:
     xpathOk = xpathManip.locate
     if xpathOk is True:
         break
-connect.files = arqCons
-connect.months = month
-connect.dfSircon = listXpath2
-df = connect.dfSircon
-df.to_csv("df.csv", index=False, header=True)
+# connect.files = arqCons
+# connect.months = month
+# connect.dfSircon = listXpath2
+# df = connect.dfSircon
+# df.to_csv("df.csv", index=False, header=True)
 
 connect.pressListXpath = listXpathComissoesConfiguracao
 connect.pressListXpath = xpathTipoComissao
@@ -103,10 +103,10 @@ connect.tagFathers = tagFather
 connect.tagGets = tagGet
 connect.tagReturnValue
 connect.pressXpathReturnListValue = xpathAdministradora
-# connect.valueAdministradoras = valueAdministradora  # ira limitar a pesquiza
+connect.valueAdministradoras = valueAdministradora  # ira limitar a pesquiza
 connect.pressListValueXpathReturnListValue = xpathTabelaRecebimento
 connect.pressListValueXpathReturnListValueDouble = xpathCargo
-# connect.valueCargos = valueCargo  # ira limitar a pesquiza
+connect.valueCargos = valueCargo  # ira limitar a pesquiza
 connect.tagGets = tagGetEnd
 connect.tagReturnValue
 connect.pressListValueReturnListValueTriple = listCampoCotaPeriodoParcela

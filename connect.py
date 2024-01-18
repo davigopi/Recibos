@@ -431,27 +431,75 @@ class Connect:
         for key, column in enumerate(self.listValue):
             key = str(key)
             key = key.rjust(nStr, '0') 
-            nameColumn = 'Column' + '-' + key
-            self.table[nameColumn] = column
+            nameNumberColumn = 'Column' + '-' + key
+            self.table[nameNumberColumn] = column
         # return self.table
 
     @property
     def renameColumn(self):
-        count = 0
+        countColumn = 0
         while True:
-            count += 1
-            print(count)                
-            match count:
-                case 1:
-                    nameColumn = 'Administradora'
-                case 2:
-                    nameColumn = 'Tabela de recebimento'
-                case 3:
-                    nameColumn = 'Cargo'
             try:
-                self.table.columns.values[count] = nameColumn
+                self.table.columns.values[count]
             except IndexError:
-                break
+                break               
+            match countColumn:
+                case 0:
+                    nameNumberColumn = 'Index'
+                case 1:
+                    nameNumberColumn = 'Administradora'
+                case 2:
+                    nameNumberColumn = 'Tabela de recebimento'
+                case 3:
+                    nameNumberColumn = 'Cargo'
+                case _:
+                    nameValue = self.table.columns.values[count]
+                    print(nameValue)
+                    TableManip.nameNumberColumns = count
+                    TableManip.nameNumberlines
+
+                    work = ''
+                    for letter in nameValue:
+                        work += letter
+            self.table.columns.values[count] = nameNumberColumn
+            countColumn += 1
+
+
+        #             for column1 in column:
+        #                 nameNumberColumnCondition = False
+        #                 if column1 != '':
+        #                     word = ''
+        #                     dataCondition = 0
+        #                     for key, letter in enumerate(column1):
+        #                         word += letter
+        #                         if word == 'Período Venda':
+        #                             print(f'################# {word} #################')
+        #                             nameNumberColumn = 'Periodo valor qtd vendas ' + str(nPeriodo)
+        #                             nPeriodo += 1
+        #                             nameNumberColumnCondition = True
+        #                             break
+        #                         if key == 2 or key == 5:
+        #                             if letter == '/':
+        #                                 dataCondition += 1
+        #                         if dataCondition == 2:
+        #                             print(f'################# {word} #################')
+        #                             if dateStart is True:
+        #                                 nameNumberColumn = 'Data inicial ' + str(nDate)
+        #                                 dateStart = False
+        #                             else:
+        #                                 nameNumberColumn = 'Data final ' + str(nDate)
+        #                                 dateStart = True
+        #                                 nDate += 1
+        #                             nameNumberColumnCondition = True
+        #                             break
+        #                     # column1 = column1.replace('.', '')
+        #                     # column1 = column1.replace(',', '.')
+        #                 if nameNumberColumnCondition is False:
+        #                     print(column1)              
+        #                 else:
+        #                     break
+
+
         return self.table
 
         # nPeriodo = 1
@@ -462,46 +510,13 @@ class Connect:
         #         break
         #     match key:
         #         case 0:
-        #             nameColumn = '
+        #             nameNumberColumn = '
         #         case 1:
-        #             nameColumn = 
+        #             nameNumberColumn = 
         #         case 2:
-        #             nameColumn = 
-        #         case _:
-        #             for column1 in column:
-        #                 nameColumnCondition = False
-        #                 if column1 != '':
-        #                     word = ''
-        #                     dataCondition = 0
-        #                     for key, letter in enumerate(column1):
-        #                         word += letter
-        #                         if word == 'Período Venda':
-        #                             print(f'################# {word} #################')
-        #                             nameColumn = 'Periodo valor qtd vendas ' + str(nPeriodo)
-        #                             nPeriodo += 1
-        #                             nameColumnCondition = True
-        #                             break
-        #                         if key == 2 or key == 5:
-        #                             if letter == '/':
-        #                                 dataCondition += 1
-        #                         if dataCondition == 2:
-        #                             print(f'################# {word} #################')
-        #                             if dateStart is True:
-        #                                 nameColumn = 'Data inicial ' + str(nDate)
-        #                                 dateStart = False
-        #                             else:
-        #                                 nameColumn = 'Data final ' + str(nDate)
-        #                                 dateStart = True
-        #                                 nDate += 1
-        #                             nameColumnCondition = True
-        #                             break
-        #                     # column1 = column1.replace('.', '')
-        #                     # column1 = column1.replace(',', '.')
-        #                 if nameColumnCondition is False:
-        #                     print(column1)
-                           
-        #                 else:
-        #                     break
+        #             nameNumberColumn = 
+        #         
+       
 
 
 class ReturnValue:
@@ -718,6 +733,10 @@ class TableManip:
     def __init__(self, dfNew, df) -> None:
         self._df = df
         self._dfNew = dfNew
+        self.nameNumberLine = None
+        self.nameNumberColumn = None
+        
+        self.value = None
 
     @property
     def merge(self):
@@ -727,6 +746,30 @@ class TableManip:
             self._dfNew = pd.merge(self._dfNew, self._df, how='outer')            
         return self._dfNew
 
+    @property
+    def nameNumberlines(self):
+        return self.nameNumberLine
+    
+    @nameNumberlines.setter
+    def nameNumberlines(self, nameNumberLine):
+        self.nameNumberLine = nameNumberLine
+
+    @property
+    def nameNumberColumns(self):
+        return self.nameNumberColumn
+    
+    @nameNumberColumns.setter
+    def nameNumberColumns(self, nameNumberColumn):
+        self.nameNumberColumn = nameNumberColumn
+
+    @property
+    def infTable(self):
+        if type(self.nameNumberLine) == str and type(self.nameNumberColumn) == str:
+            self.value = df.at[self.nameNumberLine, self.nameNumberColumn]  # pelo nome
+        else:
+            print(self.nameNumberLine, type(self.nameNumberLine), "###", self.nameNumberColumn, type(self.nameNumberColumn))
+            self.value = df.iat[self.nameNumberLine, self.nameNumberColumn]  # pelo local
+        return self.value
 
 class ImageManip:
     def __init__(self) -> None:
