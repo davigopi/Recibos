@@ -2,121 +2,170 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 from connect import Connect, XpathManip
+from pathlib import Path
 # from selenium.common.exceptions import TimeoutException
 import os
-# import ast
 from time import sleep
+# import ast
+import pandas as pd
 
 siteSircon = "https://app.sistemasircon.com.br/login"
 user = 'davigopi@gmail.com'
 password = '36vad28'
-security = [user, password]
+month = 6
+pathTables = Path(__file__).parent/'tables'
+arqTableSales = pathTables/'tableSales.csv'
+arqTableSalesSetup = pathTables/'tableSalesSetup.csv'
+pathDonwload = os.environ['USERPROFILE'] + '\\Downloads'
+arqDonwload = pathDonwload + '\\consorciados.csv'
 
-listXpathLog = ['//*[@id="form:txtUsuarioSircon"]'  # campo usuario
-            , '//*[@id="form:txtSenhaSircon"]'  # campo senha
-            , '//*[@id="form:btLogar"]'  # botao confirmar
-            ]
+# security = [user, password]
 
-arqCons = os.environ['USERPROFILE'] + '\Downloads\consorciados.csv'
-month = 5
-xp0 = '//*[@id="menucadastro"]/a'  # menu cadastro
-#xp0 = '//*[@id="menucadastro"]'  # menu cadastro
-xp1 = '//*[@id="menucadastro"]/ul/li[5]'  # menu consorciado
-xp2 = '//*[@id="pnlBloco"]/div[6]/div/div[3]/div'  # campo entrega venda inicio
-xp3 = '//*[@id="ui-datepicker-div"]/div[1]/a[1]'  # botao seta para esquerda
-line = 1
-column = 0  
-xp4 = f'//*[@id="ui-datepicker-div"]/table/tbody/tr[{line}]/td[{column}]'  # linha coluna calendario
-xp5 = '//*[@id="ui-datepicker-div"]/div[3]/button[2]'  # botao fechar do calendario
-xp6 = '//*[@id="pnlBloco"]/div[6]/div/div[4]/div'  # campo entrega venda final
-xp7 = '//*[@id="btnConsultar"]'  # botao consultar
-xp8 = '//*[@id="btnGerarXls"]'  # botao de download
-listXpath2 = [xp0, xp1, xp2, xp3, xp4, xp5, xp6, xp3, xp4, xp5, xp7, xp8]
-
+'''#################### LIMITAR PESQUISAS ##################################'''
+valueAdministradora = ['DISAL']
+valueCargo = ['CONSULTOR CLT - A PARTIR JAN-2018', 'CONSULTOR DE PARCEIRO']
+'''#################### TAGS ###############################################'''
 tagSon = 'option'
 tagFather = 'select'
 tagGet = 'outerHTML'
 tagGetEnd = 'value'
-
-valueAdministradora = ['DISAL']
-valueCargo = ['CONSULTOR CLT - A PARTIR JAN-2018', 'CONSULTOR DE PARCEIRO']
-
-listXpathComissoesConfiguracao = ['//*[@id="menufinan"]'  # comissões
-                                , '//*[@id="menufinan"]/ul/li[2]'  # Configuração
-                                ]
-xpathTipoComissao = ['//*[@id="frm:tpComissao"]'
-                    , '//*[@id="frm:tpComissao"]/option[2]'  # Pagamento
-                    ]
+'''#################### XPATHS #############################################'''
+listXpathLog = [
+    '//*[@id="form:txtUsuarioSircon"]',  # campo usuario
+    '//*[@id="form:txtSenhaSircon"]',  # campo senha
+    '//*[@id="form:btLogar"]'  # botao confirmar
+    ]
+# linha coluna calendario
+line = 1
+column = 0  
+xp0 = '//*[@id="menucadastro"]/a'  # menu cadastro
+xp1 = '//*[@id="menucadastro"]/ul/li[5]'  # menu consorciado
+xp2 = '//*[@id="pnlBloco"]/div[6]/div/div[3]/div'  # campo entrega venda inicio
+xp3 = '//*[@id="ui-datepicker-div"]/div[1]/a[1]'  # botao seta para esquerda
+xp4 = f'//*[@id="ui-datepicker-div"]/table/tbody/tr[{line}]/td[{column}]'
+xp5 = '//*[@id="ui-datepicker-div"]/div[3]/button[2]'  # botao fechar calend
+xp6 = '//*[@id="pnlBloco"]/div[6]/div/div[4]/div'  # campo entrega venda final
+xp7 = '//*[@id="btnConsultar"]'  # botao consultar
+xp8 = '//*[@id="btnGerarXls"]'  # botao de download
+listXpath2 = [xp0, xp1, xp2, xp3, xp4, xp5, xp6, xp3, xp4, xp5, xp7, xp8]
+listXpathComissoesConfiguracao = [
+    '//*[@id="menufinan"]',  # comissões
+    '//*[@id="menufinan"]/ul/li[2]'  # Config
+    ]
+xpathTipoComissao = [
+    '//*[@id="frm:tpComissao"]',
+    '//*[@id="frm:tpComissao"]/option[2]'  # Pagamento
+    ]
 xpathAdministradora = '//*[@id="frm:cbAdministradora"]'
 xpathTabelaRecebimento = '//*[@id="frm:cbTabelaRecebimento"]'
 xpathCargo = '//*[@id="frm:cbCargo"]'
 listCampoCotaPeriodoParcela = []
 for num in range(30):  # quantidade de campos comissões configuracao
     listCampoCotaPeriodoParcela.append([ 
-                 f'//*[@id="frm:pnlEsacalas"]/div[{str(num+1)}]'  # campo de 0 a 2 
-                , [f'frm:j_idt124:{num}:j_idt194', f'frm:j_idt124:{num}:j_idt188'] # qtd cotas inicial
-                , [f'frm:j_idt124:{num}:j_idt196', f'frm:j_idt124:{num}:j_idt190']  # qtd cotas final
-                , f'//*[@id="frm:j_idt124:{num}:j_idt182_input"]'  # data venda inicio
-                , f'//*[@id="frm:j_idt124:{num}:j_idt184_input"]'  # data venda fim
-                , f'//*[@id="frm:j_idt124:{num}:j_idt149"]'  # parcela 1
-                , f'//*[@id="frm:j_idt124:{num}:j_idt156"]'  # parcela 2
-                , f'//*[@id="frm:j_idt124:{num}:j_idt158"]'  # parcela 3
-                , f'//*[@id="frm:j_idt124:{num}:j_idt160"]'  # parcela 4
-                , f'//*[@id="frm:j_idt124:{num}:j_idt162"]'  # parcela 5
-                , f'//*[@id="frm:j_idt124:{num}:j_idt164"]'  # parcela 6
-                , f'//*[@id="frm:j_idt124:{num}:j_idt166"]'  # parcela 7
-                , f'//*[@id="frm:j_idt124:{num}:j_idt168"]'  # parcela 8
-                , f'//*[@id="frm:j_idt124:{num}:j_idt170"]'  # parcela 9
-                , f'//*[@id="frm:j_idt124:{num}:j_idt172"]'  # parcela 10
-                , f'//*[@id="frm:j_idt124:{num}:j_idt174"]'  # parcela 11
-                , f'//*[@id="frm:j_idt124:{num}:j_idt176"]'  # parcela 12
-                ])
+        f'//*[@id="frm:pnlEsacalas"]/div[{str(num+1)}]',  # campo de 0 a 2 
+        [f'frm:j_idt124:{num}:j_idt194', 
+            f'frm:j_idt124:{num}:j_idt188'],  # qtd cotas inicial
+        [f'frm:j_idt124:{num}:j_idt196', 
+            f'frm:j_idt124:{num}:j_idt190'],  # qtd cotas final
+        f'//*[@id="frm:j_idt124:{num}:j_idt182_input"]',  # data venda inicio
+        f'//*[@id="frm:j_idt124:{num}:j_idt184_input"]',  # data venda fim
+        f'//*[@id="frm:j_idt124:{num}:j_idt149"]',  # parcela 1
+        f'//*[@id="frm:j_idt124:{num}:j_idt156"]',  # parcela 2
+        f'//*[@id="frm:j_idt124:{num}:j_idt158"]',  # parcela 3
+        f'//*[@id="frm:j_idt124:{num}:j_idt160"]',  # parcela 4
+        f'//*[@id="frm:j_idt124:{num}:j_idt162"]',  # parcela 5
+        f'//*[@id="frm:j_idt124:{num}:j_idt164"]',  # parcela 6
+        f'//*[@id="frm:j_idt124:{num}:j_idt166"]',  # parcela 7
+        f'//*[@id="frm:j_idt124:{num}:j_idt168"]',  # parcela 8
+        f'//*[@id="frm:j_idt124:{num}:j_idt170"]',  # parcela 9
+        f'//*[@id="frm:j_idt124:{num}:j_idt172"]',  # parcela 10
+        f'//*[@id="frm:j_idt124:{num}:j_idt174"]',  # parcela 11
+        f'//*[@id="frm:j_idt124:{num}:j_idt176"]'  # parcela 12
+        ])
     # listXpathCampoParcela.append([listCampo, listCotaPeriodoParcela])
+'''#################### ABRIR SITES ########################################'''
+openSite = True
+logar = True
+salesSetup = False
+commission = False
+if not openSite:
+    logar = False
+if not logar:
+    salesSetup = False
+    commission = False
 
-options = webdriver.ChromeOptions()
-options.add_argument('--ignore-certificate-errors')
-options.add_experimental_option('excludeSwitches', ['enable-automation'])
-options.add_experimental_option('excludeSwitches', ['enable-logging'])
+if openSite:
+    options = webdriver.ChromeOptions()
+    options.add_argument('--ignore-certificate-errors')
+    options.add_experimental_option('excludeSwitches', ['enable-automation'])
+    options.add_experimental_option('excludeSwitches', ['enable-logging'])
+    service = Service(ChromeDriverManager().install())            
+    driver = webdriver.Chrome(service=service, options=options)
+    driver.get(siteSircon)
+    connect = Connect(driver=driver)
+    xpathManip = XpathManip(driver=driver)
 
-driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
-driver.get(siteSircon)
-connect = Connect(driver=driver)
-xpathManip = XpathManip(driver=driver)
-connect.users = user
-connect.passwords = password
-while True:
-    connect.logarSircon = listXpathLog
-    xpathManip.locate = listXpathComissoesConfiguracao[0]
-    xpathOk = xpathManip.locate
-    if xpathOk is True:
-        break
-# connect.files = arqCons
-# connect.months = month
-# connect.dfSircon = listXpath2
-# df = connect.dfSircon
-# df.to_csv("df.csv", index=False, header=True)
+if logar:
+    connect.users = user
+    connect.passwords = password
+    while True:
+        connect.logarSircon = listXpathLog
+        xpathManip.locate = listXpathComissoesConfiguracao[0]
+        xpathOk = xpathManip.locate
+        if xpathOk is True:
+            break
 
-connect.pressListXpath = listXpathComissoesConfiguracao
-connect.pressListXpath = xpathTipoComissao
-connect.tagSons = tagSon
-connect.tagFathers = tagFather
-connect.tagGets = tagGet
-connect.tagReturnValue
-connect.pressXpathReturnListValue = xpathAdministradora
-connect.valueAdministradoras = valueAdministradora  # ira limitar a pesquiza
-connect.pressListValueXpathReturnListValue = xpathTabelaRecebimento
-connect.pressListValueXpathReturnListValueDouble = xpathCargo
-connect.valueCargos = valueCargo  # ira limitar a pesquiza
-connect.tagGets = tagGetEnd
-connect.tagReturnValue
-connect.pressListValueReturnListValueTriple = listCampoCotaPeriodoParcela
-connect.addNone
-connect.addIndex
-connect.addEnd
-connect.lineToColumn
-connect.noneToEmpty
-connect.killAllEmpty
-connect.listToTable
-table = connect.renameColumn
-print(table)
-table.to_csv("table.csv", index=False, header=True)
+if salesSetup:
+    connect.files = arqDonwload
+    connect.months = month
+    connect.dfSircon = listXpath2
+    tableSales = connect.dfSircon
+    tableSales.to_csv(
+        "tables\\tableSales.csv",
+        index=False, 
+        header=True, 
+        sep=';'
+        )
+
+if salesSetup:
+    connect.pressListXpath = listXpathComissoesConfiguracao
+    connect.pressListXpath = xpathTipoComissao
+    connect.tagSons = tagSon
+    connect.tagFathers = tagFather
+    connect.tagGets = tagGet
+    connect.tagReturnValue
+    connect.pressXpathReturnListValue = xpathAdministradora
+    # connect.valueAdministradoras = valueAdministradora  # Limitar pesquiza
+    connect.pressListValueXpathReturnListValue = xpathTabelaRecebimento
+    connect.pressListValueXpathReturnListValueDouble = xpathCargo
+    # connect.valueCargos = valueCargo  # Limitar pesquiza
+    connect.tagGets = tagGetEnd
+    connect.tagReturnValue
+    connect.pressListValueReturnListValueTriple = listCampoCotaPeriodoParcela
+    connect.addNone
+    connect.addIndex
+    connect.addEnd
+    connect.lineToColumn
+    connect.noneToEmpty
+    connect.killAllEmpty
+    tableSalesSetup = connect.listToTable
+    tableSalesSetup = connect.renameColumn
+    # print(table)
+    tableSalesSetup.to_csv(
+        "tables\\tableSalesSetup.csv",
+        index=False, 
+        header=True, 
+        sep=';'
+        )  # type: ignore
+    # table.to_csv("table2.csv", index=False, header=True)
+
+print('########################')
+conf = {}
+print(pathTables)
+tableSales = pd.read_csv(arqTableSales, sep=';', encoding='utf-8', dtype=str)
+tableSalesSetup = pd.read_csv(arqTableSalesSetup, sep=';', encoding='utf-8', 
+                              dtype=str)
+print(tableSales)
+print(tableSalesSetup)
+
+sleep(300)

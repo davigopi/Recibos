@@ -3,11 +3,15 @@ from ast import Break
 from asyncio.windows_events import NULL
 # from cgitb import text
 from contextlib import nullcontext
+from mailbox import NotEmptyError
+from contextlib import contextmanager
+from msilib.text import tables
 # import re
 import sys
 # from msilib.schema import Property
 # import ssl
 from time import sleep
+# from numpy import NaN
 import pyautogui
 import pandas as pd
 from pandas.errors import EmptyDataError
@@ -17,20 +21,30 @@ from bs4 import BeautifulSoup
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.actions.wheel_input import ScrollOrigin
-from selenium.common.exceptions import NoSuchElementException, ElementNotInteractableException, ElementClickInterceptedException
-from selenium.common.exceptions import StaleElementReferenceException, InvalidArgumentException, InvalidSelectorException, TimeoutException
+from selenium.common.exceptions import (
+    NoSuchElementException, 
+    ElementNotInteractableException, 
+    ElementClickInterceptedException
+    )
+from selenium.common.exceptions import (
+    StaleElementReferenceException, 
+    InvalidArgumentException, 
+    InvalidSelectorException, 
+    TimeoutException
+    )
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 
 
-excecaoAll = (NoSuchElementException
-            , ElementNotInteractableException
-            , ElementClickInterceptedException
-            , StaleElementReferenceException
-            , InvalidArgumentException
-            , InvalidSelectorException
-            , TimeoutException
-            )
+excecaoAll = (
+    NoSuchElementException,
+    ElementNotInteractableException,
+    ElementClickInterceptedException,
+    StaleElementReferenceException,
+    InvalidArgumentException,
+    InvalidSelectorException,
+    TimeoutException
+    )
 
 class Connect:
     def __init__(self, *args, **kwargs) -> None:
@@ -118,6 +132,14 @@ class Connect:
         self.month = month
 
     @property
+    def tables(self):
+        return None
+    
+    @tables.setter
+    def tables(self, table):
+        self.table = table
+
+    @property
     def valueAdministradoras(self):
         return None
     
@@ -174,26 +196,33 @@ class Connect:
     
     @dfSircon.setter
     def dfSircon(self, listXpath):  
-        file = FileManip(self.file)
+        file = FileManip()
+        file.arqConss = self.file
         for lastMonth in range(self.month, -1, -1):
             file.delete
             fileNotExist = True
             for key, xpath in enumerate(listXpath):
-                butt = ButtonsSpecial(lastMonth=lastMonth, func=self.mouseKeyboard, xpath=xpath) 
+                func = self.mouseKeyboard
+                butt = ButtonsSpecial(lastMonth=lastMonth, func=func, xpath=xpath) 
                 clickOk = False
                 while clickOk is False:
-                    if key == 3 or key == 7:
+                    if key == 3 or key == 7:   # botao seta para esquerda
                         clickOk = butt.clickLeftArrow
-                    elif key == 4:
+                    elif key == 4:  # linha coluna calendario inicio
                         clickOk = butt.clickDayStartMonth
-                    elif key == 8:
+                    elif key == 8:  # linha coluna calendario fim
                         clickOk = butt.clickDayEndMonth
                     else:
                         self.mouseKeyboard.clickXpath = xpath
                         clickOk = self.mouseKeyboard.clickXpath
+                    if key == 11:  # botao de download
+                        self.df = file.readCsv
+                    if self.df is False:  # tem que repetir se download nao exis
+                        clickOk = False
             if fileNotExist is True:
-                self.df = file.readCsv
-                table = TableManip(self.dfNew, self.df)
+                table = TableManip()
+                table.dfs = self.df
+                table.dfNews = self.dfNew
                 self.dfNew = table.merge
         file.delete
         file.writeCsv = self.dfNew
@@ -324,8 +353,6 @@ class Connect:
                                     if value is False:
                                         continue
                                     else:
-                                        # if value == '':
-                                        #     value = 0
                                         break
                             else:
                                 self.returnValue.xpathValue = xpathCampoCotaPeriodoParcela
@@ -428,19 +455,25 @@ class Connect:
             if len(self.listValue)/(10**number) < 1:
                 nStr = number
                 break
+        del self.listValue[-1]
         for key, column in enumerate(self.listValue):
             key = str(key)
             key = key.rjust(nStr, '0') 
             nameNumberColumn = 'Column' + '-' + key
             self.table[nameNumberColumn] = column
-        # return self.table
+        return self.table
 
     @property
     def renameColumn(self):
+        tableManip = TableManip()
         countColumn = 0
+        dateStart = True
+        parcStart = False
+        qtvVendas = 0
+        nameNumberColumn1 = False
         while True:
             try:
-                self.table.columns.values[count]
+                self.table.columns.values[countColumn]
             except IndexError:
                 break               
             match countColumn:
@@ -453,70 +486,57 @@ class Connect:
                 case 3:
                     nameNumberColumn = 'Cargo'
                 case _:
-                    nameValue = self.table.columns.values[count]
-                    print(nameValue)
-                    TableManip.nameNumberColumns = count
-                    TableManip.nameNumberlines
-
-                    work = ''
-                    for letter in nameValue:
-                        work += letter
-            self.table.columns.values[count] = nameNumberColumn
+                    tableManip.nameNumberColumns = countColumn
+                    countLine = 0
+                    while True:
+                        tableManip.nameNumberlines = countLine
+                        tableManip.infTable = self.table
+                        value = tableManip.infTable
+                        value = str(value)
+                        if value != '' and value != 'nan':
+                            word = ''
+                            key2Barra = False
+                            for key, letter in enumerate(value):
+                                word += letter
+                                if word == 'Período Venda' or word == 'PerÃ­odo Venda:':
+                                    # print(f'################# Periodo -> {word} #################')
+                                    qtvVendas += 1
+                                    nameNumberColumn = str(qtvVendas) + ' Periodo valor qtd vendas'
+                                    nameNumberColumn1 = str(qtvVendas) + ' Qtd. Cotas Inicial'
+                                    nameNumberColumn2 = str(qtvVendas) + ' Qtd. Cotas Final'
+                                    nParc = 1
+                                    parcStart = False
+                                    break
+                                if key == 2 and letter == '/':
+                                    key2Barra = True
+                                if key == 5 and letter == '/' and key2Barra is True:
+                                    # print(f'################# Data -> {word} #################')
+                                    if dateStart is True:
+                                        nameNumberColumn = str(qtvVendas) + ' Data inicial'
+                                        dateStart = False
+                                    else:
+                                        nameNumberColumn = str(qtvVendas) + ' Data final'
+                                        dateStart = True
+                                        parcStart = True
+                                    key2Barra = False
+                                    break                                
+                                if value == word:  # fim. palavra completa
+                                    if parcStart is True:
+                                        nameNumberColumn = str(qtvVendas) + ' Parc ' + str(nParc)
+                                        nParc += 1
+                                    else:
+                                        nameNumberColumn = self.table.columns.values[countColumn]
+                                    break                                        
+                            break
+                        else:
+                            countLine += 1                    
+            self.table.columns.values[countColumn] = nameNumberColumn
+            if nameNumberColumn1 is not False:
+                self.table.columns.values[countColumn + 1] = nameNumberColumn1
+                self.table.columns.values[countColumn + 2] = nameNumberColumn2
+                nameNumberColumn1 = False
             countColumn += 1
-
-
-        #             for column1 in column:
-        #                 nameNumberColumnCondition = False
-        #                 if column1 != '':
-        #                     word = ''
-        #                     dataCondition = 0
-        #                     for key, letter in enumerate(column1):
-        #                         word += letter
-        #                         if word == 'Período Venda':
-        #                             print(f'################# {word} #################')
-        #                             nameNumberColumn = 'Periodo valor qtd vendas ' + str(nPeriodo)
-        #                             nPeriodo += 1
-        #                             nameNumberColumnCondition = True
-        #                             break
-        #                         if key == 2 or key == 5:
-        #                             if letter == '/':
-        #                                 dataCondition += 1
-        #                         if dataCondition == 2:
-        #                             print(f'################# {word} #################')
-        #                             if dateStart is True:
-        #                                 nameNumberColumn = 'Data inicial ' + str(nDate)
-        #                                 dateStart = False
-        #                             else:
-        #                                 nameNumberColumn = 'Data final ' + str(nDate)
-        #                                 dateStart = True
-        #                                 nDate += 1
-        #                             nameNumberColumnCondition = True
-        #                             break
-        #                     # column1 = column1.replace('.', '')
-        #                     # column1 = column1.replace(',', '.')
-        #                 if nameNumberColumnCondition is False:
-        #                     print(column1)              
-        #                 else:
-        #                     break
-
-
         return self.table
-
-        # nPeriodo = 1
-        # nDate = 1
-        # dateStart = True
-        # for key, column in enumerate(self.listValue):
-        #     if column == self.listValue[-1]:
-        #         break
-        #     match key:
-        #         case 0:
-        #             nameNumberColumn = '
-        #         case 1:
-        #             nameNumberColumn = 
-        #         case 2:
-        #             nameNumberColumn = 
-        #         
-       
 
 
 class ReturnValue:
@@ -658,6 +678,7 @@ class RenameText:
             else: 
                 self.text += letter
 
+
 class XpathManip:
     def __init__(self, *args, **kwargs) -> None:
         self.driver = kwargs.get('driver')
@@ -690,10 +711,17 @@ class XpathManip:
 
 
 class FileManip:
-    def __init__(self, arqCons) -> None:
-        self._arqCons = arqCons
+    def __init__(self) -> None:
+        self._arqCons: str = ''
         self._dfnew = None
-        pass
+
+    @property
+    def arqConss(self):
+        return None
+    
+    @arqConss.setter
+    def arqConss(self, arqCons):
+        self._arqCons = arqCons
     
     @property
     def delete(self):
@@ -708,17 +736,28 @@ class FileManip:
 
     @property
     def readCsv(self):
+        count = 0
         while True:
+            count += 1
+            time = 'Tempo pecorrido: ' + str(count) + ' seg.'
+            if count >= 10:
+                return False
             try:  # se não carregar é porque não completou download
-                self._dfNew = pd.read_csv(self._arqCons, sep=';', encoding='utf-8', dtype=str)
+                self._dfNew = pd.read_csv(self._arqCons, sep=';', encoding='utf-8', dtype=str)  # type: ignore
+                # print(self._dfNew)
                 return self._dfNew
-            except FileNotFoundError:
+            except FileNotFoundError as e1:
+                print(f'ERRO FileNotFoundError arq não existe: {e1}. {time}')
                 pass
-            except PermissionError as e:
+            except PermissionError as e2:
+                print(f'ERRO PermissionError permissoa no local: {e2}. {time}')
                 sleep(1)
-            except EmptyDataError:
+            except EmptyDataError as e3:
+                print(f'ERRO EmptyDataError do arquivo: {e3}. {time}')
                 pass
+            sleep(1)
 
+            
     @property
     def writeCsv(self):
         return self._df
@@ -729,26 +768,42 @@ class FileManip:
         self._df.to_csv(self._arqCons, index=False, header=True)
 
 
-class TableManip:
-    def __init__(self, dfNew, df) -> None:
-        self._df = df
-        self._dfNew = dfNew
+
+class TableManip:  
+    def __init__(self) -> None:
+        self.df = None
+        self.dfNew = None
         self.nameNumberLine = None
         self.nameNumberColumn = None
-        
         self.value = None
 
     @property
+    def dfNews(self):
+        return None
+    
+    @dfNews.setter
+    def dfNews(self, dfNew):
+        self.dfNew = dfNew
+
+    @property
+    def dfs(self):
+        return None
+    
+    @dfs.setter
+    def dfs(self, df):
+        self.df = df
+
+    @property
     def merge(self):
-        if self._dfNew is None:
-            self._dfNew = self._df
+        if self.dfNew is None:
+            self.dfNew = self.df
         else:
-            self._dfNew = pd.merge(self._dfNew, self._df, how='outer')            
-        return self._dfNew
+            self.dfNew = pd.merge(self.dfNew, self.df, how='outer')  # type: ignore
+        return self.dfNew
 
     @property
     def nameNumberlines(self):
-        return self.nameNumberLine
+        return None
     
     @nameNumberlines.setter
     def nameNumberlines(self, nameNumberLine):
@@ -756,7 +811,7 @@ class TableManip:
 
     @property
     def nameNumberColumns(self):
-        return self.nameNumberColumn
+        return None
     
     @nameNumberColumns.setter
     def nameNumberColumns(self, nameNumberColumn):
@@ -764,12 +819,19 @@ class TableManip:
 
     @property
     def infTable(self):
-        if type(self.nameNumberLine) == str and type(self.nameNumberColumn) == str:
-            self.value = df.at[self.nameNumberLine, self.nameNumberColumn]  # pelo nome
-        else:
-            print(self.nameNumberLine, type(self.nameNumberLine), "###", self.nameNumberColumn, type(self.nameNumberColumn))
-            self.value = df.iat[self.nameNumberLine, self.nameNumberColumn]  # pelo local
         return self.value
+
+    @infTable.setter
+    def infTable(self, table):
+        if type(self.nameNumberLine) == str and type(self.nameNumberColumn) == str:
+            # print('string ->', self.nameNumberLine, type(self.nameNumberLine), "###", self.nameNumberColumn, type(self.nameNumberColumn))
+            self.value = table.at[self.nameNumberLine, self.nameNumberColumn]  # pelo nome
+        elif type(self.nameNumberLine) == int and type(self.nameNumberColumn) == int:
+            # print('Numeros ->', self.nameNumberLine, type(self.nameNumberLine), "###", self.nameNumberColumn, type(self.nameNumberColumn))
+            self.value = table.iat[self.nameNumberLine, self.nameNumberColumn]  # pelo local
+        else:
+            print('Indefinido ->', self.nameNumberLine, type(self.nameNumberLine), "###", self.nameNumberColumn, type(self.nameNumberColumn))
+
 
 class ImageManip:
     def __init__(self) -> None:
@@ -960,3 +1022,4 @@ class ButtonsSpecial:
 
 if __name__ == '__main__':
     import main
+    # import lerArq
