@@ -16,8 +16,10 @@ month = 6
 pathTables = Path(__file__).parent/'tables'
 arqTableSales = pathTables/'tableSales.csv'
 arqTableSalesSetup = pathTables/'tableSalesSetup.csv'
+arqTableFunction = pathTables/'tableFunction.csv'
 pathDonwload = os.environ['USERPROFILE'] + '\\Downloads'
-arqDonwload = pathDonwload + '\\consorciados.csv'
+arqDonwloadSales = pathDonwload + '\\consorciados.csv'
+arqDonwloadFunction = pathDonwload + '\\funcionarios.csv'
 
 # security = [user, password]
 
@@ -47,7 +49,7 @@ xp5 = '//*[@id="ui-datepicker-div"]/div[3]/button[2]'  # botao fechar calend
 xp6 = '//*[@id="pnlBloco"]/div[6]/div/div[4]/div'  # campo entrega venda final
 xp7 = '//*[@id="btnConsultar"]'  # botao consultar
 xp8 = '//*[@id="btnGerarXls"]'  # botao de download
-listXpath2 = [xp0, xp1, xp2, xp3, xp4, xp5, xp6, xp3, xp4, xp5, xp7, xp8]
+listXpathSales = [xp0, xp1, xp2, xp3, xp4, xp5, xp6, xp3, xp4, xp5, xp7, xp8]
 listXpathComissoesConfiguracao = [
     '//*[@id="menufinan"]',  # comissões
     '//*[@id="menufinan"]/ul/li[2]'  # Config
@@ -83,16 +85,27 @@ for num in range(30):  # quantidade de campos comissões configuracao
         f'//*[@id="frm:j_idt124:{num}:j_idt176"]'  # parcela 12
         ])
     # listXpathCampoParcela.append([listCampo, listCotaPeriodoParcela])
+listXpathFunction = [
+    '//*[@id="menucadastro"]/a',  # menu cadastro
+    '//*[@id="menucadastro"]/ul/li[7]',  # menu funcionario
+    '//*[@id="btnConsultar"]',  # botao consultar
+    '//*[@id="btnGerarXls"]'  # botao consultar
+
+
+]
+
 '''#################### ABRIR SITES ########################################'''
 openSite = True
 logar = True
+sales = False
 salesSetup = False
-commission = False
+functionSetup = True
 if not openSite:
     logar = False
 if not logar:
+    sales = False
     salesSetup = False
-    commission = False
+    functionSetup = False
 
 if openSite:
     options = webdriver.ChromeOptions()
@@ -115,11 +128,11 @@ if logar:
         if xpathOk is True:
             break
 
-if salesSetup:
-    connect.files = arqDonwload
+if sales:
+    connect.files = arqDonwloadSales
     connect.months = month
-    connect.dfSircon = listXpath2
-    tableSales = connect.dfSircon
+    connect.sales = listXpathSales
+    tableSales = connect.sales
     tableSales.to_csv(
         "tables\\tableSales.csv",
         index=False, 
@@ -159,13 +172,62 @@ if salesSetup:
         )  # type: ignore
     # table.to_csv("table2.csv", index=False, header=True)
 
+
+if functionSetup:
+    connect.files = arqDonwloadFunction
+    connect.function = listXpathFunction
+    tableFunction = connect.function
+    tableFunction.to_csv(
+        "tables\\tableFunction.csv",
+        index=False, 
+        header=True, 
+        sep=';'
+        )  # type: ignore
+
+
 print('########################')
 conf = {}
 print(pathTables)
 tableSales = pd.read_csv(arqTableSales, sep=';', encoding='utf-8', dtype=str)
 tableSalesSetup = pd.read_csv(arqTableSalesSetup, sep=';', encoding='utf-8', 
                               dtype=str)
-print(tableSales)
-print(tableSalesSetup)
+tableFunction = pd.read_csv(arqTableFunction, sep=';', encoding='utf-8', 
+                              dtype=str)
+# print(tableSales)
+# print(tableSalesSetup)
+# print(tableFunction)
 
-sleep(300)
+nLine = tableSales[tableSales.columns[0]].count()
+# for i in range(nLine):
+#     inf = tableSales.at[i, 'Vendedor']
+#     inf = inf.replace('" ', '')
+#     inf = inf.replace(' "', '')
+#     inf = inf.replace('"', '')
+#     if inf != tableSales.at[i, 'Vendedor']:
+#         pass
+#     print(inf) 
+#     tableSales.at[i, 'Vendedor'] = inf
+
+
+df = pd.merge(tableSales, tableFunction, 
+              left_on='Vendedor', right_on='Nome', how='left')
+df.to_csv(
+    "tables\\tableMerge.csv",
+    index=False, 
+    header=True, 
+    sep=';'
+    )  # type: ignore
+# print(df)
+nDiferente = 0
+for i in range(nLine):
+    i2 = i - nDiferente
+    if df.at[i, 'Vendedor'] != tableSales.at[i2, 'Vendedor']:
+        print(i, '    ', df.at[i, 'Vendedor'], "      ", tableSales.at[i, 'Vendedor'])
+        print()
+        nDiferente += 1
+        # break
+        
+
+
+sleep(6000)
+

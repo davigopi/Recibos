@@ -188,14 +188,14 @@ class Connect:
                     self.mouseKeyboard.clickXpath = xpath
                     self.clickOk = self.mouseKeyboard.clickXpath
                     if self.clickOk is True:
-                        break   
+                        break 
 
     @property
-    def dfSircon(self): 
+    def sales(self): 
         return self.dfNew
     
-    @dfSircon.setter
-    def dfSircon(self, listXpath):  
+    @sales.setter
+    def sales(self, listXpath):  
         file = FileManip()
         file.arqConss = self.file
         for lastMonth in range(self.month, -1, -1):
@@ -226,6 +226,27 @@ class Connect:
                 self.dfNew = table.merge
         file.delete
         file.writeCsv = self.dfNew
+
+    @property
+    def function(self): 
+        return self.dfNew
+    
+    @function.setter
+    def function(self, listXpath):  
+        file = FileManip()
+        file.arqConss = self.file
+        file.delete
+        # fileNotExist = True
+        for key, xpath in enumerate(listXpath):
+            clickOk = False
+            while clickOk is False:
+                self.mouseKeyboard.clickXpath = xpath
+                clickOk = self.mouseKeyboard.clickXpath
+                if key == 3:  # botao de download
+                    self.df = file.readCsv
+                if self.df is False:  # tem que repetir se download nao exis
+                    clickOk = False
+        self.dfNew = self.df
 
     @property
     def pressListXpath(self):
