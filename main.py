@@ -90,12 +90,10 @@ listXpathFunction = [
     '//*[@id="menucadastro"]/ul/li[7]',  # menu funcionario
     '//*[@id="btnConsultar"]',  # botao consultar
     '//*[@id="btnGerarXls"]'  # botao consultar
-
-
 ]
 
 '''#################### ABRIR SITES ########################################'''
-openSite = True
+openSite = False
 logar = True
 sales = False
 salesSetup = False
@@ -197,9 +195,13 @@ tableFunction = pd.read_csv(arqTableFunction, sep=';', encoding='utf-8',
 # print(tableSalesSetup)
 # print(tableFunction)
 
-nLine = tableSales[tableSales.columns[0]].count()
-# for i in range(nLine):
-#     inf = tableSales.at[i, 'Vendedor']
+nLine = tableSalesSetup[tableSalesSetup.columns[0]].count()
+for i in range(nLine):
+    if 'FERIAS' in tableSalesSetup.at[i, 'Tabela de recebimento']: 
+        tableSalesSetup.at[i, 'Administradora'] += ' FERIAS'
+        print(tableSalesSetup.at[i, 'Administradora'])
+
+print(tableSalesSetup) 
 #     inf = inf.replace('" ', '')
 #     inf = inf.replace(' "', '')
 #     inf = inf.replace('"', '')
@@ -207,10 +209,27 @@ nLine = tableSales[tableSales.columns[0]].count()
 #         pass
 #     print(inf) 
 #     tableSales.at[i, 'Vendedor'] = inf
-
+columnsList = tableSalesSetup.columns.to_list()
+print(columnsList)
 
 df = pd.merge(tableSales, tableFunction, 
               left_on='Vendedor', right_on='Nome', how='left')
+
+
+listColumnsStart = ['Administradora', 'Cargo', 'CPF', 'Vendedor', 'Gerente']
+columnsList = df.columns.to_list()
+columnsListNew = []
+for key, columnList in enumerate(columnsList):
+    if key == 0:
+        for listColumnStart in listColumnsStart:
+            columnsListNew.append(listColumnStart)
+    if columnList in listColumnsStart:
+        continue
+    columnsListNew.append(columnList)
+df = df[columnsListNew]
+
+
+
 df.to_csv(
     "tables\\tableMerge.csv",
     index=False, 
