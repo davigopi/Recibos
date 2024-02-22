@@ -92,18 +92,32 @@ listXpathFunction = [
     '//*[@id="btnGerarXls"]'  # botao consultar
 ]
 
+listXpathComissoesConfPagamento = [
+    '//*[@id="menufinan"]',  # comissões
+    '//*[@id="menufinan"]/ul/li[3]/a'  # ConfigPagamento
+    ]
+xpathTipoComissaoPagamento = [
+    '//*[@id="frm:cbTpConfig"]',
+    '//*[@id="frm:cbTpConfig"]/option[1]'  # Pagamento
+    ]
+xpathCargoPagamento = '//*[@id="frm:cbCargo"]'
+xpathAdministradoraPagamento =  '//*[@id="frm:cbAdministradora"]'
+
 '''#################### ABRIR SITES ########################################'''
 openSite = True
 logar = True
-sales = True
-salesSetup = True
-functionSetup = True
+sales = False
+salesSetup = False
+salesSetupPay = True
+functionSetup = False
 if not openSite:
     logar = False
 if not logar:
     sales = False
     salesSetup = False
+    salesSetupPay = False
     functionSetup = False
+
 
 if openSite:
     options = webdriver.ChromeOptions()
@@ -138,6 +152,22 @@ if sales:
         sep=';'
         )
 
+if salesSetupPay:
+    connect.tagSons = tagSon
+    connect.tagFathers = tagFather
+    connect.tagGets = tagGet
+    connect.tagReturnValue
+    connect.pressListXpath = listXpathComissoesConfPagamento
+    connect.pressListXpath = xpathTipoComissaoPagamento
+    connect.pressXpathReturnListValue = xpathCargoPagamento
+    listCargo = connect.pressXpathReturnListValue
+    connect.pressXpathReturnListValue = xpathAdministradoraPagamento
+    listAdministradora = connect.pressXpathReturnListValue
+    print('###################')
+    for cargo, administradora in listCargoAdministradora:
+        print(administradora)
+    print('###################')
+
 if salesSetup:
     connect.pressListXpath = listXpathComissoesConfiguracao
     connect.pressListXpath = xpathTipoComissao
@@ -170,7 +200,6 @@ if salesSetup:
         )  # type: ignore
     # table.to_csv("table2.csv", index=False, header=True)
 
-
 if functionSetup:
     connect.files = arqDonwloadFunction
     connect.function = listXpathFunction
@@ -186,11 +215,15 @@ if functionSetup:
 print('########################')
 conf = {}
 print(pathTables)
-tableSales = pd.read_csv(arqTableSales, sep=';', encoding='utf-8', dtype=str)
-tableSalesSetup = pd.read_csv(arqTableSalesSetup, sep=';', encoding='utf-8', 
+tableSales = pd.read_csv(arqTableSales, sep=';', 
+                         encoding='utf-8', 
+                         dtype=str)
+tableSalesSetup = pd.read_csv(arqTableSalesSetup, sep=';', 
+                              encoding='utf-8', 
                               dtype=str)
-tableFunction = pd.read_csv(arqTableFunction, sep=';', encoding='utf-8', 
-                              dtype=str)
+tableFunction = pd.read_csv(arqTableFunction, sep=';', 
+                            encoding='utf-8', 
+                            dtype=str)
 # print(tableSales)
 # print(tableSalesSetup)
 # print(tableFunction)
@@ -213,8 +246,6 @@ for i in range(nLine):
 
 # columnsList = tableSalesSetup.columns.to_list()
 # print(columnsList)
-
-
 
 df = pd.merge(tableSales, tableFunction, 
               left_on='Vendedor', right_on='Nome', how='left')
@@ -251,7 +282,4 @@ for i in range(nLine):
         # break
         
 
-
-
-# sleep(6000)
-
+sleep(100000)
