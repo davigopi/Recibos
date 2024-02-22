@@ -93,10 +93,10 @@ listXpathFunction = [
 ]
 
 '''#################### ABRIR SITES ########################################'''
-openSite = False
+openSite = True
 logar = True
-sales = False
-salesSetup = False
+sales = True
+salesSetup = True
 functionSetup = True
 if not openSite:
     logar = False
@@ -199,9 +199,9 @@ nLine = tableSalesSetup[tableSalesSetup.columns[0]].count()
 for i in range(nLine):
     if 'FERIAS' in tableSalesSetup.at[i, 'Tabela de recebimento']: 
         tableSalesSetup.at[i, 'Administradora'] += ' FERIAS'
-        print(tableSalesSetup.at[i, 'Administradora'])
+        # print(tableSalesSetup.at[i, 'Administradora'])
 
-print(tableSalesSetup) 
+# print(tableSalesSetup) 
 #     inf = inf.replace('" ', '')
 #     inf = inf.replace(' "', '')
 #     inf = inf.replace('"', '')
@@ -209,8 +209,12 @@ print(tableSalesSetup)
 #         pass
 #     print(inf) 
 #     tableSales.at[i, 'Vendedor'] = inf
-columnsList = tableSalesSetup.columns.to_list()
-print(columnsList)
+        
+
+# columnsList = tableSalesSetup.columns.to_list()
+# print(columnsList)
+
+
 
 df = pd.merge(tableSales, tableFunction, 
               left_on='Vendedor', right_on='Nome', how='left')
@@ -228,7 +232,7 @@ for key, columnList in enumerate(columnsList):
     columnsListNew.append(columnList)
 df = df[columnsListNew]
 
-
+df = pd.merge(df, tableSalesSetup, on=['Administradora', 'Cargo'], how='left')
 
 df.to_csv(
     "tables\\tableMerge.csv",
@@ -246,6 +250,7 @@ for i in range(nLine):
         nDiferente += 1
         # break
         
+
 
 
 # sleep(6000)
