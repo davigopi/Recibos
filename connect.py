@@ -385,6 +385,56 @@ class Connect:
         self.listValue = listValueTemp
 
     @property
+    def pressListXpathReturnListValue(self):
+        return self.listValue
+
+    @pressListXpathReturnListValue.setter
+    def pressListXpathReturnListValue(self, listXpath):
+        listTemp = []
+        for xpath in listXpath:
+            while True:
+                self.mouseKeyboard.clickXpath = xpath
+                self.clickOk = self.mouseKeyboard.clickXpath
+                if self.clickOk is True:
+                    break
+            self.returnValue.tagValue = xpath
+            listTemp.append(self.returnValue.tagValue)
+        self.listValue = listTemp
+
+    @property
+    def pressListValueReturnListValue(self):
+        return self.listValue
+
+    @pressListValueReturnListValue.setter
+    def pressListValueReturnListValue(self, listXpath):
+        listCargo = self.listValue[0]
+        listAdministradora = self.listValue[1]
+        listPagamento = self.listValue[2]
+        listValueTemp1 = []
+        for cargo in listCargo:
+            self.mouseKeyboard.clickValue = cargo
+            listValueTemp2 = []
+            for administradora in listAdministradora:
+                self.mouseKeyboard.clickValue = administradora
+                listValueTemp3 = []
+                for pagamento in listPagamento:
+                    self.mouseKeyboard.clickValue = pagamento
+                    # sleep(1111111)
+                    listValueTemp4 = []
+                    for xpathConsole in listXpath:
+                        if xpathConsole == listXpath[0]:
+                            self.returnValue.xpathFathers = xpathConsole 
+                            continue
+                        self.returnValue.xpathDoubelTexts = xpathConsole
+                        value = self.returnValue.xpathDoubelTexts
+                        listValueTemp4.append(value)
+                    listValueTemp3.append([pagamento, listValueTemp4])
+                listValueTemp2.append([administradora, listValueTemp3])
+            listValueTemp1.append([cargo, listValueTemp2])
+            break
+        self.listValue = listValueTemp1      
+
+    @property
     def addNone(self):
         maximumNumberColumm = 0
         for listValueTemp in self.listValue:
@@ -611,7 +661,11 @@ class ReturnValue:
         while True:
             try:
                 count += 1
-                self.value = self.driver.find_element(By.XPATH, self.xpathFather).find_element(By.XPATH, xpath).get_attribute(self.tagGet)
+                # print('father: ', self.xpathFather)
+                # print('get: ', self.tagGet)
+                self.value = self.driver.find_element(
+                    By.XPATH, self.xpathFather).find_element(
+                        By.XPATH, xpath).get_attribute(self.tagGet)
                 break
             except excecaoAll:
                 if count >= 3:
@@ -629,7 +683,9 @@ class ReturnValue:
         while True:
             try:
                 count += 1
-                self.value = self.driver.find_element(By.XPATH, self.xpathFather).find_element(By.NAME, name).get_attribute(self.tagGet)
+                self.value = self.driver.find_element(
+                    By.XPATH, self.xpathFather).find_element(
+                        By.NAME, name).get_attribute(self.tagGet)
                 break
             except excecaoAll:
                 if count >= 3:
@@ -648,6 +704,30 @@ class ReturnValue:
             count += 1
             try:
                 self.value = self.driver.find_element(By.XPATH, xpath).text
+                break
+            except excecaoAll:
+                if count >= 3:
+                    self.value = False
+                    break
+                sleep(0.2)
+
+
+
+    @property
+    def xpathDoubelTexts(self):
+        return self.value
+    
+    @xpathDoubelTexts.setter
+    def xpathDoubelTexts(self, xpath):
+        count = 0
+        while True:
+            try:
+                count += 1
+                # print('father: ', self.xpathFather)
+                # print('get: ', self.tagGet)
+                self.value = self.driver.find_element(
+                    By.XPATH, self.xpathFather).find_element(
+                        By.XPATH, xpath).text
                 break
             except excecaoAll:
                 if count >= 3:

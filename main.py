@@ -14,9 +14,9 @@ user = 'davigopi@gmail.com'
 password = '36vad28'
 month = 6
 pathTables = Path(__file__).parent/'tables'
-arqTableSales = pathTables/'tableSales.csv'
-arqTableSalesSetup = pathTables/'tableSalesSetup.csv'
-arqTableFunction = pathTables/'tableFunction.csv'
+arqTableSales = pathTables/'table_Cadastro_Consorciado.csv'
+arqTableSalesSetup = pathTables/'table_Comissoes_ConfigPagamento.csv'
+arqTableFunction = pathTables/'table_Cadastro_Funcionario.csv'
 pathDonwload = os.environ['USERPROFILE'] + '\\Downloads'
 arqDonwloadSales = pathDonwload + '\\consorciados.csv'
 arqDonwloadFunction = pathDonwload + '\\funcionarios.csv'
@@ -64,7 +64,7 @@ xpathCargo = '//*[@id="frm:cbCargo"]'
 listCampoCotaPeriodoParcela = []
 for num in range(30):  # quantidade de campos comissões configuracao
     listCampoCotaPeriodoParcela.append([ 
-        f'//*[@id="frm:pnlEsacalas"]/div[{str(num+1)}]',  # campo de 0 a 2 
+        f'//*[@id="frm:pnlEsacalas"]/div[{str(num+1)}]',  # campo 0 a 2 Father
         [f'frm:j_idt124:{num}:j_idt194', 
             f'frm:j_idt124:{num}:j_idt188'],  # qtd cotas inicial
         [f'frm:j_idt124:{num}:j_idt196', 
@@ -100,8 +100,34 @@ xpathTipoComissaoPagamento = [
     '//*[@id="frm:cbTpConfig"]',
     '//*[@id="frm:cbTpConfig"]/option[1]'  # Pagamento
     ]
-xpathCargoPagamento = '//*[@id="frm:cbCargo"]'
-xpathAdministradoraPagamento =  '//*[@id="frm:cbAdministradora"]'
+listXpathCargoAdminstradoraPagamento = [
+    '//*[@id="frm:cbCargo"]',
+    '//*[@id="frm:cbAdministradora"]',
+    '//*[@id="frm:cbTpRecebimento"]'
+    ]
+listDtPagamentoParcelas = [
+    '//*[@id="frm:pnlBloco"]',  # xpath Father
+    '//*[@id="frm:cbFormaReceb"]',  # data pagamento por
+    '//*[@id="frm:cb1"]',  # dia util
+    '//*[@id="frm:recPriParc"]',  # 1º parcela recebera
+    '//*[@id="frm:cb4"]',  # 1º parcela referencia 
+    '//*[@id="frm:cbRefApuracaoPrimParc"]',  # periodo inicial tipo
+    '//*[@id="frm:cbP1"]',   # periodo inicial quando
+    '//*[@id="frm:cbRefApuracaoFimPrimParc"]',  # periodo final tipo
+    '//*[@id="frm:cbP5"]',  # periodo final quando
+    '//*[@id="frm:recConfimac"]',  # Demais parcela recebera
+    '//*[@id="frm:cbP10"]',  # Demais parcela referencia 
+    '//*[@id="frm:cbRefApuracaoConfirmacoes"]',  # periodo inicial tipo
+    '//*[@id="frm:cbP11"]',   # periodo inicial quando
+    '//*[@id="frm:cbRefApuracaoFimConfirmacoes"]',  # periodo final tipo
+    '//*[@id="frm:cbP15"]',  # periodo final quando
+    '//*[@id="frm:recFat"]',  # Faturamento recebera
+    '//*[@id="frm:cbP19"]',  # Faturamento referencia 
+    '//*[@id="frm:cbRefApuracaoFaturamento"]',  # periodo inicial tipo
+    '//*[@id="frm:cbP20"]',   # periodo inicial quando
+    '//*[@id="frm:cbRefApuracaoFimFaturamento"]',  # periodo final tipo
+    '//*[@id="frm:cbP24"]',  # periodo final quando
+]
 
 '''#################### ABRIR SITES ########################################'''
 openSite = True
@@ -144,9 +170,9 @@ if sales:
     connect.files = arqDonwloadSales
     connect.months = month
     connect.sales = listXpathSales
-    tableSales = connect.sales
-    tableSales.to_csv(
-        "tables\\tableSales.csv",
+    table_Cadastro_Consorciado = connect.sales
+    table_Cadastro_Consorciado.to_csv(
+        "tables\\table_Cadastro_Consorciado.csv",
         index=False, 
         header=True, 
         sep=';'
@@ -159,14 +185,21 @@ if salesSetupPay:
     connect.tagReturnValue
     connect.pressListXpath = listXpathComissoesConfPagamento
     connect.pressListXpath = xpathTipoComissaoPagamento
-    connect.pressXpathReturnListValue = xpathCargoPagamento
-    listCargo = connect.pressXpathReturnListValue
-    connect.pressXpathReturnListValue = xpathAdministradoraPagamento
-    listAdministradora = connect.pressXpathReturnListValue
-    print('###################')
-    for cargo, administradora in listCargoAdministradora:
-        print(administradora)
-    print('###################')
+    connect.pressListXpathReturnListValue = listXpathCargoAdminstradoraPagamento
+    listCargo = connect.pressListXpathReturnListValue  # precisa do tagGet
+    # connect.tagGets = tagGetEnd
+    # connect.tagReturnValue
+    connect.pressListValueReturnListValue = listDtPagamentoParcelas
+    listFull = connect.pressListValueReturnListValue
+    for cargoOutros in listFull:
+        cargo = cargoOutros[0]
+        for administradoraOutros in cargoOutros[1]:
+            administradora = administradoraOutros[0]
+            for pagamento in administradoraOutros[1]:
+                print('###################')
+                print(f'cargo: {cargo}')
+                print(f'administradora: {administradora}')
+                print(f'pagamento: {pagamento}')
 
 if salesSetup:
     connect.pressListXpath = listXpathComissoesConfiguracao
@@ -189,11 +222,11 @@ if salesSetup:
     connect.lineToColumn
     connect.noneToEmpty
     connect.killAllEmpty
-    tableSalesSetup = connect.listToTable
-    tableSalesSetup = connect.renameColumn
+    table_Comissoes_ConfigPagamento = connect.listToTable
+    table_Comissoes_ConfigPagamento = connect.renameColumn
     # print(table)
-    tableSalesSetup.to_csv(
-        "tables\\tableSalesSetup.csv",
+    table_Comissoes_ConfigPagamento.to_csv(
+        "tables\\table_Comissoes_ConfigPagamento.csv",
         index=False, 
         header=True, 
         sep=';'
@@ -203,9 +236,9 @@ if salesSetup:
 if functionSetup:
     connect.files = arqDonwloadFunction
     connect.function = listXpathFunction
-    tableFunction = connect.function
-    tableFunction.to_csv(
-        "tables\\tableFunction.csv",
+    table_Cadastro_Funcionario = connect.function
+    table_Cadastro_Funcionario.to_csv(
+        "tables\\table_Cadastro_Funcionario.csv",
         index=False, 
         header=True, 
         sep=';'
@@ -215,39 +248,39 @@ if functionSetup:
 print('########################')
 conf = {}
 print(pathTables)
-tableSales = pd.read_csv(arqTableSales, sep=';', 
+table_Cadastro_Consorciado = pd.read_csv(arqTableSales, sep=';', 
                          encoding='utf-8', 
                          dtype=str)
-tableSalesSetup = pd.read_csv(arqTableSalesSetup, sep=';', 
+table_Comissoes_ConfigPagamento = pd.read_csv(arqTableSalesSetup, sep=';', 
                               encoding='utf-8', 
                               dtype=str)
-tableFunction = pd.read_csv(arqTableFunction, sep=';', 
+table_Cadastro_Funcionario = pd.read_csv(arqTableFunction, sep=';', 
                             encoding='utf-8', 
                             dtype=str)
-# print(tableSales)
-# print(tableSalesSetup)
-# print(tableFunction)
+# print(table_Cadastro_Consorciado)
+# print(table_Comissoes_ConfigPagamento)
+# print(table_Cadastro_Funcionario)
 
-nLine = tableSalesSetup[tableSalesSetup.columns[0]].count()
+nLine = table_Comissoes_ConfigPagamento[table_Comissoes_ConfigPagamento.columns[0]].count()
 for i in range(nLine):
-    if 'FERIAS' in tableSalesSetup.at[i, 'Tabela de recebimento']: 
-        tableSalesSetup.at[i, 'Administradora'] += ' FERIAS'
-        # print(tableSalesSetup.at[i, 'Administradora'])
+    if 'FERIAS' in table_Comissoes_ConfigPagamento.at[i, 'Tabela de recebimento']: 
+        table_Comissoes_ConfigPagamento.at[i, 'Administradora'] += ' FERIAS'
+        # print(table_Comissoes_ConfigPagamento.at[i, 'Administradora'])
 
-# print(tableSalesSetup) 
+# print(table_Comissoes_ConfigPagamento) 
 #     inf = inf.replace('" ', '')
 #     inf = inf.replace(' "', '')
 #     inf = inf.replace('"', '')
-#     if inf != tableSales.at[i, 'Vendedor']:
+#     if inf != table_Cadastro_Consorciado.at[i, 'Vendedor']:
 #         pass
 #     print(inf) 
-#     tableSales.at[i, 'Vendedor'] = inf
+#     table_Cadastro_Consorciado.at[i, 'Vendedor'] = inf
         
 
-# columnsList = tableSalesSetup.columns.to_list()
+# columnsList = table_Comissoes_ConfigPagamento.columns.to_list()
 # print(columnsList)
 
-df = pd.merge(tableSales, tableFunction, 
+df = pd.merge(table_Cadastro_Consorciado, table_Cadastro_Funcionario, 
               left_on='Vendedor', right_on='Nome', how='left')
 
 
@@ -263,7 +296,7 @@ for key, columnList in enumerate(columnsList):
     columnsListNew.append(columnList)
 df = df[columnsListNew]
 
-df = pd.merge(df, tableSalesSetup, on=['Administradora', 'Cargo'], how='left')
+df = pd.merge(df, table_Comissoes_ConfigPagamento, on=['Administradora', 'Cargo'], how='left')
 
 df.to_csv(
     "tables\\tableMerge.csv",
@@ -275,11 +308,11 @@ df.to_csv(
 nDiferente = 0
 for i in range(nLine):
     i2 = i - nDiferente
-    if df.at[i, 'Vendedor'] != tableSales.at[i2, 'Vendedor']:
-        print(i, '    ', df.at[i, 'Vendedor'], "      ", tableSales.at[i, 'Vendedor'])
+    if df.at[i, 'Vendedor'] != table_Cadastro_Consorciado.at[i2, 'Vendedor']:
+        print(i, '    ', df.at[i, 'Vendedor'], "      ", table_Cadastro_Consorciado.at[i, 'Vendedor'])
         print()
         nDiferente += 1
         # break
         
 
-sleep(100000)
+sleep(1)
