@@ -24,8 +24,8 @@ arqDonwloadFunction = pathDonwload + '\\funcionarios.csv'
 # security = [user, password]
 
 '''#################### LIMITAR PESQUISAS ##################################'''
-valueAdministradora = ['DISAL']
-valueCargo = ['CONSULTOR CLT - A PARTIR JAN-2018', 'CONSULTOR DE PARCEIRO']
+valueChooseAdministradora = ['DISAL']
+valueChooseCargo = ['CONSULTOR CLT - A PARTIR JAN-2018', 'CONSULTOR DE PARCEIRO']
 '''#################### TAGS ###############################################'''
 tagSon = 'option'
 tagFather = 'select'
@@ -130,33 +130,32 @@ listDtPagamentoParcelas = [
 ]
 
 '''#################### ABRIR SITES ########################################'''
-openSite = True
-logar = True
+openSite = False
 sales = False
 salesSetup = False
+
 salesSetupPay = True
+
 functionSetup = False
 if not openSite:
-    logar = False
-if not logar:
     sales = False
     salesSetup = False
     salesSetupPay = False
     functionSetup = False
 
 
+######################### defined ################################
+options = webdriver.ChromeOptions()
+options.add_argument('--ignore-certificate-errors')
+options.add_experimental_option('excludeSwitches', ['enable-automation'])
+options.add_experimental_option('excludeSwitches', ['enable-logging'])
+service = Service(ChromeDriverManager().install())            
+driver = webdriver.Chrome(service=service, options=options)
+connect = Connect(driver=driver)
+xpathManip = XpathManip(driver=driver)
 if openSite:
-    options = webdriver.ChromeOptions()
-    options.add_argument('--ignore-certificate-errors')
-    options.add_experimental_option('excludeSwitches', ['enable-automation'])
-    options.add_experimental_option('excludeSwitches', ['enable-logging'])
-    service = Service(ChromeDriverManager().install())            
-    driver = webdriver.Chrome(service=service, options=options)
     driver.get(siteSircon)
-    connect = Connect(driver=driver)
-    xpathManip = XpathManip(driver=driver)
-
-if logar:
+    # logar
     connect.users = user
     connect.passwords = password
     while True:
@@ -165,6 +164,27 @@ if logar:
         xpathOk = xpathManip.locate
         if xpathOk is True:
             break
+else:
+    driver.quit()
+
+
+if functionSetup:
+    connect.files = arqDonwloadFunction
+    connect.function = listXpathFunction
+    table_Cadastro_Funcionario = connect.function
+    table_Cadastro_Funcionario.to_csv(
+        "tables\\table_Cadastro_Funcionario.csv",
+        index=False, 
+        header=True, 
+        sep=';'
+        )  # type: ignore
+else:
+    table_Cadastro_Funcionario = pd.read_csv(arqTableFunction, sep=';', 
+                                             encoding='utf-8', 
+                                             dtype=str)
+
+connect.valueExistCargos = table_Cadastro_Funcionario
+
 
 if sales:
     connect.files = arqDonwloadSales
@@ -177,6 +197,55 @@ if sales:
         header=True, 
         sep=';'
         )
+else: 
+    # ler as tabelas que para nao precisar executar novamente
+    table_Cadastro_Consorciado = pd.read_csv(arqTableSales, sep=';', 
+                                             encoding='utf-8', 
+                                             dtype=str)
+
+connect.valueExistAdministradoras = table_Cadastro_Consorciado
+
+
+if salesSetup:
+    connect.pressListXpath = listXpathComissoesConfiguracao
+    connect.pressListXpath = xpathTipoComissao
+    connect.tagSons = tagSon
+    connect.tagFathers = tagFather
+    connect.tagGets = tagGet
+    connect.tagReturnValue
+    connect.pressXpathReturnListValue = xpathAdministradora
+    connect.valueChooseAdministradoras = valueChooseAdministradora  # Limitar pesquiza
+    connect.pressListValueXpathReturnListValue = xpathTabelaRecebimento
+    connect.pressListValueXpathReturnListValueDouble = xpathCargo
+    connect.valueChooseCargos = valueChooseCargo  # Limitar pesquiza
+    connect.tagGets = tagGetEnd
+    connect.tagReturnValue
+    connect.pressListValueReturnListValueTriple = listCampoCotaPeriodoParcela
+    connect.addNone
+    connect.addIndex
+    connect.addEnd
+    connect.lineToColumn
+    connect.noneToEmpty
+    connect.killAllEmpty
+    table_Comissoes_ConfigPagamento = connect.listToTable
+    table_Comissoes_ConfigPagamento = connect.renameColumn
+    # print(table)
+    table_Comissoes_ConfigPagamento.to_csv(
+        "tables\\table_Comissoes_ConfigPagamento.csv",
+        index=False, 
+        header=True, 
+        sep=';'
+        )  # type: ignore
+    # table.to_csv("table2.csv", index=False, header=True)
+else:
+    table_Comissoes_ConfigPagamento = pd.read_csv(arqTableSalesSetup, sep=';', 
+                                                  encoding='utf-8', 
+                                                  dtype=str)
+
+
+
+
+print('########################')
 
 if salesSetupPay:
     connect.tagSons = tagSon
@@ -201,66 +270,26 @@ if salesSetupPay:
                 print(f'administradora: {administradora}')
                 print(f'pagamento: {pagamento}')
 
-if salesSetup:
-    connect.pressListXpath = listXpathComissoesConfiguracao
-    connect.pressListXpath = xpathTipoComissao
-    connect.tagSons = tagSon
-    connect.tagFathers = tagFather
-    connect.tagGets = tagGet
-    connect.tagReturnValue
-    connect.pressXpathReturnListValue = xpathAdministradora
-    # connect.valueAdministradoras = valueAdministradora  # Limitar pesquiza
-    connect.pressListValueXpathReturnListValue = xpathTabelaRecebimento
-    connect.pressListValueXpathReturnListValueDouble = xpathCargo
-    # connect.valueCargos = valueCargo  # Limitar pesquiza
-    connect.tagGets = tagGetEnd
-    connect.tagReturnValue
-    connect.pressListValueReturnListValueTriple = listCampoCotaPeriodoParcela
-    connect.addNone
-    connect.addIndex
-    connect.addEnd
-    connect.lineToColumn
-    connect.noneToEmpty
-    connect.killAllEmpty
-    table_Comissoes_ConfigPagamento = connect.listToTable
-    table_Comissoes_ConfigPagamento = connect.renameColumn
-    # print(table)
-    table_Comissoes_ConfigPagamento.to_csv(
-        "tables\\table_Comissoes_ConfigPagamento.csv",
-        index=False, 
-        header=True, 
-        sep=';'
-        )  # type: ignore
-    # table.to_csv("table2.csv", index=False, header=True)
-
-if functionSetup:
-    connect.files = arqDonwloadFunction
-    connect.function = listXpathFunction
-    table_Cadastro_Funcionario = connect.function
-    table_Cadastro_Funcionario.to_csv(
-        "tables\\table_Cadastro_Funcionario.csv",
-        index=False, 
-        header=True, 
-        sep=';'
-        )  # type: ignore
 
 
-print('########################')
-conf = {}
-print(pathTables)
-table_Cadastro_Consorciado = pd.read_csv(arqTableSales, sep=';', 
-                         encoding='utf-8', 
-                         dtype=str)
-table_Comissoes_ConfigPagamento = pd.read_csv(arqTableSalesSetup, sep=';', 
-                              encoding='utf-8', 
-                              dtype=str)
-table_Cadastro_Funcionario = pd.read_csv(arqTableFunction, sep=';', 
-                            encoding='utf-8', 
-                            dtype=str)
+
+
 # print(table_Cadastro_Consorciado)
 # print(table_Comissoes_ConfigPagamento)
 # print(table_Cadastro_Funcionario)
 
+
+
+
+
+
+print(listAdministradora)
+
+print(nLine)
+
+sleep(30)
+
+# editar tabela tara nao dar conflito com mesmo nome 
 nLine = table_Comissoes_ConfigPagamento[table_Comissoes_ConfigPagamento.columns[0]].count()
 for i in range(nLine):
     if 'FERIAS' in table_Comissoes_ConfigPagamento.at[i, 'Tabela de recebimento']: 
@@ -280,10 +309,12 @@ for i in range(nLine):
 # columnsList = table_Comissoes_ConfigPagamento.columns.to_list()
 # print(columnsList)
 
+# mesclar tabela
 df = pd.merge(table_Cadastro_Consorciado, table_Cadastro_Funcionario, 
               left_on='Vendedor', right_on='Nome', how='left')
 
 
+# ordenar calunas da tabela para a forma que quiser
 listColumnsStart = ['Administradora', 'Cargo', 'CPF', 'Vendedor', 'Gerente']
 columnsList = df.columns.to_list()
 columnsListNew = []
@@ -296,8 +327,10 @@ for key, columnList in enumerate(columnsList):
     columnsListNew.append(columnList)
 df = df[columnsListNew]
 
+# mesclar tabela 
 df = pd.merge(df, table_Comissoes_ConfigPagamento, on=['Administradora', 'Cargo'], how='left')
 
+# salvar a tabela
 df.to_csv(
     "tables\\tableMerge.csv",
     index=False, 
@@ -305,6 +338,8 @@ df.to_csv(
     sep=';'
     )  # type: ignore
 # print(df)
+
+# teste para saebr a diferença e mostra que é diferente
 nDiferente = 0
 for i in range(nLine):
     i2 = i - nDiferente

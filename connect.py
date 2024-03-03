@@ -66,6 +66,8 @@ class Connect:
         self.valueCargo = None
         self.mouseKeyboard = MouseKeyboard(driver=self.driver)
         self.returnValue = ReturnValue(driver=self.driver)
+        self.listExistCargos = None
+        self.listExistAdministradoras = None
 
     @property
     def users(self):
@@ -140,19 +142,19 @@ class Connect:
         self.table = table
 
     @property
-    def valueAdministradoras(self):
+    def valueChooseAdministradoras(self):
         return None
     
-    @valueAdministradoras.setter
-    def valueAdministradoras(self, valueAdministradora):
+    @valueChooseAdministradoras.setter
+    def valueChooseAdministradoras(self, valueAdministradora):
         self.valueAdministradora = valueAdministradora
 
     @property
-    def valueCargos(self):
+    def valueChooseCargos(self):
         return None
     
-    @valueCargos.setter
-    def valueCargos(self, valueCargo):
+    @valueChooseCargos.setter
+    def valueChooseCargos(self, valueCargo):
         self.valueCargo = valueCargo
 
     @property
@@ -161,6 +163,36 @@ class Connect:
         self.returnValue.tagFathers = self.tagFather
         self.returnValue.tagGets = self.tagGet
 
+    @property
+    def valueExistCargos(self):
+        return None
+    
+    @valueExistCargos.setter
+    def valueExistCargos(self, table_Cadastro_Funcionario):
+        nLine = table_Cadastro_Funcionario[table_Cadastro_Funcionario.columns[0]].count()
+        listFullCargos = []
+        for i in range(nLine):
+            listFullCargos.append(table_Cadastro_Funcionario.at[i, 'Cargo'])
+        self.listExistCargos = list(set(listFullCargos))
+        self.listExistCargos.sort()
+        print(self.listExistCargos)
+
+
+    @property
+    def valueExistAdministradoras(self):
+        return None
+    
+    @valueExistAdministradoras.setter
+    def valueExistAdministradoras(self, table_Cadastro_Consorciado):
+        nLine = table_Cadastro_Consorciado[table_Cadastro_Consorciado.columns[0]].count()
+        listFullAdministradora = []
+        for i in range(nLine):
+            listFullAdministradora.append(table_Cadastro_Consorciado.at[i, 'Administradora'])
+        self.listExistAdministradoras = list(set(listFullAdministradora))
+        self.listExistAdministradoras.sort()
+        print(self.listExistAdministradoras)
+
+    ###########  logar  ###############
     @property
     def logarSircon(self):
         return None
@@ -248,6 +280,11 @@ class Connect:
                     clickOk = False
         self.dfNew = self.df
 
+
+
+
+
+
     @property
     def pressListXpath(self):
         return self.clickOk
@@ -272,8 +309,8 @@ class Connect:
             self.clickOk = self.mouseKeyboard.clickXpath
             if self.clickOk is True:
                 break
-        self.returnValue.tagValue = xpath
-        self.listValue = self.returnValue.tagValue
+        self.returnValue.xpathTag = xpath
+        self.listValue = self.returnValue.xpathTag
 
     @property
     def pressListValueXpathReturnListValue(self):
@@ -297,8 +334,8 @@ class Connect:
                 self.clickOk = self.mouseKeyboard.clickXpath
                 if self.clickOk is True:
                     break
-            self.returnValue.tagValue = xpath
-            listValueTablarecebimento = self.returnValue.tagValue
+            self.returnValue.xpathTag = xpath
+            listValueTablarecebimento = self.returnValue.xpathTag
             listValueAdministradoraTablarecebimento.append([valueAdministradora, listValueTablarecebimento])
         self.listValue = listValueAdministradoraTablarecebimento
 
@@ -321,8 +358,8 @@ class Connect:
                     self.clickOk = self.mouseKeyboard.clickXpath
                     if self.clickOk is True:
                         break
-                self.returnValue.tagValue = xpath
-                listValueCargo = self.returnValue.tagValue
+                self.returnValue.xpathTag = xpath
+                listValueCargo = self.returnValue.xpathTag
                 listValueTabelarecebimentoCargo.append([valueTablarecebimento, listValueCargo])
             listValueTemp.append([valueAdministradora, listValueTabelarecebimentoCargo])
         self.listValue = listValueTemp
@@ -369,15 +406,15 @@ class Connect:
                                 value = renameText.renameHeader  # salvando cabeçalho
                             elif key == 1 or key == 2:
                                 for xpathParcela in xpathCampoCotaPeriodoParcela:
-                                    self.returnValue.nameValue = xpathParcela
-                                    value = self.returnValue.nameValue
+                                    self.returnValue.xpathNameTag = xpathParcela
+                                    value = self.returnValue.xpathNameTag
                                     if value is False:
                                         continue
                                     else:
                                         break
                             else:
-                                self.returnValue.xpathValue = xpathCampoCotaPeriodoParcela
-                                value = self.returnValue.xpathValue
+                                self.returnValue.xpathXpathTag = xpathCampoCotaPeriodoParcela
+                                value = self.returnValue.xpathXpathTag
                             if value is False:
                                 break
                             listValueTemp2.append(value)
@@ -397,8 +434,8 @@ class Connect:
                 self.clickOk = self.mouseKeyboard.clickXpath
                 if self.clickOk is True:
                     break
-            self.returnValue.tagValue = xpath
-            listTemp.append(self.returnValue.tagValue)
+            self.returnValue.xpathTag = xpath
+            listTemp.append(self.returnValue.xpathTag)
         self.listValue = listTemp
 
     @property
@@ -422,11 +459,13 @@ class Connect:
                     # sleep(1111111)
                     listValueTemp4 = []
                     for xpathConsole in listXpath:
+                        # o primeiro xpath é o pai
                         if xpathConsole == listXpath[0]:
                             self.returnValue.xpathFathers = xpathConsole 
                             continue
-                        self.returnValue.xpathDoubelTexts = xpathConsole
-                        value = self.returnValue.xpathDoubelTexts
+                        self.returnValue.tagGets = "option[selected]"
+                        self.returnValue.xpathXpathTag = xpathConsole
+                        value = self.returnValue.xpathXpathTag
                         listValueTemp4.append(value)
                     listValueTemp3.append([pagamento, listValueTemp4])
                 listValueTemp2.append([administradora, listValueTemp3])
@@ -652,17 +691,15 @@ class ReturnValue:
         self.tagGet = tagValue
 
     @property
-    def xpathValue(self):
+    def xpathXpathTag(self):
         return self.value
     
-    @xpathValue.setter
-    def xpathValue(self, xpath):
+    @xpathXpathTag.setter
+    def xpathXpathTag(self, xpath):
         count = 0
         while True:
             try:
                 count += 1
-                # print('father: ', self.xpathFather)
-                # print('get: ', self.tagGet)
                 self.value = self.driver.find_element(
                     By.XPATH, self.xpathFather).find_element(
                         By.XPATH, xpath).get_attribute(self.tagGet)
@@ -674,11 +711,11 @@ class ReturnValue:
                 sleep(0.2)
 
     @property
-    def nameValue(self):
+    def xpathNameTag(self):
         return self.value
     
-    @nameValue.setter
-    def nameValue(self, name):
+    @xpathNameTag.setter
+    def xpathNameTag(self, name):
         count = 0
         while True:
             try:
@@ -713,34 +750,35 @@ class ReturnValue:
 
 
 
-    @property
-    def xpathDoubelTexts(self):
-        return self.value
+    # @property
+    # def xpathDoubelValues(self):
+    #     return self.value
     
-    @xpathDoubelTexts.setter
-    def xpathDoubelTexts(self, xpath):
-        count = 0
-        while True:
-            try:
-                count += 1
-                # print('father: ', self.xpathFather)
-                # print('get: ', self.tagGet)
-                self.value = self.driver.find_element(
-                    By.XPATH, self.xpathFather).find_element(
-                        By.XPATH, xpath).text
-                break
-            except excecaoAll:
-                if count >= 3:
-                    self.value = False
-                    break
-                sleep(0.2)
+    # @xpathDoubelValues.setter
+    # def xpathDoubelValues(self, xpath):
+    #     count = 0
+    #     while True:
+    #         try:
+    #             count += 1
+    #             # print('father: ', self.xpathFather)
+    #             # print('get: ', self.tagGet)
+    #             self.value = self.driver.find_element(
+    #                 By.XPATH, self.xpathFather).find_element(
+    #                     By.XPATH, xpath).value
+    #             break
+    #         except excecaoAll:
+    #             if count >= 3:
+    #                 self.value = False
+    #                 break
+    #             sleep(0.2)
+
 
     @property
-    def tagValue(self):
+    def xpathTag(self):
         return self.value
     
-    @tagValue.setter
-    def tagValue(self, xpath):
+    @xpathTag.setter
+    def xpathTag(self, xpath):
         while True:
             try: 
                 self.value = self.driver.find_element(By.XPATH, xpath).get_attribute(self.tagGet)  # retornar o outerHTML
