@@ -68,6 +68,7 @@ class Connect:
         self.returnValue = ReturnValue(driver=self.driver)
         self.listExistCargos = None
         self.listExistAdministradoras = None
+        self.listExistTabelarecebimento = None
 
     @property
     def users(self):
@@ -164,21 +165,6 @@ class Connect:
         self.returnValue.tagGets = self.tagGet
 
     @property
-    def valueExistCargos(self):
-        return None
-    
-    @valueExistCargos.setter
-    def valueExistCargos(self, table_Cadastro_Funcionario):
-        nLine = table_Cadastro_Funcionario[table_Cadastro_Funcionario.columns[0]].count()
-        listFullCargos = []
-        for i in range(nLine):
-            listFullCargos.append(table_Cadastro_Funcionario.at[i, 'Cargo'])
-        self.listExistCargos = list(set(listFullCargos))
-        self.listExistCargos.sort()
-        print(self.listExistCargos)
-
-
-    @property
     def valueExistAdministradoras(self):
         return None
     
@@ -190,7 +176,27 @@ class Connect:
             listFullAdministradora.append(table_Cadastro_Consorciado.at[i, 'Administradora'])
         self.listExistAdministradoras = list(set(listFullAdministradora))
         self.listExistAdministradoras.sort()
-        print(self.listExistAdministradoras)
+
+    @property
+    def valueExistCargos(self):
+        return None
+    
+    @valueExistCargos.setter
+    def valueExistCargos(self, table_Cadastro_Funcionario):
+        nLine = table_Cadastro_Funcionario[table_Cadastro_Funcionario.columns[0]].count()
+        listFullCargos = []
+        for i in range(nLine):
+            listFullCargos.append(table_Cadastro_Funcionario.at[i, 'Cargo'])
+        self.listExistCargos = list(set(listFullCargos))
+        self.listExistCargos.sort()
+
+    @property
+    def valueExistTabelarecebimento(self):
+        return None
+    
+    @valueExistTabelarecebimento.setter
+    def valueExistTabelarecebimento(self, valueChooseTabelarecebimento):
+        self.listExistTabelarecebimento = valueChooseTabelarecebimento
 
     ###########  logar  ###############
     @property
@@ -280,11 +286,6 @@ class Connect:
                     clickOk = False
         self.dfNew = self.df
 
-
-
-
-
-
     @property
     def pressListXpath(self):
         return self.clickOk
@@ -298,35 +299,43 @@ class Connect:
                 if self.clickOk is True:
                     break
 
+    #  pegar os valores administradoras
     @property
-    def pressXpathReturnListValue(self):
+    def pressXpathResultListValue(self):
         return self.listValue
 
-    @pressXpathReturnListValue.setter
-    def pressXpathReturnListValue(self, xpath):
+    @pressXpathResultListValue.setter
+    def pressXpathResultListValue(self, xpath):
         while True:
             self.mouseKeyboard.clickXpath = xpath
             self.clickOk = self.mouseKeyboard.clickXpath
             if self.clickOk is True:
                 break
         self.returnValue.xpathTag = xpath
-        self.listValue = self.returnValue.xpathTag
+        listValue = self.returnValue.xpathTag
+        listValueTemp = []
+        # limitar
+        for valueAdministradora in listValue:
+            # limita se a pessoa colocar na lista as administradora
+            if self.valueAdministradora is not None:
+                if valueAdministradora not in self.valueAdministradora:
+                    continue
+            # limita apenas as administradoras que existe nas vendas existentes
+            if self.listExistAdministradoras is not None:
+                if valueAdministradora not in self.listExistAdministradoras:
+                    continue
+            listValueTemp.append(valueAdministradora)
+        self.listValue = listValueTemp
 
+     # com valores da administradoras ira acrecentar valor tabela de recebimento
     @property
-    def pressListValueXpathReturnListValue(self):
+    def pressListValueXpathResultListValue(self):
         return self.listValue
     
-    @pressListValueXpathReturnListValue.setter
-    def pressListValueXpathReturnListValue(self, xpath):
+    @pressListValueXpathResultListValue.setter
+    def pressListValueXpathResultListValue(self, xpath):
         listValueAdministradoraTablarecebimento = []
         for valueAdministradora in self.listValue:
-            if self.valueAdministradora is not None:
-                jumpAdministradora = True
-                for valueAdministradora2 in self.valueAdministradora:
-                    if valueAdministradora2 == valueAdministradora:
-                        jumpAdministradora = False
-                if jumpAdministradora is True:
-                    continue
             self.mouseKeyboard.locationSearchTag = self.tagSon
             self.mouseKeyboard.clickValue = valueAdministradora
             while True:
@@ -335,16 +344,29 @@ class Connect:
                 if self.clickOk is True:
                     break
             self.returnValue.xpathTag = xpath
-            listValueTablarecebimento = self.returnValue.xpathTag
-            listValueAdministradoraTablarecebimento.append([valueAdministradora, listValueTablarecebimento])
+            listValueTabelarecebimento = self.returnValue.xpathTag
+            listValueTemp = []
+            # limitar
+            if self.listExistTabelarecebimento is not None:
+                for valueTabelarecebimento in listValueTabelarecebimento:
+                    existWord = False
+                    for wordDelete in self.listExistTabelarecebimento:
+                        if wordDelete in valueTabelarecebimento:
+                            existWord = True
+                            break         
+                    if existWord is False:
+                        listValueTemp.append(valueTabelarecebimento)
+                listValueTabelarecebimento = listValueTemp
+            listValueAdministradoraTablarecebimento.append([valueAdministradora, listValueTabelarecebimento])
         self.listValue = listValueAdministradoraTablarecebimento
 
+    # com valores da administ. e tabela receb ira acrecentar valores do cargo
     @property
-    def pressListValueXpathReturnListValueDouble(self):
+    def pressListValueXpathResultListValueDouble(self):
         return self.listValue
 
-    @pressListValueXpathReturnListValueDouble.setter
-    def pressListValueXpathReturnListValueDouble(self, xpath):
+    @pressListValueXpathResultListValueDouble.setter
+    def pressListValueXpathResultListValueDouble(self, xpath):
         listValueTemp = []
         self.mouseKeyboard.locationSearchTag = self.tagSon
         for listValueAdministradoraTablarecebimento in self.listValue:
@@ -360,35 +382,41 @@ class Connect:
                         break
                 self.returnValue.xpathTag = xpath
                 listValueCargo = self.returnValue.xpathTag
+                listValueCargoTemp = []
+                # limitar
+                for valueCargo in listValueCargo:
+                    # limita se a pessoa digita os cargos
+                    if self.valueCargo is not None:  # limitar pesquis
+                        if valueCargo not in self.valueCargo:
+                            continue
+                    # limitar apenas o que existe nos cargo da lista de funcion
+                    if self.listExistCargos is not None:
+                        if valueCargo not in self.listExistCargos:
+                            continue
+                    listValueCargoTemp.append(valueCargo)
+                listValueCargo = listValueCargoTemp
                 listValueTabelarecebimentoCargo.append([valueTablarecebimento, listValueCargo])
             listValueTemp.append([valueAdministradora, listValueTabelarecebimentoCargo])
         self.listValue = listValueTemp
     
     @property
-    def pressListValueReturnListValueTriple(self):
+    def pressListValueResultListValueTriple(self):
         return self.listValue
 
-    @pressListValueReturnListValueTriple.setter
-    def pressListValueReturnListValueTriple(self, listXpath):
+    @pressListValueResultListValueTriple.setter
+    def pressListValueResultListValueTriple(self, listXpath):
         listValueTemp = []
         self.mouseKeyboard.locationSearchTag = self.tagSon
         renameText = RenameText()
         for listValueAdministradoraTablarecebimentoCargo in self.listValue:
             self.mouseKeyboard.clickValue = listValueAdministradoraTablarecebimentoCargo[0]
-            for listValueTablarecebimentoCargo in listValueAdministradoraTablarecebimentoCargo[1]:
-                self.mouseKeyboard.clickValue = listValueTablarecebimentoCargo[0]
-                for valueCargo in listValueTablarecebimentoCargo[1]:
-                    if self.valueCargo is not None:  # limitar pesquisa
-                        jumpCargo = True
-                        for valueCargo2 in self.valueCargo:  
-                            if valueCargo2 == valueCargo:
-                                jumpCargo = False
-                        if jumpCargo is True:
-                            continue
+            for listValueTabelarecebimentoCargo in listValueAdministradoraTablarecebimentoCargo[1]:
+                self.mouseKeyboard.clickValue = listValueTabelarecebimentoCargo[0]
+                for valueCargo in listValueTabelarecebimentoCargo[1]:
                     self.mouseKeyboard.clickValue = valueCargo
                     listValueTemp2 = []
                     listValueTemp2.append(listValueAdministradoraTablarecebimentoCargo[0])
-                    listValueTemp2.append(listValueTablarecebimentoCargo[0])
+                    listValueTemp2.append(listValueTabelarecebimentoCargo[0])
                     listValueTemp2.append(valueCargo)
                     listEnd = False
                     for campoCotaPeriodoParcela in listXpath:
@@ -428,15 +456,39 @@ class Connect:
     @pressListXpathReturnListValue.setter
     def pressListXpathReturnListValue(self, listXpath):
         listTemp = []
-        for xpath in listXpath:
+        for key, xpath in enumerate(listXpath):
             while True:
                 self.mouseKeyboard.clickXpath = xpath
                 self.clickOk = self.mouseKeyboard.clickXpath
                 if self.clickOk is True:
                     break
             self.returnValue.xpathTag = xpath
-            listTemp.append(self.returnValue.xpathTag)
+            listValueTemp = []
+            # limitar
+            for value in self.returnValue.xpathTag:
+                if key == 0:
+                    # limita se a pessoa digita os cargos
+                    if self.valueCargo is not None:  # limitar pesquis
+                        if value not in self.valueCargo:
+                            continue
+                    # limitar apenas o que existe nos cargo da lista de funcion
+                    if self.listExistCargos is not None:
+                        if value not in self.listExistCargos:
+                            continue
+                elif key == 1:
+                    # limita se a pessoa colocar na lista as administradora
+                    if self.valueAdministradora is not None:
+                        if value not in self.valueAdministradora:
+                            continue
+                    # limita apenas as administradoras que existe nas vendas existentes
+                    if self.listExistAdministradoras is not None:
+                        if value not in self.listExistAdministradoras:
+                            continue
+                listValueTemp.append(value)
+            listTemp.append(listValueTemp)
         self.listValue = listTemp
+        print(self.listValue)
+        sleep(10)
 
     @property
     def pressListValueReturnListValue(self):
@@ -456,31 +508,33 @@ class Connect:
                 listValueTemp3 = []
                 for pagamento in listPagamento:
                     self.mouseKeyboard.clickValue = pagamento
-                    # sleep(1111111)
                     listValueTemp4 = []
                     for xpathConsole in listXpath:
                         # o primeiro xpath é o pai
                         if xpathConsole == listXpath[0]:
                             self.returnValue.xpathFathers = xpathConsole 
                             continue
-                        self.returnValue.tagGets = "option[selected]"
+                        self.returnValue.tagGets = "option[@selected]"
                         self.returnValue.xpathXpathTag = xpathConsole
                         value = self.returnValue.xpathXpathTag
                         listValueTemp4.append(value)
                     listValueTemp3.append([pagamento, listValueTemp4])
                 listValueTemp2.append([administradora, listValueTemp3])
+                break
             listValueTemp1.append([cargo, listValueTemp2])
             break
         self.listValue = listValueTemp1      
 
     @property
     def addNone(self):
+        # ira mostra o maior numero de quantidade de lelemnetos list da list
         maximumNumberColumm = 0
         for listValueTemp in self.listValue:
             if maximumNumberColumm < len(listValueTemp):
                 maximumNumberColumm = len(listValueTemp)
         maximumNumberColumm += 1
         listValue = []
+        # adiciona 'None' no maior quantidade e tambem completa os restante
         for listValueTemp in self.listValue:
             listValueTemp.append('None')  
             listLineTemp = []
@@ -609,7 +663,6 @@ class Connect:
                             for key, letter in enumerate(value):
                                 word += letter
                                 if word == 'Período Venda' or word == 'PerÃ­odo Venda:':
-                                    # print(f'################# Periodo -> {word} #################')
                                     qtvVendas += 1
                                     nameNumberColumn = str(qtvVendas) + ' Periodo valor qtd vendas'
                                     nameNumberColumn1 = str(qtvVendas) + ' Qtd. Cotas Inicial'
@@ -620,7 +673,6 @@ class Connect:
                                 if key == 2 and letter == '/':
                                     key2Barra = True
                                 if key == 5 and letter == '/' and key2Barra is True:
-                                    # print(f'################# Data -> {word} #################')
                                     if dateStart is True:
                                         nameNumberColumn = str(qtvVendas) + ' Data inicial'
                                         dateStart = False
@@ -748,31 +800,6 @@ class ReturnValue:
                     break
                 sleep(0.2)
 
-
-
-    # @property
-    # def xpathDoubelValues(self):
-    #     return self.value
-    
-    # @xpathDoubelValues.setter
-    # def xpathDoubelValues(self, xpath):
-    #     count = 0
-    #     while True:
-    #         try:
-    #             count += 1
-    #             # print('father: ', self.xpathFather)
-    #             # print('get: ', self.tagGet)
-    #             self.value = self.driver.find_element(
-    #                 By.XPATH, self.xpathFather).find_element(
-    #                     By.XPATH, xpath).value
-    #             break
-    #         except excecaoAll:
-    #             if count >= 3:
-    #                 self.value = False
-    #                 break
-    #             sleep(0.2)
-
-
     @property
     def xpathTag(self):
         return self.value
@@ -883,7 +910,6 @@ class FileManip:
                 return False
             try:  # se não carregar é porque não completou download
                 self._dfNew = pd.read_csv(self._arqCons, sep=';', encoding='utf-8', dtype=str)  # type: ignore
-                # print(self._dfNew)
                 return self._dfNew
             except FileNotFoundError as e1:
                 print(f'ERRO FileNotFoundError arq não existe: {e1}. {time}')
@@ -963,10 +989,8 @@ class TableManip:
     @infTable.setter
     def infTable(self, table):
         if type(self.nameNumberLine) == str and type(self.nameNumberColumn) == str:
-            # print('string ->', self.nameNumberLine, type(self.nameNumberLine), "###", self.nameNumberColumn, type(self.nameNumberColumn))
             self.value = table.at[self.nameNumberLine, self.nameNumberColumn]  # pelo nome
         elif type(self.nameNumberLine) == int and type(self.nameNumberColumn) == int:
-            # print('Numeros ->', self.nameNumberLine, type(self.nameNumberLine), "###", self.nameNumberColumn, type(self.nameNumberColumn))
             self.value = table.iat[self.nameNumberLine, self.nameNumberColumn]  # pelo local
         else:
             print('Indefinido ->', self.nameNumberLine, type(self.nameNumberLine), "###", self.nameNumberColumn, type(self.nameNumberColumn))

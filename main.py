@@ -24,8 +24,12 @@ arqDonwloadFunction = pathDonwload + '\\funcionarios.csv'
 # security = [user, password]
 
 '''#################### LIMITAR PESQUISAS ##################################'''
+limitSearchChosse = False
 valueChooseAdministradora = ['DISAL']
 valueChooseCargo = ['CONSULTOR CLT - A PARTIR JAN-2018', 'CONSULTOR DE PARCEIRO']
+limitSearchSystem = True
+limitSearchDeleteWord = True
+valueChooseTabelarecebimento = ['FERIAS']
 '''#################### TAGS ###############################################'''
 tagSon = 'option'
 tagFather = 'select'
@@ -130,14 +134,13 @@ listDtPagamentoParcelas = [
 ]
 
 '''#################### ABRIR SITES ########################################'''
-openSite = False
+openSite = True
 sales = False
+functionSetup = False
 salesSetup = False
-
 salesSetupPay = True
 
-functionSetup = False
-if not openSite:
+if openSite is False:
     sales = False
     salesSetup = False
     salesSetupPay = False
@@ -167,25 +170,6 @@ if openSite:
 else:
     driver.quit()
 
-
-if functionSetup:
-    connect.files = arqDonwloadFunction
-    connect.function = listXpathFunction
-    table_Cadastro_Funcionario = connect.function
-    table_Cadastro_Funcionario.to_csv(
-        "tables\\table_Cadastro_Funcionario.csv",
-        index=False, 
-        header=True, 
-        sep=';'
-        )  # type: ignore
-else:
-    table_Cadastro_Funcionario = pd.read_csv(arqTableFunction, sep=';', 
-                                             encoding='utf-8', 
-                                             dtype=str)
-
-connect.valueExistCargos = table_Cadastro_Funcionario
-
-
 if sales:
     connect.files = arqDonwloadSales
     connect.months = month
@@ -203,8 +187,31 @@ else:
                                              encoding='utf-8', 
                                              dtype=str)
 
-connect.valueExistAdministradoras = table_Cadastro_Consorciado
+if functionSetup:
+    connect.files = arqDonwloadFunction
+    connect.function = listXpathFunction
+    table_Cadastro_Funcionario = connect.function
+    table_Cadastro_Funcionario.to_csv(
+        "tables\\table_Cadastro_Funcionario.csv",
+        index=False, 
+        header=True, 
+        sep=';'
+        )  # type: ignore
+else:
+    table_Cadastro_Funcionario = pd.read_csv(arqTableFunction, sep=';', 
+                                             encoding='utf-8', 
+                                             dtype=str)
 
+
+# para limitar pesquisa escolhida pelo usuario
+if limitSearchChosse is True:
+    connect.valueChooseAdministradoras = valueChooseAdministradora
+    connect.valueChooseCargos = valueChooseCargo
+if limitSearchSystem is True:
+    connect.valueExistAdministradoras = table_Cadastro_Consorciado
+    connect.valueExistCargos = table_Cadastro_Funcionario
+if limitSearchDeleteWord is True:
+    connect.valueExistTabelarecebimento = valueChooseTabelarecebimento
 
 if salesSetup:
     connect.pressListXpath = listXpathComissoesConfiguracao
@@ -213,23 +220,32 @@ if salesSetup:
     connect.tagFathers = tagFather
     connect.tagGets = tagGet
     connect.tagReturnValue
-    connect.pressXpathReturnListValue = xpathAdministradora
-    connect.valueChooseAdministradoras = valueChooseAdministradora  # Limitar pesquiza
-    connect.pressListValueXpathReturnListValue = xpathTabelaRecebimento
-    connect.pressListValueXpathReturnListValueDouble = xpathCargo
-    connect.valueChooseCargos = valueChooseCargo  # Limitar pesquiza
+    # criar lista de administradoras
+    connect.pressXpathResultListValue = xpathAdministradora
+    # criar lista de administradoras + tabela de recebiemnto 
+    connect.pressListValueXpathResultListValue = xpathTabelaRecebimento
+    # criar lista de administradoras + tabela de recebiemnto + cargos
+    connect.pressListValueXpathResultListValueDouble = xpathCargo
+    # alterar a tagets
     connect.tagGets = tagGetEnd
     connect.tagReturnValue
-    connect.pressListValueReturnListValueTriple = listCampoCotaPeriodoParcela
+    # criar lista de administradoras + tabela de recebiemnto + cargos + valores 
+    connect.pressListValueResultListValueTriple = listCampoCotaPeriodoParcela
+    # adicionar 'None' para todos terem o mesmo quantidade de elementos
+    # e tambem o ultimo elemento adiciona uma coluna 'None'
     connect.addNone
+    # adiciona o index
     connect.addIndex
+    # substitu o ultimo elemento 'None' por 'endValue'
     connect.addEnd
+    # substitu  da ulitmo coluna da 'endValue' por 'endValueLast'
     connect.lineToColumn
+    # substitu todos no 'None' por ''
     connect.noneToEmpty
+    # excluir se tudo for ''
     connect.killAllEmpty
     table_Comissoes_ConfigPagamento = connect.listToTable
     table_Comissoes_ConfigPagamento = connect.renameColumn
-    # print(table)
     table_Comissoes_ConfigPagamento.to_csv(
         "tables\\table_Comissoes_ConfigPagamento.csv",
         index=False, 
@@ -242,20 +258,19 @@ else:
                                                   encoding='utf-8', 
                                                   dtype=str)
 
-
-
-
-print('########################')
+print('###########salesSetupPay#############')
 
 if salesSetupPay:
     connect.tagSons = tagSon
     connect.tagFathers = tagFather
     connect.tagGets = tagGet
     connect.tagReturnValue
+    # caminho no site para entra local especifico pelo xpath
     connect.pressListXpath = listXpathComissoesConfPagamento
     connect.pressListXpath = xpathTipoComissaoPagamento
+    # list os valores existentes no campos cargos, administradora, tipoPagamento
     connect.pressListXpathReturnListValue = listXpathCargoAdminstradoraPagamento
-    listCargo = connect.pressListXpathReturnListValue  # precisa do tagGet
+    # listCargo = connect.pressListXpathReturnListValue  # precisa do tagGet
     # connect.tagGets = tagGetEnd
     # connect.tagReturnValue
     connect.pressListValueReturnListValue = listDtPagamentoParcelas
@@ -283,9 +298,9 @@ if salesSetupPay:
 
 
 
-print(listAdministradora)
+# print(listAdministradora)
 
-print(nLine)
+# print(nLine)
 
 sleep(30)
 
