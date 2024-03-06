@@ -104,7 +104,7 @@ xpathTipoComissaoPagamento = [
     '//*[@id="frm:cbTpConfig"]',
     '//*[@id="frm:cbTpConfig"]/option[1]'  # Pagamento
     ]
-listXpathCargoAdminstradoraPagamento = [
+listXpathCargAdminsPag = [
     '//*[@id="frm:cbCargo"]',
     '//*[@id="frm:cbAdministradora"]',
     '//*[@id="frm:cbTpRecebimento"]'
@@ -268,8 +268,8 @@ if salesSetupPay:
     # caminho no site para entra local especifico pelo xpath
     connect.pressListXpath = listXpathComissoesConfPagamento
     connect.pressListXpath = xpathTipoComissaoPagamento
-    # list os valores existentes no campos cargos, administradora, tipoPagamento
-    connect.pressListXpathReturnListValue = listXpathCargoAdminstradoraPagamento
+    # list os valores existentes no campos cargos, administradora,tipoPagamento
+    connect.pressListXpathReturnListValue = listXpathCargAdminsPag
     # listCargo = connect.pressListXpathReturnListValue  # precisa do tagGet
     # connect.tagGets = tagGetEnd
     # connect.tagReturnValue
@@ -285,24 +285,13 @@ if salesSetupPay:
                 print(f'administradora: {administradora}')
                 print(f'pagamento: {pagamento}')
 
-
-
-
-
 # print(table_Cadastro_Consorciado)
 # print(table_Comissoes_ConfigPagamento)
 # print(table_Cadastro_Funcionario)
-
-
-
-
-
-
 # print(listAdministradora)
-
 # print(nLine)
 
-sleep(30)
+sleep(3000)
 
 # editar tabela tara nao dar conflito com mesmo nome 
 nLine = table_Comissoes_ConfigPagamento[table_Comissoes_ConfigPagamento.columns[0]].count()
@@ -319,7 +308,6 @@ for i in range(nLine):
 #         pass
 #     print(inf) 
 #     table_Cadastro_Consorciado.at[i, 'Vendedor'] = inf
-        
 
 # columnsList = table_Comissoes_ConfigPagamento.columns.to_list()
 # print(columnsList)
