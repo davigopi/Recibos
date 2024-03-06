@@ -35,6 +35,7 @@ tagSon = 'option'
 tagFather = 'select'
 tagGet = 'outerHTML'
 tagGetEnd = 'value'
+tagSelected = '/option[@selected="selected"]'
 '''#################### XPATHS #############################################'''
 listXpathLog = [
     '//*[@id="form:txtUsuarioSircon"]',  # campo usuario
@@ -112,25 +113,63 @@ listXpathCargAdminsPag = [
 listDtPagamentoParcelas = [
     '//*[@id="frm:pnlBloco"]',  # xpath Father
     '//*[@id="frm:cbFormaReceb"]',  # data pagamento por
-    '//*[@id="frm:cb1"]',  # dia util
+    ['//*[@id="frm:cb1"]',
+     '//*[@id="frm:cb2"]',
+     '//*[@id="frm:cb3"]'],  # dias
     '//*[@id="frm:recPriParc"]',  # 1º parcela recebera
     '//*[@id="frm:cb4"]',  # 1º parcela referencia 
     '//*[@id="frm:cbRefApuracaoPrimParc"]',  # periodo inicial tipo
-    '//*[@id="frm:cbP1"]',   # periodo inicial quando
+    ['//*[@id="frm:cbP1"]', 
+     '//*[@id="frm:cbP2"]', 
+     '//*[@id="frm:cbP3"]', 
+     '//*[@id="frm:cbP4"]', 
+     '//*[@id="frm:cbP28"]', 
+     '//*[@id="frm:cbP29"]', 
+     '//*[@id="frm:cbP39"]'],   # periodo inicial quando    
     '//*[@id="frm:cbRefApuracaoFimPrimParc"]',  # periodo final tipo
-    '//*[@id="frm:cbP5"]',  # periodo final quando
+    ['//*[@id="frm:cbP5"]', 
+     '//*[@id="frm:cbP6"]', 
+     '//*[@id="frm:cbP7"]', 
+     '//*[@id="frm:cbP8"]',
+     '//*[@id="frm:cbP30"]',
+     '//*[@id="frm:cbP40"]',
+     '//*[@id="frm:j_idt193"]'],  # periodo final quando
     '//*[@id="frm:recConfimac"]',  # Demais parcela recebera
     '//*[@id="frm:cbP10"]',  # Demais parcela referencia 
     '//*[@id="frm:cbRefApuracaoConfirmacoes"]',  # periodo inicial tipo
-    '//*[@id="frm:cbP11"]',   # periodo inicial quando
+    ['//*[@id="frm:cbP11"]', 
+     '//*[@id="frm:cbP12"]', 
+     '//*[@id="frm:cbP13"]', 
+     '//*[@id="frm:cbP14"]',
+     '//*[@id="frm:cbP31"]',
+     '//*[@id="frm:cbP38"]',
+     '//*[@id="frm:cbP41"]'],   # periodo inicial quando
     '//*[@id="frm:cbRefApuracaoFimConfirmacoes"]',  # periodo final tipo
-    '//*[@id="frm:cbP15"]',  # periodo final quando
+    ['//*[@id="frm:cbP15"]', 
+     '//*[@id="frm:cbP16"]', 
+     '//*[@id="frm:cbP17"]',
+     '//*[@id="frm:cbP18"]', 
+     '//*[@id="frm:cbP32"]',
+     '//*[@id="frm:cbP37"]',
+     '//*[@id="frm:cbP42"]'],  # periodo final quando
     '//*[@id="frm:recFat"]',  # Faturamento recebera
     '//*[@id="frm:cbP19"]',  # Faturamento referencia 
     '//*[@id="frm:cbRefApuracaoFaturamento"]',  # periodo inicial tipo
-    '//*[@id="frm:cbP20"]',   # periodo inicial quando
+    ['//*[@id="frm:cbP20"]', 
+     '//*[@id="frm:cbP21"]', 
+     '//*[@id="frm:cbP22"]',
+     '//*[@id="frm:cbP23"]',
+     '//*[@id="frm:cbP33"]',
+     '//*[@id="frm:cbP36"]',
+     '//*[@id="frm:cbP43"]'],   # periodo inicial quando
     '//*[@id="frm:cbRefApuracaoFimFaturamento"]',  # periodo final tipo
-    '//*[@id="frm:cbP24"]',  # periodo final quando
+    ['//*[@id="frm:cbP24"]',
+     '//*[@id="frm:cbP25"]',
+     '//*[@id="frm:cbP26"]',
+     '//*[@id="frm:cbP27"]',
+     '//*[@id="frm:cbP34"]',
+     '//*[@id="frm:cbP35"]',
+     '//*[@id="frm:cbP44"]'],  # periodo final quando
 ]
 
 '''#################### ABRIR SITES ########################################'''
@@ -264,6 +303,7 @@ if salesSetupPay:
     connect.tagSons = tagSon
     connect.tagFathers = tagFather
     connect.tagGets = tagGet
+    connect.tagSelecteds = tagSelected
     connect.tagReturnValue
     # caminho no site para entra local especifico pelo xpath
     connect.pressListXpath = listXpathComissoesConfPagamento
@@ -279,11 +319,13 @@ if salesSetupPay:
         cargo = cargoOutros[0]
         for administradoraOutros in cargoOutros[1]:
             administradora = administradoraOutros[0]
-            for pagamento in administradoraOutros[1]:
+            for tipopagamentoOutros in administradoraOutros[1]:
+                tipopagamento = tipopagamentoOutros[0]
                 print('###################')
                 print(f'cargo: {cargo}')
                 print(f'administradora: {administradora}')
-                print(f'pagamento: {pagamento}')
+                print(f'tipo de pagamento: {tipopagamento}')
+                print(f'Informações: {tipopagamentoOutros[1]}')
 
 # print(table_Cadastro_Consorciado)
 # print(table_Comissoes_ConfigPagamento)

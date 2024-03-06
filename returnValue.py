@@ -33,6 +33,9 @@ class ReturnValue:
         self.tagSon = None
         self.tagGet = None
         self.value = None
+        self.tagSelected = None
+        self.timeSleep = 0
+        self.attempt = 0
 
     @property
     def xpathFathers(self):
@@ -67,6 +70,30 @@ class ReturnValue:
         self.tagGet = tagValue
 
     @property
+    def tagSelecteds(self):
+        return None
+    
+    @tagSelecteds.setter
+    def tagSelecteds(self, tagSelected):
+        self.tagSelected = tagSelected
+
+    @property
+    def timeSleeps(self):
+        return None
+    
+    @timeSleeps.setter
+    def timeSleeps(self, timeSleep):
+        self.timeSleep = timeSleep
+
+    @property
+    def attempts(self):
+        return None
+    
+    @attempts.setter
+    def attempts(self, attempt):
+        self.attempt = attempt
+
+    @property
     def xpathXpathTag(self):
         return self.value
     
@@ -81,10 +108,31 @@ class ReturnValue:
                         By.XPATH, xpath).get_attribute(self.tagGet)
                 break
             except excecaoAll:
-                if count >= 3:
+                if count >= self.attempt:
                     self.value = False
                     break
                 sleep(0.2)
+
+    @property
+    def xpathXpathTagSelected(self):
+        return self.value
+    
+    @xpathXpathTagSelected.setter
+    def xpathXpathTagSelected(self, xpath):
+        count = 0
+        xpath += self.tagSelected
+        while True:
+            try:
+                count += 1
+                self.value = self.driver.find_element(
+                    By.XPATH, self.xpathFather).find_element(
+                        By.XPATH, xpath).text
+                break
+            except excecaoAll:
+                if count >= 3:
+                    self.value = False
+                    break
+                sleep(self.timeSleep)
 
     @property
     def xpathNameTag(self):

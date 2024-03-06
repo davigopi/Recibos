@@ -61,6 +61,7 @@ class Connect:
         self.tagSon = None
         self.tagFather = None
         self.tagGet = None
+        self.tagSelected = None
         self.file = None
         self.month = None
         self.valueAdministradora = None
@@ -110,6 +111,14 @@ class Connect:
     @tagGets.setter
     def tagGets(self, tagGet):
         self.tagGet = tagGet
+
+    @property
+    def tagSelecteds(self):
+        return None
+    
+    @tagSelecteds.setter
+    def tagSelecteds(self, tagSelected):
+        self.tagSelected = tagSelected
 
     @property
     def listValues(self):
@@ -164,6 +173,7 @@ class Connect:
         self.returnValue.tagSons = self.tagSon
         self.returnValue.tagFathers = self.tagFather
         self.returnValue.tagGets = self.tagGet
+        self.returnValue.tagSelecteds = self.tagSelected
 
     @property
     def valueExistAdministradoras(self):
@@ -508,17 +518,26 @@ class Connect:
                 for pagamento in listPagamento:
                     self.mouseKeyboard.clickValue = pagamento
                     listValueTemp4 = []
-                    for xpathConsole in listXpath:
+                    for key, xpathConsole in enumerate(listXpath):
                         # o primeiro xpath é o pai
-                        if xpathConsole == listXpath[0]:
+                        if key == 0:
                             self.returnValue.xpathFathers = xpathConsole 
+                            self.returnValue.timeSleeps = 0.5
+                            self.returnValue.attempts = 6
                             continue
-                        self.returnValue.tagGets = "option[@selected]"
-                        self.returnValue.xpathXpathTag = xpathConsole
-                        value = self.returnValue.xpathXpathTag
+                        if key in [2, 6, 8, 12, 14, 18, 20]:
+                            self.returnValue.timeSleeps = 0
+                            self.returnValue.attempts = 1
+                            for xpathConsoleSingle in xpathConsole:
+                                self.returnValue.xpathXpathTagSelected = xpathConsoleSingle
+                                value = self.returnValue.xpathXpathTagSelected
+                                if value is not False:
+                                    break
+                        else:
+                            self.returnValue.xpathXpathTagSelected = xpathConsole
+                            value = self.returnValue.xpathXpathTagSelected
                         listValueTemp4.append(value)
                     listValueTemp3.append([pagamento, listValueTemp4])
-                    break
                 listValueTemp2.append([administradora, listValueTemp3])
                 break
             listValueTemp1.append([cargo, listValueTemp2])
