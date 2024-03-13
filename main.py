@@ -14,10 +14,12 @@ user = 'davigopi@gmail.com'
 password = '36vad28'
 month = 6
 pathTables = Path(__file__).parent/'tables'
-arqTableSales = pathTables/'table_Cadastro_Consorciado.csv'
-arqTableSalesSetup = pathTables/'table_Comissoes_Configuracao.csv'
-arqTableCommissionSetup = pathTables/'table_Comissoes_ConfigPagamento.csv'
-arqTableFunction = pathTables/'table_Cadastro_Funcionario.csv'
+arqTableCadastroConsorciado = pathTables/'table_Cadastro_Consorciado.csv'
+arqTableCadastroFuncionario = pathTables/'table_Cadastro_Funcionario.csv'
+arqTableCadastroAta = pathTables/'table_Cadastro_Ata.csv'
+arqTableComissoesConfiguracao = pathTables/'table_Comissoes_Configuracao.csv'
+arqTableComissoesConfigPagamento = pathTables/'table_Comissoes_ConfigPagamento.csv'
+
 pathDonwload = os.environ['USERPROFILE'] + '\\Downloads'
 arqDonwloadSales = pathDonwload + '\\consorciados.csv'
 arqDonwloadFunction = pathDonwload + '\\funcionarios.csv'
@@ -172,6 +174,15 @@ listXpathDtPagamentoParcelas = [
      '//*[@id="frm:cbP35"]',
      '//*[@id="frm:cbP44"]'],  # periodo final quando
 ]
+
+listXpathMinutes = [
+    '//*[@id="menucadastro"]/a',  # menu cadastro
+    '//*[@id="menucadastro"]/ul/li[2]/a',  # menu Ata
+    '//*[@id="frm:cbAno"]',  # Ano
+    '//*[@id="frm:cbAdministradora"]',  # administradora
+    # '//*[@id="btnGerarXls"]'  # botao consultar
+]
+
 headerDtPagamentoParcelas=[
     'Cargo', 'Administradora', 'Tipo Pagamento', 'Dt pag. por', 'dia pag.',
     '1P recebera', '1P referencia', '1P periodo inicial', '1P dt inicial', 
@@ -186,13 +197,16 @@ openSite = True
 sales = False
 functionSetup = False
 salesSetup = False
-salesSetupPay = True
+salesSetupPay = False
+minutesSetup = True
+
 
 if openSite is False:
     sales = False
     salesSetup = False
     salesSetupPay = False
     functionSetup = False
+    minutesSetup = False
 
 
 ######################### defined ################################
@@ -218,40 +232,48 @@ if openSite:
 else:
     driver.quit()
 
+######################### table_Cadastro_Consorciado ##########################
 if sales:
     connect.files = arqDonwloadSales
     connect.months = month
     connect.sales = listXpathSales
     table_Cadastro_Consorciado = connect.sales
     table_Cadastro_Consorciado.to_csv(
-        "tables\\table_Cadastro_Consorciado.csv",
-        index=False, 
-        header=True, 
-        sep=';'
+        arqTableCadastroConsorciado,
+        sep=';',
+        index=False,
+        header=True
         )
-else: 
-    # ler as tabelas que para nao precisar executar novamente
-    table_Cadastro_Consorciado = pd.read_csv(arqTableSales, sep=';', 
-                                             encoding='utf-8', 
-                                             dtype=str)
+else:  # ler as tabelas que para nao precisar executar novamente
+    table_Cadastro_Consorciado = pd.read_csv(
+        arqTableCadastroConsorciado,
+        sep=';',
+        encoding='utf-8',
+        dtype=str
+        )
 
+####################### table_Cadastro_Funcionario ############################
+    
 if functionSetup:
     connect.files = arqDonwloadFunction
     connect.function = listXpathFunction
     table_Cadastro_Funcionario = connect.function
     table_Cadastro_Funcionario.to_csv(
-        "tables\\table_Cadastro_Funcionario.csv",
-        index=False, 
-        header=True, 
-        sep=';'
+        arqTableCadastroFuncionario,
+        sep=';',
+        index=False,
+        header=True,
         )  # type: ignore
 else:
-    table_Cadastro_Funcionario = pd.read_csv(arqTableFunction, sep=';', 
-                                             encoding='utf-8', 
-                                             dtype=str)
+    table_Cadastro_Funcionario = pd.read_csv(
+        arqTableCadastroFuncionario,
+        sep=';',
+        encoding='utf-8',
+        dtype=str
+        )
 
 
-# para limitar pesquisa escolhida pelo usuario
+########## Limitar pesquisa escolhida pelo usuario ###########################
 if limitSearchChosse is True:
     connect.valueChooseAdministradoras = valueChooseAdministradora
     connect.valueChooseCargos = valueChooseCargo
@@ -260,6 +282,21 @@ if limitSearchSystem is True:
     connect.valueExistCargos = table_Cadastro_Funcionario
 if limitSearchDeleteWord is True:
     connect.valueExistTabelarecebimento = valueChooseTabelarecebimento
+
+
+########################## table_Cadastro_Ata #################################
+if minutesSetup is True:
+    connect.months = month
+    connect.minutes = listXpathMinutes
+else:
+    table_Cadastro_Ata = pd.read_csv(
+        arqTableCadastroAta,
+        sep=';',
+        encoding='utf-8',
+        dtype=str
+        )
+
+
 
 if salesSetup:
     connect.pressListXpath = listXpathComissoesConfiguracao
@@ -296,11 +333,11 @@ if salesSetup:
     connect.listColunmToTable
     table_Comissoes_Configuracao = connect.renameColumn
     table_Comissoes_Configuracao.to_csv(
-        arqTableSalesSetup, index=False, header=True,  sep=';')  # type: ignore
+        arqTableComissoesConfiguracao, index=False, header=True,  sep=';')  # type: ignore
     # table.to_csv("table2.csv", index=False, header=True)
 else:
     table_Comissoes_Configuracao = pd.read_csv(
-        arqTableSalesSetup, sep=';', encoding='utf-8', dtype=str)
+        arqTableComissoesConfiguracao, sep=';', encoding='utf-8', dtype=str)
 
 if salesSetupPay:
     connect.tagSons = tagSon
@@ -322,17 +359,25 @@ if salesSetupPay:
     listFull = connect.organizeListLine
     table_Comissoes_ConfigPagamento = connect.listLineToTable
     table_Comissoes_ConfigPagamento.to_csv(
-        arqTableCommissionSetup, index=False, header=True, sep=';'
+        arqTableComissoesConfigPagamento, index=False, header=True, sep=';'
         )  # type: ignore
 
+else:
+    table_Comissoes_ConfigPagamento = pd.read_csv(
+        arqTableComissoesConfigPagamento, sep=';', encoding='utf-8', dtype=str)
 
-# print(table_Cadastro_Consorciado)
-# print(table_Comissoes_Configuracao)
-# print(table_Cadastro_Funcionario)
-# print(listAdministradora)
-# print(nLine)
+listTable = [table_Cadastro_Consorciado,
+             table_Cadastro_Funcionario,
+             table_Comissoes_Configuracao,
+             table_Comissoes_ConfigPagamento]
 
-sleep(3000)
+for key, list in enumerate(listTable):
+    print(list)
+    print(key)
+    sleep(5)
+
+
+sleep(333)
 
 # editar tabela tara nao dar conflito com mesmo nome 
 nLine = table_Comissoes_Configuracao[table_Comissoes_Configuracao.columns[0]].count()

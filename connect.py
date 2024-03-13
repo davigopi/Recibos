@@ -5,7 +5,7 @@ from asyncio.windows_events import NULL
 from contextlib import nullcontext
 from mailbox import NotEmptyError
 from contextlib import contextmanager
-from msilib.text import tables
+# from msilib.text import tables
 # import re
 import sys
 # from msilib.schema import Property
@@ -35,6 +35,9 @@ from selenium.common.exceptions import (
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 from returnValue import ReturnValue
+from renemaText import RenameText
+from dateMonthYear import DateMonthYear
+from mouseKeyboard import MouseKeyboard
 
 excecaoAll = (
     NoSuchElementException,
@@ -45,7 +48,6 @@ excecaoAll = (
     InvalidSelectorException,
     TimeoutException
     )
-
 
 class Connect:
     def __init__(self, *args, **kwargs) -> None:
@@ -296,6 +298,45 @@ class Connect:
                 if self.df is False:  # tem que repetir se download nao exis
                     clickOk = False
         self.dfNew = self.df
+
+
+    @property
+    def minutes(self): 
+        return self.dfNew
+    
+    @minutes.setter
+    def minutes(self, listXpath):
+        dateMonthYear = DateMonthYear()
+        dateMonthYear.listMonthYear = self.month
+        list = dateMonthYear.listMonthYear
+        for key, xpath in enumerate(listXpath):
+            clickOk = False
+            while clickOk is False:
+                if key in (0, 1):
+                    self.mouseKeyboard.clickXpath = xpath
+                    clickOk = self.mouseKeyboard.clickXpath
+                if key == 2:  # selecionar ano
+                    xpathYear = xpath
+                    clickOk = True
+                if key == 3:
+                    for administradora in self.listExistAdministradoras:
+                        print(administradora)
+                        self.mouseKeyboard.clickXpath = xpath
+                        # clickOk = self.mouseKeyboard.clickXpath
+                        self.mouseKeyboard.clickValue = administradora
+                        for year in list[0]:
+                            print(year)
+                            self.mouseKeyboard.clickXpath = xpathYear
+                            clickOk = self.mouseKeyboard.clickXpath
+                            self.mouseKeyboard.clickValue = year
+                            sleep(3)
+        #             self.df = file.readCsv
+        #         if self.df is False:  # tem que repetir se download nao exis
+        #             clickOk = False
+        # self.dfNew = self.df
+        print('fim')
+        sleep(1000)
+
 
     @property
     def pressListXpath(self):
@@ -1080,110 +1121,6 @@ class ImageManip:
                     if waitImg <= 0.6:
                         similariyImg = 1
                         waitImg = 0.9
-
-    
-class MouseKeyboard:
-    def __init__(self, *args, **kwargs) -> None:
-        self.driver = kwargs.get('driver')
-        # self.xpath = kwargs.get('xpath')
-        self.excecao = (NoSuchElementException
-                        , ElementNotInteractableException
-                        , ElementClickInterceptedException
-                        , StaleElementReferenceException
-                        , InvalidArgumentException
-                        , TimeoutException
-                        )
-        self.numberTimesRepeated = 0
-        self.clickOk = None
-        self.locationSearch = '*'
-        self.writeSec = None
-
-    @property
-    def writeSecs(self):
-        return self.writeSec
-    
-    @writeSecs.setter
-    def writeSecs(self, writeSec):
-        self.writeSec = writeSec
-
-    @property
-    def locationSearchTag(self):
-        return self.locationSearch
-    
-    @locationSearchTag.setter
-    def locationSearchTag(self, xpath):
-        self.locationSearch = xpath
-
-    @ property
-    def clickXpath(self):
-        return self.clickOk
-
-    @clickXpath.setter
-    def clickXpath(self, xpath):   
-        wait = WebDriverWait(self.driver, 1)
-        while True:
-            try:
-                wait.until(EC.presence_of_element_located((By.XPATH, xpath)))
-                element = self.driver.find_element(By.XPATH, xpath)
-                element.click()
-                self.numberTimesRepeated = 0
-                self.clickOk = True
-                break
-            except self.excecao:
-                self.numberTimesRepeated += 1
-                if self.numberTimesRepeated >= 4:
-                    if self.numberTimesRepeated >= 10:
-                        print(f'Erro, mais de dez tentativas, em click do xpath {xpath}')
-                        sys.exit()
-                    else:
-                        sleep(1)
-                        self.clickOk = False
-                        break
-
-    @property
-    def clickValue(self):
-        return None
-    
-    @clickValue.setter
-    def clickValue(self, text):
-        self.numberTimesRepeated = 0
-        while True:
-            try:
-                self.driver.find_element(By.XPATH, f"//{self.locationSearchTag}[contains(text(),'{text}')]").click()
-                sleep(0.5)
-                break
-            except self.excecao:
-                self.numberTimesRepeated += 1
-                if self.numberTimesRepeated >= 4:
-                    if self.numberTimesRepeated >= 10:
-                        print(f'Erro, mais de dez tentativas, em click no texto {text}')
-                        sys.exit()
-                    else:
-                        sleep(1)
-            
-    @property
-    def keys(self):
-        return self.clickOk
-
-    @keys.setter
-    def keys(self, xpath):
-        while True:
-            try:
-                self.driver.find_element(By.XPATH, xpath).clear()
-                self.driver.find_element(By.XPATH, xpath).send_keys(self.writeSec)
-                self.clickOk = True
-                break
-            except self.excecao:
-                sleep(0.2)
-                self.numberTimesRepeated += 1
-                if self.numberTimesRepeated >= 4:
-                    if self.numberTimesRepeated >= 10:
-                        print(f'Erro, mais de dez tentativas, em click do xpath {xpath}')
-                        sys.exit()
-                    else:
-                        sleep(1)
-                        self.clickOk = False
-                        break
 
 
 class ButtonsSpecial:
