@@ -539,10 +539,46 @@ class Connect:
                         listValueTemp4.append(value)
                     listValueTemp3.append([pagamento, listValueTemp4])
                 listValueTemp2.append([administradora, listValueTemp3])
-                break
             listValueTemp1.append([cargo, listValueTemp2])
-            break
-        self.listValue = listValueTemp1      
+        self.listValue = listValueTemp1
+
+    @property
+    def organizeListLine(self):
+        return self.listValue
+
+    @organizeListLine.setter
+    def organizeListLine(self, headerDtPagamentoParcelas):
+        listValueTemp = []
+        listValueTemp.append(headerDtPagamentoParcelas)
+        key = 0
+        for cargoOutros in self.listValue:
+            cargo = cargoOutros[0]
+            for administradoraOutros in cargoOutros[1]:
+                administradora = administradoraOutros[0]
+                for tipopagamentoOutros in administradoraOutros[1]:
+                    tipopagamento = tipopagamentoOutros[0]
+                    listValueTemp2 = []
+                    listValueTemp2.append(cargo)
+                    listValueTemp2.append(administradora)
+                    listValueTemp2.append(tipopagamento)
+                    for outros in tipopagamentoOutros[1]:
+                        listValueTemp2.append(outros)
+                    key += 1
+                    strKey = str(key)
+                    listValueTemp2.append(strKey)
+                    listValueTemp.append(listValueTemp2)
+        self.listValue = listValueTemp
+        
+    @property
+    def listLineToTable(self):
+        for key, line in enumerate(self.listValue):
+            if key == 0:
+                # Criar um DataFrame vazio
+                self.table = pd.DataFrame(index=[line[-1]], columns=line)
+                continue
+            # Adicionar a nova linha ao DataFrame existente
+            self.table.loc[len(self.table)] = line
+        return self.table
 
     @property
     def addNone(self):
@@ -631,7 +667,7 @@ class Connect:
         self.listValue = listValue
 
     @property
-    def listToTable(self):
+    def listColunmToTable(self):
         self.table = pd.DataFrame(index=self.listValue[-1], columns=['Index'])
         self.table['Index'] = self.listValue[-1]
         for number in range(100):
