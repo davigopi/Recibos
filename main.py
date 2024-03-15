@@ -179,8 +179,8 @@ listXpathMinutes = [
     '//*[@id="menucadastro"]/a',  # menu cadastro
     '//*[@id="menucadastro"]/ul/li[2]/a',  # menu Ata
     '//*[@id="frm:cbAno"]',  # Ano
+    '//*[@id="frm:pnlLista"]',   # informacao OBS: alterado ordem.
     '//*[@id="frm:cbAdministradora"]',  # administradora
-    # '//*[@id="btnGerarXls"]'  # botao consultar
 ]
 
 headerDtPagamentoParcelas=[
