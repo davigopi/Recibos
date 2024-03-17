@@ -195,5 +195,29 @@ class ReturnValue:
                             text=True))  # pega cada valro 
                 self.value = listValue
                 break  
-            except (AttributeError, Exception) as e:
+            except (AttributeError, Exception):
+                sleep(0.2)
+
+    @property
+    def xpath_to_tags(self):
+        return self.value
+    
+    @xpath_to_tags.setter
+    def xpath_to_tags(self, xpath):
+        count = 0
+        while True:
+            count += 1
+            try:
+                # return all tags
+                self.value = self.driver.find_element(
+                    By.XPATH, xpath).get_attribute(self.tagGet)
+                # Erro (FeatureNotFound) if not install: pip install lxml
+                # test loading table
+                BeautifulSoup(self.value, "lxml").find(
+                    self.tagFather).findAll(self.tagSon)
+                break
+            except (AttributeError, Exception):
+                if count >= 5:
+                    self.value = False
+                    break
                 sleep(0.2)

@@ -39,6 +39,7 @@ from renemaText import RenameText
 from dateMonthYear import DateMonthYear
 from mouseKeyboard import MouseKeyboard
 from tableManip import TableManip
+from tags_to_table import Tags_to_table
 
 excecaoAll = (
     NoSuchElementException,
@@ -72,6 +73,9 @@ class Connect:
         self.valueCargo = None
         self.mouseKeyboard = MouseKeyboard(driver=self.driver)
         self.returnValue = ReturnValue(driver=self.driver)
+        self.dateMonthYear = DateMonthYear()
+        self.tags_to_table = Tags_to_table()
+        self.tableManip = TableManip()
         self.listExistCargos = None
         self.listExistAdministradoras = None
         self.listExistTabelarecebimento = None
@@ -273,10 +277,10 @@ class Connect:
                     if self.df is False:  # tem que repetir se download nao exis
                         clickOk = False
             if fileNotExist is True:
-                table = TableManip()
-                table.dfs = self.df
-                table.dfNews = self.dfNew
-                self.dfNew = table.merge
+                tableManip = TableManip()
+                tableManip.dfs = self.df
+                tableManip.dfNews = self.dfNew
+                self.dfNew = tableManip.merge
         file.delete
         file.writeCsv = self.dfNew
 
@@ -308,9 +312,9 @@ class Connect:
     
     @minutes.setter
     def minutes(self, listXpath):
-        dateMonthYear = DateMonthYear()
-        dateMonthYear.listMonthYear = self.month
-        list = dateMonthYear.listMonthYear
+        # returnValue = ReturnValue()
+        self.dateMonthYear.listMonthYear = self.month
+        list = self.dateMonthYear.listMonthYear
         for key, xpath in enumerate(listXpath):
             clickOk = False
             while clickOk is False:
@@ -334,6 +338,23 @@ class Connect:
                             self.mouseKeyboard.clickXpath = xpathYear
                             clickOk = self.mouseKeyboard.clickXpath
                             self.mouseKeyboard.clickValue = year
+                            self.returnValue.xpath_to_tags = xpathTableMinutes
+                            html = self.returnValue.xpath_to_tags
+                            if html is not False:
+                                self.tags_to_table.tables = html
+                                table = self.tags_to_table.tables
+                                self.tableManip.renemar_data = table
+                                self.tableManip.del_column = 'Ações'
+                                self.tableManip.column_home_values = 'Período'
+                                self.tableManip.add_column = 'Período final'
+                                self.tableManip.rename_name_column = 'Período inicial'
+                                self.tableManip.value_separates = 'à'
+                                self.tableManip.value_before_afters = 'before'
+                                self.tableManip.rename_value_column = 'Período inicial'
+                                self.tableManip.value_before_afters = 'after'
+                                self.tableManip.rename_value_column = 'Período final'
+                                # print(self.tags_to_table.tables)
+                                sleep(50)
                 
         #             self.df = file.readCsv
         #         if self.df is False:  # tem que repetir se download nao exis

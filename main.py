@@ -34,11 +34,15 @@ limitSearchSystem = True
 limitSearchDeleteWord = True
 valueChooseTabelarecebimento = ['FERIAS']
 '''#################### TAGS ###############################################'''
-tagSon = 'option'
-tagFather = 'select'
-tagGet = 'outerHTML'
-tagGetEnd = 'value'
-tagSelected = '/option[@selected="selected"]'
+tag_option = 'option'
+tag_select = 'select'
+tag_outerHTML = 'outerHTML'
+tag_value = 'value'
+tag_selected = '/option[@selected="selected"]'
+tag_table = 'table'
+tag_row = 'tr'
+tag_data = 'td'
+tag_cab = 'th'
 '''#################### XPATHS #############################################'''
 listXpathLog = [
     '//*[@id="form:txtUsuarioSircon"]',  # campo usuario
@@ -283,10 +287,13 @@ if limitSearchSystem is True:
 if limitSearchDeleteWord is True:
     connect.valueExistTabelarecebimento = valueChooseTabelarecebimento
 
-
 ########################## table_Cadastro_Ata #################################
 if minutesSetup is True:
     connect.months = month
+    connect.tagSons = tag_data
+    connect.tagFathers = tag_row
+    connect.tagGets = tag_outerHTML
+    connect.tagReturnValue
     connect.minutes = listXpathMinutes
 else:
     table_Cadastro_Ata = pd.read_csv(
@@ -296,14 +303,13 @@ else:
         dtype=str
         )
 
-
-
+########################## table_Comissoes_Configuracao #######################
 if salesSetup:
     connect.pressListXpath = listXpathComissoesConfiguracao
     connect.pressListXpath = xpathTipoComissao
-    connect.tagSons = tagSon
-    connect.tagFathers = tagFather
-    connect.tagGets = tagGet
+    connect.tagSons = tag_option
+    connect.tagFathers = tag_select
+    connect.tagGets = tag_outerHTML
     connect.tagReturnValue
     # criar lista de administradoras
     connect.pressXpathResultListValue = xpathAdministradora
@@ -312,7 +318,7 @@ if salesSetup:
     # criar lista de administradoras + tabela de recebiemnto + cargos
     connect.pressListValueXpathResultListValueDouble = xpathCargo
     # alterar a tagets
-    connect.tagGets = tagGetEnd
+    connect.tagGets = tag_value
     connect.tagReturnValue
     # criar lista de administradoras + tabela de recebiemnto + cargos + valores 
     connect.pressListValueResultListValueTriple = listCampoCotaPeriodoParcela
@@ -339,11 +345,12 @@ else:
     table_Comissoes_Configuracao = pd.read_csv(
         arqTableComissoesConfiguracao, sep=';', encoding='utf-8', dtype=str)
 
+########################## table_Comissoes_ConfigPagamento ####################
 if salesSetupPay:
-    connect.tagSons = tagSon
-    connect.tagFathers = tagFather
-    connect.tagGets = tagGet
-    connect.tagSelecteds = tagSelected
+    connect.tagSons = tag_option
+    connect.tagFathers = tag_select
+    connect.tagGets = tag_outerHTML
+    connect.tagSelecteds = tag_selected
     connect.tagReturnValue
     # caminho no site para entra local especifico pelo xpath
     connect.pressListXpath = listXpathComissoesConfPagamento
@@ -351,7 +358,7 @@ if salesSetupPay:
     # list os valores existentes no campos cargos, administradora,tipoPagamento
     connect.pressListXpathReturnListValue = listXpathCargAdminsPag
     # listCargo = connect.pressListXpathReturnListValue  # precisa do tagGet
-    # connect.tagGets = tagGetEnd
+    # connect.tagGets = tag_value
     # connect.tagReturnValue
     connect.pressListValueReturnListValue = listXpathDtPagamentoParcelas
     # connect.organizeListLine
@@ -366,6 +373,8 @@ else:
     table_Comissoes_ConfigPagamento = pd.read_csv(
         arqTableComissoesConfigPagamento, sep=';', encoding='utf-8', dtype=str)
 
+
+########################## termino de carregameno de tabelas ##################
 listTable = [table_Cadastro_Consorciado,
              table_Cadastro_Funcionario,
              table_Comissoes_Configuracao,
