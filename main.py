@@ -2,6 +2,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 from connect import Connect, XpathManip
+from table_manip_value import Table_manip_value
 from pathlib import Path
 # from selenium.common.exceptions import TimeoutException
 import os
@@ -12,13 +13,15 @@ import pandas as pd
 siteSircon = "https://app.sistemasircon.com.br/login"
 user = 'davigopi@gmail.com'
 password = '36vad28'
-month = 6
+month = 24
 pathTables = Path(__file__).parent/'tables'
 arqTableCadastroConsorciado = pathTables/'table_Cadastro_Consorciado.csv'
 arqTableCadastroFuncionario = pathTables/'table_Cadastro_Funcionario.csv'
 arqTableCadastroAta = pathTables/'table_Cadastro_Ata.csv'
 arqTableComissoesConfiguracao = pathTables/'table_Comissoes_Configuracao.csv'
 arqTableComissoesConfigPagamento = pathTables/'table_Comissoes_ConfigPagamento.csv'
+arqTableTeste = pathTables/'table_teste.csv'
+arqInformacao = pathTables/'informacao.txt'
 
 pathDonwload = os.environ['USERPROFILE'] + '\\Downloads'
 arqDonwloadSales = pathDonwload + '\\consorciados.csv'
@@ -197,21 +200,18 @@ headerDtPagamentoParcelas=[
     ]
 
 '''#################### ABRIR SITES ########################################'''
-openSite = True
+# openSite = True
+# sales = True
+# functionSetup = True
+# salesSetup = True
+# salesSetupPay = True
+# minutesSetup = True
+openSite = False
 sales = False
 functionSetup = False
 salesSetup = False
 salesSetupPay = False
-minutesSetup = True
-
-
-if openSite is False:
-    sales = False
-    salesSetup = False
-    salesSetupPay = False
-    functionSetup = False
-    minutesSetup = False
-
+minutesSetup = False
 
 ######################### defined ################################
 options = webdriver.ChromeOptions()
@@ -295,6 +295,13 @@ if minutesSetup is True:
     connect.tagGets = tag_outerHTML
     connect.tagReturnValue
     connect.minutes = listXpathMinutes
+    table_Cadastro_Ata = connect.minutes
+    table_Cadastro_Ata.to_csv(
+        arqTableCadastroAta,
+        sep=';',
+        index=False,
+        header=True,
+        )  # type: ignore
 else:
     table_Cadastro_Ata = pd.read_csv(
         arqTableCadastroAta,
@@ -375,46 +382,63 @@ else:
 
 
 ########################## termino de carregameno de tabelas ##################
-listTable = [table_Cadastro_Consorciado,
-             table_Cadastro_Funcionario,
-             table_Comissoes_Configuracao,
-             table_Comissoes_ConfigPagamento]
+# listTable = [table_Cadastro_Consorciado,
+#              table_Cadastro_Funcionario,
+#              table_Cadastro_Ata,
+#              table_Comissoes_Configuracao,
+#              table_Comissoes_ConfigPagamento]
 
-for key, list in enumerate(listTable):
-    print(list)
-    print(key)
-    sleep(5)
+# for key, list in enumerate(listTable):
+#     print(list)
+#     print(key)
 
+# Verificar duplicatas nas colunas de junção
+table_manip_value = Table_manip_value()
+''' manipular table_Cadastro_Funcionario, para alterar os Nomes duplicados com
+os Cargos, que gera comissão duplicada, pois o mesmo tem dois ou mais cargos'''
+table_manip_value.tables = table_Cadastro_Funcionario
+table_manip_value.row_duplicate_column_1 = 'Nome'
+table_manip_value.list_columns_one_two = ['Nome', 'Cargo']
+table_manip_value.edit_data_column_2 = ['Nome', 'Cargo']
+table_Cadastro_Funcionario = table_manip_value.edit_data_column_2
+''' manipular table_Cadastro_Consorciado, para altera rcoluna Vendedor
+e igualar aos alterados no table_Cadastro_Funcionario'''
+table_manip_value.tables = table_Cadastro_Consorciado
+table_manip_value.data_duplicate_change = 'Vendedor'
+table_Cadastro_Consorciado = table_manip_value.data_duplicate_change
+''' manipular table_Comissoes_Configuracao remover as duplicação nas colunas
+'Administradora' e 'Cargo' '''
+table_manip_value.tables = table_Comissoes_Configuracao
+table_manip_value.row_duplicate_column_2 = ['Administradora', 'Cargo']
+table_manip_value.list_columns_one_two_three = ['Administradora',
+                                                'Cargo',
+                                                'Tabela de recebimento']
+# texto = table_manip_value.list_columns_one_two_three
+# for text in texto:
+#     print(text)
+table_manip_value.edit_data_column_3 = ['Administradora',
+                                           'Cargo',
+                                           'Tabela de recebimento']
+table_Comissoes_Configuracao = table_manip_value.edit_data_column_3
 
-sleep(333)
+# table_manip_value.row_duplicate_column_2 = ['Administradora', 'Cargo']
+# table = table_manip_value.row_duplicate_column_2
+# print('##########################################')
+# print(table)
 
-# editar tabela tara nao dar conflito com mesmo nome 
-nLine = table_Comissoes_Configuracao[table_Comissoes_Configuracao.columns[0]].count()
-for i in range(nLine):
-    if 'FERIAS' in table_Comissoes_Configuracao.at[i, 'Tabela de recebimento']: 
-        table_Comissoes_Configuracao.at[i, 'Administradora'] += ' FERIAS'
-        # print(table_Comissoes_Configuracao.at[i, 'Administradora'])
+# for linha in table:
+#     print(linha)
 
-# print(table_Comissoes_Configuracao) 
-#     inf = inf.replace('" ', '')
-#     inf = inf.replace(' "', '')
-#     inf = inf.replace('"', '')
-#     if inf != table_Cadastro_Consorciado.at[i, 'Vendedor']:
-#         pass
-#     print(inf) 
-#     table_Cadastro_Consorciado.at[i, 'Vendedor'] = inf
+# table.to_csv(arqTableTeste, index=False, header=True, sep=';')  # type: ignore
 
-# columnsList = table_Comissoes_Configuracao.columns.to_list()
-# print(columnsList)
-
-# mesclar tabela
-df = pd.merge(table_Cadastro_Consorciado, table_Cadastro_Funcionario, 
+# duplicatas_rows.to_csv(arqTableTeste, index=False, header=True, sep=';')
+print('##########################################')
+table_full = pd.merge(table_Cadastro_Consorciado, table_Cadastro_Funcionario, 
               left_on='Vendedor', right_on='Nome', how='left')
-
 
 # ordenar calunas da tabela para a forma que quiser
 listColumnsStart = ['Administradora', 'Cargo', 'CPF', 'Vendedor', 'Gerente']
-columnsList = df.columns.to_list()
+columnsList = table_full.columns.to_list()
 columnsListNew = []
 for key, columnList in enumerate(columnsList):
     if key == 0:
@@ -423,29 +447,43 @@ for key, columnList in enumerate(columnsList):
     if columnList in listColumnsStart:
         continue
     columnsListNew.append(columnList)
-df = df[columnsListNew]
+table_full = table_full[columnsListNew]
 
 # mesclar tabela 
-df = pd.merge(df, table_Comissoes_Configuracao, on=['Administradora', 'Cargo'], how='left')
+table_full = pd.merge(table_full, table_Comissoes_Configuracao, on=['Administradora', 'Cargo'], how='left')
+print(table_Cadastro_Consorciado)
+print(table_full)
 
 # salvar a tabela
-df.to_csv(
+table_full.to_csv(
     "tables\\tableMerge.csv",
     index=False, 
     header=True, 
     sep=';'
     )  # type: ignore
-# print(df)
 
-# teste para saebr a diferença e mostra que é diferente
+# teste para sabEr a diferença e mostra que é diferente
+num_line = len(table_full)
 nDiferente = 0
-for i in range(nLine):
+count = 0
+with open(arqInformacao, 'w') as arquivo:
+    arquivo.write('Na tabela table_merge foi encontrado duplicado:  \n \n')
+for i in range(num_line):
     i2 = i - nDiferente
-    if df.at[i, 'Vendedor'] != table_Cadastro_Consorciado.at[i2, 'Vendedor']:
-        print(i, '    ', df.at[i, 'Vendedor'], "      ", table_Cadastro_Consorciado.at[i, 'Vendedor'])
-        print()
+    if table_full.at[i, 'Vendedor'] != table_Cadastro_Consorciado.at[i2, 'Vendedor']:
+        count += 1
+        arquivoTxt = str(count) + 'ª divergência \n'
+        arquivoTxt += 'Vendedor: ' + table_full.at[i, 'Vendedor'] + '\n'
+        arquivoTxt += 'Cliente: ' + table_full.at[i, 'Cliente'] + '\n' + '\n'
+
+        with open(arqInformacao, 'a') as arquivo:
+            arquivo.write(arquivoTxt)
         nDiferente += 1
         # break
-        
+
+# # Verificar duplicatas nas colunas de junção
+# duplicatas = table_Comissoes_Configuracao.duplicated(subset=['Administradora', 'Cargo'], keep=False)
+# duplicatas_rows = table_Comissoes_Configuracao[duplicatas]
+# print(duplicatas_rows)
 
 sleep(1)

@@ -11,10 +11,10 @@ class TableManip:
         self.nameNumberColumn = None
         self.value = None
         self.table = None
-        self.column_home_value = None
         self.value_separate = None
-        self.value_before_after = None
-        self.column_fixed_value = None
+        self.value_fixed_column = None
+        self.column_clone = None
+        self.rename_name_column_origin = None
 
     @property
     def dfNews(self):
@@ -32,21 +32,29 @@ class TableManip:
     def dfs(self, df):
         self.df = df
 
-    @property
-    def column_home_values(self):
-        return None
+    # @property
+    # def column_home_values(self):
+    #     return None
     
-    @column_home_values.setter
-    def column_home_values(self, column_home_value):
-        self.column_home_value = column_home_value
+    # @column_home_values.setter
+    # def column_home_values(self, column_home_value):
+    #     self.column_home_value = column_home_value
 
     @property
-    def column_fixed_values(self):
+    def value_fixed_columns(self):
         return None
     
-    @column_fixed_values.setter
-    def column_fixed_values(self, column_fixed_value):
-        self.column_fixed_value = column_fixed_value
+    @value_fixed_columns.setter
+    def value_fixed_columns(self, value_fixed_column):
+        self.value_fixed_column = value_fixed_column
+
+    @property
+    def column_clones(self):
+        return self.column_clone
+    
+    @column_clones.setter
+    def column_clones(self, column_clone):
+        self.column_clone = column_clone
 
     @property
     def value_separates(self):
@@ -57,12 +65,12 @@ class TableManip:
         self.value_separate = value_separate
 
     @property
-    def value_before_afters(self):
+    def rename_name_column_origins(self):
         return None
     
-    @value_before_afters.setter
-    def value_before_afters(self, value_before_after):
-        self.value_before_after = value_before_after
+    @rename_name_column_origins.setter
+    def rename_name_column_origins(self, rename_name_column_origin):
+        self.rename_name_column_origin = rename_name_column_origin
 
     @property
     def nameNumberlines(self):
@@ -124,17 +132,28 @@ class TableManip:
         self.table = table
 
     @property
-    def add_column(self):
+    def add_column_nan(self):
         return self.table
 
-    @add_column.setter
-    def add_column(self, name_column):
-        if self.column_fixed_value is not None:  # criar coluna com valor fixo
-            self.table[name_column] = self.column_fixed_value
-        elif self.column_home_value is None:
-            self.table[name_column] = np.nan
-        else:
-            self.table[name_column] = self.table[self.column_home_value]
+    @add_column_nan.setter
+    def add_column_nan(self, name_column):
+        self.table[name_column] = np.nan
+
+    @property
+    def add_value_fixed_column(self):
+        return self.table
+
+    @add_value_fixed_column.setter
+    def add_value_fixed_column(self, name_column):
+        self.table[name_column] = self.value_fixed_column
+
+    @property
+    def add_column_clone(self):
+        return self.table
+
+    @add_column_clone.setter
+    def add_column_clone(self, name_column):
+        self.table[name_column] = self.table[self.column_clone]
 
     @property
     def del_column(self):
@@ -145,28 +164,37 @@ class TableManip:
         self.table.drop(name_column, axis=1, inplace=True)
 
     @property
-    def rename_name_column(self):
+    def rename_name_column_destiny(self):
         return self.table
 
-    @rename_name_column.setter
-    def rename_name_column(self, name_column):
-        self.table = self.table.rename(
-            columns={self.column_home_value: name_column})
-    
+    @rename_name_column_destiny.setter
+    def rename_name_column_destiny(self, name_column):
+        self.table = self.table.rename(columns={self.rename_name_column_origin: name_column})
+     
     @property
-    def rename_value_column(self):
+    def rename_value_column_before(self):
         return self.table
 
-    @rename_value_column.setter
-    def rename_value_column(self, name_column):
+    @rename_value_column_before.setter
+    def rename_value_column_before(self, name_column):
         num_line, num_column = self.table.shape
         for line in range(num_line):
             inf = self.table.iat[line, self.table.columns.get_loc(name_column)]
-            if self.value_before_after == 'before':
-                inf_re = re.search(r'^(.*?) '+ self.value_separate, inf)
-            elif self.value_before_after == 'after':
-                inf_re = re.search(self.value_separate + r' (.*)$', inf)
+            inf_re = re.search(r'^(.*?) '+ self.value_separate, inf)
             if inf_re:  # só ira alterar se encontrou a self.value_separate
                 inf = inf_re.group(1)
             self.table.iat[line, self.table.columns.get_loc(name_column)] = inf
-        print(self.table)
+
+    @property
+    def rename_value_column_after(self):
+        return self.table
+
+    @rename_value_column_after.setter
+    def rename_value_column_after(self, name_column):
+        num_line, num_column = self.table.shape
+        for line in range(num_line):
+            inf = self.table.iat[line, self.table.columns.get_loc(name_column)]
+            inf_re = re.search(self.value_separate + r' (.*)$', inf)
+            if inf_re:  # só ira alterar se encontrou a self.value_separate
+                inf = inf_re.group(1)
+            self.table.iat[line, self.table.columns.get_loc(name_column)] = inf

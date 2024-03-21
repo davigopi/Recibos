@@ -39,7 +39,8 @@ from renemaText import RenameText
 from dateMonthYear import DateMonthYear
 from mouseKeyboard import MouseKeyboard
 from tableManip import TableManip
-from tags_to_table import Tags_to_table
+from table_from_tags import Table_from_tags
+from buttonsSpecial import ButtonsSpecial
 
 excecaoAll = (
     NoSuchElementException,
@@ -74,7 +75,7 @@ class Connect:
         self.mouseKeyboard = MouseKeyboard(driver=self.driver)
         self.returnValue = ReturnValue(driver=self.driver)
         self.dateMonthYear = DateMonthYear()
-        self.tags_to_table = Tags_to_table()
+        self.table_from_tags = Table_from_tags()
         self.tableManip = TableManip()
         self.listExistCargos = None
         self.listExistAdministradoras = None
@@ -305,10 +306,9 @@ class Connect:
                     clickOk = False
         self.dfNew = self.df
 
-
     @property
     def minutes(self): 
-        return self.dfNew
+        return self.table
     
     @minutes.setter
     def minutes(self, listXpath):
@@ -328,41 +328,39 @@ class Connect:
                     xpathTableMinutes = xpath
                     clickOk = True
                 if key == 4:
+                    tableComplete = False
                     for administradora in self.listExistAdministradoras:
-                        print(administradora)
                         self.mouseKeyboard.clickXpath = xpath
                         # clickOk = self.mouseKeyboard.clickXpath
                         self.mouseKeyboard.clickValue = administradora
                         for year in list[0]:
-                            print(year)
                             self.mouseKeyboard.clickXpath = xpathYear
                             clickOk = self.mouseKeyboard.clickXpath
                             self.mouseKeyboard.clickValue = year
                             self.returnValue.xpath_to_tags = xpathTableMinutes
                             html = self.returnValue.xpath_to_tags
                             if html is not False:
-                                self.tags_to_table.tables = html
-                                table = self.tags_to_table.tables
+                                self.table_from_tags.tables = html
+                                table = self.table_from_tags.tables
                                 self.tableManip.renemar_data = table
                                 self.tableManip.del_column = 'Ações'
-                                self.tableManip.column_home_values = 'Período'
-                                self.tableManip.add_column = 'Período final'
-                                self.tableManip.rename_name_column = 'Período inicial'
+                                self.tableManip.column_clones = 'Período'
+                                self.tableManip.add_column_clone = 'Período final'
+                                self.tableManip.rename_name_column_origins = 'Período'
+                                self.tableManip.rename_name_column_destiny = 'Período inicial'
                                 self.tableManip.value_separates = 'à'
-                                self.tableManip.value_before_afters = 'before'
-                                self.tableManip.rename_value_column = 'Período inicial'
-                                self.tableManip.value_before_afters = 'after'
-                                self.tableManip.rename_value_column = 'Período final'
-                                # print(self.tags_to_table.tables)
-                                sleep(50)
-                
-        #             self.df = file.readCsv
-        #         if self.df is False:  # tem que repetir se download nao exis
-        #             clickOk = False
-        # self.dfNew = self.df
-        print('fim')
-        sleep(1000)
-
+                                self.tableManip.rename_value_column_before = 'Período inicial'
+                                self.tableManip.rename_value_column_after = 'Período final'
+                                self.tableManip.value_fixed_columns = administradora
+                                self.tableManip.add_value_fixed_column = 'Administradora'
+                                self.tableManip.value_fixed_columns = year
+                                self.tableManip.add_value_fixed_column = 'Ano'
+                                table = self.tableManip.add_value_fixed_column
+                                if tableComplete is False:
+                                    tableComplete = table
+                                else:
+                                    tableComplete = pd.concat([tableComplete, table])
+        self.table = tableComplete
 
     @property
     def pressListXpath(self):
@@ -1084,59 +1082,6 @@ class ImageManip:
                     if waitImg <= 0.6:
                         similariyImg = 1
                         waitImg = 0.9
-
-
-class ButtonsSpecial:
-    def __init__(self, lastMonth, func, xpath) -> None:
-        self.lastMonth = lastMonth
-        self.func = func
-        self.xpath = xpath
-
-    @property
-    def clickLeftArrow(self):
-        if self.lastMonth != 0:
-            for _ in range(self.lastMonth):  # quantidade de vezes que tem que retornar
-                self.func.clickXpath = self.xpath
-                clickOk = self.func.clickXpath
-        else:
-            clickOk = True  # ultimo mes nao precisa click
-        return clickOk
-    
-    @property
-    def clickDayStartMonth(self):
-        line = 1
-        column = 7
-        while True:
-            self.xpath = f'//*[@id="ui-datepicker-div"]/table/tbody/tr[{line}]/td[{column}]'
-            self.func.clickXpath = self.xpath
-            clickOk = self.func.clickXpath
-            column -= 1 
-            if column == 0:
-                break 
-        sleep(3) 
-        return clickOk
-    
-    @property
-    def clickDayEndMonth(self):
-        if self.lastMonth != 0:
-            line = 4
-            column = 7
-            while True:
-                self.xpath = f'//*[@id="ui-datepicker-div"]/table/tbody/tr[{line}]/td[{column}]'
-                self.func.clickXpath = self.xpath
-                clickOk = self.func.clickXpath
-                column += 1
-                if (column == 3 and line == 6) or clickOk is False:
-                    clickOk = True
-                    break
-                if column == 8:
-                    line += 1
-                    column = 1  
-        else:
-            clickOk = True
-        sleep(3)
-        return clickOk
-    
 
 if __name__ == '__main__':
     import main
