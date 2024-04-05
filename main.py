@@ -1,27 +1,28 @@
+import os
+from pathlib import Path
+from time import sleep
+from webdriver_manager.chrome import ChromeDriverManager
+import pandas as pd
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
-from connect import Connect, XpathManip
-from table_manip_value import Table_manip_value
-from pathlib import Path
-# from selenium.common.exceptions import TimeoutException
-import os
-from time import sleep
-# import ast
-import pandas as pd
+from typing import Union
+from components.connect import Connect
+from components.xpathManip import XpathManip
+from components.table_manip_value import Table_manip_value
+
 
 siteSircon = "https://app.sistemasircon.com.br/login"
 user = 'davigopi@gmail.com'
 password = '36vad28'
 month = 24
-pathTables = Path(__file__).parent/'tables'
-arqTableCadastroConsorciado = pathTables/'table_Cadastro_Consorciado.csv'
-arqTableCadastroFuncionario = pathTables/'table_Cadastro_Funcionario.csv'
-arqTableCadastroAta = pathTables/'table_Cadastro_Ata.csv'
-arqTableComissoesConfiguracao = pathTables/'table_Comissoes_Configuracao.csv'
-arqTableComissoesConfigPagamento = pathTables/'table_Comissoes_ConfigPagamento.csv'
-arqTableTeste = pathTables/'table_teste.csv'
-arqInformacao = pathTables/'informacao.txt'
+pathTables = Path(__file__).parent / 'tables'
+arqTableCadastroConsorciado = pathTables / 'table_Cadastro_Consorciado.csv'
+arqTableCadastroFuncionario = pathTables / 'table_Cadastro_Funcionario.csv'
+arqTableCadastroAta = pathTables / 'table_Cadastro_Ata.csv'
+arqTableComissoesConfiguracao = pathTables / 'table_Comissoes_Configuracao.csv'
+arqTableComissoesConfigPag = pathTables / 'table_Comissoes_ConfigPagamento.csv'
+arqTableTeste = pathTables / 'table_teste.csv'
+arqInformacao = pathTables / 'informacao.txt'
 
 pathDonwload = os.environ['USERPROFILE'] + '\\Downloads'
 arqDonwloadSales = pathDonwload + '\\consorciados.csv'
@@ -32,7 +33,10 @@ arqDonwloadFunction = pathDonwload + '\\funcionarios.csv'
 '''#################### LIMITAR PESQUISAS ##################################'''
 limitSearchChosse = False
 valueChooseAdministradora = ['DISAL']
-valueChooseCargo = ['CONSULTOR CLT - A PARTIR JAN-2018', 'CONSULTOR DE PARCEIRO']
+valueChooseCargo = [
+    'CONSULTOR CLT - A PARTIR JAN-2018',
+    'CONSULTOR DE PARCEIRO'
+]
 limitSearchSystem = True
 limitSearchDeleteWord = True
 valueChooseTabelarecebimento = ['FERIAS']
@@ -51,10 +55,10 @@ listXpathLog = [
     '//*[@id="form:txtUsuarioSircon"]',  # campo usuario
     '//*[@id="form:txtSenhaSircon"]',  # campo senha
     '//*[@id="form:btLogar"]'  # botao confirmar
-    ]
+]
 # linha coluna calendario
 line = 1
-column = 0  
+column = 0
 xp0 = '//*[@id="menucadastro"]/a'  # menu cadastro
 xp1 = '//*[@id="menucadastro"]/ul/li[5]'  # menu consorciado
 xp2 = '//*[@id="pnlBloco"]/div[6]/div/div[3]/div'  # campo entrega venda inicio
@@ -68,38 +72,38 @@ listXpathSales = [xp0, xp1, xp2, xp3, xp4, xp5, xp6, xp3, xp4, xp5, xp7, xp8]
 listXpathComissoesConfiguracao = [
     '//*[@id="menufinan"]',  # comissões
     '//*[@id="menufinan"]/ul/li[2]'  # Config
-    ]
+]
 xpathTipoComissao = [
     '//*[@id="frm:tpComissao"]',
     '//*[@id="frm:tpComissao"]/option[2]'  # Pagamento
-    ]
+]
 xpathAdministradora = '//*[@id="frm:cbAdministradora"]'
 xpathTabelaRecebimento = '//*[@id="frm:cbTabelaRecebimento"]'
 xpathCargo = '//*[@id="frm:cbCargo"]'
 listCampoCotaPeriodoParcela = []
 for num in range(30):  # quantidade de campos comissões configuracao
-    listCampoCotaPeriodoParcela.append([ 
-        f'//*[@id="frm:pnlEsacalas"]/div[{str(num+1)}]',  # campo 0 a 2 Father
-        [f'frm:j_idt124:{num}:j_idt194', 
-            f'frm:j_idt124:{num}:j_idt188'],  # qtd cotas inicial
-        [f'frm:j_idt124:{num}:j_idt196', 
-            f'frm:j_idt124:{num}:j_idt190'],  # qtd cotas final
-        f'//*[@id="frm:j_idt124:{num}:j_idt182_input"]',  # data venda inicio
-        f'//*[@id="frm:j_idt124:{num}:j_idt184_input"]',  # data venda fim
-        f'//*[@id="frm:j_idt124:{num}:j_idt149"]',  # parcela 1
-        f'//*[@id="frm:j_idt124:{num}:j_idt156"]',  # parcela 2
-        f'//*[@id="frm:j_idt124:{num}:j_idt158"]',  # parcela 3
-        f'//*[@id="frm:j_idt124:{num}:j_idt160"]',  # parcela 4
-        f'//*[@id="frm:j_idt124:{num}:j_idt162"]',  # parcela 5
-        f'//*[@id="frm:j_idt124:{num}:j_idt164"]',  # parcela 6
-        f'//*[@id="frm:j_idt124:{num}:j_idt166"]',  # parcela 7
-        f'//*[@id="frm:j_idt124:{num}:j_idt168"]',  # parcela 8
-        f'//*[@id="frm:j_idt124:{num}:j_idt170"]',  # parcela 9
-        f'//*[@id="frm:j_idt124:{num}:j_idt172"]',  # parcela 10
-        f'//*[@id="frm:j_idt124:{num}:j_idt174"]',  # parcela 11
-        f'//*[@id="frm:j_idt124:{num}:j_idt176"]'  # parcela 12
-        ])
-    # listXpathCampoParcela.append([listCampo, listCotaPeriodoParcela])
+  listCampoCotaPeriodoParcela.append([
+      f'//*[@id="frm:pnlEsacalas"]/div[{str(num + 1)}]',  # campo 0 a 2 Father
+      [f'frm:j_idt124:{num}:j_idt194',
+          f'frm:j_idt124:{num}:j_idt188'],  # qtd cotas inicial
+      [f'frm:j_idt124:{num}:j_idt196',
+          f'frm:j_idt124:{num}:j_idt190'],  # qtd cotas final
+      f'//*[@id="frm:j_idt124:{num}:j_idt182_input"]',  # data venda inicio
+      f'//*[@id="frm:j_idt124:{num}:j_idt184_input"]',  # data venda fim
+      f'//*[@id="frm:j_idt124:{num}:j_idt149"]',  # parcela 1
+      f'//*[@id="frm:j_idt124:{num}:j_idt156"]',  # parcela 2
+      f'//*[@id="frm:j_idt124:{num}:j_idt158"]',  # parcela 3
+      f'//*[@id="frm:j_idt124:{num}:j_idt160"]',  # parcela 4
+      f'//*[@id="frm:j_idt124:{num}:j_idt162"]',  # parcela 5
+      f'//*[@id="frm:j_idt124:{num}:j_idt164"]',  # parcela 6
+      f'//*[@id="frm:j_idt124:{num}:j_idt166"]',  # parcela 7
+      f'//*[@id="frm:j_idt124:{num}:j_idt168"]',  # parcela 8
+      f'//*[@id="frm:j_idt124:{num}:j_idt170"]',  # parcela 9
+      f'//*[@id="frm:j_idt124:{num}:j_idt172"]',  # parcela 10
+      f'//*[@id="frm:j_idt124:{num}:j_idt174"]',  # parcela 11
+      f'//*[@id="frm:j_idt124:{num}:j_idt176"]'  # parcela 12
+  ])
+  # listXpathCampoParcela.append([listCampo, listCotaPeriodoParcela])
 listXpathFunction = [
     '//*[@id="menucadastro"]/a',  # menu cadastro
     '//*[@id="menucadastro"]/ul/li[7]',  # menu funcionario
@@ -110,16 +114,16 @@ listXpathFunction = [
 listXpathComissoesConfPagamento = [
     '//*[@id="menufinan"]',  # comissões
     '//*[@id="menufinan"]/ul/li[3]/a'  # ConfigPagamento
-    ]
+]
 xpathTipoComissaoPagamento = [
     '//*[@id="frm:cbTpConfig"]',
     '//*[@id="frm:cbTpConfig"]/option[1]'  # Pagamento
-    ]
+]
 listXpathCargAdminsPag = [
     '//*[@id="frm:cbCargo"]',
     '//*[@id="frm:cbAdministradora"]',
     '//*[@id="frm:cbTpRecebimento"]'
-    ]
+]
 listXpathDtPagamentoParcelas = [
     '//*[@id="frm:pnlBloco"]',  # xpath Father
     '//*[@id="frm:cbFormaReceb"]',  # data pagamento por
@@ -127,46 +131,46 @@ listXpathDtPagamentoParcelas = [
      '//*[@id="frm:cb2"]',
      '//*[@id="frm:cb3"]'],  # dias
     '//*[@id="frm:recPriParc"]',  # 1º parcela recebera
-    '//*[@id="frm:cb4"]',  # 1º parcela referencia 
+    '//*[@id="frm:cb4"]',  # 1º parcela referencia
     '//*[@id="frm:cbRefApuracaoPrimParc"]',  # periodo inicial tipo
-    ['//*[@id="frm:cbP1"]', 
-     '//*[@id="frm:cbP2"]', 
-     '//*[@id="frm:cbP3"]', 
-     '//*[@id="frm:cbP4"]', 
-     '//*[@id="frm:cbP28"]', 
-     '//*[@id="frm:cbP29"]', 
-     '//*[@id="frm:cbP39"]'],   # periodo inicial quando    
+    ['//*[@id="frm:cbP1"]',
+     '//*[@id="frm:cbP2"]',
+     '//*[@id="frm:cbP3"]',
+     '//*[@id="frm:cbP4"]',
+     '//*[@id="frm:cbP28"]',
+     '//*[@id="frm:cbP29"]',
+     '//*[@id="frm:cbP39"]'],   # periodo inicial quando
     '//*[@id="frm:cbRefApuracaoFimPrimParc"]',  # periodo final tipo
-    ['//*[@id="frm:cbP5"]', 
-     '//*[@id="frm:cbP6"]', 
-     '//*[@id="frm:cbP7"]', 
+    ['//*[@id="frm:cbP5"]',
+     '//*[@id="frm:cbP6"]',
+     '//*[@id="frm:cbP7"]',
      '//*[@id="frm:cbP8"]',
      '//*[@id="frm:cbP30"]',
      '//*[@id="frm:cbP40"]',
      '//*[@id="frm:j_idt193"]'],  # periodo final quando
     '//*[@id="frm:recConfimac"]',  # Demais parcela recebera
-    '//*[@id="frm:cbP10"]',  # Demais parcela referencia 
+    '//*[@id="frm:cbP10"]',  # Demais parcela referencia
     '//*[@id="frm:cbRefApuracaoConfirmacoes"]',  # periodo inicial tipo
-    ['//*[@id="frm:cbP11"]', 
-     '//*[@id="frm:cbP12"]', 
-     '//*[@id="frm:cbP13"]', 
+    ['//*[@id="frm:cbP11"]',
+     '//*[@id="frm:cbP12"]',
+     '//*[@id="frm:cbP13"]',
      '//*[@id="frm:cbP14"]',
      '//*[@id="frm:cbP31"]',
      '//*[@id="frm:cbP38"]',
      '//*[@id="frm:cbP41"]'],   # periodo inicial quando
     '//*[@id="frm:cbRefApuracaoFimConfirmacoes"]',  # periodo final tipo
-    ['//*[@id="frm:cbP15"]', 
-     '//*[@id="frm:cbP16"]', 
+    ['//*[@id="frm:cbP15"]',
+     '//*[@id="frm:cbP16"]',
      '//*[@id="frm:cbP17"]',
-     '//*[@id="frm:cbP18"]', 
+     '//*[@id="frm:cbP18"]',
      '//*[@id="frm:cbP32"]',
      '//*[@id="frm:cbP37"]',
      '//*[@id="frm:cbP42"]'],  # periodo final quando
     '//*[@id="frm:recFat"]',  # Faturamento recebera
-    '//*[@id="frm:cbP19"]',  # Faturamento referencia 
+    '//*[@id="frm:cbP19"]',  # Faturamento referencia
     '//*[@id="frm:cbRefApuracaoFaturamento"]',  # periodo inicial tipo
-    ['//*[@id="frm:cbP20"]', 
-     '//*[@id="frm:cbP21"]', 
+    ['//*[@id="frm:cbP20"]',
+     '//*[@id="frm:cbP21"]',
      '//*[@id="frm:cbP22"]',
      '//*[@id="frm:cbP23"]',
      '//*[@id="frm:cbP33"]',
@@ -190,198 +194,198 @@ listXpathMinutes = [
     '//*[@id="frm:cbAdministradora"]',  # administradora
 ]
 
-headerDtPagamentoParcelas=[
+headerDtPagamentoParcelas = [
     'Cargo', 'Administradora', 'Tipo Pagamento', 'Dt pag. por', 'dia pag.',
-    '1P recebera', '1P referencia', '1P periodo inicial', '1P dt inicial', 
-    '1P periodo final', '1P dt final', 'D+ recebera', 'D+ referencia', 
-    'D+ perido inicial', 'D+ dt inicial', 'D+ periodo final', 'D+ dt final', 
-    'FAT recebera', 'FAT referencia', 'FAT perido inicial', 'FAT dt inicial', 
+    '1P recebera', '1P referencia', '1P periodo inicial', '1P dt inicial',
+    '1P periodo final', '1P dt final', 'D+ recebera', 'D+ referencia',
+    'D+ perido inicial', 'D+ dt inicial', 'D+ periodo final', 'D+ dt final',
+    'FAT recebera', 'FAT referencia', 'FAT perido inicial', 'FAT dt inicial',
     'FAT periodo final', 'FAT dt final', 'Index'
-    ]
+]
 
 '''#################### ABRIR SITES ########################################'''
-# openSite = True
-# sales = True
-# functionSetup = True
-# salesSetup = True
-# salesSetupPay = True
-# minutesSetup = True
+openSite = True
+new_table_Cadastro_Consorciado = True
+new_table_Cadastro_Funcionario = True
+new_table_Comissoes_Configuracao = True
+new_table_Comissoes_ConfigPagamento = True
+new_table_Cadastro_Ata = True
 openSite = False
-sales = False
-functionSetup = False
-salesSetup = False
-salesSetupPay = False
-minutesSetup = False
+new_table_Cadastro_Consorciado = False
+new_table_Cadastro_Funcionario = False
+new_table_Comissoes_Configuracao = False
+new_table_Comissoes_ConfigPagamento = False
+new_table_Cadastro_Ata = False
 
-######################### defined ################################
+''' defined '''
 options = webdriver.ChromeOptions()
 options.add_argument('--ignore-certificate-errors')
 options.add_experimental_option('excludeSwitches', ['enable-automation'])
 options.add_experimental_option('excludeSwitches', ['enable-logging'])
-service = Service(ChromeDriverManager().install())            
+service = Service(ChromeDriverManager().install())
 driver = webdriver.Chrome(service=service, options=options)
 connect = Connect(driver=driver)
 xpathManip = XpathManip(driver=driver)
 if openSite:
-    driver.get(siteSircon)
-    # logar
-    connect.users = user
-    connect.passwords = password
-    while True:
-        connect.logarSircon = listXpathLog
-        xpathManip.locate = listXpathComissoesConfiguracao[0]
-        xpathOk = xpathManip.locate
-        if xpathOk is True:
-            break
+  driver.get(siteSircon)
+  # logar
+  connect.users = user
+  connect.passwords = password
+  while True:
+    connect.logarSircon = listXpathLog
+    xpathManip.locate = listXpathComissoesConfiguracao[0]
+    xpathOk = xpathManip.locate
+    if xpathOk is True:
+      break
 else:
-    driver.quit()
+  driver.quit()
 
-######################### table_Cadastro_Consorciado ##########################
-if sales:
-    connect.files = arqDonwloadSales
-    connect.months = month
-    connect.sales = listXpathSales
-    table_Cadastro_Consorciado = connect.sales
-    table_Cadastro_Consorciado.to_csv(
-        arqTableCadastroConsorciado,
-        sep=';',
-        index=False,
-        header=True
-        )
+'''table_Cadastro_Consorciado'''
+if new_table_Cadastro_Consorciado:
+  connect.files = arqDonwloadSales
+  connect.months = month
+  connect.sales = listXpathSales
+  table_Cadastro_Consorciado: Union[pd.DataFrame, bool] = connect.sales
+  table_Cadastro_Consorciado.to_csv(
+      arqTableCadastroConsorciado,
+      sep=';',
+      index=False,
+      header=True
+  )
 else:  # ler as tabelas que para nao precisar executar novamente
-    table_Cadastro_Consorciado = pd.read_csv(
-        arqTableCadastroConsorciado,
-        sep=';',
-        encoding='utf-8',
-        dtype=str
-        )
+  table_Cadastro_Consorciado = pd.read_csv(
+      arqTableCadastroConsorciado,
+      sep=';',
+      encoding='utf-8',
+      dtype=str
+  )
 
-####################### table_Cadastro_Funcionario ############################
-    
-if functionSetup:
-    connect.files = arqDonwloadFunction
-    connect.function = listXpathFunction
-    table_Cadastro_Funcionario = connect.function
-    table_Cadastro_Funcionario.to_csv(
-        arqTableCadastroFuncionario,
-        sep=';',
-        index=False,
-        header=True,
-        )  # type: ignore
+'''table_Cadastro_Funcionario '''
+
+if new_table_Cadastro_Funcionario:
+  connect.files = arqDonwloadFunction
+  connect.function = listXpathFunction
+  table_Cadastro_Funcionario = connect.function
+  table_Cadastro_Funcionario.to_csv(
+      arqTableCadastroFuncionario,
+      sep=';',
+      index=False,
+      header=True,
+  )  # type: ignore
 else:
-    table_Cadastro_Funcionario = pd.read_csv(
-        arqTableCadastroFuncionario,
-        sep=';',
-        encoding='utf-8',
-        dtype=str
-        )
+  table_Cadastro_Funcionario = pd.read_csv(
+      arqTableCadastroFuncionario,
+      sep=';',
+      encoding='utf-8',
+      dtype=str
+  )
 
 
-########## Limitar pesquisa escolhida pelo usuario ###########################
+'''Limitar pesquisa escolhida pelo usuario'''
 if limitSearchChosse is True:
-    connect.valueChooseAdministradoras = valueChooseAdministradora
-    connect.valueChooseCargos = valueChooseCargo
+  connect.valueChooseAdministradoras = valueChooseAdministradora
+  connect.valueChooseCargos = valueChooseCargo
 if limitSearchSystem is True:
-    connect.valueExistAdministradoras = table_Cadastro_Consorciado
-    connect.valueExistCargos = table_Cadastro_Funcionario
+  connect.valueExistAdministradoras = table_Cadastro_Consorciado
+  connect.valueExistCargos = table_Cadastro_Funcionario
 if limitSearchDeleteWord is True:
-    connect.valueExistTabelarecebimento = valueChooseTabelarecebimento
+  connect.valueExistTabelarecebimento = valueChooseTabelarecebimento
 
-########################## table_Cadastro_Ata #################################
-if minutesSetup is True:
-    connect.months = month
-    connect.tagSons = tag_data
-    connect.tagFathers = tag_row
-    connect.tagGets = tag_outerHTML
-    connect.tagReturnValue
-    connect.minutes = listXpathMinutes
-    table_Cadastro_Ata = connect.minutes
-    table_Cadastro_Ata.to_csv(
-        arqTableCadastroAta,
-        sep=';',
-        index=False,
-        header=True,
-        )  # type: ignore
+'''table_Cadastro_Ata'''
+if new_table_Cadastro_Ata is True:
+  connect.months = month
+  connect.tagSons = tag_data
+  connect.tagFathers = tag_row
+  connect.tagGets = tag_outerHTML
+  connect.tagReturnValue
+  connect.minutes = listXpathMinutes
+  table_Cadastro_Ata = connect.minutes
+  table_Cadastro_Ata.to_csv(
+      arqTableCadastroAta,
+      sep=';',
+      index=False,
+      header=True,
+  )  # type: ignore
 else:
-    table_Cadastro_Ata = pd.read_csv(
-        arqTableCadastroAta,
-        sep=';',
-        encoding='utf-8',
-        dtype=str
-        )
+  table_Cadastro_Ata = pd.read_csv(
+      arqTableCadastroAta,
+      sep=';',
+      encoding='utf-8',
+      dtype=str
+  )
 
-########################## table_Comissoes_Configuracao #######################
-if salesSetup:
-    connect.pressListXpath = listXpathComissoesConfiguracao
-    connect.pressListXpath = xpathTipoComissao
-    connect.tagSons = tag_option
-    connect.tagFathers = tag_select
-    connect.tagGets = tag_outerHTML
-    connect.tagReturnValue
-    # criar lista de administradoras
-    connect.pressXpathResultListValue = xpathAdministradora
-    # criar lista de administradoras + tabela de recebiemnto 
-    connect.pressListValueXpathResultListValue = xpathTabelaRecebimento
-    # criar lista de administradoras + tabela de recebiemnto + cargos
-    connect.pressListValueXpathResultListValueDouble = xpathCargo
-    # alterar a tagets
-    connect.tagGets = tag_value
-    connect.tagReturnValue
-    # criar lista de administradoras + tabela de recebiemnto + cargos + valores 
-    connect.pressListValueResultListValueTriple = listCampoCotaPeriodoParcela
-    # adicionar 'None' para todos terem o mesmo quantidade de elementos
-    # e tambem o ultimo elemento adiciona uma coluna 'None'
-    connect.addNone
-    # adiciona o index
-    connect.addIndex
-    # substitu o ultimo elemento 'None' por 'endValue'
-    connect.addEnd
-    # substitu  da ulitmo coluna da 'endValue' por 'endValueLast'
-    connect.lineToColumn
-    # substitu todos no 'None' por ''
-    connect.noneToEmpty
-    # excluir se tudo for ''
-    connect.killAllEmpty
-    #table_Comissoes_Configuracao = connect.listColunmToTable
-    connect.listColunmToTable
-    table_Comissoes_Configuracao = connect.renameColumn
-    table_Comissoes_Configuracao.to_csv(
-        arqTableComissoesConfiguracao, index=False, header=True,  sep=';')  # type: ignore
-    # table.to_csv("table2.csv", index=False, header=True)
+'''table_Comissoes_Configuracao'''
+if new_table_Comissoes_Configuracao:
+  connect.pressListXpath = listXpathComissoesConfiguracao
+  connect.pressListXpath = xpathTipoComissao
+  connect.tagSons = tag_option
+  connect.tagFathers = tag_select
+  connect.tagGets = tag_outerHTML
+  connect.tagReturnValue
+  # criar lista de administradoras
+  connect.pressXpathResultListValue = xpathAdministradora
+  # criar lista de administradoras + tabela de recebiemnto
+  connect.pressListValueXpathResultListValue = xpathTabelaRecebimento
+  # criar lista de administradoras + tabela de recebiemnto + cargos
+  connect.pressListValueXpathResultListValueDouble = xpathCargo
+  # alterar a tagets
+  connect.tagGets = tag_value
+  connect.tagReturnValue
+  # criar lista de administradoras + tabela de recebiemnto + cargos + valores
+  connect.pressListValueResultListValueTriple = listCampoCotaPeriodoParcela
+  # adicionar 'None' para todos terem o mesmo quantidade de elementos
+  # e tambem o ultimo elemento adiciona uma coluna 'None'
+  connect.addNone
+  # adiciona o index
+  connect.addIndex
+  # substitu o ultimo elemento 'None' por 'endValue'
+  connect.addEnd
+  # substitu  da ulitmo coluna da 'endValue' por 'endValueLast'
+  connect.lineToColumn
+  # substitu todos no 'None' por ''
+  connect.noneToEmpty
+  # excluir se tudo for ''
+  connect.killAllEmpty
+  # table_Comissoes_Configuracao = connect.listColunmToTable
+  connect.listColunmToTable
+  table_Comissoes_Configuracao = connect.renameColumn
+  table_Comissoes_Configuracao.to_csv(
+      arqTableComissoesConfiguracao, index=False, header=True, sep=';')
+  # table.to_csv("table2.csv", index=False, header=True)
 else:
-    table_Comissoes_Configuracao = pd.read_csv(
-        arqTableComissoesConfiguracao, sep=';', encoding='utf-8', dtype=str)
+  table_Comissoes_Configuracao = pd.read_csv(
+      arqTableComissoesConfiguracao, sep=';', encoding='utf-8', dtype=str)
 
-########################## table_Comissoes_ConfigPagamento ####################
-if salesSetupPay:
-    connect.tagSons = tag_option
-    connect.tagFathers = tag_select
-    connect.tagGets = tag_outerHTML
-    connect.tagSelecteds = tag_selected
-    connect.tagReturnValue
-    # caminho no site para entra local especifico pelo xpath
-    connect.pressListXpath = listXpathComissoesConfPagamento
-    connect.pressListXpath = xpathTipoComissaoPagamento
-    # list os valores existentes no campos cargos, administradora,tipoPagamento
-    connect.pressListXpathReturnListValue = listXpathCargAdminsPag
-    # listCargo = connect.pressListXpathReturnListValue  # precisa do tagGet
-    # connect.tagGets = tag_value
-    # connect.tagReturnValue
-    connect.pressListValueReturnListValue = listXpathDtPagamentoParcelas
-    # connect.organizeListLine
-    connect.organizeListLine = headerDtPagamentoParcelas
-    listFull = connect.organizeListLine
-    table_Comissoes_ConfigPagamento = connect.listLineToTable
-    table_Comissoes_ConfigPagamento.to_csv(
-        arqTableComissoesConfigPagamento, index=False, header=True, sep=';'
-        )  # type: ignore
+'''table_Comissoes_ConfigPagamento'''
+if new_table_Comissoes_ConfigPagamento:
+  connect.tagSons = tag_option
+  connect.tagFathers = tag_select
+  connect.tagGets = tag_outerHTML
+  connect.tagSelecteds = tag_selected
+  connect.tagReturnValue
+  # caminho no site para entra local especifico pelo xpath
+  connect.pressListXpath = listXpathComissoesConfPagamento
+  connect.pressListXpath = xpathTipoComissaoPagamento
+  # list os valores existentes no campos cargos, administradora,tipoPagamento
+  connect.pressListXpathReturnListValue = listXpathCargAdminsPag
+  # listCargo = connect.pressListXpathReturnListValue  # precisa do tagGet
+  # connect.tagGets = tag_value
+  # connect.tagReturnValue
+  connect.pressListValueReturnListValue = listXpathDtPagamentoParcelas
+  # connect.organizeListLine
+  connect.organizeListLine = headerDtPagamentoParcelas
+  listFull = connect.organizeListLine
+  table_Comissoes_ConfigPagamento = connect.listLineToTable
+  table_Comissoes_ConfigPagamento.to_csv(
+      arqTableComissoesConfigPag, index=False, header=True, sep=';'
+  )  # type: ignore
 
 else:
-    table_Comissoes_ConfigPagamento = pd.read_csv(
-        arqTableComissoesConfigPagamento, sep=';', encoding='utf-8', dtype=str)
+  table_Comissoes_ConfigPagamento = pd.read_csv(
+      arqTableComissoesConfigPag, sep=';', encoding='utf-8', dtype=str)
 
 
-########################## termino de carregameno de tabelas ##################
+''' termino de carregameno de tabelas '''
 # listTable = [table_Cadastro_Consorciado,
 #              table_Cadastro_Funcionario,
 #              table_Cadastro_Ata,
@@ -400,12 +404,12 @@ table_manip_value.tables = table_Cadastro_Funcionario
 table_manip_value.row_duplicate_column_1 = 'Nome'
 table_manip_value.list_columns_one_two = ['Nome', 'Cargo']
 table_manip_value.edit_data_column_2 = ['Nome', 'Cargo']
-table_Cadastro_Funcionario = table_manip_value.edit_data_column_2
+table_Cadastro_Funcionario = table_manip_value.return_table
 ''' manipular table_Cadastro_Consorciado, para altera rcoluna Vendedor
 e igualar aos alterados no table_Cadastro_Funcionario'''
 table_manip_value.tables = table_Cadastro_Consorciado
 table_manip_value.data_duplicate_change = 'Vendedor'
-table_Cadastro_Consorciado = table_manip_value.data_duplicate_change
+table_Cadastro_Consorciado = table_manip_value.return_table
 ''' manipular table_Comissoes_Configuracao remover as duplicação nas colunas
 'Administradora' e 'Cargo' '''
 table_manip_value.tables = table_Comissoes_Configuracao
@@ -413,77 +417,96 @@ table_manip_value.row_duplicate_column_2 = ['Administradora', 'Cargo']
 table_manip_value.list_columns_one_two_three = ['Administradora',
                                                 'Cargo',
                                                 'Tabela de recebimento']
-# texto = table_manip_value.list_columns_one_two_three
-# for text in texto:
-#     print(text)
 table_manip_value.edit_data_column_3 = ['Administradora',
-                                           'Cargo',
-                                           'Tabela de recebimento']
-table_Comissoes_Configuracao = table_manip_value.edit_data_column_3
+                                        'Cargo',
+                                        'Tabela de recebimento']
+table_Comissoes_Configuracao = table_manip_value.return_table
+'''mescla tabelas'''
+table_full = pd.merge(
+    table_Cadastro_Consorciado,
+    table_Cadastro_Funcionario,
+    left_on='Vendedor',
+    right_on='Nome',
+    how='left'
+)
+table_full = pd.merge(
+    table_full,
+    table_Comissoes_Configuracao,
+    on=['Administradora', 'Cargo'],
+    how='left')
+''' manipular tabela full '''
+table_manip_value.tables = table_full
+table_manip_value.add_column_day_week = ['Data de Entrega',
+                                         'Data Cad. Adm']
+''' manipular table_comissoes_configuPagamento'''
+table_manip_value.tables = table_Comissoes_ConfigPagamento
+table_manip_value.edit_data_column_all = ['Cargo',
+                                          'Administradora',
+                                          'Tipo Pagamento']
+table = table_manip_value.return_table
+table_manip_value.tables = table
+table_manip_value.row_duplicate_column_2 = ['Cargo',
+                                            'Administradora',]
+table_duplicate = table_manip_value.return_table_duplicate
+print(table_duplicate)
+table = table_manip_value.return_table
+table.to_csv(arqTableTeste, index=False, header=True, sep=';')  # type: ignore
 
-# table_manip_value.row_duplicate_column_2 = ['Administradora', 'Cargo']
-# table = table_manip_value.row_duplicate_column_2
-# print('##########################################')
-# print(table)
 
-# for linha in table:
-#     print(linha)
-
-# table.to_csv(arqTableTeste, index=False, header=True, sep=';')  # type: ignore
-
-# duplicatas_rows.to_csv(arqTableTeste, index=False, header=True, sep=';')
-print('##########################################')
-table_full = pd.merge(table_Cadastro_Consorciado, table_Cadastro_Funcionario, 
-              left_on='Vendedor', right_on='Nome', how='left')
-
-# ordenar calunas da tabela para a forma que quiser
-listColumnsStart = ['Administradora', 'Cargo', 'CPF', 'Vendedor', 'Gerente']
+''' Ordenar colunas da tabela para a forma que quiser'''
+listColumnsStart = [
+    'Situação', 'CPF', 'Vendedor', 'Administradora', 'Cargo', 'Crédito',
+    'Data de Entrega', 'Data Cad. Adm', 'Gerente', 'Cliente',
+    'Valor Parc. Inicial',
+]
 columnsList = table_full.columns.to_list()
 columnsListNew = []
 for key, columnList in enumerate(columnsList):
-    if key == 0:
-        for listColumnStart in listColumnsStart:
-            columnsListNew.append(listColumnStart)
-    if columnList in listColumnsStart:
-        continue
-    columnsListNew.append(columnList)
+  if key == 0:
+    for listColumnStart in listColumnsStart:
+      columnsListNew.append(listColumnStart)
+  if columnList in listColumnsStart:
+    continue
+  columnsListNew.append(columnList)
 table_full = table_full[columnsListNew]
 
-# mesclar tabela 
-table_full = pd.merge(table_full, table_Comissoes_Configuracao, on=['Administradora', 'Cargo'], how='left')
-print(table_Cadastro_Consorciado)
-print(table_full)
 
 # salvar a tabela
 table_full.to_csv(
     "tables\\tableMerge.csv",
-    index=False, 
-    header=True, 
+    index=False,
+    header=True,
     sep=';'
-    )  # type: ignore
+)
+
+
+# print(table_Cadastro_Consorciado)
+# print(table_full)
 
 # teste para sabEr a diferença e mostra que é diferente
 num_line = len(table_full)
 nDiferente = 0
 count = 0
 with open(arqInformacao, 'w') as arquivo:
-    arquivo.write('Na tabela table_merge foi encontrado duplicado:  \n \n')
+  arquivo.write('Na tabela table_merge foi encontrado duplicado:  \n \n')
 for i in range(num_line):
-    i2 = i - nDiferente
-    if table_full.at[i, 'Vendedor'] != table_Cadastro_Consorciado.at[i2, 'Vendedor']:
-        count += 1
-        arquivoTxt = str(count) + 'ª divergência \n'
-        arquivoTxt += 'Vendedor: ' + table_full.at[i, 'Vendedor'] + '\n'
-        arquivoTxt += 'Cliente: ' + table_full.at[i, 'Cliente'] + '\n' + '\n'
+  i2 = i - nDiferente
+  if table_full.at[i, 'Vendedor'] != table_Cadastro_Consorciado.at[
+          i2, 'Vendedor']:
+    count += 1
+    arquivoTxt = str(count) + 'ª divergência \n'
+    arquivoTxt += 'Vendedor: ' + table_full.at[i, 'Vendedor'] + '\n'
+    arquivoTxt += 'Cliente: ' + table_full.at[i, 'Cliente'] + '\n' + '\n'
 
-        with open(arqInformacao, 'a') as arquivo:
-            arquivo.write(arquivoTxt)
-        nDiferente += 1
-        # break
+    with open(arqInformacao, 'a') as arquivo:
+      arquivo.write(arquivoTxt)
+    nDiferente += 1
+    # break
 
 # # Verificar duplicatas nas colunas de junção
-# duplicatas = table_Comissoes_Configuracao.duplicated(subset=['Administradora', 'Cargo'], keep=False)
+# duplicatas = table_Comissoes_Configuracao.duplicated(
+#   subset=['Administradora', 'Cargo'], keep=False)
 # duplicatas_rows = table_Comissoes_Configuracao[duplicatas]
 # print(duplicatas_rows)
 
-sleep(1)
+# sleep(1)
