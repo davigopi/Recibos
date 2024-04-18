@@ -8,6 +8,7 @@ from datetime import datetime
 class Table_manip_value():
     def __init__(self) -> None:
         self.table: pd.DataFrame = pd.DataFrame()
+        self.table_2: pd.DataFrame = pd.DataFrame()
         self.table_duplicate: pd.DataFrame = pd.DataFrame()
         self.list_one_two = []
         self.list_one_two_three = []
@@ -20,6 +21,14 @@ class Table_manip_value():
     @tables.setter
     def tables(self, table):
         self.table = table
+
+    @property
+    def tables_2(self):
+        return None
+
+    @tables_2.setter
+    def tables_2(self, table):
+        self.table_2 = table
 
     @property
     def row_duplicate_column(self):
@@ -284,6 +293,18 @@ class Table_manip_value():
             if change is True:
                 data_change = line1[:2] + data_change
                 self.table.loc[self.table.index[key], tipo_pag] = data_change
+
+    # @property
+    # def add_data_weekly(self):
+    #     return None
+
+    # @add_data_weekly.setter
+    # def add_data_weekly(self, list_colunms):
+    #     quantity_line = self.table_2.shape[0]
+    #     for key in range(quantity_line):
+    #         for column in list_colunms:
+    #             line = self.table_2.iloc[key][column]
+    #             print(line)
 
     # @property
     # def add_column_day_week(self):

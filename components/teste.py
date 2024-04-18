@@ -1,22 +1,10 @@
-from datetime
-from dateutil.relativedelta import relativedelta
+import pandas as pd
 
-month = 24
-months = month
-# Obtém o ano atual
-year_weekly = []
-year_current = datetime.now().year
-year_salve = year_current
-year_weekly.append(year_salve)
-data_months = datetime.now()
-while months > 0:
-    data_months = data_months - relativedelta(months=1)
-    year_data_months = data_months.year
-    if year_salve != year_data_months:
-        year_salve = year_data_months
-        year_weekly.append(year_salve)
-    months -= 1
-print(year_weekly)
+# Suponha que você tenha um DataFrame chamado df
+df = pd.DataFrame({'A': ['foo', 'bar', 'baz'], 'B': ['123', '456', '789']})
 
-# Exibe o ano atual
-# print("Ano atual:", ano_atual)
+# Juntando as colunas 'A' e 'B' em uma nova coluna 'C'
+df['C'] = df['A'] + df['B']
+
+# Exibindo o DataFrame com a nova coluna 'C'
+print(df)

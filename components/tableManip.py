@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import re
+from time import sleep
 
 
 class TableManip:
@@ -16,21 +17,21 @@ class TableManip:
         self.column_clone = None
         self.rename_name_column_origin = None
 
-    @property
-    def dfNews(self):
-        return None
+    # @property
+    # def dfNews(self):
+    #     return None
 
-    @dfNews.setter
-    def dfNews(self, dfNew):
-        self.dfNew = dfNew
+    # @dfNews.setter
+    # def dfNews(self, dfNew):
+    #     self.dfNew = dfNew
 
-    @property
-    def dfs(self):
-        return None
+    # @property
+    # def dfs(self):
+    #     return None
 
-    @dfs.setter
-    def dfs(self, df):
-        self.df = df
+    # @dfs.setter
+    # def dfs(self, df):
+    #     self.df = df
 
     # @property
     # def tables(self):
@@ -40,53 +41,53 @@ class TableManip:
     # def tables(self, table):
     #     self.table = table
 
-    @property
-    def value_fixed_columns(self):
-        return None
+    # @property
+    # def value_fixed_columns(self):
+    #     return None
 
-    @value_fixed_columns.setter
-    def value_fixed_columns(self, value_fixed_column):
-        self.value_fixed_column = value_fixed_column
+    # @value_fixed_columns.setter
+    # def value_fixed_columns(self, value_fixed_column):
+    #     self.value_fixed_column = value_fixed_column
 
-    @property
-    def column_clones(self):
-        return self.column_clone
+    # @property
+    # def column_clones(self):
+    #     return self.column_clone
 
-    @column_clones.setter
-    def column_clones(self, column_clone):
-        self.column_clone = column_clone
+    # @column_clones.setter
+    # def column_clones(self, column_clone):
+    #     self.column_clone = column_clone
 
-    @property
-    def value_separates(self):
-        return None
+    # @property
+    # def value_separates(self):
+    #     return None
 
-    @value_separates.setter
-    def value_separates(self, value_separate):
-        self.value_separate = value_separate
+    # @value_separates.setter
+    # def value_separates(self, value_separate):
+    #     self.value_separate = value_separate
 
-    @property
-    def rename_name_column_origins(self):
-        return None
+    # @property
+    # def rename_name_column_origins(self):
+    #     return None
 
-    @rename_name_column_origins.setter
-    def rename_name_column_origins(self, rename_name_column_origin):
-        self.rename_name_column_origin = rename_name_column_origin
+    # @rename_name_column_origins.setter
+    # def rename_name_column_origins(self, rename_name_column_origin):
+    #     self.rename_name_column_origin = rename_name_column_origin
 
-    @property
-    def nameNumberlines(self):
-        return None
+    # @property
+    # def nameNumberlines(self):
+    #     return None
 
-    @nameNumberlines.setter
-    def nameNumberlines(self, nameNumberLine):
-        self.nameNumberLine = nameNumberLine
+    # @nameNumberlines.setter
+    # def nameNumberlines(self, nameNumberLine):
+    #     self.nameNumberLine = nameNumberLine
 
-    @property
-    def nameNumberColumns(self):
-        return None
+    # @property
+    # def nameNumberColumns(self):
+    #     return None
 
-    @nameNumberColumns.setter
-    def nameNumberColumns(self, nameNumberColumn):
-        self.nameNumberColumn = nameNumberColumn
+    # @nameNumberColumns.setter
+    # def nameNumberColumns(self, nameNumberColumn):
+    #     self.nameNumberColumn = nameNumberColumn
 
     @property
     def merge(self):
@@ -137,7 +138,6 @@ class TableManip:
 
     @add_column_nan.setter
     def add_column_nan(self, name_column):
-        print(f'self.df {self.df}  {type(self.df)}')
         self.df[name_column] = np.nan
 
     @property
@@ -155,6 +155,15 @@ class TableManip:
     @add_column_clone.setter
     def add_column_clone(self, name_column):
         self.table[name_column] = self.table[self.column_clone]
+
+    @property
+    def add_column_clone_two_columns(self):
+        return None
+
+    @add_column_clone_two_columns.setter
+    def add_column_clone_two_columns(self, list_name_column):
+        self.table[list_name_column[0]] = self.table[
+            list_name_column[1]] + '/' + str(self.table[list_name_column[2]])
 
     @property
     def del_column(self):
@@ -220,6 +229,23 @@ class TableManip:
         # self.table = self.table.append(line_dictionary, ignore_index=True)
         new_line = pd.DataFrame([line_dictionary])
         self.table = pd.concat([self.table, new_line], ignore_index=True)
+
+    @property
+    def rename_name_column(self):
+        return None
+
+    @rename_name_column.setter
+    def rename_name_column(self, list_name_column):
+        # name_columns = self.table.columns.tolist()
+        # list_new_name_columns = []
+        # for name_column in name_columns:
+        #     if name_column == list_name_column[0]:
+        #         list_new_name_columns.append(list_name_column[1])
+        #     else:
+        #         list_new_name_columns.append(name_column)
+
+        self.table = self.table.rename(
+            columns={list_name_column[0]: list_name_column[1]})
 
     @property
     def return_table(self):

@@ -13,6 +13,10 @@ from components.xpathManip import XpathManip
 from components.table_manip_value import Table_manip_value
 from components.date_weekly import Date_weekly
 
+tableManip = TableManip()
+table_manip_value = Table_manip_value()
+date_weekly = Date_weekly()
+
 
 siteSircon = "https://app.sistemasircon.com.br/login"
 user = 'davigopi@gmail.com'
@@ -215,12 +219,13 @@ new_table_Cadastro_Funcionario = True
 new_table_Comissoes_Configuracao = True
 new_table_Comissoes_ConfigPagamento = True
 new_table_Cadastro_Ata = True
-openSite = False
+# openSite = False
 new_table_Cadastro_Consorciado = False
 new_table_Cadastro_Funcionario = False
-new_table_Comissoes_Configuracao = False
-new_table_Comissoes_ConfigPagamento = False
 new_table_Cadastro_Ata = False
+new_table_Comissoes_Configuracao = False
+# new_table_Comissoes_ConfigPagamento = False
+
 
 ''' defined '''
 options = webdriver.ChromeOptions()
@@ -250,7 +255,7 @@ if new_table_Cadastro_Consorciado:
     connect.files = arqDonwloadSales
     connect.months = month
     connect.sales = listXpathSales
-    table_Cadastro_Consorciado: Union[pd.DataFrame, bool] = connect.sales
+    table_Cadastro_Consorciado = connect.sales
     table_Cadastro_Consorciado.to_csv(  # type: ignore
         arqTableCadastroConsorciado,
         sep=';',
@@ -305,6 +310,9 @@ if new_table_Cadastro_Ata is True:
     connect.tagReturnValue
     connect.minutes = listXpathMinutes
     table_Cadastro_Ata = connect.minutes
+    tableManip.table = table_Cadastro_Ata  # type: ignore
+    tableManip.add_column_clone_two_columns = ['ATA', 'Mês', 'Ano']
+    table_Cadastro_Ata = tableManip.table
     table_Cadastro_Ata.to_csv(  # type: ignore
         arqTableCadastroAta,
         sep=';',
@@ -318,6 +326,7 @@ else:
         encoding='utf-8',
         dtype=str
     )
+
 
 '''table_Comissoes_Configuracao'''
 if new_table_Comissoes_Configuracao:
@@ -391,13 +400,15 @@ else:
 
 
 '''tabela numero da semana no mes'''
-date_weekly = Date_weekly()
+
 date_weekly.year_weeklys = 24
 date_weekly.create_weekYear_week_date = None
 date_weekly.edit_weekYear_week_date_separate_week = None
 date_weekly.edit_weekYear_week_date_separate_weekMonth = None
 date_weekly.edit_weekMonth_week_date = None
-date_weekly.create_table_weekMonth_week_date = None
+date_weekly.create_table_weekMonth_week_date = ['N Semana Mes',
+                                                'Data semana',
+                                                'Dia semana']
 table_date_weekly = date_weekly.return_table
 table_date_weekly.to_csv(arqTableDatasSemanais,
                          index=False, header=True, sep=';')
@@ -414,7 +425,7 @@ table_date_weekly.to_csv(arqTableDatasSemanais,
 #     print(key)
 
 # Verificar duplicatas nas colunas de junção
-table_manip_value = Table_manip_value()
+
 ''' manipular table_Cadastro_Funcionario, para alterar os Nomes duplicados com
 os Cargos, que gera comissão duplicada, pois o mesmo tem dois ou mais cargos'''
 table_manip_value.tables = table_Cadastro_Funcionario
@@ -439,15 +450,7 @@ table_manip_value.edit_data_column_3 = ['Administradora',
                                         'Tabela de recebimento']
 table_Comissoes_Configuracao = table_manip_value.return_table
 
-
-# acrecentar colunas na tabela
-TableManip.dfs = table_Cadastro_Consorciado
-TableManip.add_column_nan = 'Dt Entrega Semana'
-TableManip.add_column_nan = 'Dt Cad Adm Semana'
-table_Cadastro_Consorciado = TableManip.return_df  # type: ignore
-
-
-'''mescla tabelas'''
+'''############## mescla tabelas ###################'''
 table_full = pd.merge(
     table_Cadastro_Consorciado,
     table_Cadastro_Funcionario,
@@ -491,15 +494,49 @@ table.to_csv(arqTableTeste, index=False, header=True, sep=';')  # type: ignore
 table_duplicate.to_csv(arqTableComissoesConfigPagDupl,  # type: ignore
                        index=False, header=True, sep=';')
 
+'''# mesclar table_full com table_datas_semanais'''
 
-######################
+
+tableManip.table = table_date_weekly
+tableManip.del_column = 'Dia semana'
+table_date_weekly_changed = tableManip.table
+columns_table_date_weekly_changed = table_date_weekly_changed.columns
+
+table_full = pd.merge(
+    table_full,
+    table_date_weekly_changed,
+    left_on='Data de Entrega',
+    right_on='Data semana',
+    how='left'
+)
+tableManip.table = table_full
+tableManip.rename_name_column = [
+    'N Semana Mes',
+    'N Semana Entrega']
+table_full = tableManip.table
+table_full = pd.merge(
+    table_full,
+    table_date_weekly_changed,
+    left_on='Data Cad. Adm',
+    right_on='Data semana',
+    how='left'
+)
+tableManip.table = table_full
+tableManip.rename_name_column = [
+    'N Semana Mes',
+    'N Cad. Adm Entrega']
+table_full = tableManip.table
+
+''' manipular table ATA '''
+
+print(table_Cadastro_Ata)
 
 
 ''' Ordenar colunas da tabela para a forma que quiser'''
 listColumnsStart = [
     'Situação', 'CPF', 'Vendedor', 'Administradora', 'Cargo', 'Crédito',
-    'Data de Entrega', 'Dt Entrega Semana', 'Data Cad. Adm',
-    'Dt Cad Adm Semana', 'Gerente', 'Cliente', 'Valor Parc. Inicial'
+    'Data de Entrega', 'N Semana Entrega', 'Data Cad. Adm',
+    'N Cad. Adm Entrega', 'Gerente', 'Cliente', 'Valor Parc. Inicial'
 ]
 columnsList = table_full.columns.to_list()
 columnsListNew = []
