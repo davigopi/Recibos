@@ -1,10 +1,25 @@
 import pandas as pd
 
-# Suponha que você tenha um DataFrame chamado df
-df = pd.DataFrame({'A': ['foo', 'bar', 'baz'], 'B': ['123', '456', '789']})
+# DataFrame esquerdo
+df1 = pd.DataFrame({
+    'nome': ['davi', 'debora', 'samuel'],
+    'idade': [25, 30, 28]
+})
+# DataFrame direito
+df2 = pd.DataFrame({
+    'coluna_comparada': ['davi gomes pinheiro', 'caio lima', 'samuel ferreira lessa'],
+    'cidade': ['São Paulo', 'Rio de Janeiro', 'Belo Horizonte']
+})
 
-# Juntando as colunas 'A' e 'B' em uma nova coluna 'C'
-df['C'] = df['A'] + df['B']
+# Adicionando uma nova coluna em df1 para verificar se o nome está em coluna_comparada
+df1['nome_em_coluna_comparada'] = df1['nome'].apply(lambda x: x in df2['coluna_comparada'].values)
 
-# Exibindo o DataFrame com a nova coluna 'C'
-print(df)
+# Mesclando os DataFrames usando a nova coluna temporária
+merged_df = df1.merge(
+    df2,
+    how='left',
+    left_on='nome_em_coluna_comparada',
+    right_index=True,
+    indicator=True)
+
+print(merged_df)

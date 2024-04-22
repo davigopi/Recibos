@@ -28,6 +28,7 @@ arqTableCadastroFuncionario = pathTables / 'table_Cadastro_Funcionario.csv'
 arqTableCadastroAta = pathTables / 'table_Cadastro_Ata.csv'
 arqTableComissoesConfiguracao = pathTables / 'table_Comissoes_Configuracao.csv'
 arqTableComissoesConfigPag = pathTables / 'table_Comissoes_ConfigPagamento.csv'
+arqTableComissoesConfigPagTratada = pathTables / 'table_Comissoes_ConfigPagTratada.csv'
 arqTableComissoesConfigPagDupl = pathTables / 'table_Comissoes_ConfigPagamento_Dupl.csv'
 arqTableDatasSemanais = pathTables / 'table_datas_semanais.csv'
 arqTableTeste = pathTables / 'table_teste.csv'
@@ -219,12 +220,12 @@ new_table_Cadastro_Funcionario = True
 new_table_Comissoes_Configuracao = True
 new_table_Comissoes_ConfigPagamento = True
 new_table_Cadastro_Ata = True
-# openSite = False
+openSite = False
 new_table_Cadastro_Consorciado = False
 new_table_Cadastro_Funcionario = False
 new_table_Cadastro_Ata = False
 new_table_Comissoes_Configuracao = False
-# new_table_Comissoes_ConfigPagamento = False
+new_table_Comissoes_ConfigPagamento = False
 
 
 ''' defined '''
@@ -309,9 +310,16 @@ if new_table_Cadastro_Ata is True:
     connect.tagGets = tag_outerHTML
     connect.tagReturnValue
     connect.minutes = listXpathMinutes
+
     table_Cadastro_Ata = connect.minutes
     tableManip.table = table_Cadastro_Ata  # type: ignore
-    tableManip.add_column_clone_two_columns = ['ATA', 'Mês', 'Ano']
+    list_columns_rename = [[1, 'Mes'],
+                           [2, 'Periodo_inicial'],
+                           [3, 'Periodo_final']]
+    for column_rename in list_columns_rename:
+        tableManip.rename_name_column_indix = column_rename
+    tableManip.add_column_clone_two_columns = ['ATA', 'Mes', 'Ano']
+
     table_Cadastro_Ata = tableManip.table
     table_Cadastro_Ata.to_csv(  # type: ignore
         arqTableCadastroAta,
@@ -428,19 +436,19 @@ table_date_weekly.to_csv(arqTableDatasSemanais,
 
 ''' manipular table_Cadastro_Funcionario, para alterar os Nomes duplicados com
 os Cargos, que gera comissão duplicada, pois o mesmo tem dois ou mais cargos'''
-table_manip_value.tables = table_Cadastro_Funcionario
+table_manip_value.table = table_Cadastro_Funcionario  # type: ignore
 table_manip_value.row_duplicate_column = ['Nome']
 table_manip_value.list_columns_one_two = ['Nome', 'Cargo']
 table_manip_value.edit_data_column_2 = ['Nome', 'Cargo']
-table_Cadastro_Funcionario = table_manip_value.return_table
+table_Cadastro_Funcionario = table_manip_value.table
 ''' manipular table_Cadastro_Consorciado, para altera rcoluna Vendedor
 e igualar aos alterados no table_Cadastro_Funcionario'''
-table_manip_value.tables = table_Cadastro_Consorciado
+table_manip_value.table = table_Cadastro_Consorciado  # type: ignore
 table_manip_value.data_duplicate_change = 'Vendedor'
-table_Cadastro_Consorciado = table_manip_value.return_table
+table_Cadastro_Consorciado = table_manip_value.table
 ''' manipular table_Comissoes_Configuracao remover as duplicação nas colunas
 'Administradora' e 'Cargo' '''
-table_manip_value.tables = table_Comissoes_Configuracao
+table_manip_value.table = table_Comissoes_Configuracao
 table_manip_value.row_duplicate_column = ['Administradora', 'Cargo']
 table_manip_value.list_columns_one_two_three = ['Administradora',
                                                 'Cargo',
@@ -448,12 +456,12 @@ table_manip_value.list_columns_one_two_three = ['Administradora',
 table_manip_value.edit_data_column_3 = ['Administradora',
                                         'Cargo',
                                         'Tabela de recebimento']
-table_Comissoes_Configuracao = table_manip_value.return_table
+table_Comissoes_Configuracao = table_manip_value.table
 
 '''############## mescla tabelas ###################'''
 table_full = pd.merge(
-    table_Cadastro_Consorciado,
-    table_Cadastro_Funcionario,
+    table_Cadastro_Consorciado,  # type: ignore
+    table_Cadastro_Funcionario,  # type: ignore
     left_on='Vendedor',
     right_on='Nome',
     how='left'
@@ -468,9 +476,7 @@ table_full = pd.merge(
 # table_manip_value.add_column_day_week = ['Data de Entrega',
 #                                          'Data Cad. Adm']
 ''' manipular table_comissoes_configuPagamento'''
-table_manip_value.tables = table_Comissoes_ConfigPagamento
-# table = table_manip_value.return_table
-# print(table)
+table_manip_value.table = table_Comissoes_ConfigPagamento
 table_manip_value.edit_data_column_all = ['Cargo',
                                           'Administradora',
                                           'Tipo Pagamento',
@@ -480,63 +486,101 @@ table_manip_value.edit_data_column_all = ['Cargo',
                                           'D+ recebera',
                                           'FAT recebera',
                                           'Index']
-table = table_manip_value.return_table
-table_manip_value.tables = table
+table = table_manip_value.table
+table_manip_value.table = table
 table_manip_value.row_duplicate_column = ['Cargo',
                                           'Administradora',
                                           'Tipo Pagamento']
 
-table_duplicate = table_manip_value.return_table_duplicate
-# print(table_duplicate)
-table = table_manip_value.return_table
-table.to_csv(arqTableTeste, index=False, header=True, sep=';')  # type: ignore
+table_duplicate = table_manip_value.table_duplicate
+table_Comissoes_ConfigPagTratada = table_manip_value.table
+table_Comissoes_ConfigPagTratada.to_csv(
+    arqTableComissoesConfigPagTratada,
+    index=False, header=True, sep=';')
 
 table_duplicate.to_csv(arqTableComissoesConfigPagDupl,  # type: ignore
                        index=False, header=True, sep=';')
 
-'''# mesclar table_full com table_datas_semanais'''
-
+'''# mesclar table_full com table_date_weekly_changed'''
 
 tableManip.table = table_date_weekly
 tableManip.del_column = 'Dia semana'
 table_date_weekly_changed = tableManip.table
-columns_table_date_weekly_changed = table_date_weekly_changed.columns
+list_columns_date_merge = [['Data de Entrega', 'Sem Ent'],
+                           ['Data Cad. Adm', 'Sem Cad Adm'],
+                           ['Data Pag. 2º Parc', 'Sem 2º Parc'],
+                           ['Data Pag. 3º Parc', 'Sem 3º Parc'],
+                           ['Data Pag. 4º Parc', 'Sem 4º Parc'],
+                           ['Data Pag. 5º Parc', 'Sem 5º Parc'],
+                           ['Data Pag. 6º Parc', 'Sem 6º Parc']]
 
-table_full = pd.merge(
-    table_full,
-    table_date_weekly_changed,
-    left_on='Data de Entrega',
-    right_on='Data semana',
-    how='left'
-)
-tableManip.table = table_full
-tableManip.rename_name_column = [
-    'N Semana Mes',
-    'N Semana Entrega']
-table_full = tableManip.table
-table_full = pd.merge(
-    table_full,
-    table_date_weekly_changed,
-    left_on='Data Cad. Adm',
-    right_on='Data semana',
-    how='left'
-)
-tableManip.table = table_full
-tableManip.rename_name_column = [
-    'N Semana Mes',
-    'N Cad. Adm Entrega']
-table_full = tableManip.table
+for columns_date in list_columns_date_merge:
+    column_compare = columns_date[0]
+    column_new_merge = columns_date[1]
+    table_full = pd.merge(
+        table_full,
+        table_date_weekly_changed,
+        left_on=column_compare,
+        right_on='Data semana',
+        how='left'
+    )
+    tableManip.table = table_full
+    tableManip.rename_name_column = ['N Semana Mes', column_new_merge]
+    tableManip.del_column = 'Data semana'
+    table_full = tableManip.table
 
-''' manipular table ATA '''
 
-print(table_Cadastro_Ata)
+''' manipular table ATA  e colocar na table_full'''
+table_manip_value.table_2 = table_Cadastro_Ata  # type: ignore
+list_date_ATA = [['Data de Entrega', 'ATA Entrega'],
+                 ['Data Cad. Adm', 'ATA Cad Adm'],
+                 ['Data Pag. 2º Parc', 'ATA 2º Parc'],
+                 ['Data Pag. 3º Parc', 'ATA 3º Parc'],
+                 ['Data Pag. 4º Parc', 'ATA 4º Parc'],
+                 ['Data Pag. 5º Parc', 'ATA 5º Parc'],
+                 ['Data Pag. 6º Parc', 'ATA 6º Parc']]
+for date_ATA in list_date_ATA:
+    column_compare = date_ATA[0]
+    column_new_edit = date_ATA[1]
+    tableManip.table = table_full
+    # tableManip.add_column_nan = [column_new_edit]
+    tableManip.add_value_fixed_column = [column_new_edit]
+    table_full = tableManip.table
+    table_manip_value.table = table_full
+    table_manip_value.edit_data_column_ATA = [column_compare,
+                                              column_new_edit,
+                                              'Periodo_inicial',
+                                              'Periodo_final',
+                                              'ATA']
+    table_full = table_manip_value.table
+
+
+table_manip_value.table_2 = table_Comissoes_ConfigPagTratada
+table_manip_value.add_columns_full = ['Cargo',
+                                      'Administradora',
+                                      'Tipo Pagamento']
+
+#
+#
+#
+#
+#
+#
 
 
 ''' Ordenar colunas da tabela para a forma que quiser'''
 listColumnsStart = [
-    'Situação', 'CPF', 'Vendedor', 'Administradora', 'Cargo', 'Crédito',
-    'Data de Entrega', 'N Semana Entrega', 'Data Cad. Adm',
-    'N Cad. Adm Entrega', 'Gerente', 'Cliente', 'Valor Parc. Inicial'
+    'Situação',
+    'Vendedor', 'Administradora', 'Cargo',
+    'Crédito', 'Data Pag. 1º Parc', 'Valor Parc. Inicial',
+    'Data de Entrega', 'Sem Ent', 'ATA Entrega',
+    'Data Cad. Adm', 'Sem Cad Adm', 'ATA Cad Adm',
+    'Data Pag. 2º Parc', 'Sem 2º Parc', 'ATA 2º Parc',
+    'Data Pag. 3º Parc', 'Sem 3º Parc', 'ATA 3º Parc',
+    'Data Pag. 4º Parc', 'Sem 4º Parc', 'ATA 4º Parc',
+    'Data Pag. 5º Parc', 'Sem 5º Parc', 'ATA 5º Parc',
+    'Data Pag. 6º Parc', 'Sem 6º Parc', 'ATA 6º Parc',
+    'Gerente', 'Cliente',
 ]
 columnsList = table_full.columns.to_list()
 columnsListNew = []

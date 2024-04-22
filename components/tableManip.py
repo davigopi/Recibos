@@ -13,7 +13,7 @@ class TableManip:
         self.value = None
         self.table: pd.DataFrame = pd.DataFrame()
         self.value_separate = None
-        self.value_fixed_column = ''
+        self.value_fixed_column = ''  # por padrao ''
         self.column_clone = None
         self.rename_name_column_origin = None
 
@@ -137,8 +137,9 @@ class TableManip:
         return None
 
     @add_column_nan.setter
-    def add_column_nan(self, name_column):
-        self.df[name_column] = np.nan
+    def add_column_nan(self, list_names_columns):
+        for name_column in list_names_columns:
+            self.table[name_column] = np.nan
 
     @property
     def add_value_fixed_column(self):
@@ -163,7 +164,8 @@ class TableManip:
     @add_column_clone_two_columns.setter
     def add_column_clone_two_columns(self, list_name_column):
         self.table[list_name_column[0]] = self.table[
-            list_name_column[1]] + '/' + str(self.table[list_name_column[2]])
+            list_name_column[1]] + '/' + self.table[
+                list_name_column[2]].astype(str)
 
     @property
     def del_column(self):
@@ -236,16 +238,18 @@ class TableManip:
 
     @rename_name_column.setter
     def rename_name_column(self, list_name_column):
-        # name_columns = self.table.columns.tolist()
-        # list_new_name_columns = []
-        # for name_column in name_columns:
-        #     if name_column == list_name_column[0]:
-        #         list_new_name_columns.append(list_name_column[1])
-        #     else:
-        #         list_new_name_columns.append(name_column)
-
         self.table = self.table.rename(
             columns={list_name_column[0]: list_name_column[1]})
+
+    @property
+    def rename_name_column_indix(self):
+        return None
+
+    @rename_name_column_indix.setter
+    def rename_name_column_indix(self, list_index_name_column):
+        index_column = list_index_name_column[0]
+        name_column = list_index_name_column[1]
+        self.table.columns.values[index_column] = name_column
 
     @property
     def return_table(self):

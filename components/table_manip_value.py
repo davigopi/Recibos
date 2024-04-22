@@ -4,6 +4,8 @@ import numbers
 from time import sleep
 from datetime import datetime
 
+from components.tableManip import TableManip
+
 
 class Table_manip_value():
     def __init__(self) -> None:
@@ -14,21 +16,21 @@ class Table_manip_value():
         self.list_one_two_three = []
         self.list_name_change = []
 
-    @property
-    def tables(self):
-        return None
+    # @property
+    # def tables(self):
+    #     return None
 
-    @tables.setter
-    def tables(self, table):
-        self.table = table
+    # @tables.setter
+    # def tables(self, table):
+    #     self.table = table
 
-    @property
-    def tables_2(self):
-        return None
+    # @property
+    # def tables_2(self):
+    #     return None
 
-    @tables_2.setter
-    def tables_2(self, table):
-        self.table_2 = table
+    # @tables_2.setter
+    # def tables_2(self, table):
+    #     self.table_2 = table
 
     @property
     def row_duplicate_column(self):
@@ -141,11 +143,6 @@ class Table_manip_value():
         Admin = column_name[0]
         Cargo = column_name[1]
         Table_rec = column_name[2]
-        # df = self.table[column_name]
-        # colunm_admin_cargo = column_name[0]+column_name[1]
-        # df = df.sort_values(by=[column_name[0], column_name[1]])
-        # df[(colunm_admin_cargo)] = df.apply(
-        #     lambda row: row[column_name[0]] + row[column_name[1]], axis=1)
         list_rename = ['IMOVEL 50%', 'IMOVEL 100%', ' IMOVEL RODOBENS',
                        '"D" - EXCEÇÃO', 'MOTO', 'CAMINHÃO', 'IMOVEL']
         for administradora, cargo, listTabela in self.list_one_two_three:
@@ -294,43 +291,58 @@ class Table_manip_value():
                 data_change = line1[:2] + data_change
                 self.table.loc[self.table.index[key], tipo_pag] = data_change
 
-    # @property
-    # def add_data_weekly(self):
-    #     return None
+    @property
+    def edit_data_column_ATA(self):
+        return None
 
-    # @add_data_weekly.setter
-    # def add_data_weekly(self, list_colunms):
-    #     quantity_line = self.table_2.shape[0]
-    #     for key in range(quantity_line):
-    #         for column in list_colunms:
-    #             line = self.table_2.iloc[key][column]
-    #             print(line)
+    @edit_data_column_ATA.setter
+    def edit_data_column_ATA(self, list_colunms):
+        data = list_colunms[0]
+        ata_1 = list_colunms[1]
+        data_inicia = list_colunms[2]
+        data_final = list_colunms[3]
+        ata_2 = list_colunms[4]
+        quantity_line_1 = self.table.shape[0]
+        quantity_line_2 = self.table_2.shape[0]
+        self.table[ata_1] = self.table[ata_1].astype(str)
+        for key_1 in range(quantity_line_1):
+            try:
+                data_1_str = self.table.iloc[key_1][data]
+                data_1 = datetime.strptime(data_1_str, '%d/%m/%Y')
+            except ValueError:
+                continue
+            for key_2 in range(quantity_line_2):
+                data_inicio_str = self.table_2.iloc[key_2][data_inicia]
+                data_inicio = datetime.strptime(data_inicio_str, '%d/%m/%Y')
+                data_fim_str = self.table_2.iloc[key_2][data_final]
+                data_fim = datetime.strptime(data_fim_str, '%d/%m/%Y')
+                if data_1 >= data_inicio and data_1 <= data_fim:
+                    data_ata = self.table_2.iloc[key_2][ata_2]
+                    self.table.loc[key_1, ata_1] = data_ata
+                    break
 
-    # @property
-    # def add_column_day_week(self):
-    #   return None
+    @property
+    def add_columns_full(self):
+        return None
 
-    # @add_column_day_week.setter
-    # def add_column_day_week(self, name_colunms):
-    #   dt_entrega = name_colunms[0]
-    #   dt_cad_adm = name_colunms[1]
-    #   quantity_line = self.table.shape[0]
-    #   self.table['Semana ' + dt_entrega] = np.nan
-    #   self.table['Semana ' + dt_cad_adm] = np.nan
-    #   for key in range(quantity_line):
-    #     date1 = iloc[key][dt_entrega]
-    #     date2 = iloc[key][dt_cad_adm]
-    #     dates = [date1, date2]
-    #     for date in dates:
-    #       date = datetime.strptime(date, "%d/%m/%Y")
-    #       day_week = date.weekday()
-    #       day_week = (day_week + 1) % 7
-    #       week_month = (date.day + day_week - 1) // 7 + 1
+    @add_columns_full.setter
+    def add_columns_full(self, list_columns):
+        tableManip = TableManip()
+        cargo = list_columns[0]
+        administradora = list_columns[1]
+        tipo_pagamento = list_columns[2]
+        name_columns = self.table_2.columns.tolist()
+        tableManip.table = self.table
+        for name_column in name_columns:
+            if name_column == cargo or name_column == administradora:
+                continue
+            tableManip.add_value_fixed_column = name_column
+        self.table = tableManip.table
 
-    @ property
-    def return_table(self):
-        return self.table
+    # @ property
+    # def return_table(self):
+    #     return self.table
 
-    @ property
-    def return_table_duplicate(self):
-        return self.table_duplicate
+    # @ property
+    # def return_table_duplicate(self):
+    #     return self.table_duplicate

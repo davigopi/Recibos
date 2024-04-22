@@ -1,5 +1,9 @@
 import pandas as pd
 import datetime
+# import calendar
+from calendar import month_name
+from unidecode import unidecode
+import locale
 from components.tableManip import TableManip
 from dateutil.relativedelta import relativedelta
 
@@ -15,6 +19,20 @@ class Date_weekly:
             'Sábado',
             'Domingo',
         ]
+        self.meses = {
+            '01': 'JANEIRO',
+            '02': 'FEVEREIRO',
+            '03': 'MARÇO',
+            '04': 'ABRIL',
+            '05': 'MAIO',
+            '06': 'JUNHO',
+            '07': 'JULHO',
+            '08': 'AGOSTO',
+            '09': 'SETEMBRO',
+            '10': 'OUTUBRO',
+            '11': 'NOVEMBRO',
+            '12': 'DEZEMBRO'
+        }
         self.year_weekly = []
         self.calend = []
         self.table: pd.DataFrame = pd.DataFrame()
@@ -90,6 +108,7 @@ class Date_weekly:
 
     @edit_weekYear_week_date_separate_weekMonth.setter
     def edit_weekYear_week_date_separate_weekMonth(self, none):
+        # locale.setlocale(locale.LC_TIME, 'pt_BR.UTF-8')
         calend = []
         calend_interno = []
         ultimo_month = '01'
@@ -97,19 +116,28 @@ class Date_weekly:
         for week_list in self.calend:
             for num_week, dia_week, data in week_list:
                 calend_interno.append([dia_week, data])
-                ''' O padrão ISO 8601 se o primeiro dia do year for uma quinta-feira,
-        a week anterior é considerada a primeira'''
+                ''' O padrão ISO 8601 se o primeiro dia do year for uma
+                quinta-feira, a week anterior é considerada a primeira'''
                 if dia_week == 'Quinta-feira':
                     month = data.split("/")[1]
+                    year = data.split("/")[2]
             if month != ultimo_month:
                 variavel = num_week - 1
                 ultimo_month = month
             if num_week == 1:
                 variavel = 0
             num_week -= variavel
-            calend.append([calend_interno, num_week])
+            # name_month = calendar.month_name[int(month)].capitalize()
+            # name_month = datetime.date(1900, int(month), 1).strftime('%B')
+            # print(month)
+            name_month = self.meses.get(month)
+            # if 'Mar' in name_month:
+            #     print(name_month)
+            week_mth_year = str(num_week) + 'º ' + name_month + '/' + year
+            calend.append([calend_interno, week_mth_year])
             calend_interno = []
         self.calend = calend
+        # print(self.calend)
 
     @property
     def edit_weekMonth_week_date(self):
