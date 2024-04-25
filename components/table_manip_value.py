@@ -332,12 +332,42 @@ class Table_manip_value():
         administradora = list_columns[1]
         tipo_pagamento = list_columns[2]
         name_columns = self.table_2.columns.tolist()
+        quantity_line_1 = self.table.shape[0]
+        quantity_line_2 = self.table_2.shape[0]
         tableManip.table = self.table
+        list_columns_add = []
+        # add colunas na table_full
         for name_column in name_columns:
-            if name_column == cargo or name_column == administradora:
+            if name_column in list_columns:
                 continue
             tableManip.add_value_fixed_column = name_column
+            list_columns_add.append(name_column)
         self.table = tableManip.table
+        # add valores as colunas
+        for key_1 in range(quantity_line_1):
+            administradora_1 = self.table.iloc[key_1][administradora]
+            cargo_1 = self.table.iloc[key_1][cargo]
+            for key_2 in range(quantity_line_2):
+                administradora_2 = self.table_2.iloc[key_2][administradora]
+                cargo_2 = self.table_2.iloc[key_2][cargo]
+                tipo_pagamento_2 = self.table_2.iloc[key_2][tipo_pagamento]
+                if administradora_1 == administradora_2 and cargo_1 == cargo_2 and '1' in tipo_pagamento_2:
+                    for column in list_columns_add:
+                        self.table.loc[key_1, column] = self.table_2.iloc[key_2][column]
+                    break
+
+    # @property
+    # def add_data_columns_full(self):
+    #     return None
+
+    # @add_data_columns_full.setter
+    # def add_data_columns_full(self, columns):
+    #     cargo = list_columns[0]
+    #     administradora = list_columns[1]
+    #     tipo_pagamento = list_columns[2]
+    #     name_columns = self.table_2.columns.tolist()
+    #     for name_column in name_columns:
+    #         if ma
 
     # @ property
     # def return_table(self):

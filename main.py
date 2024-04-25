@@ -220,12 +220,12 @@ new_table_Cadastro_Funcionario = True
 new_table_Comissoes_Configuracao = True
 new_table_Comissoes_ConfigPagamento = True
 new_table_Cadastro_Ata = True
-openSite = False
-new_table_Cadastro_Consorciado = False
-new_table_Cadastro_Funcionario = False
-new_table_Cadastro_Ata = False
-new_table_Comissoes_Configuracao = False
-new_table_Comissoes_ConfigPagamento = False
+# openSite = False
+# new_table_Cadastro_Consorciado = False
+# new_table_Cadastro_Funcionario = False
+# new_table_Cadastro_Ata = False
+# new_table_Comissoes_Configuracao = False
+# new_table_Comissoes_ConfigPagamento = False
 
 
 ''' defined '''
@@ -555,10 +555,13 @@ for date_ATA in list_date_ATA:
     table_full = table_manip_value.table
 
 
-table_manip_value.table_2 = table_Comissoes_ConfigPagTratada
+table_manip_value.table_2 = table_Comissoes_ConfigPagamento
 table_manip_value.add_columns_full = ['Cargo',
                                       'Administradora',
-                                      'Tipo Pagamento']
+                                      'Tipo Pagamento',
+                                      'Index']
+
+table_full = table_manip_value.table
 
 #
 #
@@ -573,13 +576,17 @@ listColumnsStart = [
     'Situação',
     'Vendedor', 'Administradora', 'Cargo',
     'Crédito', 'Data Pag. 1º Parc', 'Valor Parc. Inicial',
+    'Dt pag. por', 'dia pag.',
+    '1P recebera', '1P referencia',
     'Data de Entrega', 'Sem Ent', 'ATA Entrega',
     'Data Cad. Adm', 'Sem Cad Adm', 'ATA Cad Adm',
+    'D+ recebera', 'D+ referencia',
     'Data Pag. 2º Parc', 'Sem 2º Parc', 'ATA 2º Parc',
     'Data Pag. 3º Parc', 'Sem 3º Parc', 'ATA 3º Parc',
     'Data Pag. 4º Parc', 'Sem 4º Parc', 'ATA 4º Parc',
     'Data Pag. 5º Parc', 'Sem 5º Parc', 'ATA 5º Parc',
     'Data Pag. 6º Parc', 'Sem 6º Parc', 'ATA 6º Parc',
+    'FAT recebera',
     'Gerente', 'Cliente',
 ]
 columnsList = table_full.columns.to_list()

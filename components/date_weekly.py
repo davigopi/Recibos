@@ -133,7 +133,7 @@ class Date_weekly:
             name_month = self.meses.get(month)
             # if 'Mar' in name_month:
             #     print(name_month)
-            week_mth_year = str(num_week) + 'º ' + name_month + '/' + year
+            week_mth_year = str(num_week) + 'ª/' + name_month + '/' + year
             calend.append([calend_interno, week_mth_year])
             calend_interno = []
         self.calend = calend
