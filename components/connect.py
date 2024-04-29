@@ -15,7 +15,7 @@
 # from numpy import NaN
 # import pyautogui
 import pandas as pd
-from typing import List, Union
+# from typing import List, Union
 # from pandas.errors import EmptyDataError
 # import os
 # import random
@@ -61,133 +61,133 @@ from components.fileManip import FileManip
 class Connect:
     def __init__(self, *args, **kwargs) -> None:
         self.driver = kwargs.get('driver')
-        self.df: Union[pd.DataFrame, bool] = pd.DataFrame()
-        self.dfNew: Union[pd.DataFrame, bool] = pd.DataFrame()
+        self.df: pd.DataFrame = pd.DataFrame()
+        self.dfNew: pd.DataFrame = pd.DataFrame()
         self.listValue = []
         self.table: pd.DataFrame = pd.DataFrame()
         self.clickOk = None
         self.xpathOk = None
-        self.user = None
-        self.password = None
-        self.tagSon = None
-        self.tagFather = None
-        self.tagGet = None
-        self.tagSelected = None
-        self.file = None
+        self.user = ''
+        self.password = ''
+        self.tagSon = ''
+        self.tagFather = ''
+        self.tagGet = ''
+        self.tagSelected = ''
+        self.file = ''
         self.month = 0
-        self.valueAdministradora = None
-        self.valueCargo = None
+        self.valueAdministradora = []
+        self.cargo = []
         self.mouseKeyboard = MouseKeyboard(driver=self.driver)
         self.returnValue = ReturnValue(driver=self.driver)
         self.dateMonthYear = DateMonthYear()
         self.table_from_tags = Table_from_tags()
         self.tableManip = TableManip()
-        self.listExistCargos = None
+        self.listExistCargos = []
         self.listExistAdministradoras: list = []
-        self.listExistTabelarecebimento = None
+        self.listExistTabelarecebimento = []
 
-    @property
-    def users(self):
-        return None
+    # @property
+    # def users(self):
+    #     return None
 
-    @users.setter
-    def users(self, user):
-        self.user = user
+    # @users.setter
+    # def users(self, user):
+    #     self.user = user
 
-    @property
-    def passwords(self):
-        return None
+    # @property
+    # def passwords(self):
+    #     return None
 
-    @passwords.setter
-    def passwords(self, password):
-        self.password = password
+    # @passwords.setter
+    # def passwords(self, password):
+    #     self.password = password
 
-    @property
-    def tagSons(self):
-        return None
+    # @property
+    # def tagSons(self):
+    #     return None
 
-    @tagSons.setter
-    def tagSons(self, tagSon):
-        self.tagSon = tagSon
+    # @tagSons.setter
+    # def tagSons(self, tagSon):
+    #     self.tagSon = tagSon
 
-    @property
-    def tagFathers(self):
-        return None
+    # @property
+    # def tagFathers(self):
+    #     return None
 
-    @tagFathers.setter
-    def tagFathers(self, tagFather):
-        self.tagFather = tagFather
+    # @tagFathers.setter
+    # def tagFathers(self, tagFather):
+    #     self.tagFather = tagFather
 
-    @property
-    def tagGets(self):
-        return None
+    # @property
+    # def tagGets(self):
+    #     return None
 
-    @tagGets.setter
-    def tagGets(self, tagGet):
-        self.tagGet = tagGet
+    # @tagGets.setter
+    # def tagGets(self, tagGet):
+    #     self.tagGet = tagGet
 
-    @property
-    def tagSelecteds(self):
-        return None
+    # @property
+    # def tagSelecteds(self):
+    #     return None
 
-    @tagSelecteds.setter
-    def tagSelecteds(self, tagSelected):
-        self.tagSelected = tagSelected
+    # @tagSelecteds.setter
+    # def tagSelecteds(self, tagSelected):
+    #     self.tagSelected = tagSelected
 
-    @property
-    def listValues(self):
-        return None
+    # @property
+    # def listValues(self):
+    #     return None
 
-    @listValues.setter
-    def listValues(self, listValue):
-        self.listValue = listValue
+    # @listValues.setter
+    # def listValues(self, listValue):
+    #     self.listValue = listValue
 
-    @property
-    def files(self):
-        return None
+    # @property
+    # def files(self):
+    #     return None
 
-    @files.setter
-    def files(self, file):
-        self.file = file
+    # @files.setter
+    # def files(self, file):
+    #     self.file = file
 
-    @property
-    def months(self):
-        return None
+    # @property
+    # def months(self):
+    #     return None
 
-    @months.setter
-    def months(self, month):
-        self.month = month
+    # @months.setter
+    # def months(self, month):
+    #     self.month = month
 
-    @property
-    def tables(self):
-        return None
+    # @property
+    # def tables(self):
+    #     return None
 
-    @tables.setter
-    def tables(self, table):
-        self.table = table
+    # @tables.setter
+    # def tables(self, table):
+    #     self.table = table
 
-    @property
-    def valueChooseAdministradoras(self):
-        return None
+    # @property
+    # def valueChooseAdministradoras(self):
+    #     return None
 
-    @valueChooseAdministradoras.setter
-    def valueChooseAdministradoras(self, valueAdministradora):
-        self.valueAdministradora = valueAdministradora
+    # @valueChooseAdministradoras.setter
+    # def valueChooseAdministradoras(self, valueAdministradora):
+    #     self.valueAdministradora = valueAdministradora
 
-    @property
-    def valueChooseCargos(self):
-        return None
+    # @property
+    # def valueChooseCargos(self):
+    #     return None
 
-    @valueChooseCargos.setter
-    def valueChooseCargos(self, valueCargo):
-        self.valueCargo = valueCargo
+    # @valueChooseCargos.setter
+    # def valueChooseCargos(self, valueCargo):
+    #     self.cargo = valueCargo
 
     @property
     def tagReturnValue(self):
-        self.returnValue.tagSons = self.tagSon
-        self.returnValue.tagFathers = self.tagFather
-        self.returnValue.tagGets = self.tagGet
-        self.returnValue.tagSelecteds = self.tagSelected
+        self.returnValue.tagSon = self.tagSon
+        self.returnValue.tagFather = self.tagFather
+        self.returnValue.tagGet = self.tagGet
+        self.returnValue.tagSelected = self.tagSelected
 
     @property
     def valueExistAdministradoras(self):
@@ -218,13 +218,13 @@ class Connect:
         self.listExistCargos = list(set(listFullCargos))
         self.listExistCargos.sort()
 
-    @property
-    def valueExistTabelarecebimento(self):
-        return None
+    # @property
+    # def valueExistTabelarecebimento(self):
+    #     return None
 
-    @valueExistTabelarecebimento.setter
-    def valueExistTabelarecebimento(self, valueChooseTabelarecebimento):
-        self.listExistTabelarecebimento = valueChooseTabelarecebimento
+    # @valueExistTabelarecebimento.setter
+    # def valueExistTabelarecebimento(self, valueChooseTabelarecebimento):
+    #     self.listExistTabelarecebimento = valueChooseTabelarecebimento
 
     ''' ###########  logar  ###############'''
     @property
@@ -286,12 +286,12 @@ class Connect:
                         self.mouseKeyboard.clickXpath = xpath
                         clickOk = self.mouseKeyboard.clickXpath
                     if key == 11:  # botao de download
-                        self.df = file.readCsv
+                        self.df = file.readCsv  # type: ignore
                     if self.df is False:  # Repetir se download nao exis
                         clickOk = False
             if fileNotExist is True:
                 tableManip = TableManip()
-                tableManip.df = self.df
+                tableManip.df = self.df  # type: ignore
                 tableManip.dfNew = self.dfNew
                 self.dfNew = tableManip.merge
         file.delete
@@ -313,10 +313,10 @@ class Connect:
                 self.mouseKeyboard.clickXpath = xpath
                 clickOk = self.mouseKeyboard.clickXpath
                 if key == 3:  # botao de download
-                    self.df = file.readCsv
+                    self.df = file.readCsv  # type: ignore
                 if self.df is False:  # tem que repetir se download nao exis
                     clickOk = False
-        self.dfNew = self.df
+        self.dfNew = self.df  # type: ignore
 
     @property
     def minutes(self):
@@ -326,7 +326,7 @@ class Connect:
     def minutes(self, listXpath):
         # returnValue = ReturnValue()
         self.dateMonthYear.listMonthYear = self.month
-        listMonthYear: List = self.dateMonthYear.listMonthYear  # type: ignore
+        listMonthYear = self.dateMonthYear.listMonthYear  # type: ignore
         for key, xpath in enumerate(listXpath):
             clickOk = False
             while clickOk is False:
@@ -345,7 +345,7 @@ class Connect:
                         self.mouseKeyboard.clickXpath = xpath
                         # clickOk = self.mouseKeyboard.clickXpath
                         self.mouseKeyboard.clickValue = administradora
-                        for listYear in listMonthYear[0]:
+                        for listYear in listMonthYear[0]:  # type: ignore
                             self.mouseKeyboard.clickXpath = xpathYear
                             clickOk = self.mouseKeyboard.clickXpath
                             self.mouseKeyboard.clickValue = listYear
@@ -367,11 +367,12 @@ class Connect:
                                 self.tableManip.add_value_fixed_column = 'Administradora'
                                 self.tableManip.value_fixed_column = listYear
                                 self.tableManip.add_value_fixed_column = 'Ano'
-                                table: pd.DataFrame = self.tableManip.return_table
+                                table: pd.DataFrame = self.tableManip.table
                                 if tableComplete.empty:
                                     tableComplete = table
                                 else:
-                                    tableComplete = pd.concat([tableComplete, table])
+                                    tableComplete = pd.concat([tableComplete,
+                                                               table])
         self.table = tableComplete
 
     @property
@@ -405,17 +406,17 @@ class Connect:
         # limitar
         for valueAdministradora in listValue:
             # limita se a pessoa colocar na lista as administradora
-            if self.valueAdministradora is not None:
+            if self.valueAdministradora:
                 if valueAdministradora not in self.valueAdministradora:
                     continue
             # limita apenas as administradoras que existe nas vendas existentes
-            if self.listExistAdministradoras != []:
+            if self.listExistAdministradoras:
                 if valueAdministradora not in self.listExistAdministradoras:
                     continue
             listValueTemp.append(valueAdministradora)
         self.listValue = listValueTemp
 
-     # com valores da administradoras ira acrecentar valor tabela de recebimento
+    # com valores da administradoras ira acrecentar valor tabela de recebimento
     @property
     def pressListValueXpathResultListValue(self):
         return self.listValue
@@ -435,7 +436,7 @@ class Connect:
             listValueTabelarecebimento = self.returnValue.xpathTag
             listValueTemp = []
             # limitar
-            if self.listExistTabelarecebimento is not None:
+            if self.listExistTabelarecebimento:
                 for valueTabelarecebimento in listValueTabelarecebimento:
                     existWord = False
                     for wordDelete in self.listExistTabelarecebimento:
@@ -458,36 +459,35 @@ class Connect:
     def pressListValueXpathResultListValueDouble(self, xpath):
         listValueTemp = []
         self.mouseKeyboard.locationSearchTag = self.tagSon
-        for listValueAdministradoraTablarecebimento in self.listValue:
-            valueAdministradora = listValueAdministradoraTablarecebimento[0]
-            self.mouseKeyboard.clickValue = valueAdministradora
+        for administradora, listTablarecebimento in self.listValue:
+            self.mouseKeyboard.clickValue = administradora
             listValueTabelarecebimentoCargo = []
-            for valueTablarecebimento in listValueAdministradoraTablarecebimento[1]:
-                self.mouseKeyboard.clickValue = valueTablarecebimento
+            for tablaRecebimento in listTablarecebimento:
+                self.mouseKeyboard.clickValue = tablaRecebimento
                 while True:
                     self.mouseKeyboard.clickXpath = xpath
                     self.clickOk = self.mouseKeyboard.clickXpath
                     if self.clickOk is True:
                         break
                 self.returnValue.xpathTag = xpath
-                listValueCargo = self.returnValue.xpathTag
-                listValueCargoTemp = []
+                listCargo = self.returnValue.xpathTag
+                listCargoTemp = []
                 # limitar
-                for valueCargo in listValueCargo:
+                for cargo in listCargo:
                     # limita se a pessoa digita os cargos
-                    if self.valueCargo is not None:  # limitar pesquis
-                        if valueCargo not in self.valueCargo:
+                    if self.cargo:  # limitar pesquis
+                        if cargo not in self.cargo:
                             continue
                     # limitar apenas o que existe nos cargo da lista de funcion
-                    if self.listExistCargos is not None:
-                        if valueCargo not in self.listExistCargos:
+                    if self.listExistCargos:
+                        if cargo not in self.listExistCargos:
                             continue
-                    listValueCargoTemp.append(valueCargo)
-                listValueCargo = listValueCargoTemp
+                    listCargoTemp.append(cargo)
+                listCargo = listCargoTemp
                 listValueTabelarecebimentoCargo.append(
-                    [valueTablarecebimento, listValueCargo])
+                    [tablaRecebimento, listCargo])
             listValueTemp.append(
-                [valueAdministradora, listValueTabelarecebimentoCargo])
+                [administradora, listValueTabelarecebimentoCargo])
         self.listValue = listValueTemp
 
     @property
@@ -499,44 +499,45 @@ class Connect:
         listValueTemp = []
         self.mouseKeyboard.locationSearchTag = self.tagSon
         renameText = RenameText()
-        for listValueAdminTablecebCargo in self.listValue:
-            self.mouseKeyboard.clickValue = listValueAdminTablecebCargo[0]
-            for listValueTabelarecebimentoCargo in listValueAdminTablecebCargo[1]:
-                self.mouseKeyboard.clickValue = listValueTabelarecebimentoCargo[0]
-                for valueCargo in listValueTabelarecebimentoCargo[1]:
-                    self.mouseKeyboard.clickValue = valueCargo
+        for adminstradora, tableRecebimento_listCargo in self.listValue:
+            self.mouseKeyboard.clickValue = adminstradora
+            for tableRecebimento, listCargo in tableRecebimento_listCargo:
+                self.mouseKeyboard.clickValue = tableRecebimento
+                for cargo in listCargo:
+                    self.mouseKeyboard.clickValue = cargo
                     listValueTemp2 = []
-                    listValueTemp2.append(listValueAdminTablecebCargo[0])
-                    listValueTemp2.append(listValueTabelarecebimentoCargo[0])
-                    listValueTemp2.append(valueCargo)
+                    listValueTemp2.append(adminstradora)
+                    listValueTemp2.append(tableRecebimento)
+                    listValueTemp2.append(cargo)
                     listEnd = False
                     for campoCotaPeriodoParcela in listXpath:
                         if listEnd is True:
                             break
-                        for key, xpathCampoCotaPeriodoParcela in enumerate(
+                        for key, xpaths in enumerate(
                                 campoCotaPeriodoParcela):
                             if key == 0:
                                 # indica qual cabecalho pai
-                                self.returnValue.xpathFathers = xpathCampoCotaPeriodoParcela
+                                self.returnValue.xpathFather = xpaths
                                 # seleciona o texto da xpath
-                                self.returnValue.xpathTexts = xpathCampoCotaPeriodoParcela
+                                self.returnValue.xpathTexts = xpaths
                                 # retorna texto do cabecalho
                                 value = self.returnValue.xpathTexts
                                 if value is False:
                                     listEnd = True
                                     break
                                 renameText.renameHeader = value
-                                value = renameText.renameHeader  # salvando cabeçalho
+                                # salvando cabeçalho
+                                value = renameText.renameHeader
                             elif key == 1 or key == 2:
-                                for xpathParcela in xpathCampoCotaPeriodoParcela:
-                                    self.returnValue.xpathNameTag = xpathParcela
+                                for xpath in xpaths:
+                                    self.returnValue.xpathNameTag = xpath
                                     value = self.returnValue.xpathNameTag
                                     if value is False:
                                         continue
                                     else:
                                         break
                             else:
-                                self.returnValue.xpathXpathTag = xpathCampoCotaPeriodoParcela
+                                self.returnValue.xpathXpathTag = xpaths
                                 value = self.returnValue.xpathXpathTag
                             if value is False:
                                 break
@@ -563,20 +564,20 @@ class Connect:
             for value in self.returnValue.xpathTag:
                 if key == 0:
                     # limita se a pessoa digita os cargos
-                    if self.valueCargo is not None:  # limitar pesquis
-                        if value not in self.valueCargo:
+                    if self.cargo:  # limitar pesquis
+                        if value not in self.cargo:
                             continue
                     # limitar apenas o que existe nos cargo da lista de funcion
-                    if self.listExistCargos is not None:
+                    if self.listExistCargos:
                         if value not in self.listExistCargos:
                             continue
                 elif key == 1:
                     # limita se a pessoa colocar na lista as administradora
-                    if self.valueAdministradora is not None:
+                    if self.valueAdministradora:
                         if value not in self.valueAdministradora:
                             continue
                     # limita administradoras que existe nas vendas existentes
-                    if self.listExistAdministradoras != []:
+                    if self.listExistAdministradoras:
                         if value not in self.listExistAdministradoras:
                             continue
                 listValueTemp.append(value)
@@ -602,23 +603,23 @@ class Connect:
                 for pagamento in listPagamento:
                     self.mouseKeyboard.clickValue = pagamento
                     listValueTemp4 = []
-                    for key, xpathConsole in enumerate(listXpath):
+                    for key, xpathCons in enumerate(listXpath):
                         # o primeiro xpath é o pai
                         if key == 0:
-                            self.returnValue.xpathFathers = xpathConsole
-                            self.returnValue.timeSleeps = 0.5
-                            self.returnValue.attempts = 6
+                            self.returnValue.xpathFather = xpathCons
+                            self.returnValue.timeSleep = 0.5
+                            self.returnValue.attempt = 6
                             continue
                         if key in [2, 6, 8, 12, 14, 18, 20]:
-                            self.returnValue.timeSleeps = 0
-                            self.returnValue.attempts = 1
-                            for xpathConsoleSingle in xpathConsole:
-                                self.returnValue.xpathXpathTagSelected = xpathConsoleSingle
+                            self.returnValue.timeSleep = 0
+                            self.returnValue.attempt = 1
+                            for xpath in xpathCons:
+                                self.returnValue.xpathXpathTagSelected = xpath
                                 value = self.returnValue.xpathXpathTagSelected
                                 if value is not False:
                                     break
                         else:
-                            self.returnValue.xpathXpathTagSelected = xpathConsole
+                            self.returnValue.xpathXpathTagSelected = xpathCons
                             value = self.returnValue.xpathXpathTagSelected
                         listValueTemp4.append(value)
                     listValueTemp3.append([pagamento, listValueTemp4])
@@ -789,10 +790,10 @@ class Connect:
                 case 3:
                     nameNumberColumn = 'Cargo'
                 case _:
-                    tableManip.nameNumberColumns = countColumn
+                    tableManip.nameNumberColumn = countColumn
                     countLine = 0
                     while True:
-                        tableManip.nameNumberlines = countLine
+                        tableManip.nameNumberLine = countLine
                         tableManip.infTable = self.table
                         value = tableManip.infTable
                         value = str(value)
@@ -801,33 +802,42 @@ class Connect:
                             key2Barra = False
                             for key, letter in enumerate(value):
                                 word += letter
-                                if word == 'Período Venda' or word == 'PerÃ­odo Venda:':
+                                word_1 = 'Período Venda'
+                                word_2 = 'PerÃ­odo Venda:'
+                                word_3 = ' Periodo valor qtd vendas'
+                                word_4 = ' Qtd. Cotas Inicial'
+                                word_5 = ' Qtd. Cotas Final'
+                                if word == word_1 or word == word_2:
                                     qtvVendas += 1
-                                    nameNumberColumn = str(
-                                        qtvVendas) + ' Periodo valor qtd vendas'
-                                    nameNumberColumn1 = str(qtvVendas) + ' Qtd. Cotas Inicial'
-                                    nameNumberColumn2 = str(qtvVendas) + ' Qtd. Cotas Final'
+                                    nameNumberColumn = str(qtvVendas) + word_3
+                                    nameNumberColumn1 = str(qtvVendas) + word_4
+                                    nameNumberColumn2 = str(qtvVendas) + word_5
                                     nParc = 1
                                     parcStart = False
                                     break
                                 if key == 2 and letter == '/':
                                     key2Barra = True
-                                if key == 5 and letter == '/' and key2Barra is True:
-                                    if dateStart is True:
-                                        nameNumberColumn = str(qtvVendas) + ' Data inicial'
+                                if key == 5 and letter == '/' and key2Barra:
+                                    if dateStart:
+                                        nameNumberColumn = str(
+                                            qtvVendas) + ' Data inicial'
                                         dateStart = False
                                     else:
-                                        nameNumberColumn = str(qtvVendas) + ' Data final'
+                                        nameNumberColumn = str(
+                                            qtvVendas) + ' Data final'
                                         dateStart = True
                                         parcStart = True
                                     key2Barra = False
                                     break
                                 if value == word:  # fim. palavra completa
                                     if parcStart is True:
-                                        nameNumberColumn = str(qtvVendas) + ' Parc ' + str(nParc)
+                                        nameNumberColumn = str(
+                                            qtvVendas) + ' Parc ' + str(nParc)
                                         nParc += 1
                                     else:
-                                        nameNumberColumn = self.table.columns.values[countColumn]
+                                        nameNumberColumn = (
+                                            self.table.columns.values[
+                                                countColumn])
                                     break
                             break
                         else:

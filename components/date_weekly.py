@@ -164,7 +164,7 @@ class Date_weekly:
                         List_colunms[1]: data,
                         List_colunms[2]: week}
             tableManip.add_line_dictionary = new_line
-        self.table = tableManip.return_table
+        self.table = tableManip.table
 
     @property
     def return_year_weekly(self):

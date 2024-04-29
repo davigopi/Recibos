@@ -8,14 +8,14 @@ class TableManip:
     def __init__(self) -> None:
         self.df: pd.DataFrame = pd.DataFrame()
         self.dfNew: pd.DataFrame = pd.DataFrame()
-        self.nameNumberLine = None
-        self.nameNumberColumn = None
+        self.nameNumberLine = 0
+        self.nameNumberColumn = 0
         self.value = None
         self.table: pd.DataFrame = pd.DataFrame()
-        self.value_separate = None
+        self.value_separate = ''
         self.value_fixed_column = ''  # por padrao ''
-        self.column_clone = None
-        self.rename_name_column_origin = None
+        self.column_clone = ''
+        self.rename_name_column_origin = ''
 
     # @property
     # def dfNews(self):
@@ -251,10 +251,10 @@ class TableManip:
         name_column = list_index_name_column[1]
         self.table.columns.values[index_column] = name_column
 
-    @property
-    def return_table(self):
-        return self.table
+    # @property
+    # def return_table(self):
+    #     return self.table
 
-    @property
-    def return_df(self):
-        return self.df
+    # @property
+    # def return_df(self):
+    #     return self.df

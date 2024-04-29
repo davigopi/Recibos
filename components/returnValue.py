@@ -28,198 +28,198 @@ excecaoAll = (
 
 
 class ReturnValue:
-  def __init__(self, *args, **kwargs) -> None:
-    self.driver = kwargs.get('driver')
-    self.xpathFather = None
-    self.tagFather = None
-    self.tagSon = None
-    self.tagGet = None
-    self.value = None
-    self.tagSelected = None
-    self.timeSleep = 0
-    self.attempt = 0
+    def __init__(self, *args, **kwargs) -> None:
+        self.driver = kwargs.get('driver')
+        self.xpathFather = None
+        self.tagSon = ''
+        self.tagFather = ''
+        self.tagGet = ''
+        self.tagSelected = ''
+        self.value = None
+        self.timeSleep: float = 0
+        self.attempt = 0
 
-  @property
-  def xpathFathers(self):
-    return None
+    # @property
+    # def xpathFathers(self):
+    #   return None
 
-  @xpathFathers.setter
-  def xpathFathers(self, xpathFather):
-    self.xpathFather = xpathFather
+    # @xpathFathers.setter
+    # def xpathFathers(self, xpathFather):
+    #   self.xpathFather = xpathFather
 
-  @property
-  def tagFathers(self):
-    return None
+    # @property
+    # def tagFathers(self):
+    #   return None
 
-  @tagFathers.setter
-  def tagFathers(self, tagFather):
-    self.tagFather = tagFather
+    # @tagFathers.setter
+    # def tagFathers(self, tagFather):
+    #   self.tagFather = tagFather
 
-  @property
-  def tagSons(self):
-    return None
+    # @property
+    # def tagSons(self):
+    #   return None
 
-  @tagSons.setter
-  def tagSons(self, tagSon):
-    self.tagSon = tagSon
+    # @tagSons.setter
+    # def tagSons(self, tagSon):
+    #   self.tagSon = tagSon
 
-  @property
-  def tagGets(self):
-    return None
+    # @property
+    # def tagGets(self):
+    #   return None
 
-  @tagGets.setter
-  def tagGets(self, tagValue):
-    self.tagGet = tagValue
+    # @tagGets.setter
+    # def tagGets(self, tagValue):
+    #   self.tagGet = tagValue
 
-  @property
-  def tagSelecteds(self):
-    return None
+    # @property
+    # def tagSelecteds(self):
+    #   return None
 
-  @tagSelecteds.setter
-  def tagSelecteds(self, tagSelected):
-    self.tagSelected = tagSelected
+    # @tagSelecteds.setter
+    # def tagSelecteds(self, tagSelected):
+    #   self.tagSelected = tagSelected
 
-  @property
-  def timeSleeps(self):
-    return None
+    # @property
+    # def timeSleeps(self):
+    #   return None
 
-  @timeSleeps.setter
-  def timeSleeps(self, timeSleep):
-    self.timeSleep = timeSleep
+    # @timeSleeps.setter
+    # def timeSleeps(self, timeSleep):
+    #   self.timeSleep = timeSleep
 
-  @property
-  def attempts(self):
-    return None
+    # @property
+    # def attempts(self):
+    #   return None
 
-  @attempts.setter
-  def attempts(self, attempt):
-    self.attempt = attempt
+    # @attempts.setter
+    # def attempts(self, attempt):
+    #   self.attempt = attempt
 
-  @property
-  def xpathXpathTag(self):
-    return self.value
+    @property
+    def xpathXpathTag(self):
+        return self.value
 
-  @xpathXpathTag.setter
-  def xpathXpathTag(self, xpath):
-    count = 0
-    while True:
-      try:
-        count += 1
-        self.value = self.driver.find_element(
-            By.XPATH, self.xpathFather).find_element(
-                By.XPATH, xpath).get_attribute(self.tagGet)
-        break
-      except excecaoAll:
-        if count >= self.attempt:
-          self.value = False
-          break
-        sleep(0.2)
+    @xpathXpathTag.setter
+    def xpathXpathTag(self, xpath):
+        count = 0
+        while True:
+            try:
+                count += 1
+                self.value = self.driver.find_element(
+                    By.XPATH, self.xpathFather).find_element(
+                        By.XPATH, xpath).get_attribute(self.tagGet)
+                break
+            except excecaoAll:
+                if count >= self.attempt:
+                    self.value = False
+                    break
+                sleep(0.2)
 
-  @property
-  def xpathXpathTagSelected(self):
-    return self.value
+    @property
+    def xpathXpathTagSelected(self):
+        return self.value
 
-  @xpathXpathTagSelected.setter
-  def xpathXpathTagSelected(self, xpath):
-    count = 0
-    xpath += self.tagSelected
-    while True:
-      try:
-        count += 1
-        self.value = self.driver.find_element(
-            By.XPATH, self.xpathFather).find_element(
-                By.XPATH, xpath).text
-        break
-      except excecaoAll:
-        if count >= 3:
-          self.value = False
-          break
-        sleep(self.timeSleep)
+    @xpathXpathTagSelected.setter
+    def xpathXpathTagSelected(self, xpath):
+        count = 0
+        xpath += self.tagSelected
+        while True:
+            try:
+                count += 1
+                self.value = self.driver.find_element(
+                    By.XPATH, self.xpathFather).find_element(
+                        By.XPATH, xpath).text
+                break
+            except excecaoAll:
+                if count >= 3:
+                    self.value = False
+                    break
+                sleep(self.timeSleep)
 
-  @property
-  def xpathNameTag(self):
-    return self.value
+    @property
+    def xpathNameTag(self):
+        return self.value
 
-  @xpathNameTag.setter
-  def xpathNameTag(self, name):
-    count = 0
-    while True:
-      try:
-        count += 1
-        self.value = self.driver.find_element(
-            By.XPATH, self.xpathFather).find_element(
-                By.NAME, name).get_attribute(self.tagGet)
-        break
-      except excecaoAll:
-        if count >= 3:
-          self.value = False
-          break
-        sleep(0.2)
+    @xpathNameTag.setter
+    def xpathNameTag(self, name):
+        count = 0
+        while True:
+            try:
+                count += 1
+                self.value = self.driver.find_element(
+                    By.XPATH, self.xpathFather).find_element(
+                        By.NAME, name).get_attribute(self.tagGet)
+                break
+            except excecaoAll:
+                if count >= 3:
+                    self.value = False
+                    break
+                sleep(0.2)
 
-  @property
-  def xpathTexts(self):
-    return self.value
+    @property
+    def xpathTexts(self):
+        return self.value
 
-  @xpathTexts.setter
-  def xpathTexts(self, xpath):
-    count = 0
-    while True:
-      count += 1
-      try:
-        self.value = self.driver.find_element(By.XPATH, xpath).text
-        break
-      except excecaoAll:
-        if count >= 3:
-          self.value = False
-          break
-        sleep(0.2)
+    @xpathTexts.setter
+    def xpathTexts(self, xpath):
+        count = 0
+        while True:
+            count += 1
+            try:
+                self.value = self.driver.find_element(By.XPATH, xpath).text
+                break
+            except excecaoAll:
+                if count >= 3:
+                    self.value = False
+                    break
+                sleep(0.2)
 
-  @property
-  def xpathTag(self):
-    return self.value
+    @property
+    def xpathTag(self):
+        return self.value
 
-  @xpathTag.setter
-  def xpathTag(self, xpath):
-    while True:
-      try:
-        self.value = self.driver.find_element(
-            By.XPATH, xpath).get_attribute(
-                self.tagGet)  # retornar o outerHTML
-        # pip install lxml
-        self.value = BeautifulSoup(
-            self.value, "lxml").find(
-                self.tagFather).findAll(
-                    self.tagSon)  # formatar outerHTMl
-        listValue = []
-        for key in range(1, len(self.value), 1):
-          listValue.append(
-              self.value[key].find(
-                  text=True))  # pega cada valro
-        self.value = listValue
-        break
-      except (AttributeError, Exception):
-        sleep(0.2)
+    @xpathTag.setter
+    def xpathTag(self, xpath):
+        while True:
+            try:
+                self.value = self.driver.find_element(
+                    By.XPATH, xpath).get_attribute(
+                        self.tagGet)  # retornar o outerHTML
+                # pip install lxml
+                self.value = BeautifulSoup(
+                    self.value, "lxml").find(
+                        self.tagFather).findAll(
+                            self.tagSon)  # formatar outerHTMl
+                listValue = []
+                for key in range(1, len(self.value), 1):
+                    listValue.append(
+                        self.value[key].find(
+                            text=True))  # pega cada valro
+                self.value = listValue
+                break
+            except (AttributeError, Exception):
+                sleep(0.2)
 
-  @property
-  def xpath_to_tags(self):
-    return self.value
+    @property
+    def xpath_to_tags(self):
+        return self.value
 
-  @xpath_to_tags.setter
-  def xpath_to_tags(self, xpath):
-    count = 0
-    while True:
-      count += 1
-      try:
-        # return all tags
-        self.value = self.driver.find_element(
-            By.XPATH, xpath).get_attribute(self.tagGet)
-        # Erro (FeatureNotFound) if not install: pip install lxml
-        # test loading table
-        BeautifulSoup(self.value, "lxml").find(
-            self.tagFather).findAll(self.tagSon)
-        break
-      except (AttributeError, Exception):
-        if count >= 5:
-          self.value = False
-          break
-        sleep(0.2)
+    @xpath_to_tags.setter
+    def xpath_to_tags(self, xpath):
+        count = 0
+        while True:
+            count += 1
+            try:
+                # return all tags
+                self.value = self.driver.find_element(
+                    By.XPATH, xpath).get_attribute(self.tagGet)
+                # Erro (FeatureNotFound) if not install: pip install lxml
+                # test loading table
+                BeautifulSoup(self.value, "lxml").find(
+                    self.tagFather).findAll(self.tagSon)
+                break
+            except (AttributeError, Exception):
+                if count >= 5:
+                    self.value = False
+                    break
+                sleep(0.2)

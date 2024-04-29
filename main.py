@@ -1,12 +1,12 @@
 import os
 from pathlib import Path
-from time import sleep
+# from time import sleep
 from webdriver_manager.chrome import ChromeDriverManager
 import pandas as pd
-import datetime
+# import datetime
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
-from typing import Union
+# from typing import Union
 from components.connect import Connect
 from components.tableManip import TableManip
 from components.xpathManip import XpathManip
@@ -23,34 +23,32 @@ user = 'davigopi@gmail.com'
 password = '36vad28'
 month = 24
 pathTables = Path(__file__).parent / 'tables'
-arqTableCadastroConsorciado = pathTables / 'table_Cadastro_Consorciado.csv'
-arqTableCadastroFuncionario = pathTables / 'table_Cadastro_Funcionario.csv'
-arqTableCadastroAta = pathTables / 'table_Cadastro_Ata.csv'
-arqTableComissoesConfiguracao = pathTables / 'table_Comissoes_Configuracao.csv'
-arqTableComissoesConfigPag = pathTables / 'table_Comissoes_ConfigPagamento.csv'
-arqTableComissoesConfigPagTratada = pathTables / 'table_Comissoes_ConfigPagTratada.csv'
-arqTableComissoesConfigPagDupl = pathTables / 'table_Comissoes_ConfigPagamento_Dupl.csv'
-arqTableDatasSemanais = pathTables / 'table_datas_semanais.csv'
-arqTableTeste = pathTables / 'table_teste.csv'
-arqInformacao = pathTables / 'informacao.txt'
+name_arq = 'table_Cadastro_Consorciado.csv'
+arqTableCadastroConsorciado = pathTables / name_arq
+name_arq = 'table_Cadastro_Funcionario.csv'
+arqTableCadastroFuncionario = pathTables / name_arq
+name_arq = 'table_Cadastro_Ata.csv'
+arqTableCadastroAta = pathTables / name_arq
+name_arq = 'table_Comissoes_Configuracao.csv'
+arqTableComissoesConfiguracao = pathTables / name_arq
+name_arq = 'table_Comissoes_ConfigPagamento.csv'
+arqTableComissoesConfigPag = pathTables / name_arq
+name_arq = 'table_Comissoes_ConfigPagTratada.csv'
+arqTableComissoesConfigPagTratada = pathTables / name_arq
+name_arq = 'table_Comissoes_ConfigPagamento_Dupl.csv'
+arqTableComissoesConfigPagDupl = pathTables / name_arq
+name_arq = 'table_datas_semanais.csv'
+arqTableDatasSemanais = pathTables / name_arq
+name_arq = 'table_teste.csv'
+arqTableTeste = pathTables / name_arq
+name_arq = 'informacao.txt'
+arqInformacao = pathTables / name_arq
 
 pathDonwload = os.environ['USERPROFILE'] + '\\Downloads'
 arqDonwloadSales = pathDonwload + '\\consorciados.csv'
 arqDonwloadFunction = pathDonwload + '\\funcionarios.csv'
 
-# security = [user, password]
-
-'''#################### LIMITAR PESQUISAS ##################################'''
-limitSearchChosse = False
-valueChooseAdministradora = ['DISAL']
-valueChooseCargo = [
-    'CONSULTOR CLT - A PARTIR JAN-2018',
-    'CONSULTOR DE PARCEIRO'
-]
-limitSearchSystem = True
-limitSearchDeleteWord = True
-valueChooseTabelarecebimento = ['FERIAS']
-'''#################### TAGS ###############################################'''
+'''#################### TAGS ##############################################'''
 tag_option = 'option'
 tag_select = 'select'
 tag_outerHTML = 'outerHTML'
@@ -220,12 +218,12 @@ new_table_Cadastro_Funcionario = True
 new_table_Comissoes_Configuracao = True
 new_table_Comissoes_ConfigPagamento = True
 new_table_Cadastro_Ata = True
-# openSite = False
-# new_table_Cadastro_Consorciado = False
-# new_table_Cadastro_Funcionario = False
-# new_table_Cadastro_Ata = False
-# new_table_Comissoes_Configuracao = False
-# new_table_Comissoes_ConfigPagamento = False
+openSite = False
+new_table_Cadastro_Consorciado = False
+new_table_Cadastro_Funcionario = False
+new_table_Cadastro_Ata = False
+new_table_Comissoes_Configuracao = False
+new_table_Comissoes_ConfigPagamento = False
 
 
 ''' defined '''
@@ -240,8 +238,8 @@ xpathManip = XpathManip(driver=driver)
 if openSite:
     driver.get(siteSircon)
     # logar
-    connect.users = user
-    connect.passwords = password
+    connect.user = user
+    connect.password = password
     while True:
         connect.logarSircon = listXpathLog
         xpathManip.locate = listXpathComissoesConfiguracao[0]
@@ -253,8 +251,8 @@ else:
 
 '''table_Cadastro_Consorciado'''
 if new_table_Cadastro_Consorciado:
-    connect.files = arqDonwloadSales
-    connect.months = month
+    connect.file = arqDonwloadSales
+    connect.month = month
     connect.sales = listXpathSales
     table_Cadastro_Consorciado = connect.sales
     table_Cadastro_Consorciado.to_csv(  # type: ignore
@@ -274,7 +272,7 @@ else:  # ler as tabelas que para nao precisar executar novamente
 '''table_Cadastro_Funcionario '''
 
 if new_table_Cadastro_Funcionario:
-    connect.files = arqDonwloadFunction
+    connect.file = arqDonwloadFunction
     connect.function = listXpathFunction
     table_Cadastro_Funcionario = connect.function
     table_Cadastro_Funcionario.to_csv(  # type: ignore
@@ -291,23 +289,32 @@ else:
         dtype=str
     )
 
-
+'''#################### LIMITAR PESQUISAS ##################################'''
+limitSearchChosse = False
+valueAdministradora = ['DISAL']
+valueChooseCargo = [
+    'CONSULTOR CLT - A PARTIR JAN-2018',
+    'CONSULTOR DE PARCEIRO'
+]
+limitSearchSystem = True
+limitSearchDeleteWord = False
+valueChooseTabelarecebimento = ['FERIAS']
 '''Limitar pesquisa escolhida pelo usuario'''
 if limitSearchChosse is True:
-    connect.valueChooseAdministradoras = valueChooseAdministradora
-    connect.valueChooseCargos = valueChooseCargo
+    connect.valueAdministradora = valueAdministradora
+    connect.cargo = valueChooseCargo
 if limitSearchSystem is True:
     connect.valueExistAdministradoras = table_Cadastro_Consorciado
     connect.valueExistCargos = table_Cadastro_Funcionario
 if limitSearchDeleteWord is True:
-    connect.valueExistTabelarecebimento = valueChooseTabelarecebimento
+    connect.listExistTabelarecebimento = valueChooseTabelarecebimento
 
 '''table_Cadastro_Ata'''
 if new_table_Cadastro_Ata is True:
-    connect.months = month
-    connect.tagSons = tag_data
-    connect.tagFathers = tag_row
-    connect.tagGets = tag_outerHTML
+    connect.month = month
+    connect.tagSon = tag_data
+    connect.tagFather = tag_row
+    connect.tagGet = tag_outerHTML
     connect.tagReturnValue
     connect.minutes = listXpathMinutes
 
@@ -340,9 +347,9 @@ else:
 if new_table_Comissoes_Configuracao:
     connect.pressListXpath = listXpathComissoesConfiguracao
     connect.pressListXpath = xpathTipoComissao
-    connect.tagSons = tag_option
-    connect.tagFathers = tag_select
-    connect.tagGets = tag_outerHTML
+    connect.tagSon = tag_option
+    connect.tagFather = tag_select
+    connect.tagGet = tag_outerHTML
     connect.tagReturnValue
     # criar lista de administradoras
     connect.pressXpathResultListValue = xpathAdministradora
@@ -351,7 +358,7 @@ if new_table_Comissoes_Configuracao:
     # criar lista de administradoras + tabela de recebiemnto + cargos
     connect.pressListValueXpathResultListValueDouble = xpathCargo
     # alterar a tagets
-    connect.tagGets = tag_value
+    connect.tagGet = tag_value
     connect.tagReturnValue
     # criar lista de administradoras + tabela de recebiemnto + cargos + valores
     connect.pressListValueResultListValueTriple = listCampoCotaPeriodoParcela
@@ -380,10 +387,10 @@ else:
 
 '''table_Comissoes_ConfigPagamento'''
 if new_table_Comissoes_ConfigPagamento:
-    connect.tagSons = tag_option
-    connect.tagFathers = tag_select
-    connect.tagGets = tag_outerHTML
-    connect.tagSelecteds = tag_selected
+    connect.tagSon = tag_option
+    connect.tagFather = tag_select
+    connect.tagGet = tag_outerHTML
+    connect.tagSelected = tag_selected
     connect.tagReturnValue
     # caminho no site para entra local especifico pelo xpath
     connect.pressListXpath = listXpathComissoesConfPagamento
@@ -621,7 +628,8 @@ with open(arqInformacao, 'w') as arquivo:
     arquivo.write('Na tabela table_merge foi encontrado duplicado:  \n \n')
 for i in range(num_line):
     i2 = i - nDiferente
-    if table_full.at[i, 'Vendedor'] != table_Cadastro_Consorciado.at[
+    if table_full.at[
+        i, 'Vendedor'] != table_Cadastro_Consorciado.at[  # type: ignore
             i2, 'Vendedor']:
         count += 1
         arquivoTxt = str(count) + 'ª divergência \n'
