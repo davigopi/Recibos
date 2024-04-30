@@ -1,5 +1,9 @@
+from asyncio.windows_events import NULL
 import pandas as pd
 from pathlib import Path
+import json
+# import math
+from time import sleep
 # import math
 
 
@@ -28,14 +32,34 @@ list_columns_full_ata_cadastro = [
     item for item in list_columns_full_ata if item != 'ATA Entrega'
 ]
 
-list_columns_str_to_float = [
-    column_credito,
+list_qtd_cotas = [
     '1 Qtd. Cotas Inicial', '1 Qtd. Cotas Final',
     '2 Qtd. Cotas Inicial', '2 Qtd. Cotas Final',
     '3 Qtd. Cotas Inicial', '3 Qtd. Cotas Final',
     '4 Qtd. Cotas Inicial', '4 Qtd. Cotas Final',
     '5 Qtd. Cotas Inicial', '5 Qtd. Cotas Final',
 ]
+
+list_qtd_cotas_parcelas = [
+    '1 Qtd. Cotas Inicial', '1 Qtd. Cotas Final',
+    '1 Parc 1', '1 Parc 2', '1 Parc 3', '1 Parc 4', '1 Parc 5',
+    '1 Parc 6', '1 Parc 7', '1 Parc 8', '1 Parc 9', '1 Parc 10',
+    '2 Qtd. Cotas Inicial', '2 Qtd. Cotas Final',
+    '2 Parc 1', '2 Parc 2', '2 Parc 3', '2 Parc 4', '2 Parc 5',
+    '2 Parc 6', '2 Parc 7', '2 Parc 8', '2 Parc 9', '2 Parc 10',
+    '3 Qtd. Cotas Inicial', '3 Qtd. Cotas Final',
+    '3 Parc 1', '3 Parc 2', '3 Parc 3', '3 Parc 4', '3 Parc 5',
+    '3 Parc 6', '3 Parc 7', '3 Parc 8', '3 Parc 9', '3 Parc 10',
+    '4 Qtd. Cotas Inicial', '4 Qtd. Cotas Final',
+    '4 Parc 1', '4 Parc 2', '4 Parc 3', '4 Parc 4', '4 Parc 5',
+    '4 Parc 6', '4 Parc 7', '4 Parc 8', '4 Parc 9', '4 Parc 10',
+    '5 Qtd. Cotas Inicial', '5 Qtd. Cotas Final',
+    '5 Parc 1', '5 Parc 2', '5 Parc 3', '5 Parc 4', '5 Parc 5',
+    '5 Parc 6', '5 Parc 7', '5 Parc 8', '5 Parc 9', '5 Parc 10',
+]
+
+list_columns_str_to_float = list_qtd_cotas
+list_columns_str_to_float.append(column_credito)
 
 months = {
     'JANEIRO': 1, 'FEVEREIRO': 2, 'MARÇO': 3, 'ABRIL': 4, 'MAIO': 5,
@@ -55,11 +79,20 @@ table_full = pd.read_csv(
     dtype=str
 )
 
+name_columns_full = table_full.columns.tolist()
+quantity_line_full = table_full.shape[0]
+
+# converter em float as columns string
 for column in list_columns_str_to_float:
     table_full.loc[:, column] = table_full[column].str.replace('.', '')
     table_full.loc[:, column] = table_full[column].str.replace(',', '.')
     table_full.loc[:, column] = table_full[column].astype(float)
     table_full.loc[:, column] = table_full[column].round(2)
+
+
+# if data_administradora in list_single_administradora:
+#     list_single_administradora.remove(data_administradora)
+
 
 table_full_ata = table_full[
     table_full[column_dt_pag_por] != type_data_date_pay
@@ -69,7 +102,7 @@ table_full_weekly = table_full[
 ]
 
 
-name_columns = table_full.columns.tolist()
+name_columns_full = table_full.columns.tolist()
 quantity_line_ata = table_full_ata.shape[0]
 quantity_line_weekly = table_full_weekly.shape[0]
 
@@ -127,14 +160,6 @@ table_single_ata = []
 for column in list_columns_full_ata_single:
     table = table_seller_single[table_seller_single[column] == data_ata_single]
     sum_credito = table[column_credito].sum()
-    list_single_administradora = table[column_administradora].unique()
-    print(list_single_administradora)
-    quantity_line_table = table.shape[0]
-    for key in range(quantity_line_table):
-        data_administradora = table.iloc[key][column_administradora]
-        # if data_administradora in list_single_administradora:
-        #     list_single_administradora.remove(data_administradora)
-
     table_single_ata.append([column, sum_credito, table])
 
 
@@ -143,7 +168,6 @@ for column in list_columns_full_ata_single:
 table_single_merge: pd.DataFrame = pd.DataFrame()
 start = False
 for column, sum_credito, table in table_single_ata:
-
     if not table.empty:
         # print(column)
         # print(sum_credito)
@@ -155,6 +179,25 @@ for column, sum_credito, table in table_single_ata:
         table_single_merge = pd.concat([table_single_merge, table])
 # salvar a tabela
 # print(table_single_merge)
+
+# pegar informações de valores da administradoras
+list_single_administradora = table_single_merge[column_administradora].unique()
+print(list_single_administradora)
+dic_administradoras = {}
+for administradora in list_single_administradora:
+    for key in range(quantity_line_full):
+        data_administradora = table_single_merge.iloc[key][column_administradora]
+        if data_administradora == administradora:
+            dic_administradoras[administradora] = {}
+            for qtd_cotas in list_qtd_cotas_parcelas:
+                data = table_single_merge.iloc[key][qtd_cotas]
+                if not pd.isna(data):
+                    dic_administradoras[administradora][qtd_cotas] = data
+            break
+dic_administradoras_json = json.dumps(dic_administradoras, indent=4)
+print(dic_administradoras_json)
+
+
 table_single_merge.to_csv(
     arqTableTeste,
     index=False,
