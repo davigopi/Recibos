@@ -1,11 +1,20 @@
-import pandas as pd
+class MinhaClasse:
+    def __init__(self):
+        self.variavel = 0
+        self.total = 0
 
-# Suponha que você tenha dois DataFrames: df1 e df2
-df1 = pd.DataFrame({'A': [1, 2, 3], 'B': [4, 5, 6]})
-df2 = pd.DataFrame({'A': [7, 8, 9], 'B': [10, 11, 12]})
+    @property
+    def atualizar_variavel(self):
+        return None
 
-# Concatenar os DataFrames verticalmente (adicionar linhas)
-concatenated_df = pd.concat([df1, df2])
+    @atualizar_variavel.setter
+    def atualizar_variavel(self, novo_numero):
+        self.total = novo_numero + self.variavel
+        print("Novo valor:", self.total)
 
-# Exibir o DataFrame concatenado
-print(concatenated_df)
+
+minhaClasse = MinhaClasse()
+
+minhaClasse.variavel = 10
+
+minhaClasse.atualizar_variavel = 2
