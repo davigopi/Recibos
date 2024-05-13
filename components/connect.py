@@ -14,7 +14,10 @@
 # from types import NoneType
 # from numpy import NaN
 # import pyautogui
+from ast import While
 import pandas as pd
+from pathlib import Path
+from time import sleep
 # from typing import List, Union
 # from pandas.errors import EmptyDataError
 # import os
@@ -42,7 +45,7 @@ from components.dateMonthYear import DateMonthYear
 from components.mouseKeyboard import MouseKeyboard
 from components.tableManip import TableManip
 from components.table_from_tags import Table_from_tags
-from components.buttonsSpecial import ButtonsSpecial
+# from components.buttonsSpecial import ButtonsSpecial
 from components.fileManip import FileManip
 # from xpathManip import XpathManip
 # from imageManip import ImageManip
@@ -73,7 +76,8 @@ class Connect:
         self.tagFather = ''
         self.tagGet = ''
         self.tagSelected = ''
-        self.file = ''
+        self.file: Path = Path()
+        self.arq_log: Path = Path()
         self.month = 0
         self.valueAdministradora = []
         self.cargo = []
@@ -82,6 +86,7 @@ class Connect:
         self.dateMonthYear = DateMonthYear()
         self.table_from_tags = Table_from_tags()
         self.tableManip = TableManip()
+        self.fileManip = FileManip()
         self.listExistCargos = []
         self.listExistAdministradoras: list = []
         self.listExistTabelarecebimento = []
@@ -252,7 +257,7 @@ class Connect:
             else:
                 while True:
                     self.mouseKeyboard.clickXpath = xpath
-                    self.clickOk = self.mouseKeyboard.clickXpath
+                    self.clickOk = self.mouseKeyboard.clickOk
                     if self.clickOk is True:
                         break
 
@@ -262,40 +267,109 @@ class Connect:
 
     @sales.setter
     def sales(self, listXpath):
-        file = FileManip()
-        file.arqConss = self.file
+        self.fileManip.arq_cons = self.file  # type:ignore
+        self.fileManip.arq_log = self.arq_log  # type:ignore
         for lastMonth in range(self.month, -1, -1):
-            file.delete
-            fileNotExist = True
-            for key, xpath in enumerate(listXpath):
-                func = self.mouseKeyboard
-                butt = ButtonsSpecial(
-                    lastMonth=lastMonth,
-                    func=func,
-                    xpath=xpath
-                )
-                clickOk = False
-                while clickOk is False:
-                    if key == 3 or key == 7:   # botao seta para esquerda
-                        clickOk = butt.clickLeftArrow
-                    elif key == 4:  # linha coluna calendario inicio
-                        clickOk = butt.clickDayStartMonth
-                    elif key == 8:  # linha coluna calendario fim
-                        clickOk = butt.clickDayEndMonth
-                    else:
-                        self.mouseKeyboard.clickXpath = xpath
-                        clickOk = self.mouseKeyboard.clickXpath
-                    if key == 11:  # botao de download
-                        self.df = file.readCsv  # type: ignore
-                    if self.df is False:  # Repetir se download nao exis
-                        clickOk = False
-            if fileNotExist is True:
+            self.fileManip.delete  # type:ignore
+            # fileNotExist = True
+            repeat = True
+            while repeat:  # para persistencia
+                error = ''
+                self.mouseKeyboard.error = error  # type: ignore
+                self.fileManip.error = error
+                for key, xpath in enumerate(listXpath):
+                    func = self.mouseKeyboard
+                    # butt = ButtonsSpecial(
+                    #     lastMonth=lastMonth,
+                    #     func=func,
+                    #     xpath=xpath
+                    # )
+                    clickOk = False
+                    count_attempts = 0
+                    repeat = True
+                    while clickOk is False:
+                        func.numberTimesRepeated = 0
+                        if key == 3 or key == 7:   # botao seta para esquerda
+                            # clickOk = butt.clickLeftArrow
+                            for _ in range(lastMonth):  # quantidade de vezes que tem que retornar
+                                func.clickXpath = xpath
+                                clickOk = func.clickOk
+                                attempts_click = func.numberTimesRepeated
+                                if clickOk is False and attempts_click >= 24:
+                                    info = func.info
+                                    error += f'Erro: Mais de {attempts_click} '
+                                    error += f'click sem retorno. Info: {info}'
+                                    break
+                        elif key == 4:  # linha coluna calendario inicio
+                            # clickOk = butt.clickDayStartMonth
+                            line = 1
+                            column = 7
+                            while True:
+                                xpath = f'//*[@id="ui-datepicker-div"]/table/tbody/tr[{line}]/td[{column}]'
+                                func.clickXpath = xpath
+                                clickOk = func.clickOk
+                                column -= 1
+                                if column == 0:
+                                    break
+                            sleep(3)
+                        elif key == 8:  # linha coluna calendario fim
+                            # clickOk = butt.clickDayEndMonth
+                            if lastMonth != 0:
+                                line = 4
+                                column = 7
+                                while True:
+                                    xpath = f'//*[@id="ui-datepicker-div"]/table/tbody/tr[{line}]/td[{column}]'
+                                    func.clickXpath = xpath
+                                    clickOk = func.clickOk
+                                    column += 1
+                                    if (column == 3 and line == 6) or clickOk is False:
+                                        clickOk = True
+                                        break
+                                    if column == 8:
+                                        line += 1
+                                        column = 1
+                            else:
+                                clickOk = True
+                            sleep(3)
+                        else:
+                            self.mouseKeyboard.clickXpath = xpath
+                            clickOk = self.mouseKeyboard.clickOk
+                        if key == 11:  # botao de download
+                            self.df = self.fileManip.readCsv  # type: ignore
+                            error = self.fileManip.error
+                        info = self.mouseKeyboard.info
+                        print(f'Meses anteriosres ao atula: {lastMonth}')
+                        print(f'info: {info}')
+                        print(f'quantidade de tentativas: {count_attempts}')
+                        print(f'key: {key}')
+                        print(f'Erro: {error}')
+                        print(f'Clicle OK: {clickOk}')
+                        print('')
+                        '''O arquvi nao existe devido ao não existir nada para
+                          ser baixado no sistema origem'''
+                        if error != '':
+                            repeat = False
+                            break  # para o for erro
+                        '''Caso aja um lup infinito ele para e recomeça'''
+                        count_attempts += 1
+                        if count_attempts >= 10:
+                            break
+
+                    if clickOk:
+                        repeat = False
+            if error == '':
+                # if fileNotExist is True:
                 tableManip = TableManip()
                 tableManip.df = self.df  # type: ignore
                 tableManip.dfNew = self.dfNew
                 self.dfNew = tableManip.merge
-        file.delete
-        file.writeCsv = self.dfNew
+            else:
+                error += f' Quantidade de meses anteirores são: {lastMonth}'
+                error += f' O key do erro é: {key}'
+                self.fileManip.writeLog = error
+
+        self.fileManip.delete
+        self.fileManip.writeCsv = self.dfNew
 
     @property
     def function(self):
@@ -304,14 +378,13 @@ class Connect:
     @function.setter
     def function(self, listXpath):
         file = FileManip()
-        file.arqConss = self.file
+        file.arq_cons = self.file
         file.delete
-        # fileNotExist = True
         for key, xpath in enumerate(listXpath):
             clickOk = False
             while clickOk is False:
                 self.mouseKeyboard.clickXpath = xpath
-                clickOk = self.mouseKeyboard.clickXpath
+                clickOk = self.mouseKeyboard.clickOk
                 if key == 3:  # botao de download
                     self.df = file.readCsv  # type: ignore
                 if self.df is False:  # tem que repetir se download nao exis
@@ -332,7 +405,7 @@ class Connect:
             while clickOk is False:
                 if key in (0, 1):
                     self.mouseKeyboard.clickXpath = xpath
-                    clickOk = self.mouseKeyboard.clickXpath
+                    clickOk = self.mouseKeyboard.clickOk
                 if key == 2:  # selecionar ano
                     xpathYear = xpath
                     clickOk = True
@@ -343,11 +416,11 @@ class Connect:
                     tableComplete: pd.DataFrame = pd.DataFrame()
                     for administradora in self.listExistAdministradoras:
                         self.mouseKeyboard.clickXpath = xpath
-                        # clickOk = self.mouseKeyboard.clickXpath
+                        # clickOk = self.mouseKeyboard.clickOk
                         self.mouseKeyboard.clickValue = administradora
                         for listYear in listMonthYear[0]:  # type: ignore
                             self.mouseKeyboard.clickXpath = xpathYear
-                            clickOk = self.mouseKeyboard.clickXpath
+                            clickOk = self.mouseKeyboard.clickOk
                             self.mouseKeyboard.clickValue = listYear
                             self.returnValue.xpath_to_tags = xpathTableMinutes
                             html = self.returnValue.xpath_to_tags
@@ -384,7 +457,7 @@ class Connect:
         for xpath in listXpath:
             while True:
                 self.mouseKeyboard.clickXpath = xpath
-                self.clickOk = self.mouseKeyboard.clickXpath
+                self.clickOk = self.mouseKeyboard.clickOk
                 if self.clickOk is True:
                     break
 
@@ -397,7 +470,7 @@ class Connect:
     def pressXpathResultListValue(self, xpath):
         while True:
             self.mouseKeyboard.clickXpath = xpath
-            self.clickOk = self.mouseKeyboard.clickXpath
+            self.clickOk = self.mouseKeyboard.clickOk
             if self.clickOk is True:
                 break
         self.returnValue.xpathTag = xpath
@@ -429,7 +502,7 @@ class Connect:
             self.mouseKeyboard.clickValue = valueAdministradora
             while True:
                 self.mouseKeyboard.clickXpath = xpath
-                self.clickOk = self.mouseKeyboard.clickXpath
+                self.clickOk = self.mouseKeyboard.clickOk
                 if self.clickOk is True:
                     break
             self.returnValue.xpathTag = xpath
@@ -466,7 +539,7 @@ class Connect:
                 self.mouseKeyboard.clickValue = tablaRecebimento
                 while True:
                     self.mouseKeyboard.clickXpath = xpath
-                    self.clickOk = self.mouseKeyboard.clickXpath
+                    self.clickOk = self.mouseKeyboard.clickOk
                     if self.clickOk is True:
                         break
                 self.returnValue.xpathTag = xpath
@@ -555,7 +628,7 @@ class Connect:
         for key, xpath in enumerate(listXpath):
             while True:
                 self.mouseKeyboard.clickXpath = xpath
-                self.clickOk = self.mouseKeyboard.clickXpath
+                self.clickOk = self.mouseKeyboard.clickOk
                 if self.clickOk is True:
                     break
             self.returnValue.xpathTag = xpath

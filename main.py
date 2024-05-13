@@ -21,7 +21,7 @@ date_weekly = Date_weekly()
 siteSircon = "https://app.sistemasircon.com.br/login"
 user = 'davigopi@gmail.com'
 password = '36vad28'
-month = 24
+month = 100
 pathTables = Path(__file__).parent / 'tables'
 name_arq = 'table_Cadastro_Consorciado.csv'
 arqTableCadastroConsorciado = pathTables / name_arq
@@ -41,8 +41,10 @@ name_arq = 'table_datas_semanais.csv'
 arqTableDatasSemanais = pathTables / name_arq
 name_arq = 'table_teste.csv'
 arqTableTeste = pathTables / name_arq
-name_arq = 'informacao.txt'
-arqInformacao = pathTables / name_arq
+# name_arq = 'informacao.txt'
+# arq_log = pathTables / name_arq
+name_arq = 'log.txt'
+arq_log = pathTables / name_arq
 
 pathDonwload = os.environ['USERPROFILE'] + '\\Downloads'
 arqDonwloadSales = pathDonwload + '\\consorciados.csv'
@@ -218,12 +220,12 @@ new_table_Cadastro_Funcionario = True
 new_table_Comissoes_Configuracao = True
 new_table_Comissoes_ConfigPagamento = True
 new_table_Cadastro_Ata = True
-openSite = False
-new_table_Cadastro_Consorciado = False
-new_table_Cadastro_Funcionario = False
-new_table_Cadastro_Ata = False
-new_table_Comissoes_Configuracao = False
-new_table_Comissoes_ConfigPagamento = False
+# openSite = False
+# new_table_Cadastro_Consorciado = False
+# new_table_Cadastro_Funcionario = False
+# new_table_Cadastro_Ata = False
+# new_table_Comissoes_Configuracao = False
+# new_table_Comissoes_ConfigPagamento = False
 
 
 ''' defined '''
@@ -235,6 +237,7 @@ service = Service(ChromeDriverManager().install())
 driver = webdriver.Chrome(service=service, options=options)
 connect = Connect(driver=driver)
 xpathManip = XpathManip(driver=driver)
+connect.arq_log = arq_log
 if openSite:
     driver.get(siteSircon)
     # logar
@@ -624,7 +627,7 @@ table_full.to_csv(
 num_line = len(table_full)
 nDiferente = 0
 count = 0
-with open(arqInformacao, 'w') as arquivo:
+with open(arq_log, 'a') as arquivo:
     arquivo.write('Na tabela table_merge foi encontrado duplicado:  \n \n')
 for i in range(num_line):
     i2 = i - nDiferente
@@ -636,7 +639,7 @@ for i in range(num_line):
         arquivoTxt += 'Vendedor: ' + table_full.at[i, 'Vendedor'] + '\n'
         arquivoTxt += 'Cliente: ' + table_full.at[i, 'Cliente'] + '\n' + '\n'
 
-        with open(arqInformacao, 'a') as arquivo:
+        with open(arq_log, 'a') as arquivo:
             arquivo.write(arquivoTxt)
         nDiferente += 1
         # break

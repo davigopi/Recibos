@@ -18,7 +18,14 @@ class Generat_payroll:
         self.column_administradora = ''
         self.column_dt_pag_por = ''
         self.column_1p_referencia = ''
+        self.column_1P_recebera = ''
+        self.column_D_referencia = ''
+        self.column_D_recebera = ''
+        self.column_FAT_referencia = ''
+        self.column_FAT_recebera = ''
         self.column_credito = ''
+        self.column_comissao = ''
+        self.column_situcao = ''
         self.data_ata_single = ''
         self.seller_single = ''
         self.data_date_pay = ''
@@ -29,6 +36,10 @@ class Generat_payroll:
         self.quantity_line_weekly = 0
         # quantity_line_table = 0
         self.sum_credito = 0
+
+        self.list_situacao_to_comission = []
+        self.list_recebera_to_comission = []
+        self.list_condition_ata = []
 
         self.list_columns_str_to_float = []
         self.list_columns_full_ata = []
@@ -48,6 +59,7 @@ class Generat_payroll:
         self.list_administradora_line_sum = []
         self.list_administradora_sum_qtdcotasinicial = []
         self.list_administradora_sum_qtdcotasinicial_parc = []
+        self.list_table_column_comissao = []
 
         self.table_full_single_ata = []
 
@@ -104,7 +116,8 @@ class Generat_payroll:
         )
         self.list_weekly = sorted(
             self.list_weekly, key=lambda x: (
-                x.split('/')[2], self.dic_months[x.split('/')[1]], x.split('/')[0]
+                x.split('/')[2],
+                self.dic_months[x.split('/')[1]], x.split('/')[0]
             )
         )
 
@@ -125,6 +138,7 @@ class Generat_payroll:
             table = self.table_seller_single[
                 self.table_seller_single[ata] == self.data_ata_single
             ]
+            table.reset_index(drop=True, inplace=True)
             self.table_single_ata.append([table, ata])
 
     # ira mesclar todas as tabelas que tiver valor
@@ -152,18 +166,12 @@ class Generat_payroll:
                                 administradora][qtd_cotas] = data
                     break
 
-    # @property
-    # def line_column_administradoras_sell_single(self):
-    #     return self.list_administradora_line
-
-    # @line_column_administradoras_sell_single.setter
     def table_list_administradora_add_line(self):
         for table, ata in self.table_single_ata:
             if not table.empty:
                 quantity_line_table = table.shape[0]
-                list_administradora = table[self.column_administradora].unique()
-                # print(quantity_line_table, '!!!!', list_administradora, '!!!!!')
-                # print(table)
+                list_administradora = table[
+                    self.column_administradora].unique()
                 list_admnimistradora_line = []
                 for data_administradora in list_administradora:
                     for line in range(quantity_line_table):
@@ -175,10 +183,13 @@ class Generat_payroll:
                             break
                 self.list_administradora_line.append(
                     [table, ata, list_admnimistradora_line])
-        # print(self.list_administradora_line)
 
     def table_list_administradora_line_add_sum(self):
-        for table, ata, list_admnimistradora_line in self.list_administradora_line:
+        for (
+            table,
+            ata,
+            list_admnimistradora_line
+        ) in self.list_administradora_line:
             quantity_line_table = table.shape[0]
             sums = 0
             for line in range(quantity_line_table):
@@ -196,7 +207,12 @@ class Generat_payroll:
             # self.sum_credito = table[self.column_credito].sum() #nao funciona
 
     def table_list_administradora_sum_add_qtdcotasinicial(self):
-        for table, ata, list_admnimistradora_line, sums in self.list_administradora_line_sum:
+        for (
+            table,
+            ata,
+            list_admnimistradora_line,
+            sums
+        ) in self.list_administradora_line_sum:
             list_administradora_qtdcotas = []
             for administradora_line in list_admnimistradora_line:
                 data_administradora = administradora_line[0]
@@ -208,8 +224,8 @@ class Generat_payroll:
                     value = value.replace(',', '.')
                     value = float(value)
                     if sums >= value:
-
-                        column_qtd_cota_final = self.dic_qtd_cotas_parc[column_qtd_cota_inicial][0]
+                        column_qtd_cota_final = self.dic_qtd_cotas_parc[
+                            column_qtd_cota_inicial][0]
                         value_end = table.iloc[line][column_qtd_cota_final]
                         value_end = value_end.replace('.', '')
                         value_end = value_end.replace(',', '.')
@@ -229,25 +245,13 @@ class Generat_payroll:
                 list_administradora_qtdcotas
             ])
 
-        # for column_qtd_cota_inicial in self.list_qtd_cotas_inicial:
-        #     data_qtd_cota_inicial = self.dic_administradoras.iloc[
-        #         line_table][column_qtd_cota_inicial]
-        #     if data_qtd_cota_inicial >= self.sum_credito:
-        #         break
-        # return column_qtd_cota_inicial
-
-    def prints(self):
-        # print(self.list_seller_weekly)
-        # print(self.list_weekly)
-        # print(self.list_columns_full_ata_single)
-        # print(self.table_single_ata)
-        # print(self.table_single_merge)
-        # print(self.list_single_administradora)
-        # dic_administradoras_json = json.dumps(
-        #     self.dic_administradoras, indent=4)
-        # print(dic_administradoras_json)
-
-        for table, ata, sum_credito, list_administradora_qtdcotas in self.list_administradora_sum_qtdcotasinicial:
+    def table_list_administradora_sum_add_full(self):
+        for (
+            table,
+            ata,
+            sum_credito,
+            list_administradora_qtdcotas
+        ) in self.list_administradora_sum_qtdcotasinicial:
             quantity_line_table = table.shape[0]
             number_ata = ''
             for key in range(7):
@@ -264,7 +268,8 @@ class Generat_payroll:
                 data_qtdcotainicial = administradora_qtdcotas[2]
                 column_qtdcotafinal = administradora_qtdcotas[3]
                 data_qtdcotafinal = administradora_qtdcotas[4]
-                list_column_parc = self.dic_qtd_cotas_parc[column_qtdcotainicial]
+                list_column_parc = self.dic_qtd_cotas_parc[
+                    column_qtdcotainicial]
                 for key2, column_parc in enumerate(list_column_parc):
                     if key2 == 0:  # tira a primeira coluna qtdcotafinal
                         continue
@@ -276,6 +281,8 @@ class Generat_payroll:
                     if administradora == data_administradora:
                         break
                 porcentagem_ata = table.iloc[line][column_parc]
+                if pd.isna(porcentagem_ata):
+                    porcentagem_ata = 0
                 list_administradora_qtdcotas_parc.append([
                     administradora,
                     column_qtdcotainicial,
@@ -291,16 +298,128 @@ class Generat_payroll:
                 sum_credito,
                 list_administradora_qtdcotas_parc
             ])
-            # print(number_ata)
-        for table, ata, sum_credito, list_administradora_qtdcotas_parc in self.list_administradora_sum_qtdcotasinicial_parc:
-            print(
+
+    def add_column_comissao(self):
+        pd.options.mode.chained_assignment = None
+        for (
+            table,
+            ata,
+            sum_credito,
+            list_administradora_qtdcotas_parc
+        ) in self.list_administradora_sum_qtdcotasinicial_parc:
+            quantity_line_table = table.shape[0]
+            sum_comissao = 0
+            for (
+                administradora_qtdcotas_parc
+            ) in list_administradora_qtdcotas_parc:
+                administradora = administradora_qtdcotas_parc[0]
+                data_parc = administradora_qtdcotas_parc[6]
+                for line in range(quantity_line_table):
+                    data_situacao = table.iloc[line][self.column_situcao]
+                    cliente = table.iloc[line]['Cliente']
+                    if cliente == 'MAYARA EVELIN OTAVIANO MENDES':
+                        print(cliente)
+                    calculate_commission = True
+                    comissao = 0
+                    if data_situacao not in self.list_situacao_to_comission:
+                        calculate_commission = False
+                    elif self.list_condition_ata[0] in ata:
+                        data_1P_recebera = (
+                            table.iloc[line][self.column_1P_recebera])
+                        if data_1P_recebera not in self.list_recebera_to_comission:
+                            calculate_commission = False
+                    elif self.list_condition_ata[1] in ata:
+                        data_D_recebera = (
+                            table.iloc[line][self.column_D_recebera])
+                        if data_D_recebera not in self.list_recebera_to_comission:
+                            calculate_commission = False
+                    elif self.list_condition_ata[2] in ata:
+                        data_FAT_recebera = (
+                            table.iloc[line][self.column_FAT_recebera])
+                        if data_FAT_recebera not in self.list_recebera_to_comission:
+                            calculate_commission = False
+                    if calculate_commission is True:
+                        data_admin = table.iloc[
+                            line][self.column_administradora]
+                        if administradora == data_admin:
+                            value = table.iloc[line][self.column_credito]
+                            value = value.replace('.', '')
+                            value = value.replace(',', '.')
+                            value = float(value)
+                            data_parc = float(data_parc)
+                            comissao = value * data_parc / 100
+                            sum_comissao += comissao
+                    table.loc[line, 'column_temp'] = comissao
+            table.insert(1, self.column_comissao, table['column_temp'])
+            del table['column_temp']
+
+            self.list_table_column_comissao.append([
+                table,
                 ata,
-                '      total: ',
-                sum_credito)
-            for administradora_qtdcotas_parc in list_administradora_qtdcotas_parc:
-                print(administradora_qtdcotas_parc)
+                sum_credito,
+                sum_comissao,
+                list_administradora_qtdcotas_parc
+            ])
+
+    def prints(self):
+        # print(self.list_seller_weekly)
+        # print(self.list_weekly)
+        # print(self.list_columns_full_ata_single)
+        # print(self.table_single_ata)
+        # print(self.table_single_merge)
+        # print(self.list_single_administradora)
+        # dic_administradoras_json = json.dumps(
+        #     self.dic_administradoras, indent=4)
+        # print(dic_administradoras_json)
+        # for (
+        #     table,
+        #     ata,
+        #     sum_credito,
+        #     list_administradora_qtdcotas_parc
+        # ) in self.list_administradora_sum_qtdcotasinicial_parc:
+        #     print(
+        #         ata,
+        #         '      total: ',
+        #         sum_credito)
+        #     for (
+        #         administradora_qtdcotas_parc
+        #     ) in list_administradora_qtdcotas_parc:
+        #         print(administradora_qtdcotas_parc)
+        #     print(table)
+        #     print('')
+        pd.options.mode.chained_assignment = None
+        for (
+            table,
+            ata,
+            sum_credito,
+            sum_comissao,
+            list_administradora_qtdcotas_parc
+        ) in self.list_table_column_comissao:
+            print(
+                ata, '     ',
+                sum_credito, '     ',
+                sum_comissao, '     '
+            )
+            for (
+                administradora_qtdcotas_parc
+            ) in list_administradora_qtdcotas_parc:
+                administradora = administradora_qtdcotas_parc[0]
+                column_qtd_cotas_inicial = administradora_qtdcotas_parc[1]
+                data_qtd_cotas_inicial = administradora_qtdcotas_parc[2]
+                column_qtd_cotas_final = administradora_qtdcotas_parc[3]
+                data_qtd_cotas_final = administradora_qtdcotas_parc[4]
+                column_parc = administradora_qtdcotas_parc[5]
+                data_parc = administradora_qtdcotas_parc[6]
+                print(
+                    administradora,
+                    column_qtd_cotas_inicial,
+                    data_qtd_cotas_inicial,
+                    column_qtd_cotas_final,
+                    data_qtd_cotas_final,
+                    column_parc,
+                    data_parc)
             print(table)
-            print('#######################')
+            print('##########################################')
 
 
 if __name__ == '__main__':
@@ -322,12 +441,23 @@ if __name__ == '__main__':
     column_administradora = 'Administradora'
     column_dt_pag_por = 'Dt pag. por'
     column_1p_referencia = '1P referencia'
+    column_1P_recebera = '1P recebera'
+    column_D_referencia = 'D+ referencia'
+    column_D_recebera = 'D+ recebera'
+    column_FAT_referencia = 'FAT referencia'
+    column_FAT_recebera = 'FAT recebera'
     column_credito = 'Crédito'
+    column_comissao = 'Comissão'
+    column_situacao = 'Situação'
     data_ata_single = 'MARÇO/2024'
     seller_single = 'MARIA ILLYEDJA RODRIGUES DE SOUZA '
     # seller_single = 'BRUNA ALINE DE AZEVEDO (ENIO)'
     data_date_pay = 'DIA DA SEMANA'
     solumn_cadastro = 'CADASTRO'
+
+    list_situacao_to_comission = ['NORMAL']
+    list_recebera_to_comission = ['SIM']
+    list_condition_ata = ['Entrega', 'Parc', 'FAT']
 
     list_qtd_cotas_inicial = [
         '1 Qtd. Cotas Inicial', '2 Qtd. Cotas Inicial', '3 Qtd. Cotas Inicial',
@@ -408,6 +538,9 @@ if __name__ == '__main__':
         item for item in list_columns_full_ata if item != 'ATA Cad Adm']
     list_columns_full_ata_cadastro = [
         item for item in list_columns_full_ata if item != 'ATA Entrega']
+    list_columns_datas_unique = [
+        column_vendedor, 'Cargo'
+    ]
 
     name_columns_full = table_full.columns.tolist()
 
@@ -429,10 +562,21 @@ if __name__ == '__main__':
     generat_payroll.column_vendedor = column_vendedor
     generat_payroll.column_dt_pag_por = column_dt_pag_por
     generat_payroll.column_1p_referencia = column_1p_referencia
+    generat_payroll.column_1P_recebera = column_1P_recebera
+    generat_payroll.column_D_referencia = column_D_referencia
+    generat_payroll.column_D_recebera = column_D_recebera
+    generat_payroll.column_FAT_referencia = column_FAT_referencia
+    generat_payroll.column_FAT_recebera = column_FAT_recebera
+    generat_payroll.column_comissao = column_comissao
+    generat_payroll.column_situcao = column_situacao
     generat_payroll.data_ata_single = data_ata_single
     generat_payroll.seller_single = seller_single
     generat_payroll.data_date_pay = data_date_pay
     generat_payroll.solumn_cadastro = solumn_cadastro
+
+    generat_payroll.list_situacao_to_comission = list_situacao_to_comission
+    generat_payroll.list_recebera_to_comission = list_recebera_to_comission
+    generat_payroll.list_condition_ata = list_condition_ata
 
     generat_payroll.list_qtd_cotas_inicial = list_qtd_cotas_inicial
     generat_payroll.list_qtd_cotas_final = list_qtd_cotas_final
@@ -469,4 +613,6 @@ if __name__ == '__main__':
     generat_payroll.table_list_administradora_add_line()
     generat_payroll.table_list_administradora_line_add_sum()
     generat_payroll.table_list_administradora_sum_add_qtdcotasinicial()
+    generat_payroll.table_list_administradora_sum_add_full()
+    generat_payroll.add_column_comissao()
     generat_payroll.prints()
