@@ -5,6 +5,7 @@ from fpdf import FPDF
 
 class PDF(FPDF):
     def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)  # Chama o construtor da classe base FPDF
         self.title = ''
 
     def header(self):
@@ -23,9 +24,9 @@ pdf.title = 'Contra Cheque'
 pdf.add_page()
 pdf.set_font('Arial', '', 12)
 
-text = 'testetet tett tt tt '
-text += '121212121212121212'
-text += '232323232343435434343'
+text = 'testetet tett tt tt \n'
+text += '121212121212121212 \n'
+text += '232323232343435434343 \n'
 # Adiciona texto ao PDF
 pdf.multi_cell(0, 10, text)
 
