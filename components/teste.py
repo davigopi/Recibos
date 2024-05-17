@@ -1,20 +1,26 @@
-class MinhaClasse:
-    def __init__(self):
-        self.variavel = 0
-        self.total = 0
+from fpdf import FPDF
 
-    @property
-    def atualizar_variavel(self):
-        return None
-
-    @atualizar_variavel.setter
-    def atualizar_variavel(self, novo_numero):
-        self.total = novo_numero + self.variavel
-        print("Novo valor:", self.total)
+# Cria uma classe para o PDF
 
 
-minhaClasse = MinhaClasse()
+class PDF(FPDF):
+    def header(self):
+        self.set_font('Arial', 'B', 12)
+        self.cell(0, 10, 'Contra Cheque', 0, 1, 'C')
 
-minhaClasse.variavel = 10
+    def footer(self):
+        self.set_y(-15)
+        self.set_font('Arial', 'I', 8)
+        self.cell(0, 10, f'Página {self.page_no()}', 0, 0, 'C')
 
-minhaClasse.atualizar_variavel = 2
+
+# Cria uma instância da classe PDF
+pdf = PDF()
+pdf.add_page()
+pdf.set_font('Arial', '', 12)
+
+# Adiciona texto ao PDF
+pdf.multi_cell(0, 10, "Este é um exemplo de texto que será adicionado ao PDF.")
+
+# Salva o PDF
+pdf.output('arquivo.pdf')

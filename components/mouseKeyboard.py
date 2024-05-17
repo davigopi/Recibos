@@ -126,19 +126,30 @@ class MouseKeyboard:
     def clickValue(self, text):
         numberTimesRepeated = 0
         info = ''
+        n_test = 0
         while True:
             try:
                 self.driver.find_element(
                     By.XPATH, f"//{self.locationSearchTag}[contains(text(),'{text}')]").click()
                 sleep(0.5)
                 break
-            except self.excecao:
+            except NoSuchElementException:
+                '''pode ser que o ano passado no texto não tenha nas poçôes de
+                atas pas seleciona, entao passa para o próximo ano'''
+                if n_test >= 5:
+                    text += 1
+                    n_test = 0
+                else:
+                    n_test += 1
+                    sleep(1)
+            except self.excecao as e:
                 numberTimesRepeated += 1
                 if numberTimesRepeated >= 4:
                     if numberTimesRepeated >= 10:
                         info += 'Erro, mais de'
                         info += f' {numberTimesRepeated} tentativas, '
-                        info += f'em click no xpath: ({xpath}).'
+                        info += f'em click no text: ({text}). '
+                        info += f'O erro é: {e}'
                         self.info = info
                         print(info)
                         sys.exit()

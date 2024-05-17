@@ -221,11 +221,11 @@ new_table_Comissoes_Configuracao = True
 new_table_Comissoes_ConfigPagamento = True
 new_table_Cadastro_Ata = True
 # openSite = False
-# new_table_Cadastro_Consorciado = False
-# new_table_Cadastro_Funcionario = False
-# new_table_Cadastro_Ata = False
+new_table_Cadastro_Consorciado = False
+new_table_Cadastro_Funcionario = False
+new_table_Cadastro_Ata = False
 # new_table_Comissoes_Configuracao = False
-# new_table_Comissoes_ConfigPagamento = False
+new_table_Comissoes_ConfigPagamento = False
 
 
 ''' defined '''
@@ -584,7 +584,7 @@ table_full = table_manip_value.table
 ''' Ordenar colunas da tabela para a forma que quiser'''
 listColumnsStart = [
     'Situação',
-    'Vendedor', 'Administradora', 'Cargo',
+    'Administradora', 'Vendedor', 'Cargo',
     'Crédito', 'Data Pag. 1º Parc', 'Valor Parc. Inicial',
     'Dt pag. por', 'dia pag.',
     '1P recebera', '1P referencia',
