@@ -250,11 +250,3 @@ class TableManip:
         index_column = list_index_name_column[0]
         name_column = list_index_name_column[1]
         self.table.columns.values[index_column] = name_column
-
-    # @property
-    # def return_table(self):
-    #     return self.table
-
-    # @property
-    # def return_df(self):
-    #     return self.df

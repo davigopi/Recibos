@@ -208,6 +208,9 @@ class Connect:
                 table_Cadastro_Consorciado.at[i, 'Administradora'])
         self.listExistAdministradoras = list(set(listFullAdministradora))
         self.listExistAdministradoras.sort()
+        print(self.listExistAdministradoras)
+        print('######################################')
+        sleep(2)
 
     @property
     def valueExistCargos(self):
@@ -222,6 +225,9 @@ class Connect:
             listFullCargos.append(table_Cadastro_Funcionario.at[i, 'Cargo'])
         self.listExistCargos = list(set(listFullCargos))
         self.listExistCargos.sort()
+        print(self.listExistCargos)
+        print('######################################')
+        sleep(2)
 
     # @property
     # def valueExistTabelarecebimento(self):
@@ -273,6 +279,7 @@ class Connect:
             self.fileManip.delete  # type:ignore
             # fileNotExist = True
             repeat = True
+            error = ''
             while repeat:  # para persistencia
                 error = ''
                 self.mouseKeyboard.error = error  # type: ignore
@@ -338,23 +345,23 @@ class Connect:
                             self.df = self.fileManip.readCsv  # type: ignore
                             error = self.fileManip.error
                         info = self.mouseKeyboard.info
-                        print(f'Meses anteriosres ao atula: {lastMonth}')
-                        print(f'info: {info}')
-                        print(f'quantidade de tentativas: {count_attempts}')
-                        print(f'key: {key}')
-                        print(f'Erro: {error}')
-                        print(f'Clicle OK: {clickOk}')
-                        print('')
+                        # print(f'Meses anteriosres ao atula: {lastMonth}')
+                        # print(f'info: {info}')
+                        # print(f'quantidade de tentativas: {count_attempts}')
+                        # print(f'key: {key}')
+                        # print(f'Erro: {error}')
+                        # print(f'Clicle OK: {clickOk}')
+                        # print('')
                         '''O arquvi nao existe devido ao não existir nada para
                           ser baixado no sistema origem'''
                         if error != '':
+                            self.fileManip.writeLog = error
                             repeat = False
                             break  # para o for erro
                         '''Caso aja um lup infinito ele para e recomeça'''
                         count_attempts += 1
                         if count_attempts >= 10:
                             break
-
                     if clickOk:
                         repeat = False
             if error == '':
@@ -389,6 +396,7 @@ class Connect:
                     self.df = file.readCsv  # type: ignore
                 if self.df is False:  # tem que repetir se download nao exis
                     clickOk = False
+                sleep(0.5)
         self.dfNew = self.df  # type: ignore
 
     @property
@@ -414,6 +422,8 @@ class Connect:
                     clickOk = True
                 if key == 4:
                     tableComplete: pd.DataFrame = pd.DataFrame()
+                    print(self.listExistAdministradoras)
+                    sleep(2)
                     for administradora in self.listExistAdministradoras:
                         self.mouseKeyboard.clickXpath = xpath
                         # clickOk = self.mouseKeyboard.clickOk
@@ -486,8 +496,10 @@ class Connect:
             if self.listExistAdministradoras:
                 if valueAdministradora not in self.listExistAdministradoras:
                     continue
-            listValueTemp.append(valueAdministradora)
+            if valueAdministradora in self.listExistAdministradoras:
+                listValueTemp.append(valueAdministradora)
         self.listValue = listValueTemp
+        print(f'self.listValue: {self.listValue}')
 
     # com valores da administradoras ira acrecentar valor tabela de recebimento
     @property
@@ -552,10 +564,11 @@ class Connect:
                         if cargo not in self.cargo:
                             continue
                     # limitar apenas o que existe nos cargo da lista de funcion
-                    if self.listExistCargos:
-                        if cargo not in self.listExistCargos:
-                            continue
-                    listCargoTemp.append(cargo)
+                    # if self.listExistCargos:
+                    #     if cargo not in self.listExistCargos:
+                    #         continue
+                    if cargo in self.listExistCargos:
+                        listCargoTemp.append(cargo)
                 listCargo = listCargoTemp
                 listValueTabelarecebimentoCargo.append(
                     [tablaRecebimento, listCargo])
@@ -572,14 +585,22 @@ class Connect:
         listValueTemp = []
         self.mouseKeyboard.locationSearchTag = self.tagSon
         renameText = RenameText()
-        for adminstradora, tableRecebimento_listCargo in self.listValue:
-            self.mouseKeyboard.clickValue = adminstradora
+        for administradora, tableRecebimento_listCargo in self.listValue:
+            # if administradora is not self.listExistAdministradoras:
+            #     continue
+            self.mouseKeyboard.clickValue = administradora
+            print(administradora)
+            print('-------------------------')
             for tableRecebimento, listCargo in tableRecebimento_listCargo:
                 self.mouseKeyboard.clickValue = tableRecebimento
                 for cargo in listCargo:
+                    # if cargo is not  self.listExistCargos:
+                    #     continue
+                    print(cargo)
+                    print('===============================')
                     self.mouseKeyboard.clickValue = cargo
                     listValueTemp2 = []
-                    listValueTemp2.append(adminstradora)
+                    listValueTemp2.append(administradora)
                     listValueTemp2.append(tableRecebimento)
                     listValueTemp2.append(cargo)
                     listEnd = False
@@ -641,18 +662,18 @@ class Connect:
                         if value not in self.cargo:
                             continue
                     # limitar apenas o que existe nos cargo da lista de funcion
-                    if self.listExistCargos:
-                        if value not in self.listExistCargos:
-                            continue
+                    # if self.listExistCargos:
+                    if value not in self.listExistCargos:
+                        continue
                 elif key == 1:
                     # limita se a pessoa colocar na lista as administradora
                     if self.valueAdministradora:
                         if value not in self.valueAdministradora:
                             continue
                     # limita administradoras que existe nas vendas existentes
-                    if self.listExistAdministradoras:
-                        if value not in self.listExistAdministradoras:
-                            continue
+                    # if self.listExistAdministradoras:
+                    if value not in self.listExistAdministradoras:
+                        continue
                 listValueTemp.append(value)
             listTemp.append(listValueTemp)
         self.listValue = listTemp

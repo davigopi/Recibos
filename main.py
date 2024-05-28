@@ -4,14 +4,18 @@ from pathlib import Path
 from webdriver_manager.chrome import ChromeDriverManager
 import pandas as pd
 # import datetime
+# from datetime import date
+from datetime import datetime
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 # from typing import Union
 from components.connect import Connect
+from components.fileManip import FileManip
 from components.tableManip import TableManip
 from components.xpathManip import XpathManip
 from components.table_manip_value import Table_manip_value
 from components.date_weekly import Date_weekly
+# from time import sleep
 
 tableManip = TableManip()
 table_manip_value = Table_manip_value()
@@ -21,30 +25,44 @@ date_weekly = Date_weekly()
 siteSircon = "https://app.sistemasircon.com.br/login"
 user = 'davigopi@gmail.com'
 password = '36vad28'
-month = 100
-pathTables = Path(__file__).parent / 'tables'
+month = 12
+
+new_table_Cadastro_Consorciado = True
+new_table_Cadastro_Funcionario = True
+new_table_Cadastro_Ata = True
+new_table_Comissoes_Configuracao = True
+new_table_Comissoes_ConfigPagamento = True
+
+
+# new_table_Cadastro_Consorciado = False
+# new_table_Cadastro_Funcionario = False
+# new_table_Cadastro_Ata = False
+# new_table_Comissoes_Configuracao = False
+# new_table_Comissoes_ConfigPagamento = False
+
+
+path_source = Path(__file__).parent
+path_tables = path_source / 'tables'
 name_arq = 'table_Cadastro_Consorciado.csv'
-arqTableCadastroConsorciado = pathTables / name_arq
+arqTableCadastroConsorciado = path_tables / name_arq
 name_arq = 'table_Cadastro_Funcionario.csv'
-arqTableCadastroFuncionario = pathTables / name_arq
+arqTableCadastroFuncionario = path_tables / name_arq
 name_arq = 'table_Cadastro_Ata.csv'
-arqTableCadastroAta = pathTables / name_arq
+arqTableCadastroAta = path_tables / name_arq
 name_arq = 'table_Comissoes_Configuracao.csv'
-arqTableComissoesConfiguracao = pathTables / name_arq
+arqTableComissoesConfiguracao = path_tables / name_arq
 name_arq = 'table_Comissoes_ConfigPagamento.csv'
-arqTableComissoesConfigPag = pathTables / name_arq
+arqTableComissoesConfigPag = path_tables / name_arq
 name_arq = 'table_Comissoes_ConfigPagTratada.csv'
-arqTableComissoesConfigPagTratada = pathTables / name_arq
+arqTableComissoesConfigPagTratada = path_tables / name_arq
 name_arq = 'table_Comissoes_ConfigPagamento_Dupl.csv'
-arqTableComissoesConfigPagDupl = pathTables / name_arq
+arqTableComissoesConfigPagDupl = path_tables / name_arq
 name_arq = 'table_datas_semanais.csv'
-arqTableDatasSemanais = pathTables / name_arq
+arqTableDatasSemanais = path_tables / name_arq
 name_arq = 'table_teste.csv'
-arqTableTeste = pathTables / name_arq
-# name_arq = 'informacao.txt'
-# arq_log = pathTables / name_arq
+arqTableTeste = path_tables / name_arq
 name_arq = 'log.txt'
-arq_log = pathTables / name_arq
+arq_log = path_source / name_arq
 
 pathDonwload = os.environ['USERPROFILE'] + '\\Downloads'
 arqDonwloadSales = pathDonwload + '\\consorciados.csv'
@@ -214,31 +232,369 @@ headerDtPagamentoParcelas = [
 ]
 
 '''#################### ABRIR SITES ########################################'''
-openSite = True
-new_table_Cadastro_Consorciado = True
-new_table_Cadastro_Funcionario = True
-new_table_Comissoes_Configuracao = True
-new_table_Comissoes_ConfigPagamento = True
-new_table_Cadastro_Ata = True
-# openSite = False
-new_table_Cadastro_Consorciado = False
-new_table_Cadastro_Funcionario = False
-new_table_Cadastro_Ata = False
-# new_table_Comissoes_Configuracao = False
-new_table_Comissoes_ConfigPagamento = False
 
 
-''' defined '''
-options = webdriver.ChromeOptions()
-options.add_argument('--ignore-certificate-errors')
-options.add_experimental_option('excludeSwitches', ['enable-automation'])
-options.add_experimental_option('excludeSwitches', ['enable-logging'])
-service = Service(ChromeDriverManager().install())
-driver = webdriver.Chrome(service=service, options=options)
-connect = Connect(driver=driver)
-xpathManip = XpathManip(driver=driver)
-connect.arq_log = arq_log
-if openSite:
+def log_start_end():
+    global start
+    fileManip = FileManip()
+    if start:
+        text = '\n' + 'Inicio: '
+        start = False
+    else:
+        text = 'Fim:    '
+    text += str(datetime.now())
+    fileManip.arq_log = arq_log
+    fileManip.writeLog = text
+
+
+def limited_search_chosse():
+    valueAdministradora = ['DISAL']
+    valueChooseCargo = [
+        'CONSULTOR CLT - A PARTIR JAN-2018',
+        'CONSULTOR DE PARCEIRO'
+    ]
+    connect.valueAdministradora = valueAdministradora
+    connect.cargo = valueChooseCargo
+
+
+def limited_search_delete_word():
+    valueChooseTabelarecebimento = ['FERIAS']
+    connect.listExistTabelarecebimento = valueChooseTabelarecebimento
+
+
+def limited_search_administradoras():
+    global table_Cadastro_Consorciado
+    connect.valueExistAdministradoras = table_Cadastro_Consorciado
+
+
+def limited_search_cargos():
+    global table_Cadastro_Funcionario
+    connect.valueExistCargos = table_Cadastro_Funcionario
+
+
+def date_weekly_new():
+    '''tabela numero da semana no mes'''
+    global table_date_weekly
+    date_weekly.year_weeklys = 24
+    date_weekly.create_weekYear_week_date = None
+    date_weekly.edit_weekYear_week_date_separate_week = None
+    date_weekly.edit_weekYear_week_date_separate_weekMonth = None
+    date_weekly.edit_weekMonth_week_date = None
+    date_weekly.create_table_weekMonth_week_date = ['N Semana Mes',
+                                                    'Data semana',
+                                                    'Dia semana']
+    table_date_weekly = date_weekly.return_table
+    table_date_weekly.to_csv(arqTableDatasSemanais,
+                             index=False, header=True, sep=';')
+
+
+def table_manip_funcionario():
+    ''' manipular table_Cadastro_Funcionario, para alterar os Nomes duplicados
+    com os Cargos, que gera comissão duplicada, pois o mesmo tem dois ou mais
+    cargos'''
+    global table_Cadastro_Funcionario
+    global table_Cadastro_funcionario_gerente
+    table_manip_value.table = table_Cadastro_Funcionario  # type: ignore
+    table_manip_value.row_duplicate_column = ['Nome']
+    table_manip_value.list_columns_one_two = ['Nome', 'Cargo']
+    table_manip_value.edit_data_column_2 = ['Nome', 'Cargo']
+    table_Cadastro_Funcionario = table_manip_value.table
+    table_Cadastro_funcionario_gerente = table_Cadastro_Funcionario
+    tableManip.table = table_Cadastro_Funcionario
+    tableManip.rename_name_column = ['Cargo', 'Cargo_funcionario']
+    table_Cadastro_Funcionario = tableManip.table
+
+
+def table_manip_cadastro_consorciado():
+    ''' manipular table_Cadastro_Consorciado, para altera rcoluna Vendedor
+    e igualar aos alterados no table_Cadastro_Funcionario'''
+    global table_Cadastro_Consorciado
+    table_manip_value.table = table_Cadastro_Consorciado  # type: ignore
+    table_manip_value.data_duplicate_change = 'Vendedor'
+    table_Cadastro_Consorciado = table_manip_value.table
+
+
+def table_manip_comissoes_configuracao():
+    ''' manipular table_Comissoes_Configuracao remover as duplicação nas
+    colunas 'Administradora' e 'Cargo' '''
+    global table_Comissoes_Configuracao
+    table_manip_value.table = table_Comissoes_Configuracao
+    table_manip_value.row_duplicate_column = ['Administradora', 'Cargo']
+    table_manip_value.list_columns_one_two_three = ['Administradora',
+                                                    'Cargo',
+                                                    'Tabela de recebimento']
+    table_manip_value.edit_data_column_3 = ['Administradora',
+                                            'Cargo',
+                                            'Tabela de recebimento']
+    table_Comissoes_Configuracao = table_manip_value.table
+
+
+def table_manip_comissao_configPagamento():
+    ''' manipular table_comissoes_configuPagamento'''
+    global table_Comissoes_ConfigPagamento
+    table_manip_value.table = table_Comissoes_ConfigPagamento
+    table_manip_value.edit_data_column_all = ['Cargo',
+                                              'Administradora',
+                                              'Tipo Pagamento',
+                                              'Dt pag. por',
+                                              'dia pag.',
+                                              '1P recebera',
+                                              'D+ recebera',
+                                              'FAT recebera',
+                                              'Index']
+    table = table_manip_value.table
+    table_manip_value.table = table
+    table_manip_value.row_duplicate_column = ['Cargo',
+                                              'Administradora',
+                                              'Tipo Pagamento']
+
+    table_duplicate = table_manip_value.table_duplicate
+    table_Comissoes_ConfigPagTratada = table_manip_value.table
+    table_Comissoes_ConfigPagTratada.to_csv(
+        arqTableComissoesConfigPagTratada,
+        index=False, header=True, sep=';')
+
+    table_duplicate.to_csv(arqTableComissoesConfigPagDupl,  # type: ignore
+                           index=False, header=True, sep=';')
+
+
+def table_manip_Cadastro_funcionario_gerente():
+    global table_Cadastro_funcionario_gerente
+    tableManip = TableManip()
+    names_columns = table_Cadastro_funcionario_gerente.columns  # type: ignore
+    tableManip.table = table_Cadastro_funcionario_gerente  # type: ignore
+    for name_column in names_columns:
+        name_column_gerente = name_column + '_Gerente'
+        tableManip.rename_name_column = [name_column, name_column_gerente]
+    table_Cadastro_funcionario_gerente = tableManip.table
+
+
+def table_manip_comissoes_configuracao_gerente():
+    global table_Comissoes_Configuracao
+    global table_Comissoes_Configuracao_gerente
+    table_Comissoes_Configuracao_gerente = table_Comissoes_Configuracao
+    tableManip = TableManip()
+    names_columns = table_Comissoes_Configuracao_gerente.columns
+    tableManip.table = table_Comissoes_Configuracao_gerente
+    for name_column in names_columns:
+        name_column_gerente = name_column + '_Gerente'
+        tableManip.rename_name_column = [name_column, name_column_gerente]
+    table_Comissoes_Configuracao_gerente = tableManip.table
+
+
+def merge_consorciado_funcionario():
+    global table_full
+    global table_Cadastro_Consorciado
+    global table_Cadastro_Funcionario
+    table_full = pd.merge(
+        table_Cadastro_Consorciado,  # type: ignore
+        table_Cadastro_Funcionario,  # type: ignore
+        left_on='Vendedor',
+        right_on='Nome',
+        how='left'
+    )
+
+
+def merge_consorciado_funcionario_gerente():
+    global table_full
+    global table_Cadastro_funcionario_gerente
+    table_full = pd.merge(
+        table_full,  # type: ignore
+        table_Cadastro_funcionario_gerente,  # type: ignore
+        left_on='Gerente',
+        right_on='Nome_Gerente',
+        how='left'
+    )
+
+
+def merge_full_comissoes_configuracao():
+    global table_full
+    global table_Comissoes_Configuracao
+    table_full = pd.merge(
+        table_full,
+        table_Comissoes_Configuracao,
+        on=['Administradora', 'Cargo'],
+        how='left')
+
+
+def merge_full_comissoes_configuracao_gerente():
+    global table_full
+    global table_Comissoes_Configuracao_gerente
+    table_full = pd.merge(
+        table_full,
+        table_Comissoes_Configuracao_gerente,
+        left_on=['Administradora', 'Cargo_Gerente'],
+        right_on=['Administradora_Gerente', 'Cargo_Gerente'],
+        how='left')
+
+
+def merge_full_weekly():
+    '''# mesclar table_full com table_date_weekly_changed'''
+    global table_date_weekly
+    global table_full
+    tableManip.table = table_date_weekly
+    tableManip.del_column = 'Dia semana'
+    table_date_weekly_changed = tableManip.table
+    list_columns_date_merge = [['Data de Entrega', 'Sma Ent'],
+                               ['Data Cad. Adm', 'Sma Cad Adm'],
+                               ['Data Pag. 2º Parc', 'Sma 2º Parc'],
+                               ['Data Pag. 3º Parc', 'Sma 3º Parc'],
+                               ['Data Pag. 4º Parc', 'Sma 4º Parc'],
+                               ['Data Pag. 5º Parc', 'Sma 5º Parc'],
+                               ['Data Pag. 6º Parc', 'Sma 6º Parc']]
+
+    for columns_date in list_columns_date_merge:
+        column_compare = columns_date[0]
+        column_new_merge = columns_date[1]
+        table_full = pd.merge(
+            table_full,
+            table_date_weekly_changed,
+            left_on=column_compare,
+            right_on='Data semana',
+            how='left'
+        )
+        tableManip.table = table_full
+        tableManip.rename_name_column = ['N Semana Mes', column_new_merge]
+        tableManip.del_column = 'Data semana'
+        table_full = tableManip.table
+
+
+def merge_full_ata():
+    ''' manipular table ATA  e colocar na table_full'''
+    global table_full
+    global table_Cadastro_Ata
+    global table_Comissoes_ConfigPagamento
+    table_manip_value.table_2 = table_Cadastro_Ata  # type: ignore
+    list_date_ATA = [['Data de Entrega', 'ATA Entrega'],
+                     ['Data Cad. Adm', 'ATA Cad Adm'],
+                     ['Data Pag. 2º Parc', 'ATA 2º Parc'],
+                     ['Data Pag. 3º Parc', 'ATA 3º Parc'],
+                     ['Data Pag. 4º Parc', 'ATA 4º Parc'],
+                     ['Data Pag. 5º Parc', 'ATA 5º Parc'],
+                     ['Data Pag. 6º Parc', 'ATA 6º Parc']]
+    for date_ATA in list_date_ATA:
+        column_compare = date_ATA[0]
+        column_new_edit = date_ATA[1]
+        tableManip.table = table_full
+        # tableManip.add_column_nan = [column_new_edit]
+        tableManip.add_value_fixed_column = [column_new_edit]
+        table_full = tableManip.table
+        table_manip_value.table = table_full
+        table_manip_value.edit_data_column_ATA = [column_compare,
+                                                  column_new_edit,
+                                                  'Periodo_inicial',
+                                                  'Periodo_final',
+                                                  'ATA']
+        table_full = table_manip_value.table
+    table_manip_value.table_2 = table_Comissoes_ConfigPagamento
+    table_manip_value.add_columns_full = ['Cargo',
+                                          'Administradora',
+                                          'Tipo Pagamento',
+                                          'Index']
+    table_full = table_manip_value.table
+
+
+def order_column():
+    ''' Ordenar colunas da tabela para a forma que quiser'''
+    global table_full
+    listColumnsStart = [
+        'Situação', 'Administradora',
+        'Vendedor', 'Cargo',
+        'Gerente', 'Cargo_Gerente',
+        'Cliente', 'Crédito',
+        'Valor Parc. Inicial', 'Data Pag. 1º Parc',
+        'Dt pag. por', 'dia pag.',
+        '1P recebera', '1P referencia',
+        'Data de Entrega', 'Sma Ent', 'ATA Entrega',
+        'Data Cad. Adm', 'Sma Cad Adm', 'ATA Cad Adm',
+        'D+ recebera', 'D+ referencia',
+        'Data Pag. 2º Parc', 'Sma 2º Parc', 'ATA 2º Parc',
+        'Data Pag. 3º Parc', 'Sma 3º Parc', 'ATA 3º Parc',
+        'Data Pag. 4º Parc', 'Sma 4º Parc', 'ATA 4º Parc',
+        'Data Pag. 5º Parc', 'Sma 5º Parc', 'ATA 5º Parc',
+        'Data Pag. 6º Parc', 'Sma 6º Parc', 'ATA 6º Parc',
+        'FAT recebera',
+        'Gerente', 'Cliente',
+    ]
+    columnsList = table_full.columns.to_list()
+    columnsListNew = []
+    for key, columnList in enumerate(columnsList):
+        if key == 0:
+            for listColumnStart in listColumnsStart:
+                columnsListNew.append(listColumnStart)
+        if columnList in listColumnsStart:
+            continue
+        columnsListNew.append(columnList)
+    table_full = table_full[columnsListNew]
+
+
+def save_full():
+    # salvar a tabela
+    table_full.to_csv(
+        "tables\\tableMerge.csv",
+        index=False,
+        header=True,
+        sep=';'
+    )
+
+
+def test_full_double():
+    ''' teste para sabEr a diferença e mostra que é diferente.
+    pois se existir diferença ele ira salvar no log'''
+    global table_full
+    global table_Cadastro_Consorciado
+    fileManip = FileManip()
+    fileManip.arq_log = arq_log
+    text = 'Na tabela table_merge foi encontrado duplicado:'
+    num_line = len(table_full)
+    nDiferente = 0
+    count = 0
+    for i in range(num_line):
+        i2 = i - nDiferente
+        vend_1 = table_full.at[i, 'Vendedor']
+        vend_2 = table_Cadastro_Consorciado.at[i2, 'Vendedor']  # type: ignore
+        if vend_1 != vend_2:
+            count += 1
+            text += str(count) + 'ª divergência'
+            text += 'Vendedor: ' + table_full.at[i, 'Vendedor']
+            text += 'Cliente: ' + table_full.at[i, 'Cliente']
+            fileManip.writeLog = text
+            text = ''
+            nDiferente += 1
+            # break
+
+
+def test_table_Cadastro_Funcionario_double():
+    global table_Cadastro_Funcionario
+    list_funcionario_double = (
+        table_Cadastro_Funcionario['Nome'].tolist())  # type: ignore
+    # print(list_funcionario_double)
+    fileManip = FileManip()
+    while True:
+        n_element = len(list_funcionario_double)
+        if n_element <= 1:
+            break
+        funcionario_double = list_funcionario_double.pop()
+        # print(funcionario_double)
+        if funcionario_double in list_funcionario_double:
+            text = f'O funcionario {funcionario_double} esta duplicado. '
+            text += 'Ele tem duas funções'
+            fileManip.writeLog = text
+
+
+def openSite():
+    ''' defined '''
+    global driver
+    global connect
+    options = webdriver.ChromeOptions()
+    options.add_argument('--ignore-certificate-errors')
+    options.add_experimental_option('excludeSwitches', ['enable-automation'])
+    options.add_experimental_option('excludeSwitches', ['enable-logging'])
+    service = Service(ChromeDriverManager().install())
+    driver = webdriver.Chrome(service=service, options=options)
+    connect = Connect(driver=driver)
+    xpathManip = XpathManip(driver=driver)
+    connect.arq_log = arq_log
     driver.get(siteSircon)
     # logar
     connect.user = user
@@ -249,21 +605,25 @@ if openSite:
         xpathOk = xpathManip.locate
         if xpathOk is True:
             break
-else:
-    driver.quit()
 
+
+start = True
+log_start_end()
 '''table_Cadastro_Consorciado'''
 if new_table_Cadastro_Consorciado:
-    connect.file = arqDonwloadSales
+    openSite()
+    connect.file = arqDonwloadSales  # type: ignore
     connect.month = month
     connect.sales = listXpathSales
     table_Cadastro_Consorciado = connect.sales
+    driver.quit()
     table_Cadastro_Consorciado.to_csv(  # type: ignore
         arqTableCadastroConsorciado,
         sep=';',
         index=False,
         header=True
     )
+
 else:  # ler as tabelas que para nao precisar executar novamente
     table_Cadastro_Consorciado = pd.read_csv(
         arqTableCadastroConsorciado,
@@ -273,11 +633,12 @@ else:  # ler as tabelas que para nao precisar executar novamente
     )
 
 '''table_Cadastro_Funcionario '''
-
 if new_table_Cadastro_Funcionario:
-    connect.file = arqDonwloadFunction
+    openSite()
+    connect.file = arqDonwloadFunction  # type: ignore
     connect.function = listXpathFunction
     table_Cadastro_Funcionario = connect.function
+    driver.quit()
     table_Cadastro_Funcionario.to_csv(  # type: ignore
         arqTableCadastroFuncionario,
         sep=';',
@@ -293,35 +654,20 @@ else:
     )
 
 '''#################### LIMITAR PESQUISAS ##################################'''
-limitSearchChosse = False
-valueAdministradora = ['DISAL']
-valueChooseCargo = [
-    'CONSULTOR CLT - A PARTIR JAN-2018',
-    'CONSULTOR DE PARCEIRO'
-]
-limitSearchSystem = True
-limitSearchDeleteWord = False
-valueChooseTabelarecebimento = ['FERIAS']
-'''Limitar pesquisa escolhida pelo usuario'''
-if limitSearchChosse is True:
-    connect.valueAdministradora = valueAdministradora
-    connect.cargo = valueChooseCargo
-if limitSearchSystem is True:
-    connect.valueExistAdministradoras = table_Cadastro_Consorciado
-    connect.valueExistCargos = table_Cadastro_Funcionario
-if limitSearchDeleteWord is True:
-    connect.listExistTabelarecebimento = valueChooseTabelarecebimento
-
 '''table_Cadastro_Ata'''
 if new_table_Cadastro_Ata is True:
+    openSite()
     connect.month = month
     connect.tagSon = tag_data
     connect.tagFather = tag_row
     connect.tagGet = tag_outerHTML
     connect.tagReturnValue
+    # limited_search()
+    limited_search_administradoras()
+    limited_search_cargos()
     connect.minutes = listXpathMinutes
-
     table_Cadastro_Ata = connect.minutes
+    driver.quit()
     tableManip.table = table_Cadastro_Ata  # type: ignore
     list_columns_rename = [[1, 'Mes'],
                            [2, 'Periodo_inicial'],
@@ -329,8 +675,8 @@ if new_table_Cadastro_Ata is True:
     for column_rename in list_columns_rename:
         tableManip.rename_name_column_indix = column_rename
     tableManip.add_column_clone_two_columns = ['ATA', 'Mes', 'Ano']
-
     table_Cadastro_Ata = tableManip.table
+
     table_Cadastro_Ata.to_csv(  # type: ignore
         arqTableCadastroAta,
         sep=';',
@@ -348,6 +694,7 @@ else:
 
 '''table_Comissoes_Configuracao'''
 if new_table_Comissoes_Configuracao:
+    openSite()
     connect.pressListXpath = listXpathComissoesConfiguracao
     connect.pressListXpath = xpathTipoComissao
     connect.tagSon = tag_option
@@ -355,10 +702,12 @@ if new_table_Comissoes_Configuracao:
     connect.tagGet = tag_outerHTML
     connect.tagReturnValue
     # criar lista de administradoras
+    limited_search_administradoras()
     connect.pressXpathResultListValue = xpathAdministradora
     # criar lista de administradoras + tabela de recebiemnto
     connect.pressListValueXpathResultListValue = xpathTabelaRecebimento
     # criar lista de administradoras + tabela de recebiemnto + cargos
+    limited_search_cargos()
     connect.pressListValueXpathResultListValueDouble = xpathCargo
     # alterar a tagets
     connect.tagGet = tag_value
@@ -381,6 +730,8 @@ if new_table_Comissoes_Configuracao:
     # table_Comissoes_Configuracao = connect.listColunmToTable
     connect.listColunmToTable
     table_Comissoes_Configuracao = connect.renameColumn
+
+    driver.quit()
     table_Comissoes_Configuracao.to_csv(
         arqTableComissoesConfiguracao, index=False, header=True, sep=';')
     # table.to_csv("table2.csv", index=False, header=True)
@@ -390,6 +741,7 @@ else:
 
 '''table_Comissoes_ConfigPagamento'''
 if new_table_Comissoes_ConfigPagamento:
+    openSite()
     connect.tagSon = tag_option
     connect.tagFather = tag_select
     connect.tagGet = tag_outerHTML
@@ -399,6 +751,8 @@ if new_table_Comissoes_ConfigPagamento:
     connect.pressListXpath = listXpathComissoesConfPagamento
     connect.pressListXpath = xpathTipoComissaoPagamento
     # list os valores existentes no campos cargos, administradora,tipoPagamento
+    limited_search_administradoras()
+    limited_search_cargos()
     connect.pressListXpathReturnListValue = listXpathCargAdminsPag
     # listCargo = connect.pressListXpathReturnListValue  # precisa do tagGet
     # connect.tagGets = tag_value
@@ -407,6 +761,7 @@ if new_table_Comissoes_ConfigPagamento:
     # connect.organizeListLine
     connect.organizeListLine = headerDtPagamentoParcelas
     listFull = connect.organizeListLine
+    driver.quit()
     table_Comissoes_ConfigPagamento = connect.listLineToTable
     table_Comissoes_ConfigPagamento.to_csv(
         arqTableComissoesConfigPag, index=False, header=True, sep=';'
@@ -417,237 +772,21 @@ else:
         arqTableComissoesConfigPag, sep=';', encoding='utf-8', dtype=str)
 
 
-'''tabela numero da semana no mes'''
-
-date_weekly.year_weeklys = 24
-date_weekly.create_weekYear_week_date = None
-date_weekly.edit_weekYear_week_date_separate_week = None
-date_weekly.edit_weekYear_week_date_separate_weekMonth = None
-date_weekly.edit_weekMonth_week_date = None
-date_weekly.create_table_weekMonth_week_date = ['N Semana Mes',
-                                                'Data semana',
-                                                'Dia semana']
-table_date_weekly = date_weekly.return_table
-table_date_weekly.to_csv(arqTableDatasSemanais,
-                         index=False, header=True, sep=';')
-
-''' termino de carregameno de tabelas '''
-# listTable = [table_Cadastro_Consorciado,
-#              table_Cadastro_Funcionario,
-#              table_Cadastro_Ata,
-#              table_Comissoes_Configuracao,
-#              table_Comissoes_ConfigPagamento]
-
-# for key, list in enumerate(listTable):
-#     print(list)
-#     print(key)
-
-# Verificar duplicatas nas colunas de junção
-
-''' manipular table_Cadastro_Funcionario, para alterar os Nomes duplicados com
-os Cargos, que gera comissão duplicada, pois o mesmo tem dois ou mais cargos'''
-table_manip_value.table = table_Cadastro_Funcionario  # type: ignore
-table_manip_value.row_duplicate_column = ['Nome']
-table_manip_value.list_columns_one_two = ['Nome', 'Cargo']
-table_manip_value.edit_data_column_2 = ['Nome', 'Cargo']
-table_Cadastro_Funcionario = table_manip_value.table
-''' manipular table_Cadastro_Consorciado, para altera rcoluna Vendedor
-e igualar aos alterados no table_Cadastro_Funcionario'''
-table_manip_value.table = table_Cadastro_Consorciado  # type: ignore
-table_manip_value.data_duplicate_change = 'Vendedor'
-table_Cadastro_Consorciado = table_manip_value.table
-''' manipular table_Comissoes_Configuracao remover as duplicação nas colunas
-'Administradora' e 'Cargo' '''
-table_manip_value.table = table_Comissoes_Configuracao
-table_manip_value.row_duplicate_column = ['Administradora', 'Cargo']
-table_manip_value.list_columns_one_two_three = ['Administradora',
-                                                'Cargo',
-                                                'Tabela de recebimento']
-table_manip_value.edit_data_column_3 = ['Administradora',
-                                        'Cargo',
-                                        'Tabela de recebimento']
-table_Comissoes_Configuracao = table_manip_value.table
-
-'''############## mescla tabelas ###################'''
-table_full = pd.merge(
-    table_Cadastro_Consorciado,  # type: ignore
-    table_Cadastro_Funcionario,  # type: ignore
-    left_on='Vendedor',
-    right_on='Nome',
-    how='left'
-)
-table_full = pd.merge(
-    table_full,
-    table_Comissoes_Configuracao,
-    on=['Administradora', 'Cargo'],
-    how='left')
-# ''' manipular tabela full '''
-# table_manip_value.tables = table_full
-# table_manip_value.add_column_day_week = ['Data de Entrega',
-#                                          'Data Cad. Adm']
-''' manipular table_comissoes_configuPagamento'''
-table_manip_value.table = table_Comissoes_ConfigPagamento
-table_manip_value.edit_data_column_all = ['Cargo',
-                                          'Administradora',
-                                          'Tipo Pagamento',
-                                          'Dt pag. por',
-                                          'dia pag.',
-                                          '1P recebera',
-                                          'D+ recebera',
-                                          'FAT recebera',
-                                          'Index']
-table = table_manip_value.table
-table_manip_value.table = table
-table_manip_value.row_duplicate_column = ['Cargo',
-                                          'Administradora',
-                                          'Tipo Pagamento']
-
-table_duplicate = table_manip_value.table_duplicate
-table_Comissoes_ConfigPagTratada = table_manip_value.table
-table_Comissoes_ConfigPagTratada.to_csv(
-    arqTableComissoesConfigPagTratada,
-    index=False, header=True, sep=';')
-
-table_duplicate.to_csv(arqTableComissoesConfigPagDupl,  # type: ignore
-                       index=False, header=True, sep=';')
-
-'''# mesclar table_full com table_date_weekly_changed'''
-
-tableManip.table = table_date_weekly
-tableManip.del_column = 'Dia semana'
-table_date_weekly_changed = tableManip.table
-list_columns_date_merge = [['Data de Entrega', 'Sem Ent'],
-                           ['Data Cad. Adm', 'Sem Cad Adm'],
-                           ['Data Pag. 2º Parc', 'Sem 2º Parc'],
-                           ['Data Pag. 3º Parc', 'Sem 3º Parc'],
-                           ['Data Pag. 4º Parc', 'Sem 4º Parc'],
-                           ['Data Pag. 5º Parc', 'Sem 5º Parc'],
-                           ['Data Pag. 6º Parc', 'Sem 6º Parc']]
-
-for columns_date in list_columns_date_merge:
-    column_compare = columns_date[0]
-    column_new_merge = columns_date[1]
-    table_full = pd.merge(
-        table_full,
-        table_date_weekly_changed,
-        left_on=column_compare,
-        right_on='Data semana',
-        how='left'
-    )
-    tableManip.table = table_full
-    tableManip.rename_name_column = ['N Semana Mes', column_new_merge]
-    tableManip.del_column = 'Data semana'
-    table_full = tableManip.table
-
-
-''' manipular table ATA  e colocar na table_full'''
-table_manip_value.table_2 = table_Cadastro_Ata  # type: ignore
-list_date_ATA = [['Data de Entrega', 'ATA Entrega'],
-                 ['Data Cad. Adm', 'ATA Cad Adm'],
-                 ['Data Pag. 2º Parc', 'ATA 2º Parc'],
-                 ['Data Pag. 3º Parc', 'ATA 3º Parc'],
-                 ['Data Pag. 4º Parc', 'ATA 4º Parc'],
-                 ['Data Pag. 5º Parc', 'ATA 5º Parc'],
-                 ['Data Pag. 6º Parc', 'ATA 6º Parc']]
-for date_ATA in list_date_ATA:
-    column_compare = date_ATA[0]
-    column_new_edit = date_ATA[1]
-    tableManip.table = table_full
-    # tableManip.add_column_nan = [column_new_edit]
-    tableManip.add_value_fixed_column = [column_new_edit]
-    table_full = tableManip.table
-    table_manip_value.table = table_full
-    table_manip_value.edit_data_column_ATA = [column_compare,
-                                              column_new_edit,
-                                              'Periodo_inicial',
-                                              'Periodo_final',
-                                              'ATA']
-    table_full = table_manip_value.table
-
-
-table_manip_value.table_2 = table_Comissoes_ConfigPagamento
-table_manip_value.add_columns_full = ['Cargo',
-                                      'Administradora',
-                                      'Tipo Pagamento',
-                                      'Index']
-
-table_full = table_manip_value.table
-
-#
-#
-#
-#
-#
-#
-
-
-''' Ordenar colunas da tabela para a forma que quiser'''
-listColumnsStart = [
-    'Situação',
-    'Administradora', 'Vendedor', 'Cargo',
-    'Crédito', 'Data Pag. 1º Parc', 'Valor Parc. Inicial',
-    'Dt pag. por', 'dia pag.',
-    '1P recebera', '1P referencia',
-    'Data de Entrega', 'Sem Ent', 'ATA Entrega',
-    'Data Cad. Adm', 'Sem Cad Adm', 'ATA Cad Adm',
-    'D+ recebera', 'D+ referencia',
-    'Data Pag. 2º Parc', 'Sem 2º Parc', 'ATA 2º Parc',
-    'Data Pag. 3º Parc', 'Sem 3º Parc', 'ATA 3º Parc',
-    'Data Pag. 4º Parc', 'Sem 4º Parc', 'ATA 4º Parc',
-    'Data Pag. 5º Parc', 'Sem 5º Parc', 'ATA 5º Parc',
-    'Data Pag. 6º Parc', 'Sem 6º Parc', 'ATA 6º Parc',
-    'FAT recebera',
-    'Gerente', 'Cliente',
-]
-columnsList = table_full.columns.to_list()
-columnsListNew = []
-for key, columnList in enumerate(columnsList):
-    if key == 0:
-        for listColumnStart in listColumnsStart:
-            columnsListNew.append(listColumnStart)
-    if columnList in listColumnsStart:
-        continue
-    columnsListNew.append(columnList)
-table_full = table_full[columnsListNew]
-
-
-# salvar a tabela
-table_full.to_csv(
-    "tables\\tableMerge.csv",
-    index=False,
-    header=True,
-    sep=';'
-)
-
-
-# print(table_Cadastro_Consorciado)
-# print(table_full)
-
-# teste para sabEr a diferença e mostra que é diferente
-num_line = len(table_full)
-nDiferente = 0
-count = 0
-with open(arq_log, 'a') as arquivo:
-    arquivo.write('Na tabela table_merge foi encontrado duplicado:  \n \n')
-for i in range(num_line):
-    i2 = i - nDiferente
-    if table_full.at[
-        i, 'Vendedor'] != table_Cadastro_Consorciado.at[  # type: ignore
-            i2, 'Vendedor']:
-        count += 1
-        arquivoTxt = str(count) + 'ª divergência \n'
-        arquivoTxt += 'Vendedor: ' + table_full.at[i, 'Vendedor'] + '\n'
-        arquivoTxt += 'Cliente: ' + table_full.at[i, 'Cliente'] + '\n' + '\n'
-
-        with open(arq_log, 'a') as arquivo:
-            arquivo.write(arquivoTxt)
-        nDiferente += 1
-        # break
-
-# # Verificar duplicatas nas colunas de junção
-# duplicatas = table_Comissoes_Configuracao.duplicated(
-#   subset=['Administradora', 'Cargo'], keep=False)
-# duplicatas_rows = table_Comissoes_Configuracao[duplicatas]
-# print(duplicatas_rows)
-
-# sleep(1)
+date_weekly_new()
+table_manip_funcionario()
+table_manip_cadastro_consorciado()
+table_manip_comissoes_configuracao()
+table_manip_comissao_configPagamento()
+table_manip_Cadastro_funcionario_gerente()
+table_manip_comissoes_configuracao_gerente()
+merge_consorciado_funcionario()
+merge_consorciado_funcionario_gerente()
+merge_full_comissoes_configuracao()
+merge_full_comissoes_configuracao_gerente()
+merge_full_weekly()
+merge_full_ata()
+order_column()
+save_full()
+test_table_Cadastro_Funcionario_double()
+test_full_double()
+log_start_end()
