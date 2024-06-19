@@ -1,64 +1,14 @@
-# "ferramenta de captura"  do windows para pegar imagens
-# from ast import Break
-# from asyncio.windows_events import NULL
-# from cgitb import text
-# from contextlib import nullcontext
-# from mailbox import NotEmptyError
-# from contextlib import contextmanager
-# from msilib.text import tables
-# import re
-# import sys
-# from msilib.schema import Property
-# import ssl
-# from time import sleep
-# from types import NoneType
-# from numpy import NaN
-# import pyautogui
-from ast import While
+# from ast import While
 import pandas as pd
 from pathlib import Path
 from time import sleep
-# from typing import List, Union
-# from pandas.errors import EmptyDataError
-# import os
-# import random
-# from bs4 import BeautifulSoup
-# from selenium.webdriver.common.by import By
-# from selenium.webdriver.common.action_chains import ActionChains
-# from selenium.webdriver.common.actions.wheel_input import ScrollOrigin
-# from selenium.common.exceptions import (
-#     NoSuchElementException,
-#     ElementNotInteractableException,
-#     ElementClickInterceptedException
-# )
-# from selenium.common.exceptions import (
-#     StaleElementReferenceException,
-#     InvalidArgumentException,
-#     InvalidSelectorException,
-#     TimeoutException
-# )
-# from selenium.webdriver.support import expected_conditions as EC
-# from selenium.webdriver.support.wait import WebDriverWait
 from components.returnValue import ReturnValue
 from components.renemaText import RenameText
 from components.dateMonthYear import DateMonthYear
 from components.mouseKeyboard import MouseKeyboard
 from components.tableManip import TableManip
 from components.table_from_tags import Table_from_tags
-# from components.buttonsSpecial import ButtonsSpecial
 from components.fileManip import FileManip
-# from xpathManip import XpathManip
-# from imageManip import ImageManip
-
-# excecaoAll = (
-#     NoSuchElementException,
-#     ElementNotInteractableException,
-#     ElementClickInterceptedException,
-#     StaleElementReferenceException,
-#     InvalidArgumentException,
-#     InvalidSelectorException,
-#     TimeoutException
-# )
 
 
 class Connect:
@@ -91,102 +41,6 @@ class Connect:
         self.listExistAdministradoras: list = []
         self.listExistTabelarecebimento = []
 
-    # @property
-    # def users(self):
-    #     return None
-
-    # @users.setter
-    # def users(self, user):
-    #     self.user = user
-
-    # @property
-    # def passwords(self):
-    #     return None
-
-    # @passwords.setter
-    # def passwords(self, password):
-    #     self.password = password
-
-    # @property
-    # def tagSons(self):
-    #     return None
-
-    # @tagSons.setter
-    # def tagSons(self, tagSon):
-    #     self.tagSon = tagSon
-
-    # @property
-    # def tagFathers(self):
-    #     return None
-
-    # @tagFathers.setter
-    # def tagFathers(self, tagFather):
-    #     self.tagFather = tagFather
-
-    # @property
-    # def tagGets(self):
-    #     return None
-
-    # @tagGets.setter
-    # def tagGets(self, tagGet):
-    #     self.tagGet = tagGet
-
-    # @property
-    # def tagSelecteds(self):
-    #     return None
-
-    # @tagSelecteds.setter
-    # def tagSelecteds(self, tagSelected):
-    #     self.tagSelected = tagSelected
-
-    # @property
-    # def listValues(self):
-    #     return None
-
-    # @listValues.setter
-    # def listValues(self, listValue):
-    #     self.listValue = listValue
-
-    # @property
-    # def files(self):
-    #     return None
-
-    # @files.setter
-    # def files(self, file):
-    #     self.file = file
-
-    # @property
-    # def months(self):
-    #     return None
-
-    # @months.setter
-    # def months(self, month):
-    #     self.month = month
-
-    # @property
-    # def tables(self):
-    #     return None
-
-    # @tables.setter
-    # def tables(self, table):
-    #     self.table = table
-
-    # @property
-    # def valueChooseAdministradoras(self):
-    #     return None
-
-    # @valueChooseAdministradoras.setter
-    # def valueChooseAdministradoras(self, valueAdministradora):
-    #     self.valueAdministradora = valueAdministradora
-
-    # @property
-    # def valueChooseCargos(self):
-    #     return None
-
-    # @valueChooseCargos.setter
-    # def valueChooseCargos(self, valueCargo):
-    #     self.cargo = valueCargo
-
     @property
     def tagReturnValue(self):
         self.returnValue.tagSon = self.tagSon
@@ -208,9 +62,6 @@ class Connect:
                 table_Cadastro_Consorciado.at[i, 'Administradora'])
         self.listExistAdministradoras = list(set(listFullAdministradora))
         self.listExistAdministradoras.sort()
-        print(self.listExistAdministradoras)
-        print('######################################')
-        sleep(2)
 
     @property
     def valueExistCargos(self):
@@ -225,17 +76,6 @@ class Connect:
             listFullCargos.append(table_Cadastro_Funcionario.at[i, 'Cargo'])
         self.listExistCargos = list(set(listFullCargos))
         self.listExistCargos.sort()
-        print(self.listExistCargos)
-        print('######################################')
-        sleep(2)
-
-    # @property
-    # def valueExistTabelarecebimento(self):
-    #     return None
-
-    # @valueExistTabelarecebimento.setter
-    # def valueExistTabelarecebimento(self, valueChooseTabelarecebimento):
-    #     self.listExistTabelarecebimento = valueChooseTabelarecebimento
 
     ''' ###########  logar  ###############'''
     @property
@@ -286,11 +126,6 @@ class Connect:
                 self.fileManip.error = error
                 for key, xpath in enumerate(listXpath):
                     func = self.mouseKeyboard
-                    # butt = ButtonsSpecial(
-                    #     lastMonth=lastMonth,
-                    #     func=func,
-                    #     xpath=xpath
-                    # )
                     clickOk = False
                     count_attempts = 0
                     repeat = True
@@ -298,7 +133,7 @@ class Connect:
                         func.numberTimesRepeated = 0
                         if key == 3 or key == 7:   # botao seta para esquerda
                             # clickOk = butt.clickLeftArrow
-                            for _ in range(lastMonth):  # quantidade de vezes que tem que retornar
+                            for _ in range(lastMonth):  # vezes de retornar
                                 func.clickXpath = xpath
                                 clickOk = func.clickOk
                                 attempts_click = func.numberTimesRepeated
@@ -329,7 +164,8 @@ class Connect:
                                     func.clickXpath = xpath
                                     clickOk = func.clickOk
                                     column += 1
-                                    if (column == 3 and line == 6) or clickOk is False:
+                                    if (column == 3 and line == 6) or (
+                                        clickOk is False):
                                         clickOk = True
                                         break
                                     if column == 8:
@@ -345,13 +181,6 @@ class Connect:
                             self.df = self.fileManip.readCsv  # type: ignore
                             error = self.fileManip.error
                         info = self.mouseKeyboard.info
-                        # print(f'Meses anteriosres ao atula: {lastMonth}')
-                        # print(f'info: {info}')
-                        # print(f'quantidade de tentativas: {count_attempts}')
-                        # print(f'key: {key}')
-                        # print(f'Erro: {error}')
-                        # print(f'Clicle OK: {clickOk}')
-                        # print('')
                         '''O arquvi nao existe devido ao não existir nada para
                           ser baixado no sistema origem'''
                         if error != '':
@@ -379,8 +208,18 @@ class Connect:
         self.fileManip.writeCsv = self.dfNew
 
     @property
+    def create_primary_key(self):
+        return None
+
+    @create_primary_key.setter
+    def create_primary_key(self, name_column):
+        self.tableManip.table = self.dfNew
+        self.tableManip.add_column_primary_key = name_column
+        self.dfNew = self.tableManip.table
+
+    @property
     def function(self):
-        return self.dfNew
+        return None
 
     @function.setter
     def function(self, listXpath):
@@ -401,7 +240,7 @@ class Connect:
 
     @property
     def minutes(self):
-        return self.table
+        return None
 
     @minutes.setter
     def minutes(self, listXpath):
@@ -422,8 +261,6 @@ class Connect:
                     clickOk = True
                 if key == 4:
                     tableComplete: pd.DataFrame = pd.DataFrame()
-                    print(self.listExistAdministradoras)
-                    sleep(2)
                     for administradora in self.listExistAdministradoras:
                         self.mouseKeyboard.clickXpath = xpath
                         # clickOk = self.mouseKeyboard.clickOk
@@ -440,14 +277,21 @@ class Connect:
                                 self.tableManip.renemar_data = table
                                 self.tableManip.del_column = 'Ações'
                                 self.tableManip.column_clone = 'Período'
-                                self.tableManip.add_column_clone = 'Período final'
-                                self.tableManip.rename_name_column_origin = 'Período'
-                                self.tableManip.rename_name_column_destiny = 'Período inicial'
+                                self.tableManip.add_column_clone = (
+                                    'Período final')
+                                self.tableManip.rename_name_column_origin = (
+                                    'Período')
+                                self.tableManip.rename_name_column_destiny = (
+                                    'Período inicial')
                                 self.tableManip.value_separate = 'à'
-                                self.tableManip.rename_value_column_before = 'Período inicial'
-                                self.tableManip.rename_value_column_after = 'Período final'
-                                self.tableManip.value_fixed_column = administradora
-                                self.tableManip.add_value_fixed_column = 'Administradora'
+                                self.tableManip.rename_value_column_before = (
+                                    'Período inicial')
+                                self.tableManip.rename_value_column_after = (
+                                    'Período final')
+                                self.tableManip.value_fixed_column = (
+                                    administradora)
+                                self.tableManip.add_value_fixed_column = (
+                                    'Administradora')
                                 self.tableManip.value_fixed_column = listYear
                                 self.tableManip.add_value_fixed_column = 'Ano'
                                 table: pd.DataFrame = self.tableManip.table
@@ -499,7 +343,6 @@ class Connect:
             if valueAdministradora in self.listExistAdministradoras:
                 listValueTemp.append(valueAdministradora)
         self.listValue = listValueTemp
-        print(f'self.listValue: {self.listValue}')
 
     # com valores da administradoras ira acrecentar valor tabela de recebimento
     @property
@@ -586,18 +429,10 @@ class Connect:
         self.mouseKeyboard.locationSearchTag = self.tagSon
         renameText = RenameText()
         for administradora, tableRecebimento_listCargo in self.listValue:
-            # if administradora is not self.listExistAdministradoras:
-            #     continue
             self.mouseKeyboard.clickValue = administradora
-            print(administradora)
-            print('-------------------------')
             for tableRecebimento, listCargo in tableRecebimento_listCargo:
                 self.mouseKeyboard.clickValue = tableRecebimento
                 for cargo in listCargo:
-                    # if cargo is not  self.listExistCargos:
-                    #     continue
-                    print(cargo)
-                    print('===============================')
                     self.mouseKeyboard.clickValue = cargo
                     listValueTemp2 = []
                     listValueTemp2.append(administradora)

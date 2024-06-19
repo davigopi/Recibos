@@ -1,31 +1,25 @@
 import os
 from pathlib import Path
-# from time import sleep
 from webdriver_manager.chrome import ChromeDriverManager
 import pandas as pd
-# import datetime
-# from datetime import date
 from datetime import datetime
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
-# from typing import Union
 from components.connect import Connect
 from components.fileManip import FileManip
 from components.tableManip import TableManip
 from components.xpathManip import XpathManip
 from components.table_manip_value import Table_manip_value
 from components.date_weekly import Date_weekly
-# from time import sleep
 
 tableManip = TableManip()
 table_manip_value = Table_manip_value()
 date_weekly = Date_weekly()
 
-
 siteSircon = "https://app.sistemasircon.com.br/login"
 user = 'davigopi@gmail.com'
 password = '36vad28'
-month = 12
+month = 7
 
 new_table_Cadastro_Consorciado = True
 new_table_Cadastro_Funcionario = True
@@ -33,13 +27,11 @@ new_table_Cadastro_Ata = True
 new_table_Comissoes_Configuracao = True
 new_table_Comissoes_ConfigPagamento = True
 
-
 # new_table_Cadastro_Consorciado = False
 # new_table_Cadastro_Funcionario = False
 # new_table_Cadastro_Ata = False
 # new_table_Comissoes_Configuracao = False
 # new_table_Comissoes_ConfigPagamento = False
-
 
 path_source = Path(__file__).parent
 path_tables = path_source / 'tables'
@@ -59,14 +51,34 @@ name_arq = 'table_Comissoes_ConfigPagamento_Dupl.csv'
 arqTableComissoesConfigPagDupl = path_tables / name_arq
 name_arq = 'table_datas_semanais.csv'
 arqTableDatasSemanais = path_tables / name_arq
-name_arq = 'table_teste.csv'
-arqTableTeste = path_tables / name_arq
+name_arq = 'table_teste1.csv'
+arqTableTeste1 = path_tables / name_arq
+name_arq = 'table_teste2.csv'
+arqTableTeste2 = path_tables / name_arq
+name_arq = 'table_teste3.csv'
+arqTableTeste3 = path_tables / name_arq
 name_arq = 'log.txt'
 arq_log = path_source / name_arq
 
 pathDonwload = os.environ['USERPROFILE'] + '\\Downloads'
 arqDonwloadSales = pathDonwload + '\\consorciados.csv'
 arqDonwloadFunction = pathDonwload + '\\funcionarios.csv'
+
+'''Variaveis'''
+column_primary_key = 'PK'
+column_total_vendidos = 'Total'
+column_vendedor = 'Vendedor'
+column_gerente = 'Gerente'
+column_credito = 'Crédito'
+column_ata_entrega = 'ATA Entrega'
+column_sma_ent = 'Sma Ent'
+column_ata_cad_adm = 'ATA Cad Adm'
+column_sma_cad_adm = 'Sma Cad Adm'
+
+list_columns_total_vendidos = [
+    column_total_vendidos, column_vendedor, column_gerente, column_credito,
+    column_ata_entrega, column_sma_ent,
+    column_ata_cad_adm, column_sma_cad_adm]
 
 '''#################### TAGS ##############################################'''
 tag_option = 'option'
@@ -131,7 +143,7 @@ for num in range(30):  # quantidade de campos comissões configuracao
         f'//*[@id="frm:j_idt124:{num}:j_idt174"]',  # parcela 11
         f'//*[@id="frm:j_idt124:{num}:j_idt176"]'  # parcela 12
     ])
-    # listXpathCampoParcela.append([listCampo, listCotaPeriodoParcela])
+
 listXpathFunction = [
     '//*[@id="menucadastro"]/a',  # menu cadastro
     '//*[@id="menucadastro"]/ul/li[7]',  # menu funcionario
@@ -231,7 +243,8 @@ headerDtPagamentoParcelas = [
     'FAT periodo final', 'FAT dt final', 'Index'
 ]
 
-'''#################### ABRIR SITES ########################################'''
+
+#################### ABRIR SITES ########################################
 
 
 def log_start_end():
@@ -306,7 +319,7 @@ def table_manip_funcionario():
 
 
 def table_manip_cadastro_consorciado():
-    ''' manipular table_Cadastro_Consorciado, para altera rcoluna Vendedor
+    ''' manipular table_Cadastro_Consorciado, para altera coluna Vendedor
     e igualar aos alterados no table_Cadastro_Funcionario'''
     global table_Cadastro_Consorciado
     table_manip_value.table = table_Cadastro_Consorciado  # type: ignore
@@ -426,37 +439,66 @@ def merge_full_comissoes_configuracao_gerente():
         left_on=['Administradora', 'Cargo_Gerente'],
         right_on=['Administradora_Gerente', 'Cargo_Gerente'],
         how='left')
+    table_full.to_csv(arqTableTeste1, index=False, header=True, sep=';')
+
+
+def create_columns_ata():
+    global list_columns_ATA
+    global table_full
+    # descori a quantidade de num_atas_parc
+    columns_data_venc = ['Data Venc. ', 'º Parc']
+    columns_ata = ['ATA ', 'º Parc']
+    columns_sma = ['Sma ', 'º Parc']
+    columns_situacao = ['Situação ', 'º Parc']
+    list_columns_ATA = [
+        ['Situação', 'Data de Entrega', 'ATA Entrega', 'Sma Ent'],
+        ['Situação', 'Data Cad. Adm', 'ATA Cad Adm', 'Sma Cad Adm']
+    ]
+    num_atas_parc = 10000
+    for i in range(2, num_atas_parc + 1):
+        name_column_data_venc = (
+            columns_data_venc[0] + str(i) + columns_data_venc[1]
+        )
+        if name_column_data_venc in table_full.columns:
+            name_column_ata = columns_ata[0] + str(i) + columns_ata[1]
+            name_column_sma = columns_sma[0] + str(i) + columns_sma[1]
+            name_column_situacao = (
+                columns_situacao[0] + str(i) + columns_situacao[1]
+            )
+            list_columns_ATA.append(
+                [name_column_situacao,
+                 name_column_data_venc,
+                 name_column_ata,
+                 name_column_sma,
+                 ]
+            )
+        else:
+            break
 
 
 def merge_full_weekly():
     '''# mesclar table_full com table_date_weekly_changed'''
     global table_date_weekly
     global table_full
+    global list_columns_ATA
     tableManip.table = table_date_weekly
     tableManip.del_column = 'Dia semana'
     table_date_weekly_changed = tableManip.table
-    list_columns_date_merge = [['Data de Entrega', 'Sma Ent'],
-                               ['Data Cad. Adm', 'Sma Cad Adm'],
-                               ['Data Pag. 2º Parc', 'Sma 2º Parc'],
-                               ['Data Pag. 3º Parc', 'Sma 3º Parc'],
-                               ['Data Pag. 4º Parc', 'Sma 4º Parc'],
-                               ['Data Pag. 5º Parc', 'Sma 5º Parc'],
-                               ['Data Pag. 6º Parc', 'Sma 6º Parc']]
-
-    for columns_date in list_columns_date_merge:
-        column_compare = columns_date[0]
-        column_new_merge = columns_date[1]
+    for columns_date in list_columns_ATA:
+        name_column_data_venc = columns_date[1]
+        name_column_sma = columns_date[3]
         table_full = pd.merge(
             table_full,
             table_date_weekly_changed,
-            left_on=column_compare,
+            left_on=name_column_data_venc,
             right_on='Data semana',
             how='left'
         )
         tableManip.table = table_full
-        tableManip.rename_name_column = ['N Semana Mes', column_new_merge]
+        tableManip.rename_name_column = ['N Semana Mes', name_column_sma]
         tableManip.del_column = 'Data semana'
         table_full = tableManip.table
+        table_full.to_csv(arqTableTeste2, index=False, header=True, sep=';')
 
 
 def merge_full_ata():
@@ -464,24 +506,17 @@ def merge_full_ata():
     global table_full
     global table_Cadastro_Ata
     global table_Comissoes_ConfigPagamento
+    global list_columns_ATA
     table_manip_value.table_2 = table_Cadastro_Ata  # type: ignore
-    list_date_ATA = [['Data de Entrega', 'ATA Entrega'],
-                     ['Data Cad. Adm', 'ATA Cad Adm'],
-                     ['Data Pag. 2º Parc', 'ATA 2º Parc'],
-                     ['Data Pag. 3º Parc', 'ATA 3º Parc'],
-                     ['Data Pag. 4º Parc', 'ATA 4º Parc'],
-                     ['Data Pag. 5º Parc', 'ATA 5º Parc'],
-                     ['Data Pag. 6º Parc', 'ATA 6º Parc']]
-    for date_ATA in list_date_ATA:
-        column_compare = date_ATA[0]
-        column_new_edit = date_ATA[1]
+    for date_ATA in list_columns_ATA:
+        name_column_data_venc = date_ATA[1]
+        name_column_ata = date_ATA[2]
         tableManip.table = table_full
-        # tableManip.add_column_nan = [column_new_edit]
-        tableManip.add_value_fixed_column = [column_new_edit]
+        tableManip.add_value_fixed_column = [name_column_ata]
         table_full = tableManip.table
         table_manip_value.table = table_full
-        table_manip_value.edit_data_column_ATA = [column_compare,
-                                                  column_new_edit,
+        table_manip_value.edit_data_column_ATA = [name_column_data_venc,
+                                                  name_column_ata,
                                                   'Periodo_inicial',
                                                   'Periodo_final',
                                                   'ATA']
@@ -492,30 +527,32 @@ def merge_full_ata():
                                           'Tipo Pagamento',
                                           'Index']
     table_full = table_manip_value.table
+    table_full.to_csv(arqTableTeste3, index=False, header=True, sep=';')
+
+
+def column_add():
+    global table_full
+    tableManip.table = table_full
+    tableManip.alter_value_line_total_sum = list_columns_total_vendidos
+
+    table_full = tableManip.table
 
 
 def order_column():
     ''' Ordenar colunas da tabela para a forma que quiser'''
+    global list_columns_ATA
     global table_full
     listColumnsStart = [
-        'Situação', 'Administradora',
-        'Vendedor', 'Cargo',
-        'Gerente', 'Cargo_Gerente',
-        'Cliente', 'Crédito',
-        'Valor Parc. Inicial', 'Data Pag. 1º Parc',
+        'Administradora', 'Cargo', 'Cargo_Gerente', 'Vendedor', 'Gerente',
+        'Cliente', 'Crédito', 'Valor Parc. Inicial', 'Data Pag. 1º Parc',
         'Dt pag. por', 'dia pag.',
-        '1P recebera', '1P referencia',
-        'Data de Entrega', 'Sma Ent', 'ATA Entrega',
-        'Data Cad. Adm', 'Sma Cad Adm', 'ATA Cad Adm',
-        'D+ recebera', 'D+ referencia',
-        'Data Pag. 2º Parc', 'Sma 2º Parc', 'ATA 2º Parc',
-        'Data Pag. 3º Parc', 'Sma 3º Parc', 'ATA 3º Parc',
-        'Data Pag. 4º Parc', 'Sma 4º Parc', 'ATA 4º Parc',
-        'Data Pag. 5º Parc', 'Sma 5º Parc', 'ATA 5º Parc',
-        'Data Pag. 6º Parc', 'Sma 6º Parc', 'ATA 6º Parc',
-        'FAT recebera',
-        'Gerente', 'Cliente',
+        '1P recebera', 'D+ recebera', 'FAT recebera',
+        '1P referencia', 'D+ referencia'
     ]
+    for columns_ata in list_columns_ATA:
+        for column_ata in columns_ata:
+            if column_ata not in listColumnsStart:
+                listColumnsStart.append(column_ata)
     columnsList = table_full.columns.to_list()
     columnsListNew = []
     for key, columnList in enumerate(columnsList):
@@ -561,24 +598,36 @@ def test_full_double():
             fileManip.writeLog = text
             text = ''
             nDiferente += 1
-            # break
 
 
 def test_table_Cadastro_Funcionario_double():
     global table_Cadastro_Funcionario
     list_funcionario_double = (
         table_Cadastro_Funcionario['Nome'].tolist())  # type: ignore
-    # print(list_funcionario_double)
     fileManip = FileManip()
+    fileManip.arq_log = arq_log
     while True:
         n_element = len(list_funcionario_double)
         if n_element <= 1:
             break
         funcionario_double = list_funcionario_double.pop()
-        # print(funcionario_double)
         if funcionario_double in list_funcionario_double:
             text = f'O funcionario {funcionario_double} esta duplicado. '
             text += 'Ele tem duas funções'
+            fileManip.writeLog = text
+
+
+def text_primary_key():
+    global table_full
+    fileManip = FileManip()
+    fileManip.arq_log = arq_log
+    list_primary_key = table_full[column_primary_key].tolist()
+    while list_primary_key != []:
+        primary_key = list_primary_key.pop()
+        if primary_key in list_primary_key:
+            text = f'Foi repetido o primary key ({primary_key}). \n'
+            text += 'Isso siguinifica que tem vendas duplicados, '
+            text += 'devido a mesclagem entre as tabelas. '
             fileManip.writeLog = text
 
 
@@ -615,7 +664,8 @@ if new_table_Cadastro_Consorciado:
     connect.file = arqDonwloadSales  # type: ignore
     connect.month = month
     connect.sales = listXpathSales
-    table_Cadastro_Consorciado = connect.sales
+    connect.create_primary_key = column_primary_key
+    table_Cadastro_Consorciado = connect.dfNew
     driver.quit()
     table_Cadastro_Consorciado.to_csv(  # type: ignore
         arqTableCadastroConsorciado,
@@ -623,7 +673,6 @@ if new_table_Cadastro_Consorciado:
         index=False,
         header=True
     )
-
 else:  # ler as tabelas que para nao precisar executar novamente
     table_Cadastro_Consorciado = pd.read_csv(
         arqTableCadastroConsorciado,
@@ -631,13 +680,15 @@ else:  # ler as tabelas que para nao precisar executar novamente
         encoding='utf-8',
         dtype=str
     )
-
+table_Cadastro_Consorciado.columns = (
+    table_Cadastro_Consorciado.columns.str.strip()
+)
 '''table_Cadastro_Funcionario '''
 if new_table_Cadastro_Funcionario:
     openSite()
     connect.file = arqDonwloadFunction  # type: ignore
     connect.function = listXpathFunction
-    table_Cadastro_Funcionario = connect.function
+    table_Cadastro_Funcionario = connect.dfNew
     driver.quit()
     table_Cadastro_Funcionario.to_csv(  # type: ignore
         arqTableCadastroFuncionario,
@@ -653,8 +704,11 @@ else:
         dtype=str
     )
 
+table_Cadastro_Funcionario.columns = (
+    table_Cadastro_Funcionario.columns.str.strip()
+)
+
 '''#################### LIMITAR PESQUISAS ##################################'''
-'''table_Cadastro_Ata'''
 if new_table_Cadastro_Ata is True:
     openSite()
     connect.month = month
@@ -662,11 +716,10 @@ if new_table_Cadastro_Ata is True:
     connect.tagFather = tag_row
     connect.tagGet = tag_outerHTML
     connect.tagReturnValue
-    # limited_search()
     limited_search_administradoras()
     limited_search_cargos()
     connect.minutes = listXpathMinutes
-    table_Cadastro_Ata = connect.minutes
+    table_Cadastro_Ata = connect.table
     driver.quit()
     tableManip.table = table_Cadastro_Ata  # type: ignore
     list_columns_rename = [[1, 'Mes'],
@@ -690,7 +743,7 @@ else:
         encoding='utf-8',
         dtype=str
     )
-
+table_Cadastro_Ata.columns = table_Cadastro_Ata.columns.str.strip()
 
 '''table_Comissoes_Configuracao'''
 if new_table_Comissoes_Configuracao:
@@ -730,7 +783,6 @@ if new_table_Comissoes_Configuracao:
     # table_Comissoes_Configuracao = connect.listColunmToTable
     connect.listColunmToTable
     table_Comissoes_Configuracao = connect.renameColumn
-
     driver.quit()
     table_Comissoes_Configuracao.to_csv(
         arqTableComissoesConfiguracao, index=False, header=True, sep=';')
@@ -738,6 +790,9 @@ if new_table_Comissoes_Configuracao:
 else:
     table_Comissoes_Configuracao = pd.read_csv(
         arqTableComissoesConfiguracao, sep=';', encoding='utf-8', dtype=str)
+table_Comissoes_Configuracao.columns = (
+    table_Comissoes_Configuracao.columns.str.strip()
+)
 
 '''table_Comissoes_ConfigPagamento'''
 if new_table_Comissoes_ConfigPagamento:
@@ -754,11 +809,7 @@ if new_table_Comissoes_ConfigPagamento:
     limited_search_administradoras()
     limited_search_cargos()
     connect.pressListXpathReturnListValue = listXpathCargAdminsPag
-    # listCargo = connect.pressListXpathReturnListValue  # precisa do tagGet
-    # connect.tagGets = tag_value
-    # connect.tagReturnValue
     connect.pressListValueReturnListValue = listXpathDtPagamentoParcelas
-    # connect.organizeListLine
     connect.organizeListLine = headerDtPagamentoParcelas
     listFull = connect.organizeListLine
     driver.quit()
@@ -770,7 +821,9 @@ if new_table_Comissoes_ConfigPagamento:
 else:
     table_Comissoes_ConfigPagamento = pd.read_csv(
         arqTableComissoesConfigPag, sep=';', encoding='utf-8', dtype=str)
-
+table_Comissoes_ConfigPagamento.columns = (
+    table_Comissoes_ConfigPagamento.columns.str.strip()
+)
 
 date_weekly_new()
 table_manip_funcionario()
@@ -783,10 +836,13 @@ merge_consorciado_funcionario()
 merge_consorciado_funcionario_gerente()
 merge_full_comissoes_configuracao()
 merge_full_comissoes_configuracao_gerente()
+create_columns_ata()
 merge_full_weekly()
 merge_full_ata()
+column_add()
 order_column()
 save_full()
 test_table_Cadastro_Funcionario_double()
 test_full_double()
+text_primary_key()
 log_start_end()

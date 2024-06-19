@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import re
 from time import sleep
+import locale
 
 
 class TableManip:
@@ -16,78 +17,6 @@ class TableManip:
         self.value_fixed_column = ''  # por padrao ''
         self.column_clone = ''
         self.rename_name_column_origin = ''
-
-    # @property
-    # def dfNews(self):
-    #     return None
-
-    # @dfNews.setter
-    # def dfNews(self, dfNew):
-    #     self.dfNew = dfNew
-
-    # @property
-    # def dfs(self):
-    #     return None
-
-    # @dfs.setter
-    # def dfs(self, df):
-    #     self.df = df
-
-    # @property
-    # def tables(self):
-    #     return None
-
-    # @tables.setter
-    # def tables(self, table):
-    #     self.table = table
-
-    # @property
-    # def value_fixed_columns(self):
-    #     return None
-
-    # @value_fixed_columns.setter
-    # def value_fixed_columns(self, value_fixed_column):
-    #     self.value_fixed_column = value_fixed_column
-
-    # @property
-    # def column_clones(self):
-    #     return self.column_clone
-
-    # @column_clones.setter
-    # def column_clones(self, column_clone):
-    #     self.column_clone = column_clone
-
-    # @property
-    # def value_separates(self):
-    #     return None
-
-    # @value_separates.setter
-    # def value_separates(self, value_separate):
-    #     self.value_separate = value_separate
-
-    # @property
-    # def rename_name_column_origins(self):
-    #     return None
-
-    # @rename_name_column_origins.setter
-    # def rename_name_column_origins(self, rename_name_column_origin):
-    #     self.rename_name_column_origin = rename_name_column_origin
-
-    # @property
-    # def nameNumberlines(self):
-    #     return None
-
-    # @nameNumberlines.setter
-    # def nameNumberlines(self, nameNumberLine):
-    #     self.nameNumberLine = nameNumberLine
-
-    # @property
-    # def nameNumberColumns(self):
-    #     return None
-
-    # @nameNumberColumns.setter
-    # def nameNumberColumns(self, nameNumberColumn):
-    #     self.nameNumberColumn = nameNumberColumn
 
     @property
     def merge(self):
@@ -104,10 +33,14 @@ class TableManip:
 
     @infTable.setter
     def infTable(self, table):
-        if isinstance(self.nameNumberLine, str) and isinstance(self.nameNumberColumn, str):
-            self.value = table.at[self.nameNumberLine, self.nameNumberColumn]  # pelo nome
-        elif isinstance(self.nameNumberLine, int) and isinstance(self.nameNumberColumn, int):
-            self.value = table.iat[self.nameNumberLine, self.nameNumberColumn]  # pelo local
+        if isinstance(self.nameNumberLine, str) and isinstance(
+                self.nameNumberColumn, str):
+            self.value = table.at[
+                self.nameNumberLine, self.nameNumberColumn]  # pelo nome
+        elif isinstance(self.nameNumberLine, int) and isinstance(
+                self.nameNumberColumn, int):
+            self.value = table.iat[
+                self.nameNumberLine, self.nameNumberColumn]  # pelo local
         else:
             print(
                 f'line: {self.nameNumberLine} {type(self.nameNumberLine)}'
@@ -168,27 +101,78 @@ class TableManip:
                 list_name_column[2]].astype(str)
 
     @property
+    def add_column_primary_key(self):
+        return None
+
+    @add_column_primary_key.setter
+    def add_column_primary_key(self, name_column):
+        quantity_line = self.table.shape[0]
+        list_primary_key = []
+        for key in range(1, quantity_line + 1):
+            primary_key = f'{key:06}'
+            list_primary_key.append(primary_key)
+        self.table[name_column] = list_primary_key
+
+    @property
+    def alter_value_line_total_sum(self):
+        return None
+
+    @alter_value_line_total_sum.setter
+    def alter_value_line_total_sum(self, name_column):
+        locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
+        quantity_line = self.table.shape[0]
+        for key in range(4, 8):
+            new_name_column = name_column[0] + ' ' + name_column[key]
+            new_name_column_gerente = new_name_column + ' Sup'
+            self.table[new_name_column] = ''
+            self.table[new_name_column_gerente] = ''
+            for line in range(quantity_line):
+                vendedor = self.table.iloc[line][name_column[1]]
+                gerente = self.table.iloc[line][name_column[2]]
+                ata = self.table.iloc[line][name_column[key]]
+                sum_value = self.table.loc[
+                    (self.table[name_column[1]] == vendedor) &
+                    (self.table[name_column[key]] == ata),
+                    name_column[3]
+                ].apply(lambda x: float(
+                    x.replace(' ', '').replace('.', '').replace(',', '.')
+                )).sum()
+                # .apply(lambda x: locale.atof(x)).sum()
+                sum_value_gerente = self.table.loc[
+                    (self.table[name_column[2]] == gerente) &
+                    (self.table[name_column[key]] == ata),
+                    name_column[3]
+                ].apply(lambda x: float(
+                    x.replace(' ', '').replace('.', '').replace(',', '.')
+                )).sum()
+                # .apply(lambda x: locale.atof(x)).sum()
+                sum_value = locale.format_string("%.2f", sum_value, grouping=True)
+                sum_value_gerente = locale.format_string("%.2f", sum_value_gerente, grouping=True)
+                self.table.at[line, new_name_column] = sum_value
+                self.table.at[line, new_name_column_gerente] = sum_value_gerente
+
+    @ property
     def del_column(self):
         return None
 
-    @del_column.setter
+    @ del_column.setter
     def del_column(self, name_column):
         self.table.drop(name_column, axis=1, inplace=True)
 
-    @property
+    @ property
     def rename_name_column_destiny(self):
         return None
 
-    @rename_name_column_destiny.setter
+    @ rename_name_column_destiny.setter
     def rename_name_column_destiny(self, name_column):
         self.table = self.table.rename(
             columns={self.rename_name_column_origin: name_column})
 
-    @property
+    @ property
     def rename_value_column_before(self):
         return None
 
-    @rename_value_column_before.setter
+    @ rename_value_column_before.setter
     def rename_value_column_before(self, name_column):
         num_line, num_column = self.table.shape
         for line in range(num_line):
@@ -198,11 +182,11 @@ class TableManip:
                 inf = inf_re.group(1)
             self.table.iat[line, self.table.columns.get_loc(name_column)] = inf
 
-    @property
+    @ property
     def rename_value_column_after(self):
         return None
 
-    @rename_value_column_after.setter
+    @ rename_value_column_after.setter
     def rename_value_column_after(self, name_column):
         num_line, num_column = self.table.shape
         for line in range(num_line):
@@ -212,40 +196,40 @@ class TableManip:
                 inf = inf_re.group(1)
             self.table.iat[line, self.table.columns.get_loc(name_column)] = inf
 
-    @property
+    @ property
     def create_table(self):
         return None
 
-    @create_table.setter
+    @ create_table.setter
     def create_table(self, Name_columns):
         self.table = pd.DataFrame()  # tabela vazia
         for column in Name_columns:
             self.table[column] = None
 
-    @property
+    @ property
     def add_line_dictionary(self):
         return None
 
-    @add_line_dictionary.setter
+    @ add_line_dictionary.setter
     def add_line_dictionary(self, line_dictionary):
         # self.table = self.table.append(line_dictionary, ignore_index=True)
         new_line = pd.DataFrame([line_dictionary])
         self.table = pd.concat([self.table, new_line], ignore_index=True)
 
-    @property
+    @ property
     def rename_name_column(self):
         return None
 
-    @rename_name_column.setter
+    @ rename_name_column.setter
     def rename_name_column(self, list_name_column):
         self.table = self.table.rename(
             columns={list_name_column[0]: list_name_column[1]})
 
-    @property
+    @ property
     def rename_name_column_indix(self):
         return None
 
-    @rename_name_column_indix.setter
+    @ rename_name_column_indix.setter
     def rename_name_column_indix(self, list_index_name_column):
         index_column = list_index_name_column[0]
         name_column = list_index_name_column[1]
