@@ -19,7 +19,7 @@ date_weekly = Date_weekly()
 siteSircon = "https://app.sistemasircon.com.br/login"
 user = 'davigopi@gmail.com'
 password = '36vad28'
-month = 7
+month = 10
 
 new_table_Cadastro_Consorciado = True
 new_table_Cadastro_Funcionario = True
@@ -27,11 +27,11 @@ new_table_Cadastro_Ata = True
 new_table_Comissoes_Configuracao = True
 new_table_Comissoes_ConfigPagamento = True
 
-# new_table_Cadastro_Consorciado = False
-# new_table_Cadastro_Funcionario = False
-# new_table_Cadastro_Ata = False
-# new_table_Comissoes_Configuracao = False
-# new_table_Comissoes_ConfigPagamento = False
+new_table_Cadastro_Consorciado = False
+new_table_Cadastro_Funcionario = False
+new_table_Cadastro_Ata = False
+new_table_Comissoes_Configuracao = False
+new_table_Comissoes_ConfigPagamento = False
 
 path_source = Path(__file__).parent
 path_tables = path_source / 'tables'
@@ -59,6 +59,10 @@ name_arq = 'table_teste3.csv'
 arqTableTeste3 = path_tables / name_arq
 name_arq = 'log.txt'
 arq_log = path_source / name_arq
+
+# table_full.to_csv(arqTableTeste1, index=False, header=True, sep=';')
+# table_full.to_csv(arqTableTeste2, index=False, header=True, sep=';')
+# table_full.to_csv(arqTableTeste3, index=False, header=True, sep=';')
 
 pathDonwload = os.environ['USERPROFILE'] + '\\Downloads'
 arqDonwloadSales = pathDonwload + '\\consorciados.csv'
@@ -235,7 +239,8 @@ listXpathMinutes = [
 ]
 
 headerDtPagamentoParcelas = [
-    'Cargo', 'Administradora', 'Tipo Pagamento', 'Dt pag. por', 'dia pag.',
+    'Cargo', 'Tabela', 'Administradora',
+    'Tipo Pagamento', 'Dt pag. por', 'dia pag.',
     '1P recebera', '1P referencia', '1P periodo inicial', '1P dt inicial',
     '1P periodo final', '1P dt final', 'D+ recebera', 'D+ referencia',
     'D+ perido inicial', 'D+ dt inicial', 'D+ periodo final', 'D+ dt final',
@@ -331,15 +336,14 @@ def table_manip_comissoes_configuracao():
     ''' manipular table_Comissoes_Configuracao remover as duplicação nas
     colunas 'Administradora' e 'Cargo' '''
     global table_Comissoes_Configuracao
+    columns_comConf_rept = ['Administradora', 'Cargo', 'Tabela de recebimento']
     table_manip_value.table = table_Comissoes_Configuracao
-    table_manip_value.row_duplicate_column = ['Administradora', 'Cargo']
-    table_manip_value.list_columns_one_two_three = ['Administradora',
-                                                    'Cargo',
-                                                    'Tabela de recebimento']
-    table_manip_value.edit_data_column_3 = ['Administradora',
-                                            'Cargo',
-                                            'Tabela de recebimento']
+    table_manip_value.row_duplicate_column = columns_comConf_rept
+    table_manip_value.list_columns_one_two_three = columns_comConf_rept
+    table_manip_value.edit_data_column_3 = columns_comConf_rept
     table_Comissoes_Configuracao = table_manip_value.table
+    table_Comissoes_Configuracao.rename(
+        columns={'Tabela de recebimento': 'Tabela'}, inplace=True)
 
 
 def table_manip_comissao_configPagamento():
@@ -423,10 +427,11 @@ def merge_consorciado_funcionario_gerente():
 def merge_full_comissoes_configuracao():
     global table_full
     global table_Comissoes_Configuracao
+
     table_full = pd.merge(
         table_full,
         table_Comissoes_Configuracao,
-        on=['Administradora', 'Cargo'],
+        on=['Administradora', 'Cargo', 'Tabela'],
         how='left')
 
 
@@ -436,10 +441,9 @@ def merge_full_comissoes_configuracao_gerente():
     table_full = pd.merge(
         table_full,
         table_Comissoes_Configuracao_gerente,
-        left_on=['Administradora', 'Cargo_Gerente'],
-        right_on=['Administradora_Gerente', 'Cargo_Gerente'],
+        left_on=['Administradora', 'Cargo_Gerente', 'Tabela'],
+        right_on=['Administradora_Gerente', 'Cargo_Gerente', 'Tabela_Gerente'],
         how='left')
-    table_full.to_csv(arqTableTeste1, index=False, header=True, sep=';')
 
 
 def create_columns_ata():
@@ -498,7 +502,6 @@ def merge_full_weekly():
         tableManip.rename_name_column = ['N Semana Mes', name_column_sma]
         tableManip.del_column = 'Data semana'
         table_full = tableManip.table
-        table_full.to_csv(arqTableTeste2, index=False, header=True, sep=';')
 
 
 def merge_full_ata():
@@ -527,7 +530,6 @@ def merge_full_ata():
                                           'Tipo Pagamento',
                                           'Index']
     table_full = table_manip_value.table
-    table_full.to_csv(arqTableTeste3, index=False, header=True, sep=';')
 
 
 def column_add():

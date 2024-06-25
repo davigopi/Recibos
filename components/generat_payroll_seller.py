@@ -6,7 +6,13 @@ import os
 from pathlib import Path
 from fileManip import PDF
 from fileManip import FileManip
-from tableManip import TableManip
+
+# self.table_single_merge.to_csv(
+#     "tables\\table_teste.csv",
+#     index=False,
+#     header=True,
+#     sep=';'
+# )
 
 
 class Generat_payroll:
@@ -20,6 +26,7 @@ class Generat_payroll:
         self.profession = ''
         self.column_cargo = ''
         self.column_administradora = ''
+        self.column_tabela = ''
         self.column_dt_pag_por = ''
         self.column_1p_referencia = ''
         self.column_1P_recebera = ''
@@ -50,6 +57,8 @@ class Generat_payroll:
         self.list_cargo_not_calc_commis = []
         self.list_columns_end = []
         self.list_columns_new = []
+        self.list_columns_ata_ent = []
+        self.list_columns_ata_cad = []
 
         self.list_columns_str_to_float = []
         self.list_columns_full_ata = []
@@ -63,6 +72,7 @@ class Generat_payroll:
         self.list_ata = []
         self.list_weekly = []
         self.list_columns_full_ata_single = []
+        self.list_columns_ata = []
         self.table_single_ata = []
         self.list_single_administradora = []
         self.list_administradora_line = []
@@ -164,12 +174,14 @@ class Generat_payroll:
         p1_referencia = str(
             self.table_seller_single.iloc[0][self.column_1p_referencia]
         )
-
         if self.solumn_cadastro in p1_referencia:
             list = self.list_columns_full_ata_cadastro
+            list2 = self.list_columns_ata_cad
         else:
             list = self.list_columns_full_ata_entrega
+            list2 = self.list_columns_ata_ent
         self.list_columns_full_ata_single = list
+        self.list_columns_ata = list2
         # print(self.list_columns_full_ata_single)
 
     # 3º Criar uma lista tabelas aparti do dado ata e colunas definidas
@@ -201,12 +213,6 @@ class Generat_payroll:
                 self.table_single_merge = pd.concat(
                     [self.table_single_merge, table]
                 )
-        # self.table_single_merge.to_csv(
-        #     "tables\\table_teste.csv",
-        #     index=False,
-        #     header=True,
-        #     sep=';'
-        # )
 
     # 5º verificar se pertence ao cargo especifico para sair ou não
     def is_to_stop_program(self):
@@ -217,23 +223,37 @@ class Generat_payroll:
                 print(cargo)
                 self.stop_program = True
 
-    # 6º pegar informações de valores da administradoras
+    # 6º Todas as informações inicia e final dosvalores da administradoras
     def create_dictionary_datas(self):
         self.dic_administradoras = {}
-        self.list_single_administradora = self.table_single_merge[
-            self.column_administradora].unique()
-        for administradora in self.list_single_administradora:
+
+        # list_dupla_administradora_cargo = self.table_single_merge[
+        #     [self.column_administradora, self.column_tabela]
+        # ].drop_duplicates()
+
+        list_dupla_administradora_cargo = self.table_single_merge[
+            [self.column_administradora, self.column_tabela]
+        ].drop_duplicates().to_records(index=False).tolist()
+
+        for administradora, tabela in list_dupla_administradora_cargo:
+            # print(administradora)
+            # print(tabela)
+            # print('=============')
+            # self.list_single_administradora = self.table_single_merge[
+            #     self.column_administradora].unique()
+            # for administradora in self.list_single_administradora:
             for line in range(self.quantity_line_full):
                 data_administradora = self.table_single_merge.iloc[
                     line][self.column_administradora]
-                if data_administradora == administradora:
-                    self.dic_administradoras[administradora] = {}
+                data_tabela = self.table_single_merge.iloc[
+                    line][self.column_tabela]
+                if data_administradora == administradora and data_tabela == tabela:
+                    key_dic = administradora + ' - ' + tabela
+                    self.dic_administradoras[key_dic] = {}
                     for qtd_cotas in self.list_qtd_cotas_parc:
-                        data = self.table_single_merge.iloc[
-                            line][qtd_cotas]
+                        data = self.table_single_merge.iloc[line][qtd_cotas]
                         if not pd.isna(data):
-                            self.dic_administradoras[
-                                administradora][qtd_cotas] = data
+                            self.dic_administradoras[key_dic][qtd_cotas] = data
                     break
         # for key, dic in self.dic_administradoras.items():
         #     print(key)
@@ -316,6 +336,7 @@ class Generat_payroll:
         #     print('table_list_administradora_line_add_sum')
         #     print(f'ata -> {ata}')
         #     print(f'sums -> {sums}')
+        #     print(f'Soma do confirmados -> {sums_compliance}')
         #     print(f'list_admnimistradora_line ->{list_admnimistradora_line}')
         #     print(f'table {table}')
         #     print('')
@@ -589,32 +610,36 @@ class Generat_payroll:
                 ])
         self.list_unique_information.append(sum_all_comissao)
         self.list_unique_information.append(sum_all_comissao_gerente)
-        # for (table,
-        #      ata,
-        #      sums,
-        #      sums_compliance,
-        #      sum_comissao,
-        #      sum_comissao_compliance,
-        #      percentage_compliance,
-        #      vendedor,
-        #      cargo,
-        #      list_administradora_qtdcotas_parc
-        #      ) in self.list_table_column_comissao:
-        #     print(f'ATA -> {ata}')
-        #     print(f'soma do credito -> {sums}')
-        #     print(f'soma do comissao -> {sum_comissao}')
-        #     print(f'Vendedor -> {vendedor}')
-        #     print(f'cargo -> {cargo}')
-        #     print(f'percentage_compliance -> {percentage_compliance}')
-        #     text = 'list_administradora_qtdcotas_parc ->'
-        #     print(f'{text} {list_administradora_qtdcotas_parc}')
-        #     print(f'table: {table}')
-        #     print('')
-        #     print('')
+        for (table,
+             ata,
+             sums,
+             sums_compliance,
+             sum_comissao,
+             sum_comissao_compliance,
+             percentage_compliance,
+             vendedor,
+             cargo,
+             list_administradora_qtdcotas_parc
+             ) in self.list_table_column_comissao:
+            print(f'ATA -> {ata}')
+            print(f'soma do credito -> {sums}')
+            print(f'soma do comissao -> {sum_comissao}')
+            print(f'Vendedor -> {vendedor}')
+            print(f'cargo -> {cargo}')
+            print(f'percentage_compliance -> {percentage_compliance}')
+            text = 'list_administradora_qtdcotas_parc ->'
+            print(f'{text} {list_administradora_qtdcotas_parc}')
+            print(f'table: {table}')
+            print('')
+            print('')
 
     def edit_table(self):
         self.list_table_edit = []
         table_full: pd.DataFrame = pd.DataFrame()
+        if self.profession == 'Gerente':
+            column_ata_qtd = self.list_columns_ata[1]
+        else:
+            column_ata_qtd = self.list_columns_ata[0]
         for (table,
              ata,
              sums,
@@ -627,7 +652,7 @@ class Generat_payroll:
              list_administradora_qtdcotas_parc
              ) in self.list_table_column_comissao:
             # excluir comissão zerada
-            table = table[table['Comissão'] != '0,00'].copy()
+            table = table[table[self.column_comissao] != '0,00'].copy()
             table.reset_index(drop=True, inplace=True)
             # colocar coluna Parcela
             text = ata
@@ -638,13 +663,32 @@ class Generat_payroll:
             # adicionar coluna comissão
             table[self.list_columns_new[2]] = '0'
             quantity_line_table = table.shape[0]
+            text = text.replace('ª', '')
+            # print(text)
+            # print(table)
+            for line in range(1, quantity_line_table + 1):
+                print('line', line)
             # if ata == 'ATA 5º Parc':
             #     table.to_csv(self.arqTableTeste1, index=False, header=True, sep=';')
-            for adminPorc in list_administradora_qtdcotas_parc:
-                for line in range(quantity_line_table):
-                    admin = table.iloc[line][self.column_administradora]
-                    if admin == adminPorc[0]:
-                        table.loc[line, self.list_columns_new[2]] = adminPorc[-1]
+            # for x in list_administradora_qtdcotas_parc:
+            #     print(x)
+
+            # for adminPorc in list_administradora_qtdcotas_parc:
+            #     print('adminPorc', adminPorc)
+            #     for line in range(quantity_line_table):
+            #         print('line', line)
+            #         admin = table.iloc[line][self.column_administradora]
+            #         print('admin', admin)
+            #         if admin == adminPorc[0]:
+            #             table.loc[line, self.list_columns_new[2]] = '1'
+            #             valor = table.iloc[line][column_ata_qtd]
+            #             print(ata, '   ', valor)
+
+            # adminPorc[-1]
+            #
+            #
+            #
+            #
             # print(list_administradora_qtdcotas_parc)
             if table_full.empty:
                 table_full = table
@@ -910,13 +954,18 @@ class Generat_payroll:
 if __name__ == '__main__':
     generat_payroll = Generat_payroll()
     is_gerente = True
-    # is_gerente = False
+    is_gerente = False
     model = '1'
     model = '2'
+    seller_single_unit = ''
+    seller_single_unit = 'MARIA ILLYEDJA RODRIGUES DE SOUZA'
+    # 'ANTONIO HELIO DE SOUSA TORRES', 'DENISE VITOR COSTA'
+
     column_vendedor = 'Vendedor'
     column_gerente = 'Gerente'
     column_cargo = 'Cargo'
     column_administradora = 'Administradora'
+    column_tabela = 'Tabela'
     column_dt_pag_por = 'Dt pag. por'
     column_1p_referencia = '1P referencia'
     column_1P_recebera = '1P recebera'
@@ -940,6 +989,10 @@ if __name__ == '__main__':
     column_new_parcela = 'Parcela'
     column_new_adimplencia = 'Adimplência'
     column_new_porcentagem_comissão = '%'
+    column_ata_entrega_qtd_cotas = 'ATA Entrega qtd cotas'
+    column_ata_entrega_qtd_cotas_ger = 'ATA Entrega qtd cotas Ger'
+    column_ata_cad_adm_qtd_cotas = 'ATA Cad Adm qtd cotas'
+    column_ata_cad_adm_qtd_cotas_ger = 'ATA Cad Adm qtd cotas Ger'
     # definição de variavel
     if is_gerente:
         profession = column_gerente
@@ -979,6 +1032,14 @@ if __name__ == '__main__':
         # column_cota,
     ]
 
+    list_columns_ata_ent = [
+        column_ata_entrega_qtd_cotas,
+        column_ata_entrega_qtd_cotas_ger
+    ]
+    list_columns_ata_cad = [
+        column_ata_cad_adm_qtd_cotas,
+        column_ata_cad_adm_qtd_cotas_ger
+    ]
     # Preencher o restante das colunas sequenciais
     for i in range(2, num_atas_parc + 1):
         list_columns_full_ata.append(f'ATA {i}º Parc')
@@ -1008,11 +1069,10 @@ if __name__ == '__main__':
     vendedor_anterior2 = ''
     comissao_anterior3 = 0
     vendedor_anterior3 = ''
-
     for seller_single in list_seller_single:
-        # if seller_single != 'ANTONIO HELIO DE SOUSA TORRES':
-        # if seller_single != 'DENISE VITOR COSTA':
-        #     continue
+        if seller_single_unit:
+            if seller_single_unit not in seller_single:
+                continue
         print('\n \n', seller_single)
         generat_payroll = Generat_payroll()
         pathTables = Path(__file__).parent.parent / 'tables'
@@ -1165,6 +1225,7 @@ if __name__ == '__main__':
 
         generat_payroll.column_credito = column_credito
         generat_payroll.column_administradora = column_administradora
+        generat_payroll.column_tabela = column_tabela
         generat_payroll.profession = profession
         generat_payroll.column_cargo = column_cargo
         generat_payroll.column_dt_pag_por = column_dt_pag_por
@@ -1176,7 +1237,6 @@ if __name__ == '__main__':
         generat_payroll.column_FAT_recebera = column_FAT_recebera
         generat_payroll.column_comissao = column_comissao
         generat_payroll.column_situacao = column_situacao
-        generat_payroll.list_columns_end = list_columns_end
         generat_payroll.column_ata_entrega = column_ata_entrega
         generat_payroll.column_ata_cad_Adm = column_ata_cad_Adm
         # generat_payroll.column_situacao_d = column_situacao_d
@@ -1189,6 +1249,9 @@ if __name__ == '__main__':
         generat_payroll.list_condition_ata = list_condition_ata
         generat_payroll.list_cargo_not_calc_commis = list_cargo_not_calc_commis
         generat_payroll.list_columns_new = list_columns_new
+        generat_payroll.list_columns_end = list_columns_end
+        generat_payroll.list_columns_ata_ent = list_columns_ata_ent
+        generat_payroll.list_columns_ata_cad = list_columns_ata_cad
 
         generat_payroll.list_qtd_cotas_inicial = list_qtd_cotas_inicial
         generat_payroll.list_qtd_cotas_final = list_qtd_cotas_final
@@ -1260,4 +1323,4 @@ if __name__ == '__main__':
     text += f' sua comissão é: {comissao_anterior2} \n'
     text += f'3º maior comissão: {vendedor_anterior3}, '
     text += f' sua comissão é: {comissao_anterior3}'
-    print(text)
+    # print(text)

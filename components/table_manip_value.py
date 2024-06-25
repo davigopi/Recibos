@@ -36,6 +36,8 @@ class Table_manip_value():
     def row_duplicate_column(self):
         return None
 
+    # descobir se na lista de coluna não existem valores repetidos
+    # nas tres colunas
     @row_duplicate_column.setter
     def row_duplicate_column(self, column):
         duplicatas = self.table.duplicated(subset=column, keep=False)
@@ -108,8 +110,10 @@ class Table_manip_value():
 
     @ property
     def list_columns_one_two_three(self):
-        return self.list_one_two_three
+        # return self.list_one_two_three
+        return None
 
+    # cria uma lista dos valores identicos nas tres colunas passadas
     @list_columns_one_two_three.setter
     def list_columns_one_two_three(self, column_name):
         df = self.table_duplicate[column_name]
@@ -138,6 +142,7 @@ class Table_manip_value():
     def edit_data_column_3(self):
         return None
 
+    # só ira renomear se as tres colunas mostra alguma valor identico
     @edit_data_column_3.setter
     def edit_data_column_3(self, column_name):
         Admin = column_name[0]
