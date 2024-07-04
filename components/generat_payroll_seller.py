@@ -60,6 +60,8 @@ class Generat_payroll:
         self.list_columns_ata_ent = []
         self.list_columns_ata_cad = []
 
+        self.column_ata_qtd = []
+
         self.list_columns_str_to_float = []
         self.list_columns_full_ata = []
         self.list_columns_full_weekly = []
@@ -71,8 +73,8 @@ class Generat_payroll:
         self.name_columns_full = []
         self.list_ata = []
         self.list_weekly = []
-        self.list_columns_full_ata_single = []
-        self.list_columns_ata = []
+        self.list_cols_full_ata_sing = []
+
         self.table_single_ata = []
         self.list_single_administradora = []
         self.list_administradora_line = []
@@ -175,19 +177,20 @@ class Generat_payroll:
             self.table_seller_single.iloc[0][self.column_1p_referencia]
         )
         if self.solumn_cadastro in p1_referencia:
-            list = self.list_columns_full_ata_cadastro
-            list2 = self.list_columns_ata_cad
+            self.list_cols_full_ata_sing = self.list_columns_full_ata_cadastro
+            list_ata_cad = self.list_columns_ata_cad
         else:
-            list = self.list_columns_full_ata_entrega
-            list2 = self.list_columns_ata_ent
-        self.list_columns_full_ata_single = list
-        self.list_columns_ata = list2
-        # print(self.list_columns_full_ata_single)
+            self.list_cols_full_ata_sing = self.list_columns_full_ata_entrega
+            list_ata_cad = self.list_columns_ata_ent
+        if self.profession == 'Gerente':
+            self.column_ata_qtd = list_ata_cad[1]
+        else:
+            self.column_ata_qtd = list_ata_cad[0]
 
     # 3º Criar uma lista tabelas aparti do dado ata e colunas definidas
     def tables_columns_ata_seller_single(self):
         self.table_single_ata = []
-        for ata in self.list_columns_full_ata_single:
+        for ata in self.list_cols_full_ata_sing:
             table = self.table_seller_single[
                 self.table_seller_single[ata] == self.data_ata_single
             ].copy()
@@ -504,142 +507,128 @@ class Generat_payroll:
             sums_compliance,
             list_administradora_qtdcotas_parc
         ) in self.list_administradora_sum_qtdcotasinicial_parc:
+            table[self.list_columns_new[2]] = '0'
             vendedor = table.iloc[0][self.profession]
             cargo = table.iloc[0][self.column_cargo]
-            quantity_line_table = table.shape[0]
             sum_comissao = 0
+            text = ata
+            text = text.replace(' ', '')
+            text = text.replace('ATA', '')
+            text = text.replace('º', '')
+            text = text.replace('Parc', '')
+            text = text.replace('Entrega', '1')
+            text = text.replace('CadAdm', '1')
             column_situacao_parc = self.column_situacao
-            # ira pegar a coluna especifica da situação
-            if (self.list_condition_ata[0] not in ata and
-                    self.list_condition_ata[1] not in ata):
-                text = ata.replace('ATA', '')
-                column_situacao_parc += text
-            if list_administradora_qtdcotas_parc != []:
-                for (
-                    administradora_qtdcotas_parc
-                ) in list_administradora_qtdcotas_parc:
-                    administradora = administradora_qtdcotas_parc[0]
-                    data_parc = administradora_qtdcotas_parc[6]
-                    for line in range(quantity_line_table):
-                        data_situacao = table.iloc[line][column_situacao_parc]
-                        calculate_commission = True
-                        comissao = 0
-                        list = self.list_situacao_to_comission
-                        entrega = self.list_condition_ata[0]
-                        cad_adm = self.list_condition_ata[1]
-                        parc = self.list_condition_ata[2]
-                        fat = self.list_condition_ata[3]
-                        if (entrega in ata or cad_adm in ata):
-                            ata_start = True
-                        else:
-                            ata_start = False
-                        if data_situacao not in list and ata_start is False:
-                            calculate_commission = False
-                        elif entrega in ata:
-                            data_1P_recebera = (
-                                table.iloc[line][self.column_1P_recebera])
-                            list = self.list_recebera_to_comission
-                            if data_1P_recebera not in list:
-                                calculate_commission = False
-                        elif cad_adm in ata:
-                            data_1P_recebera = (
-                                table.iloc[line][self.column_1P_recebera])
-                            list = self.list_recebera_to_comission
-                            if data_1P_recebera not in list:
-                                calculate_commission = False
-                        elif parc in ata:
-                            data_D_recebera = (
-                                table.iloc[line][self.column_D_recebera])
-                            list = self.list_recebera_to_comission
-                            if data_D_recebera not in list:
-                                calculate_commission = False
-                        elif fat in ata:
-                            data_FAT_recebera = (
-                                table.iloc[line][self.column_FAT_recebera])
-                            list = self.list_recebera_to_comission
-                            if data_FAT_recebera not in list:
-                                calculate_commission = False
-                        else:
-                            text = f'A condição da ata: {ata} não prevista'
-                            print(text)
-                            FileManip().writeLog = text
-                        if calculate_commission:
-                            data_admin = table.iloc[
-                                line][self.column_administradora]
-                            if administradora == data_admin:
-                                value = table.iloc[line][self.column_credito]
-                                value = str(value)
-                                value = value.replace('.', '')
-                                value = value.replace(',', '.')
-                                value = float(value)
-                                data_parc = float(data_parc)
-                                comissao = value * data_parc / 100
-                                sum_comissao += comissao
-                        data_admin = table.iloc[
-                            line][self.column_administradora]
-                        # print(f'{administradora} == {data_admin}')
-                        if administradora == data_admin:
-                            comissao = locale.format_string(
-                                "%.2f", comissao, grouping=True)
-                            table.loc[line, 'column_temp'] = comissao
-                try:
-                    table.insert(0, self.column_comissao, table['column_temp'])
-                except ValueError:
-                    print(table)
-                del table['column_temp']
-                if (sums_compliance / sums) >= 0.5:
-                    sum_comissao_compliance = sum_comissao
-                    sum_all_comissao += sum_comissao
+            if text != '1':
+                column_situacao_parc += ' ' + text + 'º Parc'
+            if self.profession == 'Gerente':
+                text += '_Gerente'
+            quantity_line_table = table.shape[0]
+            # print(self.column_ata_qtd)
+            for line in range(quantity_line_table):
+                text2 = table.iloc[line][self.column_ata_qtd]
+                name_column = text2 + ' Parc ' + text
+                data_percentual = table.iloc[line][name_column]
+                if pd.isnull(data_percentual):
+                    data_percentual = 0
+                text_perc = str(data_percentual) + ' %'
+                table.loc[line, self.list_columns_new[2]] = text_perc
+                data_percentual = float(data_percentual) / 100
+                # ['Entrega', 'Cad Adm', 'Parc', 'FAT']
+                entrega = self.list_condition_ata[0]
+                cad_adm = self.list_condition_ata[1]
+                parc = self.list_condition_ata[2]
+                fat = self.list_condition_ata[3]
+                if entrega in ata or cad_adm in ata:
+                    data_recebera = (
+                        table.iloc[line][self.column_1P_recebera])
+                elif parc in ata:
+                    data_recebera = (
+                        table.iloc[line][self.column_D_recebera])
+                elif fat in ata:
+                    data_recebera = (
+                        table.iloc[line][self.column_FAT_recebera])
+                data_situacao = table.iloc[line][column_situacao_parc]
+                # list_situacao_to_comission = ['NORMAL', 'PAGA']
+                list_situacao = self.list_situacao_to_comission
+                if data_situacao not in list_situacao:
+                    data_recebera = 'NAO'
+                    '''devido a emissão deste recibos poderem ser feito em
+                     momentos futuros e pagamento da coluna "Situação"
+                    não esta na list_situacao_to_comission temos que ver se
+                    e entrega para ão gera diferente dos recibos emitidos
+                    no momento certo'''
+                    if entrega in ata or cad_adm in ata:
+                        data_recebera = (
+                            table.iloc[line][self.column_1P_recebera])
+                # list_recebera_to_comission = ['SIM']
+                list_recebera = self.list_recebera_to_comission
+                if data_recebera in list_recebera:
+                    calculate_commission = True
                 else:
-                    sum_comissao_compliance = 0
-                sum_all_comissao_gerente += sum_comissao
-                percentage_compliance = str(
-                    round(((sums_compliance / sums) * 100), 1)
-                ) + '%'
-                self.list_table_column_comissao.append([
-                    table,
-                    ata,
-                    sums,
-                    sums_compliance,
-                    sum_comissao,
-                    sum_comissao_compliance,
-                    percentage_compliance,
-                    vendedor,
-                    cargo,
-                    list_administradora_qtdcotas_parc
-                ])
+                    calculate_commission = False
+                if calculate_commission:
+                    value = table.iloc[line][self.column_credito]
+                    value = str(value)
+                    value = value.replace('.', '')
+                    value = value.replace(',', '.')
+                    value = float(value)
+                    comissao = value * data_percentual
+                    sum_comissao += comissao
+                else:
+                    comissao = 0
+                comissao = locale.format_string(
+                    "%.2f", comissao, grouping=True)
+                table.loc[line, self.column_comissao] = comissao
+            if (sums_compliance / sums) >= 0.5:
+                sum_comissao_compliance = sum_comissao
+                sum_all_comissao += sum_comissao
+            else:
+                sum_comissao_compliance = 0
+            sum_all_comissao_gerente += sum_comissao
+            percentage_compliance = str(
+                round(((sums_compliance / sums) * 100), 1)
+            ) + '%'
+            self.list_table_column_comissao.append([
+                table,
+                ata,
+                sums,
+                sums_compliance,
+                sum_comissao,
+                sum_comissao_compliance,
+                percentage_compliance,
+                vendedor,
+                cargo,
+                list_administradora_qtdcotas_parc
+            ])
         self.list_unique_information.append(sum_all_comissao)
         self.list_unique_information.append(sum_all_comissao_gerente)
-        for (table,
-             ata,
-             sums,
-             sums_compliance,
-             sum_comissao,
-             sum_comissao_compliance,
-             percentage_compliance,
-             vendedor,
-             cargo,
-             list_administradora_qtdcotas_parc
-             ) in self.list_table_column_comissao:
-            print(f'ATA -> {ata}')
-            print(f'soma do credito -> {sums}')
-            print(f'soma do comissao -> {sum_comissao}')
-            print(f'Vendedor -> {vendedor}')
-            print(f'cargo -> {cargo}')
-            print(f'percentage_compliance -> {percentage_compliance}')
-            text = 'list_administradora_qtdcotas_parc ->'
-            print(f'{text} {list_administradora_qtdcotas_parc}')
-            print(f'table: {table}')
-            print('')
-            print('')
+        # for (table,
+        #      ata,
+        #      sums,
+        #      sums_compliance,
+        #      sum_comissao,
+        #      sum_comissao_compliance,
+        #      percentage_compliance,
+        #      vendedor,
+        #      cargo,
+        #      list_administradora_qtdcotas_parc
+        #      ) in self.list_table_column_comissao:
+        #     print(f'ATA -> {ata}')
+        #     print(f'soma do credito -> {sums}')
+        #     print(f'soma do comissao -> {sum_comissao}')
+        #     print(f'Vendedor -> {vendedor}')
+        #     print(f'cargo -> {cargo}')
+        #     print(f'percentage_compliance -> {percentage_compliance}')
+        #     text = 'list_administradora_qtdcotas_parc ->'
+        #     print(f'{text} {list_administradora_qtdcotas_parc}')
+        #     print(f'table: {table}')
+        #     print('')
+        #     print('')
 
     def edit_table(self):
         self.list_table_edit = []
         table_full: pd.DataFrame = pd.DataFrame()
-        if self.profession == 'Gerente':
-            column_ata_qtd = self.list_columns_ata[1]
-        else:
-            column_ata_qtd = self.list_columns_ata[0]
         for (table,
              ata,
              sums,
@@ -661,35 +650,7 @@ class Generat_payroll:
             table[self.list_columns_new[0]] = text
             table[self.list_columns_new[1]] = percentage_compliance
             # adicionar coluna comissão
-            table[self.list_columns_new[2]] = '0'
-            quantity_line_table = table.shape[0]
             text = text.replace('ª', '')
-            # print(text)
-            # print(table)
-            for line in range(1, quantity_line_table + 1):
-                print('line', line)
-            # if ata == 'ATA 5º Parc':
-            #     table.to_csv(self.arqTableTeste1, index=False, header=True, sep=';')
-            # for x in list_administradora_qtdcotas_parc:
-            #     print(x)
-
-            # for adminPorc in list_administradora_qtdcotas_parc:
-            #     print('adminPorc', adminPorc)
-            #     for line in range(quantity_line_table):
-            #         print('line', line)
-            #         admin = table.iloc[line][self.column_administradora]
-            #         print('admin', admin)
-            #         if admin == adminPorc[0]:
-            #             table.loc[line, self.list_columns_new[2]] = '1'
-            #             valor = table.iloc[line][column_ata_qtd]
-            #             print(ata, '   ', valor)
-
-            # adminPorc[-1]
-            #
-            #
-            #
-            #
-            # print(list_administradora_qtdcotas_parc)
             if table_full.empty:
                 table_full = table
             else:
@@ -709,13 +670,10 @@ class Generat_payroll:
                 cargo,
                 list_administradora_qtdcotas_parc
             ])
-
         table_full = table_full[self.list_columns_end]
         self.list_unique_information.append(table_full)
         table_full.to_csv(self.arqTableTeste1, index=False, header=True, sep=';')
-
     # limitas as colunas da tabela que serão impressa no pdf
-
     # def table_columns_end(self):
     #     self.list_table_column_define = []
     #     for (
@@ -954,13 +912,14 @@ class Generat_payroll:
 if __name__ == '__main__':
     generat_payroll = Generat_payroll()
     is_gerente = True
-    is_gerente = False
+    # is_gerente = False
     model = '1'
     model = '2'
     seller_single_unit = ''
-    seller_single_unit = 'MARIA ILLYEDJA RODRIGUES DE SOUZA'
-    # 'ANTONIO HELIO DE SOUSA TORRES', 'DENISE VITOR COSTA'
-
+    # seller_single_unit = 'MARIA ILLYEDJA RODRIGUES DE SOUZA'
+    # seller_single_unit = 'PARCEIRINHO EQUIPE - VALMON'
+    # seller_single_unit = 'DENISE VITOR COSTA'
+    # 'ANTONIO HELIO DE SOUSA TORRES',
     column_vendedor = 'Vendedor'
     column_gerente = 'Gerente'
     column_cargo = 'Cargo'

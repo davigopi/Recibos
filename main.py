@@ -15,11 +15,13 @@ from components.date_weekly import Date_weekly
 tableManip = TableManip()
 table_manip_value = Table_manip_value()
 date_weekly = Date_weekly()
+fileManip = FileManip()
+
 
 siteSircon = "https://app.sistemasircon.com.br/login"
 user = 'davigopi@gmail.com'
 password = '36vad28'
-month = 10
+month = 12
 
 new_table_Cadastro_Consorciado = True
 new_table_Cadastro_Funcionario = True
@@ -27,11 +29,11 @@ new_table_Cadastro_Ata = True
 new_table_Comissoes_Configuracao = True
 new_table_Comissoes_ConfigPagamento = True
 
-new_table_Cadastro_Consorciado = False
-new_table_Cadastro_Funcionario = False
-new_table_Cadastro_Ata = False
-new_table_Comissoes_Configuracao = False
-new_table_Comissoes_ConfigPagamento = False
+# new_table_Cadastro_Consorciado = False
+# new_table_Cadastro_Funcionario = False
+# new_table_Cadastro_Ata = False
+# new_table_Comissoes_Configuracao = False
+# new_table_Comissoes_ConfigPagamento = False
 
 path_source = Path(__file__).parent
 path_tables = path_source / 'tables'
@@ -52,14 +54,16 @@ arqTableComissoesConfigPagDupl = path_tables / name_arq
 name_arq = 'table_datas_semanais.csv'
 arqTableDatasSemanais = path_tables / name_arq
 name_arq = 'table_teste1.csv'
+
+name_arq = 'log.txt'
+arq_log = path_source / name_arq
+fileManip.arq_log = arq_log
+
 arqTableTeste1 = path_tables / name_arq
 name_arq = 'table_teste2.csv'
 arqTableTeste2 = path_tables / name_arq
 name_arq = 'table_teste3.csv'
 arqTableTeste3 = path_tables / name_arq
-name_arq = 'log.txt'
-arq_log = path_source / name_arq
-
 # table_full.to_csv(arqTableTeste1, index=False, header=True, sep=';')
 # table_full.to_csv(arqTableTeste2, index=False, header=True, sep=';')
 # table_full.to_csv(arqTableTeste3, index=False, header=True, sep=';')
@@ -239,8 +243,7 @@ listXpathMinutes = [
 ]
 
 headerDtPagamentoParcelas = [
-    'Cargo', 'Tabela', 'Administradora',
-    'Tipo Pagamento', 'Dt pag. por', 'dia pag.',
+    'Cargo', 'Administradora', 'Tipo Pagamento', 'Dt pag. por', 'dia pag.',
     '1P recebera', '1P referencia', '1P periodo inicial', '1P dt inicial',
     '1P periodo final', '1P dt final', 'D+ recebera', 'D+ referencia',
     'D+ perido inicial', 'D+ dt inicial', 'D+ periodo final', 'D+ dt final',
@@ -249,19 +252,15 @@ headerDtPagamentoParcelas = [
 ]
 
 
-#################### ABRIR SITES ########################################
-
-
+# ################### ABRIR SITES ########################################
 def log_start_end():
     global start
-    fileManip = FileManip()
     if start:
         text = '\n' + 'Inicio: '
         start = False
     else:
         text = 'Fim:    '
     text += str(datetime.now())
-    fileManip.arq_log = arq_log
     fileManip.writeLog = text
 
 
@@ -344,35 +343,6 @@ def table_manip_comissoes_configuracao():
     table_Comissoes_Configuracao = table_manip_value.table
     table_Comissoes_Configuracao.rename(
         columns={'Tabela de recebimento': 'Tabela'}, inplace=True)
-
-
-def table_manip_comissao_configPagamento():
-    ''' manipular table_comissoes_configuPagamento'''
-    global table_Comissoes_ConfigPagamento
-    table_manip_value.table = table_Comissoes_ConfigPagamento
-    table_manip_value.edit_data_column_all = ['Cargo',
-                                              'Administradora',
-                                              'Tipo Pagamento',
-                                              'Dt pag. por',
-                                              'dia pag.',
-                                              '1P recebera',
-                                              'D+ recebera',
-                                              'FAT recebera',
-                                              'Index']
-    table = table_manip_value.table
-    table_manip_value.table = table
-    table_manip_value.row_duplicate_column = ['Cargo',
-                                              'Administradora',
-                                              'Tipo Pagamento']
-
-    table_duplicate = table_manip_value.table_duplicate
-    table_Comissoes_ConfigPagTratada = table_manip_value.table
-    table_Comissoes_ConfigPagTratada.to_csv(
-        arqTableComissoesConfigPagTratada,
-        index=False, header=True, sep=';')
-
-    table_duplicate.to_csv(arqTableComissoesConfigPagDupl,  # type: ignore
-                           index=False, header=True, sep=';')
 
 
 def table_manip_Cadastro_funcionario_gerente():
@@ -582,55 +552,89 @@ def test_full_double():
     pois se existir diferença ele ira salvar no log'''
     global table_full
     global table_Cadastro_Consorciado
-    fileManip = FileManip()
-    fileManip.arq_log = arq_log
-    text = 'Na tabela table_merge foi encontrado duplicado:'
+    text = 'OK: tabelaMergem full não existe duplicidades'
     num_line = len(table_full)
     nDiferente = 0
-    count = 0
-    for i in range(num_line):
-        i2 = i - nDiferente
-        vend_1 = table_full.at[i, 'Vendedor']
-        vend_2 = table_Cadastro_Consorciado.at[i2, 'Vendedor']  # type: ignore
+    for line_1 in range(num_line):
+        line_2 = line_1 - nDiferente
+        vend_1 = table_full.at[line_1, 'Vendedor']
+        vend_2 = table_Cadastro_Consorciado.at[line_2, 'Vendedor']
         if vend_1 != vend_2:
-            count += 1
-            text += str(count) + 'ª divergência'
-            text += 'Vendedor: ' + table_full.at[i, 'Vendedor']
-            text += 'Cliente: ' + table_full.at[i, 'Cliente']
+            clit_1 = table_full.at[line, 'Cliente']
+            clit_2 = table_Cadastro_Consorciado.at[line_2, 'Cliente']
+            text = 'ERRO: table_merge '
+            text += f'encontrado diferença na linha: ({line}) para a '
+            text += f' table_cadastro_consorciado na linha: ({line_2}).\n'
+            text += f'Vendedor_1: ({vend_1}) diferente vendedor_2 ({vend_2})\n'
+            text += f'Cliente_1: ({clit_1}) diferente cliente_2 ({clit_2})'
             fileManip.writeLog = text
             text = ''
             nDiferente += 1
+    print(text)
 
 
-def test_table_Cadastro_Funcionario_double():
+def test_table_Comissoes_ConfigPagamento():
+    ''' manipular table_comissoes_configuPagamento'''
+    global table_Comissoes_ConfigPagamento
+    table_manip_value.table = table_Comissoes_ConfigPagamento
+    colummns = [
+        'Cargo', 'Administradora', 'Tipo Pagamento', 'Dt pag. por', 'dia pag.',
+        '1P recebera', 'D+ recebera', 'FAT recebera', 'Index']
+    table_manip_value.edit_data_column_all = colummns
+    table = table_manip_value.table
+    table_manip_value.table = table
+    columns = ['Cargo', 'Administradora', 'Tipo Pagamento']
+    table_manip_value.row_duplicate_column = columns
+    table_duplicate = table_manip_value.table_duplicate
+    if table_duplicate.empty:
+        text = 'OK: tabela_Comissões_ConfigPagamento não tem duplicância.'
+    else:
+        text = 'ERRO: tabela_Comissões_ConfigPagamento '
+        text += 'Existe arquivos duplicados que podem gera vendas duplicadas.'
+        text += 'Tem que ser analizada as colunas: '
+        text += 'Cargo, Administradora, Tipo Pagamento'
+        fileManip.writeLog = text
+        table_duplicate.to_csv(arqTableComissoesConfigPagDupl,  # type: ignore
+                               index=False, header=True, sep=';')
+    print(text)
+    # tratar tabela para não existir duplicancia
+    # table_Comissoes_ConfigPagTratada = table_manip_value.table
+    # table_Comissoes_ConfigPagTratada.to_csv(
+    #     arqTableComissoesConfigPagTratada,
+    #     index=False, header=True, sep=';')
+
+
+def test_table_Cadastro_Funcionario():
     global table_Cadastro_Funcionario
     list_funcionario_double = (
         table_Cadastro_Funcionario['Nome'].tolist())  # type: ignore
-    fileManip = FileManip()
-    fileManip.arq_log = arq_log
+    text = 'OK: tabela_Cadastro_Funcionario não existe duplicidades na funções'
     while True:
         n_element = len(list_funcionario_double)
         if n_element <= 1:
             break
         funcionario_double = list_funcionario_double.pop()
         if funcionario_double in list_funcionario_double:
-            text = f'O funcionario {funcionario_double} esta duplicado. '
-            text += 'Ele tem duas funções'
+            text = 'ERRO: tabela_Cadastro_Funcionario tem funcionario com '
+            text += f'mesmo nome: ({funcionario_double}) com duas funções '
+            text += 'diferentes.'
             fileManip.writeLog = text
+    print(text)
 
 
 def text_primary_key():
-    global table_full
-    fileManip = FileManip()
-    fileManip.arq_log = arq_log
+    global table_ful
     list_primary_key = table_full[column_primary_key].tolist()
+    text = 'OK: tabelaMergem full não exite chave primaria duplicada. '
     while list_primary_key != []:
         primary_key = list_primary_key.pop()
         if primary_key in list_primary_key:
-            text = f'Foi repetido o primary key ({primary_key}). \n'
+            text = 'ERRO: table_merge '
+            text += f'Foi repetido o primary key ({primary_key}).\n'
             text += 'Isso siguinifica que tem vendas duplicados, '
             text += 'devido a mesclagem entre as tabelas. '
             fileManip.writeLog = text
+    print(text)
 
 
 def openSite():
@@ -831,8 +835,9 @@ date_weekly_new()
 table_manip_funcionario()
 table_manip_cadastro_consorciado()
 table_manip_comissoes_configuracao()
-table_manip_comissao_configPagamento()
+test_table_Comissoes_ConfigPagamento()
 table_manip_Cadastro_funcionario_gerente()
+test_table_Cadastro_Funcionario()
 table_manip_comissoes_configuracao_gerente()
 merge_consorciado_funcionario()
 merge_consorciado_funcionario_gerente()
@@ -844,7 +849,6 @@ merge_full_ata()
 column_add()
 order_column()
 save_full()
-test_table_Cadastro_Funcionario_double()
 test_full_double()
 text_primary_key()
 log_start_end()
