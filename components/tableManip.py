@@ -127,7 +127,8 @@ class TableManip:
     # 7 column_sma_cad_adm = 'Sma Cad Adm'
 
     # list_columns_total_vendidos = [
-    #     column_total_vendidos, column_vendedor, column_gerente, column_credito,
+    #     column_total_vendidos, column_vendedor, column_gerente,
+    #     column_credito,
     #     column_ata_entrega, column_sma_ent,
     #     column_ata_cad_adm, column_sma_cad_adm]
 

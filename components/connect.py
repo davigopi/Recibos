@@ -49,11 +49,11 @@ class Connect:
         self.returnValue.tagSelected = self.tagSelected
 
     @property
-    def valueExistAdministradoras(self):
+    def valueExistAdministradora(self):
         return None
 
-    @valueExistAdministradoras.setter
-    def valueExistAdministradoras(self, table_Cadastro_Consorciado):
+    @valueExistAdministradora.setter
+    def valueExistAdministradora(self, table_Cadastro_Consorciado):
         nLine = table_Cadastro_Consorciado[
             table_Cadastro_Consorciado.columns[0]].count()
         listFullAdministradora = []
@@ -781,4 +781,4 @@ class Connect:
 
 
 if __name__ == '__main__':
-    from .. import main  # noqa
+    from .. import mainbkp  # noqa

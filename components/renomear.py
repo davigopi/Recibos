@@ -19,11 +19,21 @@ class Renomear:
         self.inf = self.inf.replace(';', ' ')
         self.inf = self.inf.replace('\n', '')
         self.inf = self.inf.replace(') - MULHER D+ (', ' - ')
-        self.inf = self.inf.replace('PLANO INTEGRAL 24 - PLANO LIGHT 24', 'PLANO (INTEGRAL - LIGHT) 24')
-        self.inf = self.inf.replace('PLANO INTEGRAL 20 - PLANO LIGHT 20', 'PLANO (INTEGRAL - LIGHT) 20')
-        self.inf = self.inf.replace('PLANO INTEGRAL 15 - PLANO LIGHT 15', 'PLANO (INTEGRAL - LIGHT) 15')
-        self.inf = self.inf.replace('PLANO INTEGRAL 20 - PLANO INTEGRAL 24 - PLANO LIGHT 20 - PLANO LIGHT 24', 'PLANO (INTEGRAL - LIGHT)(20 - 24)')
-        self.inf = self.inf.replace('MULHER D+ (INTEGRAL - LIGHT) - PLANO (INTEGRAL - LIGHT)', '(MULHER D+ - PLANO)(INTEGRAL - LIGHT)')
+        self.inf = self.inf.replace(
+            'PLANO INTEGRAL 24 - PLANO LIGHT 24',
+            'PLANO (INTEGRAL - LIGHT) 24')
+        self.inf = self.inf.replace(
+            'PLANO INTEGRAL 20 - PLANO LIGHT 20',
+            'PLANO (INTEGRAL - LIGHT) 20')
+        self.inf = self.inf.replace(
+            'PLANO INTEGRAL 15 - PLANO LIGHT 15',
+            'PLANO (INTEGRAL - LIGHT) 15')
+        self.inf = self.inf.replace(
+            'PLANO INTEGRAL 20 - PLANO INTEGRAL 24 - PLANO LIGHT 20 - PLANO LIGHT 24',
+            'PLANO (INTEGRAL - LIGHT)(20 - 24)')
+        self.inf = self.inf.replace(
+            'MULHER D+ (INTEGRAL - LIGHT) - PLANO (INTEGRAL - LIGHT)',
+            '(MULHER D+ - PLANO)(INTEGRAL - LIGHT)')
         self.inf = self.inf.replace('VOLKSWAGEN', 'VW')
         self.inf = self.inf.replace('RENAULT', 'RENO')
         self.inf = self.inf.replace('KIA MOTORS', 'KIA')
@@ -58,7 +68,7 @@ class Renomear:
         self.inf = self.inf.replace('COMPASS', 'COMP')
         self.inf = self.inf.replace('TRACKER', 'TRACK')
         return self.inf
-    
+
     def modelo(self):
         # self.inf = self.inf.encode('ascii', 'ignore').decode('utf8')
         self.inf = self.inf.replace('  ', ' ')
@@ -100,7 +110,7 @@ class Renomear:
         self.inf = self.inf.replace('COMPASS', 'COMP')
         self.inf = self.inf.replace('TRACKER', 'TRACK')
         return self.inf
-    
+
     def vazio(self):
         self.inf = str(self.inf)
         self.inf = self.inf.replace('\xa0', ' ')
@@ -115,7 +125,6 @@ class Renomear:
         self.inf = self.inf.replace(' ', '')
         self.inf = self.inf.replace('vazio', '')
         return self.inf
-
 
     def valor(self):
         # self.inf = self.inf.encode('ascii', 'ignore').decode('utf8')
@@ -138,9 +147,9 @@ class Renomear:
 
     def pontoVirgula(self):
         self.inf = str(self.inf)
-        self.inf = self.inf.replace('.', ',')       
+        self.inf = self.inf.replace('.', ',')
         return self.inf
-    
+
     def virgulaPonto(self):
         self.inf = self.inf.replace(',', '.')
         if self.inf == 'X':
@@ -159,7 +168,7 @@ class Renomear:
         self.inf = str(self.inf)
         self.inf = self.inf.replace('.', ',')
         return self.inf
-    
+
     def tempo(self):
         self.inf = self.inf.replace('.', ',')
         return self.inf
@@ -170,9 +179,11 @@ class Renomear:
         self.inf = self.inf.replace('º', '')
         self.inf = self.inf.replace('ª', '')
         self.inf = self.inf.replace('*', '')
-        # self.inf = re.sub(r'[\u0300-\u036f]', '', unicodedata.normalize('NFD', self.inf)).casefold()  # regex
-        self.inf = ''.join([l for l in unicodedata.normalize('NFD', self.inf) if not unicodedata.combining(l)]).casefold()   # fluent
-        self.inf = self.inf.capitalize() 
+        # self.inf = re.sub(r'[\u0300-\u036f]', '', unicodedata.normalize('NFD',
+        # self.inf)).casefold()  # regex
+        self.inf = ''.join([l for l in unicodedata.normalize('NFD', self.inf)
+                            if not unicodedata.combining(l)]).casefold()  # fluent
+        self.inf = self.inf.capitalize()
         self.inf = self.inf.replace('ontemplacao', 'ontp')
         self.inf = self.inf.replace('onfirmacao', 'onfir')
         # self.inf = self.inf.replace('onfirmacao', 'onfm')
@@ -180,10 +191,10 @@ class Renomear:
         self.inf = self.inf.replace('Valor1parcela', 'Parcela1')
         self.inf = self.inf.replace('Ta', 'TA')
         self.inf = self.inf.replace('esclassificacao', 'escla')
-        self.inf = self.inf.replace('Percentual','Lance')
+        self.inf = self.inf.replace('Percentual', 'Lance')
         # self.inf = self.inf.replace('esclassificacao', 'escl')
         return self.inf
-    
+
     def editTextoColuna(self):
         alteraInf = False
         inf1 = ''
@@ -217,5 +228,5 @@ class Renomear:
         return text1, text2
 
 
-if __name__ == '__main__':
-    import main
+# if __name__ == '__main__':
+#     import main_table
