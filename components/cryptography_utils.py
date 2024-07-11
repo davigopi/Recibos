@@ -5,6 +5,7 @@ from cryptography.exceptions import InvalidTag
 from base64 import b64encode, b64decode
 import os
 import json
+import requests
 from pathlib import Path
 
 
@@ -40,29 +41,37 @@ class Key_encrypt:
             self.key = b64decode(self.key64)
             return self.key
 
-    def create_user_crypt(self, user, password):
-        user_encrypt = self.encrypt(user)
-        password_encrypt = self.encrypt(password)
-        data = {"user": user_encrypt, "password": password_encrypt}
+    def create_user_crypt(self, list_user, list_password):
+        list_password_crypt = []
+        dictionary_encrypt = {}
+        # for user in list_user:
+        #     list_user_crypt.append(self.encrypt(user))
+        for password in list_password:
+            if password != '':
+                list_password_crypt.append(self.encrypt(password))
+        for index, password_crypt in enumerate(list_password_crypt):
+            user = list_user[index]
+            dictionary_encrypt[user] = password_crypt
         with open(self.arqUser, 'w') as file:
-            json.dump(data, file, indent=4)
-        print(f'Chave gerada e salva: {data}')
-        return data
+            file.write('\n')
+            json.dump(dictionary_encrypt, file, indent=4)
+        print(f'Chave gerada e salva: {dictionary_encrypt}')
+        return dictionary_encrypt
 
-    def decrypt_user(self):
+    def decrypt_user(self, user):
         with open(self.arqUser, 'r') as file:
-            data = json.load(file)
-            user_encrypt = data["user"]
-            password_encrypt = data["password"]
+            dictionary_encrypt = json.load(file)
             try:
-                user = self.decrypt(user_encrypt)
-                password = self.decrypt(password_encrypt)
-                list_user = [user, password]
-            except InvalidTag:
-                print("Erro: tag de autenticação inválida. A mensagem pode ter sido adulterada.")
+                password_crypt = dictionary_encrypt[user]
+            except KeyError:
+                print(f"Erro: O usuário {user} não existe.")
                 return None
-
-            return list_user
+            try:
+                password = self.decrypt(password_crypt)
+            except InvalidTag:
+                print("Erro: key de autenticação inválida.")
+                return None
+            return password
 
     def encrypt(self, text):
         # self.key = self.generate_key()
@@ -88,18 +97,53 @@ class Key_encrypt:
         decrypted_text = decryptor.update(encrypted_content) + decryptor.finalize()  # noqa
         return decrypted_text.decode('utf-8')
 
+    def import_repository(self):
+
+        # URL do arquivo JSON no seu repositório do GitHub
+        url = 'https://github.com/davigopi/crypto_user/blob/main/crypto_user.json'
+
+        # Faz uma solicitação GET para obter o conteúdo do arquivo
+        response = requests.get(url)
+
+        print("Status Code:", response.status_code)
+        print("Response Headers:", response.headers)
+        print("Response Content:", response.content[:100])
+        # data = response.json()
+        # Verifica se a solicitação foi bem-sucedida
+        # if response.status_code == 200:
+        #     # Converte o conteúdo da resposta para JSON
+        #     data = response.json()
+        #     print(data)
+        # else:
+        #     print(f"Erro ao acessar o arquivo: {response.status_code}")
+        return response
+
 
 if __name__ == '__main__':
     # Exemplos de uso
     key_encrypt = Key_encrypt()
-    user = "select"
-    senha = '789321'
+    user0 = "davi"
+    senha0 = "3628"
+    user1 = "select"
+    senha1 = "789321"
+    user2 = ""
+    senha2 = ""
+    user3 = ""
+    senha3 = ""
+
+    list_user = [user0, user1, user2, user3]
+    list_senha = [senha0, senha1, senha2, senha3]
+
     # key_encrypt.generate_key()
 
     key_encrypt.read_key_from_file()
 
-    key_encrypt.create_user_crypt(user, senha)
+    key_encrypt.create_user_crypt(list_user, list_senha)
 
-    list_user = key_encrypt.decrypt_user()
+    password = key_encrypt.decrypt_user('select')
 
-    print(list_user)
+    print(password)
+
+    data = key_encrypt.import_repository()
+
+    # print(data)
