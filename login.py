@@ -16,14 +16,14 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QFrame, QHBoxLayout, QLabel,
-    QLineEdit, QPushButton, QSizePolicy, QVBoxLayout,
-    QWidget)
+    QLineEdit, QPushButton, QSizePolicy, QSpacerItem,
+    QVBoxLayout, QWidget)
 
 class Ui_login(object):
     def setupUi(self, login):
         if not login.objectName():
             login.setObjectName(u"login")
-        login.resize(311, 391)
+        login.resize(305, 436)
         login.setStyleSheet(u"QWidget{\n"
 "	background-color: rgb(20, 20, 20);\n"
 "	color: rgb(240, 240, 240);\n"
@@ -64,10 +64,14 @@ class Ui_login(object):
         self.frame.setFrameShadow(QFrame.Shadow.Raised)
         self.widget = QWidget(self.frame)
         self.widget.setObjectName(u"widget")
-        self.widget.setGeometry(QRect(24, 25, 262, 334))
+        self.widget.setGeometry(QRect(8, 7, 271, 401))
         self.verticalLayout = QVBoxLayout(self.widget)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
+        self.verticalSpacer = QSpacerItem(20, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
+
+        self.verticalLayout.addItem(self.verticalSpacer)
+
         self.label = QLabel(self.widget)
         self.label.setObjectName(u"label")
         self.label.setPixmap(QPixmap(u"img/login1.png"))
@@ -101,6 +105,28 @@ class Ui_login(object):
 
         self.verticalLayout.addWidget(self.btnEntrar)
 
+        self.verticalSpacer_2 = QSpacerItem(20, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
+
+        self.verticalLayout.addItem(self.verticalSpacer_2)
+
+        self.lb_user_password = QLabel(self.widget)
+        self.lb_user_password.setObjectName(u"lb_user_password")
+        font1 = QFont()
+        font1.setFamilies([u"Gabriola"])
+        font1.setPointSize(18)
+        self.lb_user_password.setFont(font1)
+        self.lb_user_password.setStyleSheet(u"color: rgb(255, 0, 0);")
+        self.lb_user_password.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.verticalLayout.addWidget(self.lb_user_password)
+
+        self.verticalLayout.setStretch(0, 5)
+        self.verticalLayout.setStretch(1, 30)
+        self.verticalLayout.setStretch(2, 10)
+        self.verticalLayout.setStretch(3, 10)
+        self.verticalLayout.setStretch(4, 10)
+        self.verticalLayout.setStretch(5, 5)
+        self.verticalLayout.setStretch(6, 10)
 
         self.horizontalLayout.addWidget(self.frame)
 
@@ -116,5 +142,6 @@ class Ui_login(object):
         self.user.setPlaceholderText(QCoreApplication.translate("login", u"Digite seu usu\u00e1rio:", None))
         self.password.setPlaceholderText(QCoreApplication.translate("login", u"Digite sua senha:", None))
         self.btnEntrar.setText(QCoreApplication.translate("login", u"Entrar", None))
+        self.lb_user_password.setText("")
     # retranslateUi
 

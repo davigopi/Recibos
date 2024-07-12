@@ -2,8 +2,10 @@ from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QStackedWidget
 from PySide6.QtGui import QIcon
 from login import Ui_login
 from main_window import MainWindow
+from components.cryptography_utils import Key_encrypt
 import sys
 import requests
+import time
 
 
 class Login(QWidget, Ui_login):
@@ -19,31 +21,26 @@ class Login(QWidget, Ui_login):
         self.btnEntrar.clicked.connect(self.open_system)
 
     def open_system(self):
+        inf = 'P☻rocessando'
+        self.lb_user_password.setText(inf)
         username = self.user.text()
         password = self.password.text()
-        if password == '123':
+        self.authenticate(username, password)
+
+    def authenticate(self, username, password):
+        key_encrypt = Key_encrypt()
+        key_encrypt.read_key_file()
+        key_encrypt.read_user_crypt_web()
+        if password == key_encrypt.password_decrypt(username):
             self.w = MainWindow()
             self.w.show()
             self.close()
         else:
-            print('senha inválida')
-
-        self.authenticate(username, password)
-
-    def authenticate(self, username, password):
-        print(username)
-        print(password)
-        url = 'URL_DO_SEU_ARQUIVO_DE_AUTENTICACAO'
-        response = requests.get(url)
-
-        if response.status_code == 200:
-            auth_data = response.json()  # Assumindo que o arquivo na web é um JSON com usuários e senhas
-
-            if username in auth_data and auth_data[username] == password:
-                return True
-
-        return False
-
+            inf = 'Usuário e/ou senha inválido'
+            time.sleep(3)
+            self.lb_user_password.setText(inf)
+            self.user.clear()
+            self.password.clear()
 
 # class MainWindow_login(QMainWindow, MainWindow):
 #     def __init__(self):
@@ -55,13 +52,13 @@ class Login(QWidget, Ui_login):
 #         # self.stacked_widget = QStackedWidget()
 #         # self.setCentralWidget(self.stacked_widget)
 
+
 #         # # Adicionar as páginas ao QStackedWidget
 #         # self.stacked_widget.addWidget(self.pg_home)
 #         # self.stacked_widget.addWidget(self.pg_table)
 #         # self.stacked_widget.addWidget(self.pg_contato)
 #         # self.stacked_widget.addWidget(self.pg_sobre)
 #         # self.stacked_widget.addWidget(self.pg_cadastro)
-
 #         # paguinaas d osistema
 #         self.btn_home.clicked.connect(
 #             lambda: self.pages.setCurrentWidget(self.pg_home))
@@ -73,8 +70,6 @@ class Login(QWidget, Ui_login):
 #             lambda: self.pages.setCurrentWidget(self.pg_sobre))
 #         self.btn_cadastro.clicked.connect(
 #             lambda: self.pages.setCurrentWidget(self.pg_cadastro))
-
-
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     window = Login()

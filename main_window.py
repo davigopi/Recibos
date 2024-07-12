@@ -1,17 +1,27 @@
-from PySide6.QtWidgets import QApplication, QMainWindow, QComboBox, QWidget, QStackedWidget  # noqa
+from PySide6.QtWidgets import QApplication, QMainWindow, QTextEdit  # noqa
 from PySide6.QtCore import QDate, QObject, QThread, Signal
 from PySide6.QtGui import QIcon
+from pandas import value_counts
 # from distutils.log import Log
 from ui_main import Ui_MainWindow
 import sys
 from main_table import Main_table
 from main_gerar import Main_gerar
+import time
 
 
 class Worker1(QObject):
     started1 = Signal()
     progressed1 = Signal(str)
     finished1 = Signal()
+
+    @property
+    def prog(self):
+        return None
+
+    @prog.setter
+    def prog(self, text):
+        self.progressed1.emit(text)
 
     def scall_main_table(self, *args, **kwargs) -> None:
         self.started1.emit()
@@ -41,37 +51,65 @@ class Worker1(QObject):
             main_table.new_table_Comissoes_Configuracao = comissoes_configuracao  # noqa
         if comissoes_configPagamento is not None:
             main_table.new_table_Comissoes_ConfigPagamento = (
-                comissoes_configPagamento)
+                comissoes_configPagamento),
         if mix is not None:
             main_table.mix = mix
             print(mix)
+        self.prog = 'Iniciar'
         main_table.log_start_end()
+        self.prog = 'Criar tabela cadastro consorciado'
         main_table.create_table_Cadastro_Consorciado()
+        self.prog = 'Criar tabela cadastro funcionário'
         main_table.create_table_Cadastro_Funcionario()
+        self.prog = 'Criar tabela cadastro ata'
         main_table.create_table_Cadastro_Ata()
+        self.prog = 'Criar tabela comissoes configuração'
         main_table.create_table_Comissoes_Configuracao()
+        self.prog = 'Criar tabela comissoes configuração pagamento'
         main_table.create_table_Comissoes_ConfigPagamento()
+        self.prog = 'Criar tabela semana'
         main_table.date_weekly_new()
+        self.prog = 'Manipular tabela cadastro funcionário'
         main_table.table_manip_funcionario()
+        self.prog = 'Manipular tabela cadastro consorciado'
         main_table.table_manip_cadastro_consorciado()
+        self.prog = 'Manipular tabela comissões configuração pagamento'
         main_table.table_manip_comissoes_configuracao()
+        self.prog = 'Teste tabela comissões configuração de pagamento'
         main_table.test_table_Comissoes_ConfigPagamento()
+        self.prog = 'Manipular tabela cadastro funcionário'
         main_table.table_manip_Cadastro_funcionario_gerente()
+        self.prog = 'Teste tabela cadastro funcionário'
         main_table.test_table_Cadastro_Funcionario()
+        self.prog = 'Manipular comissões configuração gerente'
         main_table.table_manip_comissoes_configuracao_gerente()
+        self.prog = 'Mesclar iniciar'
         main_table.merge_star()
+        self.prog = 'Mesclar tabela consorciado com funcionário'
         main_table.merge_consorciado_funcionario()
+        self.prog = 'Mesclar tabela consorciado com funcionário gerente'
         main_table.merge_consorciado_funcionario_gerente()
+        self.prog = 'Mesclar tabela comissões configuração'
         main_table.merge_full_comissoes_configuracao()
+        self.prog = 'Mesclar tabela comissões configuração gerente'
         main_table.merge_full_comissoes_configuracao_gerente()
+        self.prog = 'Criar coluna ATA'
         main_table.create_columns_ata()
+        self.prog = 'Mesclar tabela semana'
         main_table.merge_full_weekly()
+        self.prog = 'Mesclar tabela ata'
         main_table.merge_full_ata()
+        self.prog = 'Adicionar colunas'
         main_table.column_add()
+        self.prog = 'Ordenar colunas'
         main_table.order_column()
+        self.prog = 'Salvar tabela principal'
         main_table.save_full()
+        self.prog = 'Testar duplicidade de vendas'
         main_table.test_full_double()
+        self.prog = 'Testar duplicidade em chave primária'
         main_table.test_primary_key()
+        self.prog = 'Finalizar'
         main_table.log_start_end()
         self.finished1.emit()
 
@@ -80,6 +118,14 @@ class Worker2(QObject):
     started2 = Signal()
     progressed2 = Signal(str)
     finished2 = Signal()
+
+    @property
+    def prog(self):
+        return None
+
+    @prog.setter
+    def prog(self, text):
+        self.progressed2.emit(text)
 
     def scall_main_table(self, *args, **kwargs) -> None:
         self.started2.emit()
@@ -110,10 +156,14 @@ class Worker2(QObject):
             data_ata = data_ata.toPython()
             main_gerar.data_ata = data_ata
             # print(data_ata)
+        self.prog = 'Iniciar'
         main_gerar.generate_date_ata()
+        self.prog = 'Gerar recibos de vendores'
         main_gerar.generate_is_vendedores()
+        self.prog = 'Gerar recibos de supervisores'
         main_gerar.generate_is_supervisores()
         # main_gerar.generate_employee()
+        self.prog = 'Finalizar'
         self.finished2.emit()
 
 
@@ -179,10 +229,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.worker1.finished1.connect(self.worker1.deleteLater)
         # Conecta sinais do worker a métodos da interface.
         self.worker1.started1.connect(self.workStarted)
+        self.worker1.progressed1.connect(self.worker1Progressed)
         # self.worker.progressed.connect(self.work1Progressed)
         self.worker1.finished1.connect(self.workFinished)
-
-        self.thread1.start()  # Inicia a thread.
+        # Inicia a thread.
+        self.thread1.start()
 
     def gerar_btn(self):
         self.worker2 = Worker2()
@@ -199,43 +250,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             data_ata=self.data_ata.date()
         ))
 
-        # Quando o worker terminar, para a thread.
         self.worker2.finished2.connect(self.thread2.quit)
-        # Deleta a thread depois que el§a termina.
         self.thread2.finished.connect(self.thread2.deleteLater)
-        # Deleta o worker depois que ele termina.
         self.worker2.finished2.connect(self.worker2.deleteLater)
-        # Conecta sinais do worker a métodos da interface.
         self.worker2.started2.connect(self.workStarted)
-        # self.worker.progressed.connect(self.work1Progressed)
+        self.worker2.progressed2.connect(self.worker2Progressed)
         self.worker2.finished2.connect(self.workFinished)
 
-        self.thread2.start()  # Inicia a thread.
-
-        # # Verificar se o QCheckBox está marcado
-        # if self.cb_todos.isChecked():
-        #     print("O cb_todos está marcado.")
-        # else:
-        #     print("O cb_todos, não está marcado.")
-
-        # if self.cb_funcionario.isChecked():
-        #     print("O cb_funcionario está marcado.")
-        # else:
-        #     print("O cb_funcionario, não está marcado.")
-
-        # if self.cb_vendedor.isChecked():
-        #     print("O cb_vendedor está marcado.")
-        # else:
-        #     print("O cb_vendedor, não está marcado.")
-
-        # if self.cb_supervisor.isChecked():
-        #     print("O cb_supervisor está marcado.")
-        # else:
-        #     print("O cb_supervisor, não está marcado.")
-
-        # Obtém o texto do item selecionado no QComboBox e define no QLabel
-        # selected_text = self.cbb_funcionario.currentText()
-        # print(f"Selecionado: {selected_text}")
+        self.thread2.start()
 
     def workStarted(self):
         self.btn_carregar.setDisabled(True)
@@ -244,6 +266,22 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.btn_recibo.setDisabled(True)
         QApplication.processEvents()
         print('worker iniciado')
+
+    def worker1Progressed(self, new_text):
+        text_original = self.te_table.toPlainText()
+        text = text_original + new_text + '\n'
+        self.te_table.setText(text)
+        self.te_table.verticalScrollBar().setValue(self.te_table.verticalScrollBar().maximum())  # noqa
+        QApplication.processEvents()
+        print('progresso', text)
+
+    def worker2Progressed(self, new_text):
+        text_original = self.te_recibo.toPlainText()
+        text = text_original + new_text + '\n'
+        self.te_recibo.setText(text)
+        self.te_recibo.verticalScrollBar().setValue(self.te_recibo.verticalScrollBar().maximum())  # noqa
+        QApplication.processEvents()
+        print('progresso', text)
 
     def workFinished(self):
         self.btn_carregar.setDisabled(False)

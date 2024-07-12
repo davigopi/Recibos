@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>582</width>
-    <height>587</height>
+    <height>731</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -121,7 +121,7 @@ QPushButton:disabled {
           <string notr="true"/>
          </property>
          <property name="currentIndex">
-          <number>0</number>
+          <number>1</number>
          </property>
          <widget class="QWidget" name="pg_recibo">
           <property name="font">
@@ -410,7 +410,7 @@ QPushButton:disabled {
             </layout>
            </item>
            <item>
-            <layout class="QVBoxLayout" name="verticalLayout_9" stretch="50,50">
+            <layout class="QVBoxLayout" name="verticalLayout_9" stretch="50,0">
              <item>
               <widget class="QPushButton" name="btn_gerar">
                <property name="enabled">
@@ -446,24 +446,12 @@ QPushButton:disabled {
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="label_13">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="minimumSize">
-                <size>
-                 <width>0</width>
-                 <height>100</height>
-                </size>
-               </property>
-               <property name="text">
-                <string/>
-               </property>
-               <property name="pixmap">
-                <pixmap>img/select.png</pixmap>
+              <widget class="QTextEdit" name="te_recibo">
+               <property name="font">
+                <font>
+                 <family>Gabriola</family>
+                 <pointsize>18</pointsize>
+                </font>
                </property>
               </widget>
              </item>
@@ -1151,7 +1139,7 @@ QPushButton:disabled {
                <property name="minimumSize">
                 <size>
                  <width>0</width>
-                 <height>22</height>
+                 <height>40</height>
                 </size>
                </property>
                <property name="font">
@@ -1163,11 +1151,24 @@ QPushButton:disabled {
                <property name="cursor">
                 <cursorShape>PointingHandCursor</cursorShape>
                </property>
+               <property name="focusPolicy">
+                <enum>Qt::FocusPolicy::TabFocus</enum>
+               </property>
                <property name="styleSheet">
                 <string notr="true"/>
                </property>
                <property name="text">
                 <string>Carregar</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QTextEdit" name="te_table">
+               <property name="font">
+                <font>
+                 <family>Gabriola</family>
+                 <pointsize>18</pointsize>
+                </font>
                </property>
               </widget>
              </item>

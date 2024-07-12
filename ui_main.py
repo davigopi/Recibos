@@ -18,14 +18,14 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
 from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QDateEdit,
     QDateTimeEdit, QFrame, QHBoxLayout, QLabel,
     QLineEdit, QMainWindow, QPushButton, QRadioButton,
-    QSizePolicy, QSpacerItem, QStackedWidget, QVBoxLayout,
-    QWidget)
+    QSizePolicy, QSpacerItem, QStackedWidget, QTextEdit,
+    QVBoxLayout, QWidget)
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(582, 587)
+        MainWindow.resize(582, 731)
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -271,31 +271,24 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_9.addWidget(self.btn_gerar)
 
-        self.label_13 = QLabel(self.pg_recibo)
-        self.label_13.setObjectName(u"label_13")
-        sizePolicy5 = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Preferred)
-        sizePolicy5.setHorizontalStretch(0)
-        sizePolicy5.setVerticalStretch(0)
-        sizePolicy5.setHeightForWidth(self.label_13.sizePolicy().hasHeightForWidth())
-        self.label_13.setSizePolicy(sizePolicy5)
-        self.label_13.setMinimumSize(QSize(0, 100))
-        self.label_13.setPixmap(QPixmap(u"img/select.png"))
+        self.te_recibo = QTextEdit(self.pg_recibo)
+        self.te_recibo.setObjectName(u"te_recibo")
+        self.te_recibo.setFont(font)
 
-        self.verticalLayout_9.addWidget(self.label_13)
+        self.verticalLayout_9.addWidget(self.te_recibo)
 
         self.verticalLayout_9.setStretch(0, 50)
-        self.verticalLayout_9.setStretch(1, 50)
 
         self.verticalLayout_12.addLayout(self.verticalLayout_9)
 
         self.pages.addWidget(self.pg_recibo)
         self.pg_home = QWidget()
         self.pg_home.setObjectName(u"pg_home")
-        sizePolicy6 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
-        sizePolicy6.setHorizontalStretch(0)
-        sizePolicy6.setVerticalStretch(0)
-        sizePolicy6.setHeightForWidth(self.pg_home.sizePolicy().hasHeightForWidth())
-        self.pg_home.setSizePolicy(sizePolicy6)
+        sizePolicy5 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
+        sizePolicy5.setHorizontalStretch(0)
+        sizePolicy5.setVerticalStretch(0)
+        sizePolicy5.setHeightForWidth(self.pg_home.sizePolicy().hasHeightForWidth())
+        self.pg_home.setSizePolicy(sizePolicy5)
         self.pg_home.setMinimumSize(QSize(0, 0))
         self.pg_home.setMaximumSize(QSize(16777215, 16777215))
         font3 = QFont()
@@ -400,8 +393,11 @@ class Ui_MainWindow(object):
 
         self.le_senha = QLineEdit(self.pg_table)
         self.le_senha.setObjectName(u"le_senha")
-        sizePolicy5.setHeightForWidth(self.le_senha.sizePolicy().hasHeightForWidth())
-        self.le_senha.setSizePolicy(sizePolicy5)
+        sizePolicy6 = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Preferred)
+        sizePolicy6.setHorizontalStretch(0)
+        sizePolicy6.setVerticalStretch(0)
+        sizePolicy6.setHeightForWidth(self.le_senha.sizePolicy().hasHeightForWidth())
+        self.le_senha.setSizePolicy(sizePolicy6)
         self.le_senha.setFont(font)
         self.le_senha.setEchoMode(QLineEdit.EchoMode.Password)
 
@@ -423,8 +419,8 @@ class Ui_MainWindow(object):
 
         self.data_inicial = QDateEdit(self.pg_table)
         self.data_inicial.setObjectName(u"data_inicial")
-        sizePolicy5.setHeightForWidth(self.data_inicial.sizePolicy().hasHeightForWidth())
-        self.data_inicial.setSizePolicy(sizePolicy5)
+        sizePolicy6.setHeightForWidth(self.data_inicial.sizePolicy().hasHeightForWidth())
+        self.data_inicial.setSizePolicy(sizePolicy6)
         self.data_inicial.setFont(font)
         self.data_inicial.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         self.data_inicial.setAlignment(Qt.AlignmentFlag.AlignRight|Qt.AlignmentFlag.AlignTrailing|Qt.AlignmentFlag.AlignVCenter)
@@ -604,12 +600,19 @@ class Ui_MainWindow(object):
         sizePolicy7.setVerticalStretch(0)
         sizePolicy7.setHeightForWidth(self.btn_carregar.sizePolicy().hasHeightForWidth())
         self.btn_carregar.setSizePolicy(sizePolicy7)
-        self.btn_carregar.setMinimumSize(QSize(0, 22))
+        self.btn_carregar.setMinimumSize(QSize(0, 40))
         self.btn_carregar.setFont(font)
         self.btn_carregar.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
+        self.btn_carregar.setFocusPolicy(Qt.FocusPolicy.TabFocus)
         self.btn_carregar.setStyleSheet(u"")
 
         self.verticalLayout_2.addWidget(self.btn_carregar)
+
+        self.te_table = QTextEdit(self.pg_table)
+        self.te_table.setObjectName(u"te_table")
+        self.te_table.setFont(font)
+
+        self.verticalLayout_2.addWidget(self.te_table)
 
 
         self.verticalLayout_6.addLayout(self.verticalLayout_2)
@@ -625,7 +628,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.pages.setCurrentIndex(0)
+        self.pages.setCurrentIndex(1)
 
 
         QMetaObject.connectSlotsByName(MainWindow)
@@ -649,7 +652,6 @@ class Ui_MainWindow(object):
         self.label_3.setText(QCoreApplication.translate("MainWindow", u"Selecione a ATA: ", None))
         self.data_ata.setDisplayFormat(QCoreApplication.translate("MainWindow", u"MMMM   /   yyyy   ", None))
         self.btn_gerar.setText(QCoreApplication.translate("MainWindow", u"Gerar", None))
-        self.label_13.setText("")
         self.label.setText("")
         self.label_11.setText("")
         self.label_8.setText(QCoreApplication.translate("MainWindow", u"INFORMA\u00c7\u00d5ES DO SISTEMA SIRCON", None))
