@@ -1,6 +1,6 @@
 from datetime import date
 from dateutil.relativedelta import relativedelta
-from typing import List, Union, Any
+from typing import List
 
 
 class DateMonthYear:

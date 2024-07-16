@@ -1,11 +1,9 @@
 from fpdf import FPDF
 
-# Cria uma classe para o PDF
-
 
 class PDF(FPDF):
     def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)  # Chama o construtor da classe base FPDF
+        super().__init__(*args, **kwargs)  # Chama construtor class base FPDF
         self.title = ''
 
     def header(self):

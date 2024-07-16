@@ -1,7 +1,6 @@
 import pandas as pd
 import numpy as np
 import numbers
-from time import sleep
 from datetime import datetime
 
 from components.tableManip import TableManip
@@ -15,22 +14,6 @@ class Table_manip_value():
         self.list_one_two = []
         self.list_one_two_three = []
         self.list_name_change = []
-
-    # @property
-    # def tables(self):
-    #     return None
-
-    # @tables.setter
-    # def tables(self, table):
-    #     self.table = table
-
-    # @property
-    # def tables_2(self):
-    #     return None
-
-    # @tables_2.setter
-    # def tables_2(self, table):
-    #     self.table_2 = table
 
     @property
     def row_duplicate_column(self):
@@ -242,29 +225,21 @@ class Table_manip_value():
         quantity_line = self.table.shape[0]
         iloc = self.table.iloc
         for key in range(quantity_line):
-            # if key == 0:
-            #     continue
-
             line1 = self.table.iloc[key][tipo_pag]
-            # print(f'{key} ,({line1})')
-            # print(self.table.head(n=0))
             self.table.loc[self.table.index[key], tipo_pag] = line1[:2]
             if key != quantity_line - 1:
                 line2 = self.table.iloc[key + 1][tipo_pag]
-            line_cargo = self.table.iloc[key][cargo]
+            # line_cargo = self.table.iloc[key][cargo]
             change = True
             data_change = ''
             if '5º' in line1:
-                # self.table.loc[self.table.index[key], cargo] = line_cargo + ' 5'
                 change = False
             elif '4º' in line1:
-                # self.table.loc[self.table.index[key], cargo] = line_cargo + ' 4'
                 if '5º' in line2:
                     change = False
                 else:
                     data_change = ' 5º'
             elif '3º' in line1:
-                # self.table.loc[self.table.index[key], cargo] = line_cargo + ' 3'
                 if '4º' in line2:
                     change = False
                 elif '5º' in line2:
@@ -272,7 +247,6 @@ class Table_manip_value():
                 else:
                     data_change = ' 4º 5º'
             elif '2º' in line1:
-                # self.table.loc[self.table.index[key], cargo] = line_cargo + ' 2'
                 if '3º' in line2:
                     change = False
                 elif '4º' in line2:
@@ -313,14 +287,14 @@ class Table_manip_value():
         for key_1 in range(quantity_line_1):
             try:
                 data_1_str = self.table.iloc[key_1][data]
-                data_1 = datetime.strptime(data_1_str, '%d/%m/%Y')
+                data_1 = datetime.strptime(data_1_str, '%d/%m/%Y')  # type: ignore # noqa
             except ValueError:
                 continue
             for key_2 in range(quantity_line_2):
                 data_inicio_str = self.table_2.iloc[key_2][data_inicia]
-                data_inicio = datetime.strptime(data_inicio_str, '%d/%m/%Y')
+                data_inicio = datetime.strptime(data_inicio_str, '%d/%m/%Y')  # type: ignore # noqa
                 data_fim_str = self.table_2.iloc[key_2][data_final]
-                data_fim = datetime.strptime(data_fim_str, '%d/%m/%Y')
+                data_fim = datetime.strptime(data_fim_str, '%d/%m/%Y')  # type: ignore # noqa
                 if data_1 >= data_inicio and data_1 <= data_fim:
                     data_ata = self.table_2.iloc[key_2][ata_2]
                     self.table.loc[key_1, ata_1] = data_ata
@@ -356,9 +330,9 @@ class Table_manip_value():
                 administradora_2 = self.table_2.iloc[key_2][administradora]
                 cargo_2 = self.table_2.iloc[key_2][cargo]
                 tipo_pagamento_2 = self.table_2.iloc[key_2][tipo_pagamento]
-                if administradora_1 == administradora_2 and cargo_1 == cargo_2 and '1' in tipo_pagamento_2:
+                if administradora_1 == administradora_2 and cargo_1 == cargo_2 and '1' in tipo_pagamento_2:  # noqa
                     for column in list_columns_add:
-                        self.table.loc[key_1, column] = self.table_2.iloc[key_2][column]
+                        self.table.loc[key_1, column] = self.table_2.iloc[key_2][column]  # noqa
                     break
 
     # @property

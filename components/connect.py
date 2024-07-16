@@ -147,7 +147,7 @@ class Connect:
                             line = 1
                             column = 7
                             while True:
-                                xpath = f'//*[@id="ui-datepicker-div"]/table/tbody/tr[{line}]/td[{column}]'
+                                xpath = f'//*[@id="ui-datepicker-div"]/table/tbody/tr[{line}]/td[{column}]'  # noqa
                                 func.clickXpath = xpath
                                 clickOk = func.clickOk
                                 column -= 1
@@ -160,12 +160,11 @@ class Connect:
                                 line = 4
                                 column = 7
                                 while True:
-                                    xpath = f'//*[@id="ui-datepicker-div"]/table/tbody/tr[{line}]/td[{column}]'
+                                    xpath = f'//*[@id="ui-datepicker-div"]/table/tbody/tr[{line}]/td[{column}]'  # noqa
                                     func.clickXpath = xpath
                                     clickOk = func.clickOk
                                     column += 1
-                                    if (column == 3 and line == 6) or (
-                                        clickOk is False):
+                                    if (column == 3 and line == 6) or (clickOk is False):  # noqa
                                         clickOk = True
                                         break
                                     if column == 8:
@@ -780,5 +779,5 @@ class Connect:
         return self.table
 
 
-if __name__ == '__main__':
-    from .. import mainbkp  # noqa
+# if __name__ == '__main__':
+#     from .. import mainbkp  # noqa

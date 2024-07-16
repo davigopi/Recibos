@@ -9,13 +9,13 @@ options.add_experimental_option('excludeSwitches', ['enable-automation'])
 options.add_experimental_option('excludeSwitches', ['enable-logging'])
 siteSircon = "https://app.sistemasircon.com.br/login"
 
-driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)  # noqa
 # driver.get(siteSircon)
 connect = Connect(driver=driver)
 
 
 table = pd.read_csv("table.csv", sep=',', encoding='latin_1', dtype=str)
-connect.tables = table
+connect.tables = table  # type: ignore
 table = connect.renameColumn
 
 # print(table)

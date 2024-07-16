@@ -29,7 +29,7 @@ class Renomear:
             'PLANO INTEGRAL 15 - PLANO LIGHT 15',
             'PLANO (INTEGRAL - LIGHT) 15')
         self.inf = self.inf.replace(
-            'PLANO INTEGRAL 20 - PLANO INTEGRAL 24 - PLANO LIGHT 20 - PLANO LIGHT 24',
+            'PLANO INTEGRAL 20 - PLANO INTEGRAL 24 - PLANO LIGHT 20 - PLANO LIGHT 24',  # noqa
             'PLANO (INTEGRAL - LIGHT)(20 - 24)')
         self.inf = self.inf.replace(
             'MULHER D+ (INTEGRAL - LIGHT) - PLANO (INTEGRAL - LIGHT)',
@@ -118,10 +118,6 @@ class Renomear:
         self.inf = self.inf.replace('Â ', ' ')
         self.inf = self.inf.replace('Â\xa0', ' ')
         self.inf = self.inf.replace('nan', ' ')
-        # self.inf = ''.join([l for l in unicodedata.normalize('NFD', self.inf) if not unicodedata.combining(l)]).casefold()
-        # self.inf = unicodedata.normalize('NFD', self.inf).encode('ascii', 'ignore').decode('utf8').casefold()
-        # print(f'variavel: ({self.inf})')
-        # print(f'type: {type(self.inf)}')
         self.inf = self.inf.replace(' ', '')
         self.inf = self.inf.replace('vazio', '')
         return self.inf
@@ -179,10 +175,8 @@ class Renomear:
         self.inf = self.inf.replace('º', '')
         self.inf = self.inf.replace('ª', '')
         self.inf = self.inf.replace('*', '')
-        # self.inf = re.sub(r'[\u0300-\u036f]', '', unicodedata.normalize('NFD',
-        # self.inf)).casefold()  # regex
-        self.inf = ''.join([l for l in unicodedata.normalize('NFD', self.inf)
-                            if not unicodedata.combining(l)]).casefold()  # fluent
+        self.inf = ''.join([char for char in unicodedata.normalize('NFD', self.inf)  # noqa
+                            if not unicodedata.combining(char)]).casefold()
         self.inf = self.inf.capitalize()
         self.inf = self.inf.replace('ontemplacao', 'ontp')
         self.inf = self.inf.replace('onfirmacao', 'onfir')

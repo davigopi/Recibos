@@ -5,7 +5,7 @@ class RenameText:
     @property
     def renameHeader(self):
         return self.text
-    
+
     @renameHeader.setter
     def renameHeader(self, text):
         text = text.replace('\n', '&&&&&')
@@ -19,5 +19,5 @@ class RenameText:
                 if countEnd >= 3:
                     break
                 continue
-            else: 
+            else:
                 self.text += letter

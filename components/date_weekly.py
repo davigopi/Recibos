@@ -1,9 +1,5 @@
 import pandas as pd
 import datetime
-# import calendar
-from calendar import month_name
-from unidecode import unidecode
-import locale
 from components.tableManip import TableManip
 from dateutil.relativedelta import relativedelta
 
@@ -108,7 +104,6 @@ class Date_weekly:
 
     @edit_weekYear_week_date_separate_weekMonth.setter
     def edit_weekYear_week_date_separate_weekMonth(self, none):
-        # locale.setlocale(locale.LC_TIME, 'pt_BR.UTF-8')
         calend = []
         calend_interno = []
         ultimo_month = '01'
@@ -127,13 +122,8 @@ class Date_weekly:
             if num_week == 1:
                 variavel = 0
             num_week -= variavel
-            # name_month = calendar.month_name[int(month)].capitalize()
-            # name_month = datetime.date(1900, int(month), 1).strftime('%B')
-            # print(month)
             name_month = self.meses.get(month)
-            # if 'Mar' in name_month:
-            #     print(name_month)
-            week_mth_year = str(num_week) + 'ª/' + name_month + '/' + year
+            week_mth_year = str(num_week) + 'ª/' + name_month + '/' + year  # type: ignore # noqa
             calend.append([calend_interno, week_mth_year])
             calend_interno = []
         self.calend = calend

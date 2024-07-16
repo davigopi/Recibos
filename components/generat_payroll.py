@@ -1,28 +1,37 @@
-# from numpy import append
 import pandas as pd
 import locale
 import os
-# import numpy as np
+import sys
 from pathlib import Path
 from components.fileManip import PDF
-# from fileManip import FileManip
 
-# self.table_single_merge.to_csv(
-#     "tables\\table_teste.csv",
-#     index=False,
-#     header=True,
-#     sep=';'
-# )
+try:
+    from path_file import Path_file
+except ImportError:
+    parent_dir = Path(__file__).resolve().parent.parent
+    sys.path.insert(0, str(parent_dir))
+    try:
+        from path_file import Path_file
+    except ImportError:
+        raise ImportError("Não foi possível importar 'Path_fiel'")
+
+
+def create_table(table_created, path):
+    table_created.columns = (table_created.columns.str.strip())
+    table_created.to_csv(path, sep=';', index=False, header=True)
+    return table_created
 
 
 class Generat_payroll:
     def __init__(self, *args, **kwargs) -> None:
+        self.path_file = Path_file()
 
         self.model = ''
 
         self.stop_program = False
 
         self.profession = ''
+        self.column_profissao = ''
         self.column_cargo = ''
         self.column_administradora = ''
         self.column_tabela = ''
@@ -37,11 +46,14 @@ class Generat_payroll:
         self.column_comissao = ''
         self.column_situacao = ''
         self.column_ata_entrega = ''
-        self.column_ata_cad_Adm = ''
-        self.data_ata_single = ''
+        self.column_ata_cad_adm = ''
+        self.column_sma_entrega = ''
+        self.column_sma_cad_adm = ''
+        self.date_ata_single = ''
+        self.date_sma_single = ''
         self.seller_single = ''
         self.data_date_pay = ''
-        self.column_cadastro = ''
+        self.data_cadastro = ''
         self.word = ''
 
         self.quantity_line_full = 0
@@ -66,6 +78,8 @@ class Generat_payroll:
         self.list_columns_full_weekly = []
         self.list_columns_full_ata_entrega = []
         self.list_columns_full_ata_cadastro = []
+        self.list_columns_full_sma_entrega = []
+        self.list_columns_full_sma_cadastro = []
         self.list_qtd_cotas_parc = []
         self.list_qtd_cotas_inicial = []
         self.list_qtd_cotas_final = []
@@ -98,14 +112,8 @@ class Generat_payroll:
         self.table_single_merge: pd.DataFrame = pd.DataFrame()
         self.table_seller_single: pd.DataFrame = pd.DataFrame()
 
-        # path_tables = Path(__file__).parent
-        # self.arqTableTeste = Path()
-        # name_arq = 'table_teste1.csv'
-        # self.arqTableTeste1 = path_tables / name_arq
-        # name_arq = 'table_teste2.csv'
-        # self.arqTableTeste2 = path_tables / name_arq
-        # name_arq = 'table_teste3.csv'
-        # self.arqTableTeste3 = path_tables / name_arq
+        self.arqTableTest1 = self.path_file.path_file_create('tables', 'table_test1.csv')  # noqa
+    # create_table(table,self.arqTableTeste1)
 
     @property
     def num_columns(self):
@@ -139,10 +147,10 @@ class Generat_payroll:
 
     # 1º ira criar duas lista de todos os vendedores clt e parceiros
     def columns_to_list_full_seller(self):
-        self.list_seller_ata = self.table_full_ata[self.profession]
+        self.list_seller_ata = self.table_full_ata[self.column_profissao]
         self.list_seller_ata = self.list_seller_ata.unique()
         self.list_seller_ata.sort()
-        self.list_seller_weekly = self.table_full_weekly[self.profession]
+        self.list_seller_weekly = self.table_full_weekly[self.column_profissao]
         self.list_seller_weekly = self.list_seller_weekly.unique()
         self.list_seller_weekly.sort()
         for column_ata in self.list_columns_full_ata:
@@ -173,42 +181,60 @@ class Generat_payroll:
 
     # 2º define se vendedor/parceiro a primeira é pela ata entrea/cadastro
     def columns_ata_full_seller_single(self):
-        p1_referencia = str(
-            self.table_seller_single.iloc[0][self.column_1p_referencia]
-        )
-        if self.column_cadastro in p1_referencia:
-            self.list_cols_full_ata_sing = self.list_columns_full_ata_cadastro
+        # pega 1ª inf da coluna 1P referencia
+        p1_referencia = str(self.table_seller_single.iloc[0][self.column_1p_referencia])  # noqa
+        dt_pag_por = str(self.table_seller_single.iloc[0][self.column_dt_pag_por])  # noqa
+        # 'CADASTRO'  _ apra sabr se é po data de entrega ou data cad. adm
+        if self.data_cadastro in p1_referencia:
+            if self.data_date_pay == dt_pag_por:
+                # '[Sma Cad Adm', 'Sma 2º Parc', ..., 'Sma 6º Parc']
+                self.list_cols_full_ata_sing = self.list_columns_full_sma_cadastro  # noqa
+            else:
+                # ['ATA Cad Adm', 'ATA 2º Parc', 'ATA 3º P ..., 'ATA 6º Parc']
+                self.list_cols_full_ata_sing = self.list_columns_full_ata_cadastro  # noqa
+            # ['ATA Cad Adm qtd cotas', 'ATA Cad Adm qtd cotas Ger']
             list_ata_cad = self.list_columns_ata_cad
         else:
-            self.list_cols_full_ata_sing = self.list_columns_full_ata_entrega
+            if self.data_date_pay == dt_pag_por:
+                # '[Sma Entrega', 'Sma 2º Parc', ..., 'Sma 6º Parc']
+                self.list_cols_full_ata_sing = self.list_columns_full_sma_entrega  # noqa
+            else:
+                # ['ATA Entrega', 'ATA 2º Parc', ..., 'ATA 6º Parc']
+                self.list_cols_full_ata_sing = self.list_columns_full_ata_entrega  # noqa
+            # ['ATA Entrega qtd cotas', 'ATA Entrega qtd cotas Ger']
             list_ata_cad = self.list_columns_ata_ent
-        if self.profession == 'Gerente':
+        if self.column_profissao == 'Gerente':
+            # ATA Entrega qtd cotas Ger, ATA Cad Adm qtd cotas Ger
             self.column_ata_qtd = list_ata_cad[1]
         else:
+            # ATA Entrega qtd cotas,  ATA Cad Adm qtd cotas
             self.column_ata_qtd = list_ata_cad[0]
 
     # 3º Criar uma lista tabelas aparti do dado ata e colunas definidas
     def tables_columns_ata_seller_single(self):
         self.table_single_ata = []
+        dt_pag_por = str(self.table_seller_single.iloc[0][self.column_dt_pag_por])  # noqa
+        if self.data_date_pay == dt_pag_por:
+            data_single = self.date_sma_single
+        else:
+            data_single = self.date_ata_single
         for ata in self.list_cols_full_ata_sing:
-            table = self.table_seller_single[
-                self.table_seller_single[ata] == self.data_ata_single
-            ].copy()
+            table = self.table_seller_single[self.table_seller_single[ata] == data_single].copy()  # noqa
             table.reset_index(drop=True, inplace=True)
             self.table_single_ata.append([table, ata])
         # informações unicas para o pdf
-        self.list_unique_information.append(self.data_ata_single)
+        self.list_unique_information.append(data_single)
         # for table, ata in self.table_single_ata:
-        #     if ata == 'ATA 2º Parc':
-        #         print(ata)
-        #         print(table)
-        #         print('')
-        #         print('')
-        #         table.to_csv(
-        #             arqTableTeste, index=False, header=True, sep=';'
-        #         )
+        #     if ata == 'ATA Cad Adm':
+        #         if not table.empty:
+        #             print(ata)
+        #             print(table)
+        #             print('')
+        #             print('')
+        #             create_table(table, self.arqTableTest1)
 
     # 4º ira mesclar todas as tabelas que tiver valor
+
     def tables_concat_seller_single(self):
         self.table_single_merge: pd.DataFrame = pd.DataFrame()
         for table, ata in self.table_single_ata:
@@ -220,6 +246,10 @@ class Generat_payroll:
     # 5º verificar se pertence ao cargo especifico para sair ou não
     def is_to_stop_program(self):
         self.stop_program = False
+        if self.table_single_merge.empty:
+            self.stop_program = True
+            print('tabela vazia')
+            return
         cargo = self.table_single_merge.iloc[0][self.column_cargo]
         for cargo_not_calc_commis in self.list_cargo_not_calc_commis:
             if cargo_not_calc_commis in cargo:
@@ -308,17 +338,22 @@ class Generat_payroll:
             sums = 0
             sums_compliance = 0
             for line in range(quantity_line_table):
+                # Crédito
                 value = table.iloc[line][self.column_credito]
                 value = str(value)
                 value = value.replace('.', '')
                 value = value.replace(',', '.')
                 value = float(value)
                 sums += value
-                if ata in [self.column_ata_entrega, self.column_ata_cad_Adm]:
+                #   'ATA Entrega'           'ATA Cad Adm'
+                if ata in [self.column_ata_entrega, self.column_ata_cad_adm,
+                           self.column_sma_entrega, self.column_sma_cad_adm]:
                     sums_compliance = sums
                 else:
+                    # Sma Cad Adm       Sma Entrega
                     name_column = ata
                     name_column = name_column.replace('ATA ', '')
+                    name_column = name_column.replace('Sma ', '')
                     name_column = 'Situação ' + name_column
                     situacao = table.iloc[line][name_column]
                     if situacao in self.list_situacao_to_comission:
@@ -509,12 +544,13 @@ class Generat_payroll:
             list_administradora_qtdcotas_parc
         ) in self.list_administradora_sum_qtdcotasinicial_parc:
             table[self.list_columns_new[2]] = '0'
-            vendedor = table.iloc[0][self.profession]
+            vendedor = table.iloc[0][self.column_profissao]
             cargo = table.iloc[0][self.column_cargo]
             sum_comissao = 0
             text = ata
             text = text.replace(' ', '')
             text = text.replace('ATA', '')
+            text = text.replace('Sma', '')
             text = text.replace('º', '')
             text = text.replace('Parc', '')
             text = text.replace('Entrega', '1')
@@ -522,7 +558,7 @@ class Generat_payroll:
             column_situacao_parc = self.column_situacao
             if text != '1':
                 column_situacao_parc += ' ' + text + 'º Parc'
-            if self.profession == 'Gerente':
+            if self.column_profissao == 'Gerente':
                 text += '_Gerente'
             quantity_line_table = table.shape[0]
             # print(self.column_ata_qtd)
@@ -671,7 +707,7 @@ class Generat_payroll:
                 cargo,
                 list_administradora_qtdcotas_parc
             ])
-        table_full = table_full[self.list_columns_end]
+        table_full = table_full[self.list_columns_end]  # type: ignore
         self.list_unique_information.append(table_full)
     # table_full.to_csv(self.arqTableTeste1, index=False, header=True, sep=';')
     # limitas as colunas da tabela que serão impressa no pdf
@@ -712,7 +748,7 @@ class Generat_payroll:
         size_line = 6
         space_paragraph = 2
         begin = True
-        ata2 = self.list_unique_information[0]
+        # ata2 = self.list_unique_information[0]
         sum_all_comissao = self.list_unique_information[1]
         sum_all_comissao_gerente = self.list_unique_information[2]
         table_full = self.list_unique_information[3]
@@ -730,7 +766,7 @@ class Generat_payroll:
         if self.list_table_edit == []:
             print("Lista vazia")
             return '0', 'zerado'
-        if self.profession == 'Gerente':
+        if self.column_profissao == 'Gerente':
             comissao = sum_all_comissao_gerente
         else:
             comissao = sum_all_comissao
@@ -760,28 +796,17 @@ class Generat_payroll:
                 #     grouping=True
                 # )
                 # Guarda a posição inicial do texto
-                text = 'FUNCIONÁRIO:'
+                if self.profession == 'Parceiro':
+                    text = 'PARCEIRO:'
+                    text2 = f'Semana: {self.date_sma_single}'
+                else:
+                    text = 'FUNCIONÁRIO:'
+                    text2 = f'ATA: {self.date_ata_single}'
+                text1 = f'{vendedor}'
+                text3 = f'{cargo}'
                 pdf.add_underlined_text(text, size_font, size_line)
-                text = f'{vendedor}'
-                text2 = f'ATA: {ata2}'
-                pdf.add_content_in_columns(
-                    [text, text2],
-                    2,
-                    size_font,
-                    size_line
-                )
-                text = f'{cargo}'
-                # if self.profession == 'Gerente':
-                #     text2 = f'Total a receber:  R$ {
-                #   sum_all_comissao_gerente}'
-                # else:
-                #     text2 = f'Total a receber:  R$ {sum_all_comissao}'
-                pdf.add_content_in_columns(
-                    [text, comissao],
-                    2,
-                    size_font,
-                    size_line
-                )
+                pdf.add_content_in_columns([text1, text2], 2, size_font, size_line)  # noqa
+                pdf.add_content_in_columns([text3, comissao], 2, size_font, size_line)  # noqa
                 pdf.ln(space_paragraph * 2)
                 begin = False
 
@@ -859,7 +884,7 @@ class Generat_payroll:
             list_sum_comissao.append(sum_comissao)
             list_sum_comissao_compliance.append(sum_comissao_compliance)
             list_percentage_compliance.append(percentage_compliance)
-        if self.profession == 'Vendedor':
+        if self.column_profissao == 'Vendedor':
             data = {
                 'TOTAL': list_ata,
                 # 'CRÉDITO': list_sum_credito,
@@ -880,10 +905,6 @@ class Generat_payroll:
         pdf.ln(space_paragraph)
         text = ''
         text2 = ''
-        # if self.profession == 'Gerente':
-        #     text = f'TOTAL COMISSÃO: R$ {sum_all_comissao_gerente}'
-        # else:
-        #     text = f'TOTAL COMISSÃO: R$ {sum_all_comissao}'
         pdf.add_text_to_end_of_line(comissao, size_font, size_line)
         pdf.ln(space_paragraph)
         pdf.ln(space_paragraph)
@@ -899,389 +920,404 @@ class Generat_payroll:
         new_folder = os.path.join(folder_documnts, "RECIBO")
         if not os.path.exists(new_folder):
             os.makedirs(new_folder)
-        name_ata = self.data_ata_single
-        name_ata = name_ata.replace('/', ' ')
-        if self.word == '_Gerente':
+        name_ata = self.date_ata_single
+        name_ata = name_ata.replace('/', ' ').lower().capitalize()
+        if self.profession == 'Gerente':
             text_profession = 'Supervisor'
+        elif self.profession == 'Gerente_geral':
+            text_profession = 'Gerente'
+        elif self.profession == 'Parceiro':
+            text_profession = 'Parceiro'
         else:
-            text_profession = ''
-        name_file = f'RP {text_profession} {name_ata} {vendedor}.pdf'
+            text_profession = 'Vendedor'
+        text_seller = ''
+        words_sellers = vendedor.lower().split()
+        for word_seller in words_sellers:
+            if len(word_seller) >= 3:
+                word_seller = word_seller.capitalize()
+            text_seller += " " + word_seller
+        name_file = f'RP {text_profession} {name_ata} {text_seller}.pdf'
         path_file = os.path.join(new_folder, name_file)
         pdf.output(path_file)
         return comissao, vendedor
 
 
-if __name__ == '__main__':
-    generat_payroll = Generat_payroll()
-    is_gerente = True
-    # is_gerente = False
-    model = '1'
-    model = '2'
-    seller_single_unit = ''
-    # seller_single_unit = 'MARIA ILLYEDJA RODRIGUES DE SOUZA'
-    # seller_single_unit = 'PARCEIRINHO EQUIPE - VALMON'
-    # seller_single_unit = 'DENISE VITOR COSTA'
-    # 'ANTONIO HELIO DE SOUSA TORRES',
-    column_vendedor = 'Vendedor'
-    column_gerente = 'Gerente'
-    column_cargo = 'Cargo'
-    column_administradora = 'Administradora'
-    column_tabela = 'Tabela'
-    column_dt_pag_por = 'Dt pag. por'
-    column_1p_referencia = '1P referencia'
-    column_1P_recebera = '1P recebera'
-    column_D_referencia = 'D+ referencia'
-    column_D_recebera = 'D+ recebera'
-    column_FAT_referencia = 'FAT referencia'
-    column_FAT_recebera = 'FAT recebera'
-    column_credito = 'Crédito'
-    column_comissao = 'Comissão'
-    column_situacao = 'Situação'
-    column_ata_cad_Adm = 'ATA Cad Adm'
-    column_ata_entrega = 'ATA Entrega'
-    column_sma_ent = 'Sma Ent'
-    column_sma_cad_adm = 'Sma Cad Adm'
-    column_cliente = 'Cliente'
-    column_n_contrato = 'Nº Contrato'
-    column_grupo = 'Grupo'
-    column_cota = 'Cota'
-    column_data_entrega = 'Data de Entrega'
-    column_cad_adm = 'Data Cad. Adm'
-    column_new_parcela = 'Parcela'
-    column_new_adimplencia = 'Adimplência'
-    column_new_porcentagem_comissão = '%'
-    column_ata_entrega_qtd_cotas = 'ATA Entrega qtd cotas'
-    column_ata_entrega_qtd_cotas_ger = 'ATA Entrega qtd cotas Ger'
-    column_ata_cad_adm_qtd_cotas = 'ATA Cad Adm qtd cotas'
-    column_ata_cad_adm_qtd_cotas_ger = 'ATA Cad Adm qtd cotas Ger'
-    # definição de variavel
-    if is_gerente:
-        profession = column_gerente
-        word = '_Gerente'
-    else:
-        profession = column_vendedor
-        word = ''
-    data_ata_single = 'MAIO/2024'
-    table_full = pd.read_csv(
-        "tables\\tableMerge.csv",
-        sep=';',
-        encoding='utf-8',
-        dtype=str
-    )
-    generat_payroll.table_full = table_full
-    generat_payroll.num_columns = ['ATA ', 'º Parc']
-    num_atas_parc = generat_payroll.number  # num col -> ATA {N} º Parc
-    list_columns_full_ata = [column_ata_entrega, column_ata_cad_Adm]
-    list_columns_full_weekly = [column_sma_ent, column_sma_cad_adm]
-    list_columns_new = [
-        column_new_parcela,
-        column_new_adimplencia,
-        column_new_porcentagem_comissão
-    ]
-    list_columns_end = [
-        column_new_parcela,
-        column_administradora,
-        column_n_contrato,
-        column_data_entrega,
-        column_cliente,
-        column_credito,
-        column_new_porcentagem_comissão,
-        column_comissao,
-        column_new_adimplencia,
-        # column_cad_adm,
-        # column_grupo,
-        # column_cota,
-    ]
+# if __name__ == '__main__':
+#     generat_payroll = Generat_payroll()
+#     is_gerente = True
+#     # is_gerente = False
+#     model = '1'
+#     model = '2'
+#     seller_single_unit = ''
+#     # seller_single_unit = 'MARIA ILLYEDJA RODRIGUES DE SOUZA'
+#     # seller_single_unit = 'PARCEIRINHO EQUIPE - VALMON'
+#     # seller_single_unit = 'DENISE VITOR COSTA'
+#     # 'ANTONIO HELIO DE SOUSA TORRES',
+#     column_vendedor = 'Vendedor'
+#     column_gerente = 'Gerente'
+#     column_cargo = 'Cargo'
+#     column_administradora = 'Administradora'
+#     column_tabela = 'Tabela'
+#     column_dt_pag_por = 'Dt pag. por'
+#     column_1p_referencia = '1P referencia'
+#     column_1P_recebera = '1P recebera'
+#     column_D_referencia = 'D+ referencia'
+#     column_D_recebera = 'D+ recebera'
+#     column_FAT_referencia = 'FAT referencia'
+#     column_FAT_recebera = 'FAT recebera'
+#     column_credito = 'Crédito'
+#     column_comissao = 'Comissão'
+#     column_situacao = 'Situação'
+#     column_ata_cad_adm = 'ATA Cad Adm'
+#     column_ata_entrega = 'ATA Entrega'
+#     column_sma_ent = 'Sma Ent'
+#     column_sma_cad_adm = 'Sma Cad Adm'
+#     column_cliente = 'Cliente'
+#     column_n_contrato = 'Nº Contrato'
+#     column_grupo = 'Grupo'
+#     column_cota = 'Cota'
+#     column_data_entrega = 'Data de Entrega'
+#     column_cad_adm = 'Data Cad. Adm'
+#     column_new_parcela = 'Parcela'
+#     column_new_adimplencia = 'Adimplência'
+#     column_new_porcentagem_comissão = '%'
+#     column_ata_entrega_qtd_cotas = 'ATA Entrega qtd cotas'
+#     column_ata_entrega_qtd_cotas_ger = 'ATA Entrega qtd cotas Ger'
+#     column_ata_cad_adm_qtd_cotas = 'ATA Cad Adm qtd cotas'
+#     column_ata_cad_adm_qtd_cotas_ger = 'ATA Cad Adm qtd cotas Ger'
+#     # definição de variavel
+#     if is_gerente:
+#         profession = column_gerente
+#         word = '_Gerente'
+#     else:
+#         profession = column_vendedor
+#         word = ''
+#     date_ata_single = 'MAIO/2024'
+#     table_full = pd.read_csv(
+#         "tables\\tableMerge.csv",
+#         sep=';',
+#         encoding='utf-8',
+#         dtype=str
+#     )
+#     generat_payroll.table_full = table_full
+#     generat_payroll.num_columns = ['ATA ', 'º Parc']
+#     num_atas_parc = generat_payroll.number  # num col -> ATA {N} º Parc
+#     list_columns_full_ata = [column_ata_entrega, column_ata_cad_adm]
+#     list_columns_full_weekly = [column_sma_ent, column_sma_cad_adm]
+#     list_columns_new = [
+#         column_new_parcela,
+#         column_new_adimplencia,
+#         column_new_porcentagem_comissão
+#     ]
+#     list_columns_end = [
+#         column_new_parcela,
+#         column_administradora,
+#         column_n_contrato,
+#         column_data_entrega,
+#         column_cliente,
+#         column_credito,
+#         column_new_porcentagem_comissão,
+#         column_comissao,
+#         column_new_adimplencia,
+#         # column_cad_adm,
+#         # column_grupo,
+#         # column_cota,
+#     ]
 
-    list_columns_ata_ent = [
-        column_ata_entrega_qtd_cotas,
-        column_ata_entrega_qtd_cotas_ger
-    ]
-    list_columns_ata_cad = [
-        column_ata_cad_adm_qtd_cotas,
-        column_ata_cad_adm_qtd_cotas_ger
-    ]
-    # Preencher o restante das colunas sequenciais
-    for i in range(2, num_atas_parc + 1):
-        list_columns_full_ata.append(f'ATA {i}º Parc')
-        list_columns_full_weekly.append(f'Sma {i}º Parc')
-    list_seller_single_all = []
+#     list_columns_ata_ent = [
+#         column_ata_entrega_qtd_cotas,
+#         column_ata_entrega_qtd_cotas_ger
+#     ]
+#     list_columns_ata_cad = [
+#         column_ata_cad_adm_qtd_cotas,
+#         column_ata_cad_adm_qtd_cotas_ger
+#     ]
+#     # Preencher o restante das colunas sequenciais
+#     for i in range(2, num_atas_parc + 1):
+#         list_columns_full_ata.append(f'ATA {i}º Parc')
+#         list_columns_full_weekly.append(f'Sma {i}º Parc')
+#     list_seller_single_all = []
 
-    # é por ata ou por semana ata?
-    # ira selecionar tabela que tenha data_ata_single e o
-    # profesion(Vendedor ou Gerete)
-    for column in list_columns_full_ata:
-        table_full_ata_def = (
-            table_full.loc[table_full[column] == data_ata_single]
-        )
-        list_unique = table_full_ata_def[profession].unique()
-        if len(list_unique) > 0:
-            list_seller_single_all.extend(list_unique)
+#     # é por ata ou por semana ata?
+#     # ira selecionar tabela que tenha date_ata_single e o
+#     # profesion(Vendedor ou Gerete)
+#     for column in list_columns_full_ata:
+#         table_full_ata_def = (
+#             table_full.loc[table_full[column] == date_ata_single]
+#         )
+#         list_unique = table_full_ata_def[profession].unique()
+#         if len(list_unique) > 0:
+#             list_seller_single_all.extend(list_unique)
 
-    list_seller_single = []
-    for seller in list_seller_single_all:
-        if seller not in list_seller_single:
-            list_seller_single.append(seller)
-    list_seller_single.sort()
+#     list_seller_single = []
+#     for seller in list_seller_single_all:
+#         if seller not in list_seller_single:
+#             list_seller_single.append(seller)
+#     list_seller_single.sort()
 
-    comissao_anterior1 = 0
-    vendedor_anterior1 = ''
-    comissao_anterior2 = 0
-    vendedor_anterior2 = ''
-    comissao_anterior3 = 0
-    vendedor_anterior3 = ''
-    for seller_single in list_seller_single:
-        if seller_single_unit:
-            if seller_single_unit not in seller_single:
-                continue
-        print('\n \n', seller_single)
-        generat_payroll = Generat_payroll()
-        pathTables = Path(__file__).parent.parent / 'tables'
-        name_arq = 'table_teste.csv'
-        # arqTableTeste = pathTables / name_arq
-        table_full = pd.read_csv(
-            "tables\\tableMerge.csv",
-            sep=';',
-            encoding='utf-8',
-            dtype=str
-        )
+#     comissao_anterior1 = 0
+#     vendedor_anterior1 = ''
+#     comissao_anterior2 = 0
+#     vendedor_anterior2 = ''
+#     comissao_anterior3 = 0
+#     vendedor_anterior3 = ''
+#     for seller_single in list_seller_single:
+#         if seller_single_unit:
+#             if seller_single_unit not in seller_single:
+#                 continue
+#         print('\n \n', seller_single)
+#         generat_payroll = Generat_payroll()
+#         pathTables = Path(__file__).parent.parent / 'tables'
+#         name_arq = 'table_teste.csv'
+#         # arqTableTeste = pathTables / name_arq
+#         table_full = pd.read_csv(
+#             "tables\\tableMerge.csv",
+#             sep=';',
+#             encoding='utf-8',
+#             dtype=str
+#         )
 
-        # column_situacao_d = 'º Parc'
+#         # column_situacao_d = 'º Parc'
 
-        data_date_pay = 'DIA DA SEMANA'
-        column_cadastro = 'CADASTRO'
+#         data_date_pay = 'DIA DA SEMANA'
+#         data_cadastro = 'CADASTRO'
 
-        list_situacao_to_comission = ['NORMAL', 'PAGA']
-        list_recebera_to_comission = ['SIM']
-        list_condition_ata = ['Entrega', 'Cad Adm', 'Parc', 'FAT']
-        list_cargo_not_calc_commis = ['ESTAGIÁRIO', 'ZERADO']
+#         list_situacao_to_comission = ['NORMAL', 'PAGA']
+#         list_recebera_to_comission = ['SIM']
+#         list_condition_ata = ['Entrega', 'Cad Adm', 'Parc', 'FAT']
+#         list_cargo_not_calc_commis = ['ESTAGIÁRIO', 'ZERADO']
 
-        # Definir o número de grupos e de parcelas
+#         # Definir o número de grupos e de parcelas
 
-        generat_payroll.table_full = table_full
+#         generat_payroll.table_full = table_full
 
-        generat_payroll.num_columns = ['ATA ', 'º Parc']
-        num_atas_parc = generat_payroll.number  # num col -> ATA {N} º Parc
-        generat_payroll.num_columns = ['', ' Qtd. Cotas Inicial']
-        num_regras = generat_payroll.number  # num col -> {N} Qtd. Cotas Inicia
-        generat_payroll.num_columns = [str(num_regras) + ' Parc ', '']
-        num_parcelas = generat_payroll.number  # num col  -> Parc {N}
+#         generat_payroll.num_columns = ['ATA ', 'º Parc']
+#         num_atas_parc = generat_payroll.number  # num col -> ATA {N} º Parc
+#         generat_payroll.num_columns = ['', ' Qtd. Cotas Inicial']
+#         num_regras = generat_payroll.number  # num col -> {N} Qtd. Cotas
+# Inicia
+#         generat_payroll.num_columns = [str(num_regras) + ' Parc ', '']
+#         num_parcelas = generat_payroll.number  # num col  -> Parc {N}
 
-        generat_payroll.word = word
-        list_columns_full_ata = [column_ata_entrega, column_ata_cad_Adm]
-        list_columns_full_weekly = [column_sma_ent, column_sma_cad_adm]
-        # Preencher a lista sequencialmente
-        for i in range(2, num_atas_parc + 1):
-            list_columns_full_ata.append(f'ATA {i}º Parc')
-            list_columns_full_weekly.append(f'Sma {i}º Parc')
-        list_qtd_cotas_parc = []
-        list_qtd_cotas_inicial = []
-        list_qtd_cotas_final = []
-        dic_qtd_cotas_parc = {}
-        for i in range(1, num_regras + 1):
-            list_qtd_cotas_parc.append(f'{i} Qtd. Cotas Inicial{word}')
-            list_qtd_cotas_inicial.append(f'{i} Qtd. Cotas Inicial{word}')
-            list_qtd_cotas_parc.append(f'{i} Qtd. Cotas Final{word}')
-            list_qtd_cotas_final.append(f'{i} Qtd. Cotas Final{word}')
-            list = []
-            for j in range(1, num_parcelas + 1):
-                list_qtd_cotas_parc.append(f'{i} Parc {j}{word}')
-                list.append(f'{i} Parc {j}{word}')
-            chave = f'{i} Qtd. Cotas Inicial{word}'
-            valor = [f'{i} Qtd. Cotas Final{word}'] + list
-            dic_qtd_cotas_parc[chave] = valor
+#         generat_payroll.word = word
+#         list_columns_full_ata = [column_ata_entrega, column_ata_cad_adm]
+#         list_columns_full_weekly = [column_sma_ent, column_sma_cad_adm]
+#         # Preencher a lista sequencialmente
+#         for i in range(2, num_atas_parc + 1):
+#             list_columns_full_ata.append(f'ATA {i}º Parc')
+#             list_columns_full_weekly.append(f'Sma {i}º Parc')
+#         list_qtd_cotas_parc = []
+#         list_qtd_cotas_inicial = []
+#         list_qtd_cotas_final = []
+#         dic_qtd_cotas_parc = {}
+#         for i in range(1, num_regras + 1):
+#             list_qtd_cotas_parc.append(f'{i} Qtd. Cotas Inicial{word}')
+#             list_qtd_cotas_inicial.append(f'{i} Qtd. Cotas Inicial{word}')
+#             list_qtd_cotas_parc.append(f'{i} Qtd. Cotas Final{word}')
+#             list_qtd_cotas_final.append(f'{i} Qtd. Cotas Final{word}')
+#             list = []
+#             for j in range(1, num_parcelas + 1):
+#                 list_qtd_cotas_parc.append(f'{i} Parc {j}{word}')
+#                 list.append(f'{i} Parc {j}{word}')
+#             chave = f'{i} Qtd. Cotas Inicial{word}'
+#             valor = [f'{i} Qtd. Cotas Final{word}'] + list
+#             dic_qtd_cotas_parc[chave] = valor
 
-        # Preencher o dicionário sequencialmente
-        # for i in range(1, num_grupos + 1):
-        #     chave_inicial = f'{i} Qtd. Cotas Inicial'
-        #     valores = (
-        #         [f'{i} Qtd. Cotas Final'] +
-        #         [f'{i} Parc {j}' for j in range(1, num_parcelas + 1)]
-        #     )
-        #     dic_qtd_cotas_parc[chave_inicial] = valores
+#         # Preencher o dicionário sequencialmente
+#         # for i in range(1, num_grupos + 1):
+#         #     chave_inicial = f'{i} Qtd. Cotas Inicial'
+#         #     valores = (
+#         #         [f'{i} Qtd. Cotas Final'] +
+#         #         [f'{i} Parc {j}' for j in range(1, num_parcelas + 1)]
+#         #     )
+#         #     dic_qtd_cotas_parc[chave_inicial] = valores
 
-        # list_qtd_cotas_parc = [
-        #     '1 Qtd. Cotas Inicial', '1 Qtd. Cotas Final',
-        #     '1 Parc 1', '1 Parc 2', '1 Parc 3', '1 Parc 4', '1 Parc 5',
-        #     '1 Parc 6', '1 Parc 7', '1 Parc 8', '1 Parc 9', '1 Parc 10',
-        #     '2 Qtd. Cotas Inicial', '2 Qtd. Cotas Final',
-        #     '2 Parc 1', '2 Parc 2', '2 Parc 3', '2 Parc 4', '2 Parc 5',
-        #     '2 Parc 6', '2 Parc 7', '2 Parc 8', '2 Parc 9', '2 Parc 10',
-        #     '3 Qtd. Cotas Inicial', '3 Qtd. Cotas Final',
-        #     '3 Parc 1', '3 Parc 2', '3 Parc 3', '3 Parc 4', '3 Parc 5',
-        #     '3 Parc 6', '3 Parc 7', '3 Parc 8', '3 Parc 9', '3 Parc 10',
-        #     '4 Qtd. Cotas Inicial', '4 Qtd. Cotas Final',
-        #     '4 Parc 1', '4 Parc 2', '4 Parc 3', '4 Parc 4', '4 Parc 5',
-        #     '4 Parc 6', '4 Parc 7', '4 Parc 8', '4 Parc 9', '4 Parc 10',
-        #     '5 Qtd. Cotas Inicial', '5 Qtd. Cotas Final',
-        #     '5 Parc 1', '5 Parc 2', '5 Parc 3', '5 Parc 4', '5 Parc 5',
-        #     '5 Parc 6', '5 Parc 7', '5 Parc 8', '5 Parc 9', '5 Parc 10',
-        # ]
+#         # list_qtd_cotas_parc = [
+#         #     '1 Qtd. Cotas Inicial', '1 Qtd. Cotas Final',
+#         #     '1 Parc 1', '1 Parc 2', '1 Parc 3', '1 Parc 4', '1 Parc 5',
+#         #     '1 Parc 6', '1 Parc 7', '1 Parc 8', '1 Parc 9', '1 Parc 10',
+#         #     '2 Qtd. Cotas Inicial', '2 Qtd. Cotas Final',
+#         #     '2 Parc 1', '2 Parc 2', '2 Parc 3', '2 Parc 4', '2 Parc 5',
+#         #     '2 Parc 6', '2 Parc 7', '2 Parc 8', '2 Parc 9', '2 Parc 10',
+#         #     '3 Qtd. Cotas Inicial', '3 Qtd. Cotas Final',
+#         #     '3 Parc 1', '3 Parc 2', '3 Parc 3', '3 Parc 4', '3 Parc 5',
+#         #     '3 Parc 6', '3 Parc 7', '3 Parc 8', '3 Parc 9', '3 Parc 10',
+#         #     '4 Qtd. Cotas Inicial', '4 Qtd. Cotas Final',
+#         #     '4 Parc 1', '4 Parc 2', '4 Parc 3', '4 Parc 4', '4 Parc 5',
+#         #     '4 Parc 6', '4 Parc 7', '4 Parc 8', '4 Parc 9', '4 Parc 10',
+#         #     '5 Qtd. Cotas Inicial', '5 Qtd. Cotas Final',
+#         #     '5 Parc 1', '5 Parc 2', '5 Parc 3', '5 Parc 4', '5 Parc 5',
+#         #     '5 Parc 6', '5 Parc 7', '5 Parc 8', '5 Parc 9', '5 Parc 10',
+#         # ]
 
-        # dic_qtd_cotas_parc = {
-        #     '1 Qtd. Cotas Inicial': [
-        #         '1 Qtd. Cotas Final',
-        #         '1 Parc 1', '1 Parc 2', '1 Parc 3', '1 Parc 4', '1 Parc 5',
-        #         '1 Parc 6', '1 Parc 7', '1 Parc 8', '1 Parc 9', '1 Parc 10'
-        #     ],
-        #     '2 Qtd. Cotas Inicial': [
-        #         '2 Qtd. Cotas Final',
-        #         '2 Parc 1', '2 Parc 2', '2 Parc 3', '2 Parc 4', '2 Parc 5',
-        #         '2 Parc 6', '2 Parc 7', '2 Parc 8', '2 Parc 9', '2 Parc 10'
-        #     ],
-        #     '3 Qtd. Cotas Inicial': [
-        #         '3 Qtd. Cotas Final',
-        #         '3 Parc 1', '3 Parc 2', '3 Parc 3', '3 Parc 4', '3 Parc 5',
-        #         '3 Parc 6', '3 Parc 7', '3 Parc 8', '3 Parc 9', '3 Parc 10'
-        #     ],
-        #     '4 Qtd. Cotas Inicial': [
-        #         '4 Qtd. Cotas Final',
-        #         '4 Parc 1', '4 Parc 2', '4 Parc 3', '4 Parc 4', '4 Parc 5',
-        #         '4 Parc 6', '4 Parc 7', '4 Parc 8', '4 Parc 9', '4 Parc 10'
-        #     ],
-        #     '5 Qtd. Cotas Inicial': [
-        #         '5 Qtd. Cotas Final',
-        #         '5 Parc 1', '5 Parc 2', '5 Parc 3', '5 Parc 4', '5 Parc 5',
-        #         '5 Parc 6', '5 Parc 7', '5 Parc 8', '5 Parc 9', '5 Parc 10'
-        #     ],
-        #     '6 Qtd. Cotas Inicial': [
-        #         '6 Qtd. Cotas Final',
-        #         '6 Parc 1', '6 Parc 2', '6 Parc 3', '6 Parc 4', '6 Parc 5',
-        #         '6 Parc 6', '6 Parc 7', '6 Parc 8', '6 Parc 9', '6 Parc 10'
-        #     ]
-        # }
+#         # dic_qtd_cotas_parc = {
+#         #     '1 Qtd. Cotas Inicial': [
+#         #         '1 Qtd. Cotas Final',
+#         #         '1 Parc 1', '1 Parc 2', '1 Parc 3', '1 Parc 4', '1 Parc 5',
+#         #         '1 Parc 6', '1 Parc 7', '1 Parc 8', '1 Parc 9', '1 Parc 10'
+#         #     ],
+#         #     '2 Qtd. Cotas Inicial': [
+#         #         '2 Qtd. Cotas Final',
+#         #         '2 Parc 1', '2 Parc 2', '2 Parc 3', '2 Parc 4', '2 Parc 5',
+#         #         '2 Parc 6', '2 Parc 7', '2 Parc 8', '2 Parc 9', '2 Parc 10'
+#         #     ],
+#         #     '3 Qtd. Cotas Inicial': [
+#         #         '3 Qtd. Cotas Final',
+#         #         '3 Parc 1', '3 Parc 2', '3 Parc 3', '3 Parc 4', '3 Parc 5',
+#         #         '3 Parc 6', '3 Parc 7', '3 Parc 8', '3 Parc 9', '3 Parc 10'
+#         #     ],
+#         #     '4 Qtd. Cotas Inicial': [
+#         #         '4 Qtd. Cotas Final',
+#         #         '4 Parc 1', '4 Parc 2', '4 Parc 3', '4 Parc 4', '4 Parc 5',
+#         #         '4 Parc 6', '4 Parc 7', '4 Parc 8', '4 Parc 9', '4 Parc 10'
+#         #     ],
+#         #     '5 Qtd. Cotas Inicial': [
+#         #         '5 Qtd. Cotas Final',
+#         #         '5 Parc 1', '5 Parc 2', '5 Parc 3', '5 Parc 4', '5 Parc 5',
+#         #         '5 Parc 6', '5 Parc 7', '5 Parc 8', '5 Parc 9', '5 Parc 10'
+#         #     ],
+#         #     '6 Qtd. Cotas Inicial': [
+#         #         '6 Qtd. Cotas Final',
+#         #         '6 Parc 1', '6 Parc 2', '6 Parc 3', '6 Parc 4', '6 Parc 5',
+#         #         '6 Parc 6', '6 Parc 7', '6 Parc 8', '6 Parc 9', '6 Parc 10'
+#         #     ]
+#         # }
 
-        dic_months = {
-            'JANEIRO': 1, 'FEVEREIRO': 2, 'MARÇO': 3, 'ABRIL': 4, 'MAIO': 5,
-            'JUNHO': 6, 'JULHO': 7, 'AGOSTO': 8, 'SETEMBRO': 9, 'OUTUBRO': 10,
-            'NOVEMBRO': 11, 'DEZEMBRO': 12
-        }
+#         dic_months = {
+#             'JANEIRO': 1, 'FEVEREIRO': 2, 'MARÇO': 3, 'ABRIL': 4, 'MAIO': 5,
+#             'JUNHO': 6, 'JULHO': 7, 'AGOSTO': 8, 'SETEMBRO': 9, 'OUTUBRO':
+#               10,
+#             'NOVEMBRO': 11, 'DEZEMBRO': 12
+#         }
 
-        # variaveis criada atravez de outras
+#         # variaveis criada atravez de outras
 
-        list_columns_full_ata_entrega = [
-            item for item in list_columns_full_ata if item != column_ata_cad_Adm]  # noqa
-        list_columns_full_ata_cadastro = [
-            item for item in list_columns_full_ata if item != column_ata_entrega]  # noqa
+#         list_columns_full_ata_entrega = [
+#             item for item in list_columns_full_ata if item != column_ata_cad_adm]  # noqa
+#         list_columns_full_ata_cadastro = [
+#             item for item in list_columns_full_ata if item != column_ata_entrega]  # noqa
 
-        name_columns_full = table_full.columns.tolist()
+#         name_columns_full = table_full.columns.tolist()
 
-        table_full_ata = table_full[
-            table_full[column_dt_pag_por] != data_date_pay]
-        table_full_weekly = table_full[
-            table_full[column_dt_pag_por] == data_date_pay]
-        table_seller_single = table_full[
-            table_full[profession] == seller_single]
-        generat_payroll.table_seller_single = table_seller_single
+#         table_full_ata = table_full[
+#             table_full[column_dt_pag_por] != data_date_pay]
+#         table_full_weekly = table_full[
+#             table_full[column_dt_pag_por] == data_date_pay]
+#         table_seller_single = table_full[
+#             table_full[profession] == seller_single]
+#         generat_payroll.table_seller_single = table_seller_single
 
-        quantity_line_full = table_full.shape[0]
-        quantity_line_ata = table_full_ata.shape[0]
-        quantity_line_weekly = table_full_weekly.shape[0]
+#         quantity_line_full = table_full.shape[0]
+#         quantity_line_ata = table_full_ata.shape[0]
+#         quantity_line_weekly = table_full_weekly.shape[0]
 
-        # exportar variaveis
-        generat_payroll.data_ata_single = data_ata_single
-        generat_payroll.seller_single = seller_single
-        # generat_payroll.arqTableTeste = arqTableTeste
-        generat_payroll.model = model
+#         # exportar variaveis
+#         generat_payroll.date_ata_single = date_ata_single
+#         generat_payroll.seller_single = seller_single
+#         # generat_payroll.arqTableTeste = arqTableTeste
+#         generat_payroll.model = model
 
-        generat_payroll.column_credito = column_credito
-        generat_payroll.column_administradora = column_administradora
-        generat_payroll.column_tabela = column_tabela
-        generat_payroll.profession = profession
-        generat_payroll.column_cargo = column_cargo
-        generat_payroll.column_dt_pag_por = column_dt_pag_por
-        generat_payroll.column_1p_referencia = column_1p_referencia
-        generat_payroll.column_1P_recebera = column_1P_recebera
-        generat_payroll.column_D_referencia = column_D_referencia
-        generat_payroll.column_D_recebera = column_D_recebera
-        generat_payroll.column_FAT_referencia = column_FAT_referencia
-        generat_payroll.column_FAT_recebera = column_FAT_recebera
-        generat_payroll.column_comissao = column_comissao
-        generat_payroll.column_situacao = column_situacao
-        generat_payroll.column_ata_entrega = column_ata_entrega
-        generat_payroll.column_ata_cad_Adm = column_ata_cad_Adm
-        # generat_payroll.column_situacao_d = column_situacao_d
+#         generat_payroll.column_credito = column_credito
+#         generat_payroll.column_administradora = column_administradora
+#         generat_payroll.column_tabela = column_tabela
+#         generat_payroll.profession = profession
+#         generat_payroll.column_cargo = column_cargo
+#         generat_payroll.column_dt_pag_por = column_dt_pag_por
+#         generat_payroll.column_1p_referencia = column_1p_referencia
+#         generat_payroll.column_1P_recebera = column_1P_recebera
+#         generat_payroll.column_D_referencia = column_D_referencia
+#         generat_payroll.column_D_recebera = column_D_recebera
+#         generat_payroll.column_FAT_referencia = column_FAT_referencia
+#         generat_payroll.column_FAT_recebera = column_FAT_recebera
+#         generat_payroll.column_comissao = column_comissao
+#         generat_payroll.column_situacao = column_situacao
+#         generat_payroll.column_ata_entrega = column_ata_entrega
+#         generat_payroll.column_ata_cad_adm = column_ata_cad_adm
+#         # generat_payroll.column_situacao_d = column_situacao_d
 
-        generat_payroll.data_date_pay = data_date_pay
-        generat_payroll.column_cadastro = column_cadastro
+#         generat_payroll.data_date_pay = data_date_pay
+#         generat_payroll.data_cadastro = data_cadastro
 
-        generat_payroll.list_situacao_to_comission = list_situacao_to_comission
-        generat_payroll.list_recebera_to_comission = list_recebera_to_comission
-        generat_payroll.list_condition_ata = list_condition_ata
-        generat_payroll.list_cargo_not_calc_commis = list_cargo_not_calc_commis
-        generat_payroll.list_columns_new = list_columns_new
-        generat_payroll.list_columns_end = list_columns_end
-        generat_payroll.list_columns_ata_ent = list_columns_ata_ent
-        generat_payroll.list_columns_ata_cad = list_columns_ata_cad
+#         generat_payroll.list_situacao_to_comission =
+#  list_situacao_to_comission
+#         generat_payroll.list_recebera_to_comission =
+# list_recebera_to_comission
+#         generat_payroll.list_condition_ata = list_condition_ata
+#         generat_payroll.list_cargo_not_calc_commis =
+# list_cargo_not_calc_commis
+#         generat_payroll.list_columns_new = list_columns_new
+#         generat_payroll.list_columns_end = list_columns_end
+#         generat_payroll.list_columns_ata_ent = list_columns_ata_ent
+#         generat_payroll.list_columns_ata_cad = list_columns_ata_cad
 
-        generat_payroll.list_qtd_cotas_inicial = list_qtd_cotas_inicial
-        generat_payroll.list_qtd_cotas_final = list_qtd_cotas_final
-        generat_payroll.list_columns_full_ata = list_columns_full_ata
-        generat_payroll.list_columns_full_weekly = list_columns_full_weekly
-        generat_payroll.list_columns_full_ata_entrega = (
-            list_columns_full_ata_entrega)
-        generat_payroll.list_columns_full_ata_cadastro = (
-            list_columns_full_ata_cadastro)
-        generat_payroll.list_qtd_cotas_parc = list_qtd_cotas_parc
-        generat_payroll.name_columns_full = name_columns_full
+#         generat_payroll.list_qtd_cotas_inicial = list_qtd_cotas_inicial
+#         generat_payroll.list_qtd_cotas_final = list_qtd_cotas_final
+#         generat_payroll.list_columns_full_ata = list_columns_full_ata
+#         generat_payroll.list_columns_full_weekly = list_columns_full_weekly
+#         generat_payroll.list_columns_full_ata_entrega = (
+#             list_columns_full_ata_entrega)
+#         generat_payroll.list_columns_full_ata_cadastro = (
+#             list_columns_full_ata_cadastro)
+#         generat_payroll.list_qtd_cotas_parc = list_qtd_cotas_parc
+#         generat_payroll.name_columns_full = name_columns_full
 
-        generat_payroll.quantity_line_full = quantity_line_full
-        generat_payroll.quantity_line_ata = quantity_line_ata
-        generat_payroll.quantity_line_weekly = quantity_line_weekly
+#         generat_payroll.quantity_line_full = quantity_line_full
+#         generat_payroll.quantity_line_ata = quantity_line_ata
+#         generat_payroll.quantity_line_weekly = quantity_line_weekly
 
-        generat_payroll.dic_qtd_cotas_parc = dic_qtd_cotas_parc
-        generat_payroll.dic_months = dic_months
+#         generat_payroll.dic_qtd_cotas_parc = dic_qtd_cotas_parc
+#         generat_payroll.dic_months = dic_months
 
-        generat_payroll.table_full_ata = table_full_ata
-        generat_payroll.table_full_weekly = table_full_weekly
+#         generat_payroll.table_full_ata = table_full_ata  # type: ignore
+#         generat_payroll.table_full_weekly = table_full_weekly  # type: ignore
 
-        # fim da exportacao variavel
-        list_columns_str_to_float = (
-            list_qtd_cotas_inicial + list_qtd_cotas_final
-        )
-        list_columns_str_to_float.append(column_credito)
-        generat_payroll.list_columns_str_to_float = list_columns_str_to_float
-        generat_payroll.convert_str_float = table_full
-        # generat_payroll.table_full = generat_payroll.convert_str_float
-        generat_payroll.columns_to_list_full_seller()
-        generat_payroll.columns_ata_full_seller_single()
-        generat_payroll.tables_columns_ata_seller_single()
-        generat_payroll.tables_concat_seller_single()
-        generat_payroll.is_to_stop_program()
-        stop_program = generat_payroll.stop_program
-        if stop_program:
-            continue
-        generat_payroll.create_dictionary_datas()
-        generat_payroll.table_list_administradora_add_line()
-        generat_payroll.table_list_administradora_line_add_sum()
-        generat_payroll.table_list_administradora_sum_add_qtdcotasinicial()
-        generat_payroll.table_list_administradora_sum_add_full()
-        generat_payroll.add_column_comissao()
-        # generat_payroll.table_columns_end()
-        generat_payroll.edit_table()
-        comissao, vendedor = generat_payroll.table_convert_pdf()
-        comissao = comissao.replace('R$', '').replace(' ', '')
-        comissao = comissao.replace('.', '').replace(',', '.')
-        comissao = float(comissao)
-        if comissao >= comissao_anterior1:
-            comissao_anterior3 = comissao_anterior2
-            vendedor_anterior3 = vendedor_anterior2
-            comissao_anterior2 = comissao_anterior1
-            vendedor_anterior2 = vendedor_anterior1
-            comissao_anterior1 = comissao
-            vendedor_anterior1 = vendedor
-        elif comissao >= comissao_anterior2:
-            comissao_anterior3 = comissao_anterior2
-            vendedor_anterior3 = vendedor_anterior2
-            comissao_anterior2 = comissao
-            vendedor_anterior2 = vendedor
-        elif comissao >= comissao_anterior3:
-            comissao_anterior3 = comissao
-            vendedor_anterior3 = vendedor
-    text = f'1º maior comissão: {vendedor_anterior1}, '
-    text += f' sua comissão é: {comissao_anterior1} \n'
-    text += f'2º maior comissão: {vendedor_anterior2}, '
-    text += f' sua comissão é: {comissao_anterior2} \n'
-    text += f'3º maior comissão: {vendedor_anterior3}, '
-    text += f' sua comissão é: {comissao_anterior3}'
-    # print(text)
+#         # fim da exportacao variavel
+#         list_columns_str_to_float = (
+#             list_qtd_cotas_inicial + list_qtd_cotas_final
+#         )
+#         list_columns_str_to_float.append(column_credito)
+#         generat_payroll.list_columns_str_to_float = list_columns_str_to_float
+#         generat_payroll.convert_str_float = table_full
+#         # generat_payroll.table_full = generat_payroll.convert_str_float
+#         generat_payroll.columns_to_list_full_seller()
+#         generat_payroll.columns_ata_full_seller_single()
+#         generat_payroll.tables_columns_ata_seller_single()
+#         generat_payroll.tables_concat_seller_single()
+#         generat_payroll.is_to_stop_program()
+#         stop_program = generat_payroll.stop_program
+#         if stop_program:
+#             continue
+#         generat_payroll.create_dictionary_datas()
+#         generat_payroll.table_list_administradora_add_line()
+#         generat_payroll.table_list_administradora_line_add_sum()
+#         generat_payroll.table_list_administradora_sum_add_qtdcotasinicial()
+#         generat_payroll.table_list_administradora_sum_add_full()
+#         generat_payroll.add_column_comissao()
+#         # generat_payroll.table_columns_end()
+#         generat_payroll.edit_table()
+#         comissao, vendedor = generat_payroll.table_convert_pdf()
+#         comissao = comissao.replace('R$', '').replace(' ', '')
+#         comissao = comissao.replace('.', '').replace(',', '.')
+#         comissao = float(comissao)
+#         if comissao >= comissao_anterior1:
+#             comissao_anterior3 = comissao_anterior2
+#             vendedor_anterior3 = vendedor_anterior2
+#             comissao_anterior2 = comissao_anterior1
+#             vendedor_anterior2 = vendedor_anterior1
+#             comissao_anterior1 = comissao
+#             vendedor_anterior1 = vendedor
+#         elif comissao >= comissao_anterior2:
+#             comissao_anterior3 = comissao_anterior2
+#             vendedor_anterior3 = vendedor_anterior2
+#             comissao_anterior2 = comissao
+#             vendedor_anterior2 = vendedor
+#         elif comissao >= comissao_anterior3:
+#             comissao_anterior3 = comissao
+#             vendedor_anterior3 = vendedor
+#     text = f'1º maior comissão: {vendedor_anterior1}, '
+#     text += f' sua comissão é: {comissao_anterior1} \n'
+#     text += f'2º maior comissão: {vendedor_anterior2}, '
+#     text += f' sua comissão é: {comissao_anterior2} \n'
+#     text += f'3º maior comissão: {vendedor_anterior3}, '
+#     text += f' sua comissão é: {comissao_anterior3}'
+#     # print(text)

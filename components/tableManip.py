@@ -1,7 +1,6 @@
 import pandas as pd
 import numpy as np
 import re
-from time import sleep
 import locale
 
 
@@ -157,21 +156,27 @@ class TableManip:
                 else:
                     list_qtd_cotas_inicial_Gerente = list_qtd
                     break
-        #
+
         list_qtd_cotas_inicial = list_qtd_cotas_inicial[::-1]
         list_qtd_cotas_inicial_Gerente = list_qtd_cotas_inicial_Gerente[::-1]
+        # Lista de nome coluna -> 5 Qtd. Cotas Inicial, 4...
+        # '1 Qtd. Cotas Inicial'], ['5 Qtd. Cotas Inicial_Gerente', '4...
+        # '1 Qtd.Cotas Inicial_Gerente']])
         list_qtd_cotas_full = [list_qtd_cotas_inicial,
                                list_qtd_cotas_inicial_Gerente]
         for key in range(4, 8):
+            #  new_name_column ->'Total'        'ATA Entrega' 4, 'Sma Ent' 5,
+            #                                   'ATA Cad Adm 6, 'Sma Cad Adm 7'
             new_name_column = name_column[0] + ' ' + name_column[key]
             new_name_column_qtd_coats = name_column[key] + ' ' + 'qtd cotas'
             new_name_column_gerente = new_name_column + ' Ger'
-            new_name_column_qtd_coats_gerente = (
-                name_column[key] + ' ' + 'qtd cotas Ger')
-            list_name_columns = [new_name_column,
-                                 new_name_column_qtd_coats,
-                                 new_name_column_gerente,
-                                 new_name_column_qtd_coats_gerente]
+            new_name_column_qtd_coats_gerente = new_name_column_qtd_coats + ' Ger'  # noqa
+            list_name_columns = [
+                new_name_column,  # Total ATA Entrega                       0
+                new_name_column_qtd_coats,  # ATA ATA Entrega               1
+                new_name_column_gerente,  # Total ATA Entrega Ger           2
+                new_name_column_qtd_coats_gerente  # ATA ATA Entrega Ger    3
+            ]
             # for name in list_name:
             #     self.table[name] = ''
             for line in range(quantity_line):
@@ -184,33 +189,41 @@ class TableManip:
                 # list_num_cota = []
                 num_ger = 0
                 for key_list, profession in enumerate(list_profession):
+                    # soma da coluna 'Crédito' com  vendedor e a ata
                     sum_profession = self.table.loc[
-                        (self.table[name_column[key_list + 1]] == profession) &
-                        (self.table[name_column[key]] == ata),
-                        name_column[3]
+                        (self.table[
+                            name_column[key_list + 1]] == profession) & (
+                                self.table[name_column[key]] == ata),
+                        name_column[3]  # 'Crédito'
                     ].apply(lambda x: float(
                         x.replace(' ', '').replace('.', '').replace(',', '.')
                     )).sum()
                     n_col = key_list + num_ger
+
+                    # coluna Total ATA Entrega ou + Ger recebe valor
                     self.table.at[line, list_name_columns[n_col]] = (
                         locale.format_string(
                             "%.2f", sum_profession, grouping=True
                         )
                     )
-
+                    #  'ATA Entrega' 'ATA Cad Adm'
                     if key == 4 or key == 6:
+                        # vendedor 0  5 Qtd. Cotas Inicial, 4...  '1 Qtd. Cotas
+                        # gerente 1  5 Qtd. Cotas Inicial_Gerente', '4.. '1 Qtd
                         for column_qtd_cotas in list_qtd_cotas_full[key_list]:
+                            # receber o valor da coluna Qtd.
                             value_qc = self.table.iloc[line][column_qtd_cotas]
+                            # passar para o proximo se o valor nao exitir
+                            if value_qc is None:
+                                continue
                             if not isinstance(value_qc, float):
                                 value_qc = value_qc.replace('.', '')
                                 value_qc = value_qc.replace(',', '.')
                                 try:
-                                    if isinstance(
-                                            value_qc, str) and (
-                                                value_qc.strip() == ''):
+                                    if isinstance(value_qc, str) and (value_qc.strip() == ''):  # noqa
                                         value_qc = 0.0
                                     else:
-                                        value_qc = float(value_qc)
+                                        value_qc = float(value_qc)  # type: ignore # noqa
                                 except ValueError:
                                     value_qc = 0.0
                             if sum_profession >= value_qc:
@@ -219,36 +232,9 @@ class TableManip:
                                 )
                                 break
                         n_col = key_list + 1 + num_ger
-                        # print('n_col', n_col, '  key_list', key_list)
-                        self.table.at[line, list_name_columns[n_col]] = num_cota
+                        self.table.at[line, list_name_columns[n_col]] = num_cota  # noqa
 
                     num_ger += 1
-
-                # sum_value_gerente = self.table.loc[
-                #     (self.table[name_column[2]] == gerente) &
-                #     (self.table[name_column[key]] == ata),
-                #     name_column[3]
-                # ].apply(lambda x: float(
-                #     x.replace(' ', '').replace('.', '').replace(',', '.')
-                # )).sum()
-
-                #
-                # for column_qtd_cotas in list_qtd_cotas_inicial_Gerente:
-                #     value_qc = self.table.iloc[line][column_qtd_cotas]
-                #     if not isinstance(value_qc, float):
-                #         value_qc = value_qc.replace('.', '')
-                #         value_qc = value_qc.replace(',', '.')
-                #         value_qc = float(value_qc)
-                #     if sum_value_gerente >= value_qc:
-                #         num_cota_ge = column_qtd_cotas.replace(column_base[1], '')
-                #         break
-                # .apply(lambda x: locale.atof(x)).sum()
-
-                # list_sum[1] = locale.format_string("%.2f", list_sum[1], grouping=True)
-                # list_sum[0]
-                # self.table.at[line, (new_name_column + '1')] = list_num_cota[0]
-                # self.table.at[line, new_name_column_gerente] = list_sum[1]
-                # self.table.at[line, (new_name_column_gerente + '1')] = list_num_cota[1]
 
     @ property
     def del_column(self):

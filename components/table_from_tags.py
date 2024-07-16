@@ -45,9 +45,10 @@ class Table_from_tags:
         for letra in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ':
             az[letra] = []
         az_keys = list(az.keys())
-        num_cab = len(table_tag.findAll('th'))  # all <th> numbre column
+        # all <th> numbre column
+        num_cab = len(table_tag.findAll('th'))  # type: ignore
         num_row = 0
-        for linha in table_tag.findAll('tr'):
+        for linha in table_tag.findAll('tr'):  # type: ignore
             num_row += 1
             cell = linha.findAll('td')  # find data <td>
             if len(cell) == num_cab:  # number columns
@@ -67,16 +68,16 @@ class Table_from_tags:
         num_row += self.last_num_index
         self.last_num_index += 1
         # add list ordem crecente
-        while num_row > self.last_num_index:  
+        while num_row > self.last_num_index:
             az[az_keys[num_column]].append(self.last_num_index)
             self.last_num_index += 1
         name_column = 'Index'
         self.table_new = pd.DataFrame(
-            index=az[az_keys[num_column]], 
+            index=az[az_keys[num_column]],
             columns=[name_column])  # add name column
         self.table_new[name_column] = az[az_keys[num_column]]  # add list colum
         # add name  column table <th>
-        for key, name_column in enumerate(table_tag.findAll('th')):
+        for key, name_column in enumerate(table_tag.findAll('th')):  # type: ignore # noqa
             name_column = name_column.find(string=True)
             try:
                 self.table_new[name_column] = az[az_keys[key]]

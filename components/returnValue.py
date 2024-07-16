@@ -39,62 +39,6 @@ class ReturnValue:
         self.timeSleep: float = 0
         self.attempt = 0
 
-    # @property
-    # def xpathFathers(self):
-    #   return None
-
-    # @xpathFathers.setter
-    # def xpathFathers(self, xpathFather):
-    #   self.xpathFather = xpathFather
-
-    # @property
-    # def tagFathers(self):
-    #   return None
-
-    # @tagFathers.setter
-    # def tagFathers(self, tagFather):
-    #   self.tagFather = tagFather
-
-    # @property
-    # def tagSons(self):
-    #   return None
-
-    # @tagSons.setter
-    # def tagSons(self, tagSon):
-    #   self.tagSon = tagSon
-
-    # @property
-    # def tagGets(self):
-    #   return None
-
-    # @tagGets.setter
-    # def tagGets(self, tagValue):
-    #   self.tagGet = tagValue
-
-    # @property
-    # def tagSelecteds(self):
-    #   return None
-
-    # @tagSelecteds.setter
-    # def tagSelecteds(self, tagSelected):
-    #   self.tagSelected = tagSelected
-
-    # @property
-    # def timeSleeps(self):
-    #   return None
-
-    # @timeSleeps.setter
-    # def timeSleeps(self, timeSleep):
-    #   self.timeSleep = timeSleep
-
-    # @property
-    # def attempts(self):
-    #   return None
-
-    # @attempts.setter
-    # def attempts(self, attempt):
-    #   self.attempt = attempt
-
     @property
     def xpathXpathTag(self):
         return self.value
@@ -105,7 +49,7 @@ class ReturnValue:
         while True:
             try:
                 count += 1
-                self.value = self.driver.find_element(
+                self.value = self.driver.find_element(  # type: ignore
                     By.XPATH, self.xpathFather).find_element(
                         By.XPATH, xpath).get_attribute(self.tagGet)
                 break
@@ -126,7 +70,7 @@ class ReturnValue:
         while True:
             try:
                 count += 1
-                self.value = self.driver.find_element(
+                self.value = self.driver.find_element(  # type: ignore
                     By.XPATH, self.xpathFather).find_element(
                         By.XPATH, xpath).text
                 break
@@ -146,7 +90,7 @@ class ReturnValue:
         while True:
             try:
                 count += 1
-                self.value = self.driver.find_element(
+                self.value = self.driver.find_element(  # type: ignore
                     By.XPATH, self.xpathFather).find_element(
                         By.NAME, name).get_attribute(self.tagGet)
                 break
@@ -166,7 +110,7 @@ class ReturnValue:
         while True:
             count += 1
             try:
-                self.value = self.driver.find_element(By.XPATH, xpath).text
+                self.value = self.driver.find_element(By.XPATH, xpath).text  # type: ignore # noqa
                 break
             except excecaoAll:
                 if count >= 3:
@@ -182,13 +126,13 @@ class ReturnValue:
     def xpathTag(self, xpath):
         while True:
             try:
-                self.value = self.driver.find_element(
+                self.value = self.driver.find_element(  # type: ignore
                     By.XPATH, xpath).get_attribute(
                         self.tagGet)  # retornar o outerHTML
                 # pip install lxml
                 self.value = BeautifulSoup(
                     self.value, "lxml").find(
-                        self.tagFather).findAll(
+                        self.tagFather).findAll(  # type: ignore
                             self.tagSon)  # formatar outerHTMl
                 listValue = []
                 for key in range(1, len(self.value), 1):
@@ -211,12 +155,12 @@ class ReturnValue:
             count += 1
             try:
                 # return all tags
-                self.value = self.driver.find_element(
+                self.value = self.driver.find_element(  # type: ignore
                     By.XPATH, xpath).get_attribute(self.tagGet)
                 # Erro (FeatureNotFound) if not install: pip install lxml
                 # test loading table
                 BeautifulSoup(self.value, "lxml").find(
-                    self.tagFather).findAll(self.tagSon)
+                    self.tagFather).findAll(self.tagSon)  # type: ignore
                 break
             except (AttributeError, Exception):
                 if count >= 5:

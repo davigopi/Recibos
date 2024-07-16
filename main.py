@@ -1,10 +1,10 @@
 from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QStackedWidget  # noqa
 from PySide6.QtGui import QIcon
+# from PySide6.QtCore import Qt
 from login import Ui_login
 from main_window import MainWindow
 from components.cryptography_utils import Key_encrypt
 import sys
-import requests
 import time
 
 
@@ -20,8 +20,13 @@ class Login(QWidget, Ui_login):
 
         self.btnEntrar.clicked.connect(self.open_system)
 
+    def keyPressEvent(self, event):
+        # if event.key() in [Qt.Key_Return, Qt.Key_Enter]:
+        if event.key() in [16777220, 16777221]:
+            self.open_system()
+
     def open_system(self):
-        inf = 'P☻rocessando'
+        inf = 'Processando'
         self.lb_user_password.setText(inf)
         username = self.user.text()
         password = self.password.text()
@@ -36,40 +41,15 @@ class Login(QWidget, Ui_login):
             self.w.show()
             self.close()
         else:
+            self.btnEntrar.setDisabled(True)
+            time.sleep(5)
             inf = 'Usuário e/ou senha inválido'
-            time.sleep(3)
             self.lb_user_password.setText(inf)
             self.user.clear()
             self.password.clear()
-
-# class MainWindow_login(QMainWindow, MainWindow):
-#     def __init__(self):
-#         super(MainWindow, self).__init__()
-#         self.setupUi(self)
-#         self.setWindowTitle("Sistema de gerenciamaneto")
-
-#         # # Criar um QStackedWidget para gerenciar as páginas
-#         # self.stacked_widget = QStackedWidget()
-#         # self.setCentralWidget(self.stacked_widget)
+            self.btnEntrar.setDisabled(False)
 
 
-#         # # Adicionar as páginas ao QStackedWidget
-#         # self.stacked_widget.addWidget(self.pg_home)
-#         # self.stacked_widget.addWidget(self.pg_table)
-#         # self.stacked_widget.addWidget(self.pg_contato)
-#         # self.stacked_widget.addWidget(self.pg_sobre)
-#         # self.stacked_widget.addWidget(self.pg_cadastro)
-#         # paguinaas d osistema
-#         self.btn_home.clicked.connect(
-#             lambda: self.pages.setCurrentWidget(self.pg_home))
-#         self.btn_tables.clicked.connect(
-#             lambda: self.pages.setCurrentWidget(self.pg_table))
-#         self.btn_contato.clicked.connect(
-#             lambda: self.pages.setCurrentWidget(self.pg_contato))
-#         self.btn_sobre.clicked.connect(
-#             lambda: self.pages.setCurrentWidget(self.pg_sobre))
-#         self.btn_cadastro.clicked.connect(
-#             lambda: self.pages.setCurrentWidget(self.pg_cadastro))
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     window = Login()

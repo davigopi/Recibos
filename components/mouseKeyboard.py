@@ -89,14 +89,14 @@ class MouseKeyboard:
 
     @clickXpath.setter
     def clickXpath(self, xpath):
-        wait = WebDriverWait(self.driver, 1)
+        wait = WebDriverWait(self.driver, 1)  # type: ignore
         numberTimesRepeated = 0
         info = ''
         self.info = ''
         while True:
             try:
                 wait.until(EC.presence_of_element_located((By.XPATH, xpath)))
-                element = self.driver.find_element(By.XPATH, xpath)
+                element = self.driver.find_element(By.XPATH, xpath)  # type:ignore # noqa
                 element.click()
                 numberTimesRepeated = 0
                 self.clickOk = True
@@ -129,8 +129,8 @@ class MouseKeyboard:
         n_test = 0
         while True:
             try:
-                self.driver.find_element(
-                    By.XPATH, f"//{self.locationSearchTag}[contains(text(),'{text}')]").click()
+                self.driver.find_element(  # type:ignore
+                    By.XPATH, f"//{self.locationSearchTag}[contains(text(),'{text}')]").click()  # noqa
                 sleep(0.5)
                 break
             except NoSuchElementException:
@@ -163,10 +163,11 @@ class MouseKeyboard:
     @keys.setter
     def keys(self, xpath):
         self.info = ''
+        numberTimesRepeated = 0
         while True:
             try:
-                self.driver.find_element(By.XPATH, xpath).clear()
-                self.driver.find_element(By.XPATH, xpath).send_keys(self.writeSec)
+                self.driver.find_element(By.XPATH, xpath).clear()  # type:ignore # noqa
+                self.driver.find_element(By.XPATH, xpath).send_keys(self.writeSec)  # type:ignore # noqa
                 self.clickOk = True
                 break
             except self.excecao:
@@ -174,7 +175,7 @@ class MouseKeyboard:
                 numberTimesRepeated += 1
                 if numberTimesRepeated >= 4:
                     if numberTimesRepeated >= 10:
-                        print(f'Erro, mais de dez tentativas, em click do xpath {xpath}')
+                        print(f'Erro, mais de dez tentativas, em click do xpath {xpath}')  # noqa
                         sys.exit()
                     else:
                         sleep(1)

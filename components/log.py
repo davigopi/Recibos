@@ -4,17 +4,17 @@ class Log:
         self.pAL = kwargs.get('pAL')
 
     def ler(self):
-        with open(self.pAL, 'r', encoding='utf-8') as arquivo:
+        with open(self.pAL, 'r', encoding='utf-8') as arquivo:  # type: ignore
             return arquivo.read()
 
     def limpar(self):
-        with open(self.pAL, 'w') as arquivo:
+        with open(self.pAL, 'w') as arquivo:  # type: ignore
             arquivo.write('')
 
     def escrever(self):
         try:
-            with open(self.pAL, 'a') as arquivo:
-                arquivo.write('\n'+self.escreva)
+            with open(self.pAL, 'a') as arquivo:  # type: ignore
+                arquivo.write('\n' + self.escreva)  # type: ignore
         except TypeError as e:
             print(f'LOG o erro: (({e})) o pAL é: (({self.pAL})) ')
 

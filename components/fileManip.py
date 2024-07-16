@@ -95,7 +95,7 @@ class FileManip:
 
 class PDF(FPDF):
     def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)  # Chama o construtor da classe base FPDF
+        super().__init__(*args, **kwargs)  # Chama o construtor class base FPDF
         self.title = ''
         self.text_size_head = 0
         self.text_size_footer = 0
@@ -114,8 +114,9 @@ class PDF(FPDF):
 
     def add_table(self, dataframe):
         # Define a largura e altura das células
-        col_widths = [self.get_string_width(str(col)) +
-                      self.space_columns for col in dataframe.columns]
+        col_widths = [
+            self.get_string_width(
+                str(col)) + self.space_columns for col in dataframe.columns]
         # Define a fonte a ser usada para desenhar o texto na tabela
         self.set_font('Arial', '', self.text_size_table)
         # Itera sobre cada linha no DataFrame
@@ -123,7 +124,7 @@ class PDF(FPDF):
             # Itera sobre cada elemento (ou célula) em uma linha
             for i, cell in enumerate(row):
                 # Calcula a largura da célula atual
-                cell_width = self.get_string_width(str(cell)) + self.space_columns
+                cell_width = self.get_string_width(str(cell)) + self.space_columns  # noqa
                 # Verifica se a largura da célula atual é maior do que a
                 # largura atualmente armazenada para a coluna correspondente
                 if cell_width > col_widths[i]:
@@ -131,14 +132,14 @@ class PDF(FPDF):
         # Adiciona o cabeçalho
         self.set_font('Arial', 'B', self.text_size_table)
         for i, col in enumerate(dataframe.columns):
-            self.cell(col_widths[i], self.cell_height, str(col), border=1, align='C')
+            self.cell(col_widths[i], self.cell_height, str(col), border=1, align='C')  # noqa
         self.ln(self.cell_height)
 
         # Adiciona as células da tabela
         self.set_font('Arial', '', self.text_size_table)
         for row in dataframe.itertuples(index=False):
             for i, cell in enumerate(row):
-                self.cell(col_widths[i], self.cell_height, str(cell), border=1, align='C')
+                self.cell(col_widths[i], self.cell_height, str(cell), border=1, align='C')  # noqa
             self.ln(self.cell_height)
 
     def add_image(self, image_path, x, y, w, h):
@@ -150,9 +151,6 @@ class PDF(FPDF):
 
         # Guarda a posição inicial do texto
         initial_x = self.get_x()
-        initial_y = self.get_y()
-        # print(f'initial_x  {initial_x}')
-        # print(f'initial_y  {initial_y}')
         cell_width = self.w - initial_x
 
         # Adiciona o texto em uma nova célula
@@ -163,9 +161,9 @@ class PDF(FPDF):
         final_y = self.get_y()
         self.line(initial_x, final_y, final_x, final_y)
 
-    def add_content_in_columns(self, content_list, num_columns, size_font, size_line):
+    def add_content_in_columns(self, content_list, num_columns, size_font, size_line):  # noqa
         self.set_font('Arial', '', size_font)
-        page_width = self.w - 2 * self.l_margin  # Largura da página sem margens
+        page_width = self.w - 2 * self.l_margin  # Largura da pág sem margens
         column_width = page_width / num_columns  # Largura de cada coluna
 
         # Calcula a posição inicial da coluna
@@ -181,8 +179,6 @@ class PDF(FPDF):
             self.set_xy(x, y)
             self.multi_cell(column_width, size_line, content, border=0)
 
-        # # Move the cursor to the bottom of the last row of the columns
-        # pdf.set_y(initial_y + ((len(content_list) // num_columns) + 1) * size_line)
             # Calcula a nova posição y
             current_y = self.get_y()
             if column == num_columns - 1:
@@ -202,9 +198,9 @@ class PDF(FPDF):
         self.set_font('Arial', '', size_font)
         # Guarda a posição y atual
         current_y = self.get_y()
-        # Define a posição x para a margem direita menos a largura do texto e a margem direita
+        # Define a posição x p/ a margem direita = largura do texto
         x_position = self.w - 2 * self.r_margin - self.get_string_width(text)
-        # Define a posição y para garantir que o texto seja adicionado na linha atual
+        # Define a posição y p/ garantir que o texto seja + na linha atual
         self.set_xy(x_position, current_y)
         # Adiciona o texto
         self.cell(0, size_line, text, ln=False)

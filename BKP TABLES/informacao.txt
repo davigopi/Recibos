@@ -1,2 +1,0 @@
-Na tabela table_merge foi encontrado duplicado:  
- 

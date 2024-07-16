@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>582</width>
-    <height>731</height>
+    <height>779</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -225,60 +225,9 @@ QPushButton:disabled {
             </widget>
            </item>
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_8">
+            <layout class="QHBoxLayout" name="horizontalLayout_8" stretch="50,5,50">
              <item>
               <layout class="QVBoxLayout" name="verticalLayout_7">
-               <property name="rightMargin">
-                <number>20</number>
-               </property>
-               <item>
-                <widget class="QCheckBox" name="cb_todos">
-                 <property name="font">
-                  <font>
-                   <family>Gabriola</family>
-                   <pointsize>18</pointsize>
-                  </font>
-                 </property>
-                 <property name="cursor">
-                  <cursorShape>ForbiddenCursor</cursorShape>
-                 </property>
-                 <property name="layoutDirection">
-                  <enum>Qt::LayoutDirection::RightToLeft</enum>
-                 </property>
-                 <property name="text">
-                  <string>Todos os funcionários</string>
-                 </property>
-                 <property name="checked">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QCheckBox" name="cb_funcionario">
-                 <property name="font">
-                  <font>
-                   <family>Gabriola</family>
-                   <pointsize>18</pointsize>
-                  </font>
-                 </property>
-                 <property name="cursor">
-                  <cursorShape>ForbiddenCursor</cursorShape>
-                 </property>
-                 <property name="layoutDirection">
-                  <enum>Qt::LayoutDirection::RightToLeft</enum>
-                 </property>
-                 <property name="text">
-                  <string>Por funcionário</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </item>
-             <item>
-              <layout class="QVBoxLayout" name="verticalLayout_10">
-               <property name="leftMargin">
-                <number>20</number>
-               </property>
                <item>
                 <widget class="QCheckBox" name="cb_vendedor">
                  <property name="font">
@@ -286,6 +235,9 @@ QPushButton:disabled {
                    <family>Gabriola</family>
                    <pointsize>18</pointsize>
                   </font>
+                 </property>
+                 <property name="layoutDirection">
+                  <enum>Qt::LayoutDirection::RightToLeft</enum>
                  </property>
                  <property name="text">
                   <string>Vendedores</string>
@@ -303,8 +255,60 @@ QPushButton:disabled {
                    <pointsize>18</pointsize>
                   </font>
                  </property>
+                 <property name="layoutDirection">
+                  <enum>Qt::LayoutDirection::RightToLeft</enum>
+                 </property>
                  <property name="text">
                   <string>Supervisores</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <spacer name="horizontalSpacer_4">
+               <property name="orientation">
+                <enum>Qt::Orientation::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>5</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <layout class="QVBoxLayout" name="verticalLayout_10">
+               <item>
+                <widget class="QCheckBox" name="cb_gerente">
+                 <property name="font">
+                  <font>
+                   <family>Gabriola</family>
+                   <pointsize>18</pointsize>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string>Gerentes</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QCheckBox" name="cb_parceiro">
+                 <property name="font">
+                  <font>
+                   <family>Gabriola</family>
+                   <pointsize>18</pointsize>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string>Parceiros</string>
                  </property>
                  <property name="checked">
                   <bool>true</bool>
@@ -333,7 +337,7 @@ QPushButton:disabled {
              <item>
               <widget class="QComboBox" name="cbb_funcionario">
                <property name="enabled">
-                <bool>false</bool>
+                <bool>true</bool>
                </property>
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -348,16 +352,14 @@ QPushButton:disabled {
                 </font>
                </property>
                <property name="cursor">
-                <cursorShape>ForbiddenCursor</cursorShape>
+                <cursorShape>SplitVCursor</cursorShape>
+               </property>
+               <property name="currentText">
+                <string>TODOS OS FUNCIONÁRIOS</string>
                </property>
                <item>
                 <property name="text">
-                 <string>Selecione o Funcionário</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string/>
+                 <string>TODOS OS FUNCIONÁRIOS</string>
                 </property>
                </item>
               </widget>
@@ -381,7 +383,7 @@ QPushButton:disabled {
                 </font>
                </property>
                <property name="text">
-                <string>Selecione a ATA: </string>
+                <string>Data a ATA mensal e semanal:   </string>
                </property>
               </widget>
              </item>
@@ -400,7 +402,7 @@ QPushButton:disabled {
                 <bool>true</bool>
                </property>
                <property name="displayFormat">
-                <string>MMMM   /   yyyy   </string>
+                <string>dd   'de'   MMMM   'de'   yyyy   </string>
                </property>
                <property name="calendarPopup">
                 <bool>true</bool>
@@ -450,7 +452,7 @@ QPushButton:disabled {
                <property name="font">
                 <font>
                  <family>Gabriola</family>
-                 <pointsize>18</pointsize>
+                 <pointsize>14</pointsize>
                 </font>
                </property>
               </widget>
@@ -734,7 +736,7 @@ QPushButton:disabled {
                 </font>
                </property>
                <property name="text">
-                <string>Data inicial das vendas:</string>
+                <string>Mês de início das vendas: </string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
@@ -794,236 +796,264 @@ QPushButton:disabled {
             </layout>
            </item>
            <item>
-            <widget class="QLabel" name="label_2">
-             <property name="font">
-              <font>
-               <family>Gabriola</family>
-               <pointsize>18</pointsize>
-              </font>
-             </property>
-             <property name="text">
-              <string>Selecione abaixo as tabelas que serão carregadas:</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <layout class="QVBoxLayout" name="verticalLayout_2">
+            <layout class="QHBoxLayout" name="horizontalLayout_10">
              <item>
-              <layout class="QHBoxLayout" name="horizontalLayout" stretch="2,8,20">
+              <layout class="QVBoxLayout" name="verticalLayout_4">
                <item>
-                <spacer name="horizontalSpacer_3">
-                 <property name="orientation">
-                  <enum>Qt::Orientation::Horizontal</enum>
+                <widget class="QLabel" name="label_2">
+                 <property name="font">
+                  <font>
+                   <family>Gabriola</family>
+                   <pointsize>18</pointsize>
+                  </font>
                  </property>
-                 <property name="sizeType">
-                  <enum>QSizePolicy::Policy::Maximum</enum>
+                 <property name="text">
+                  <string>Selecione as tabelas que serão carregadas:</string>
                  </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>15</width>
-                   <height>15</height>
-                  </size>
+                 <property name="alignment">
+                  <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
                  </property>
-                </spacer>
-               </item>
-               <item>
-                <layout class="QVBoxLayout" name="verticalLayout_4">
-                 <item>
-                  <widget class="QLabel" name="label_12">
-                   <property name="font">
-                    <font>
-                     <family>Gabriola</family>
-                     <pointsize>18</pointsize>
-                    </font>
-                   </property>
-                   <property name="cursor">
-                    <cursorShape>ArrowCursor</cursorShape>
-                   </property>
-                   <property name="text">
-                    <string>Unir todas:</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QRadioButton" name="cb_juntar_tabela">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="font">
-                    <font>
-                     <family>Gabriola</family>
-                     <pointsize>18</pointsize>
-                    </font>
-                   </property>
-                   <property name="cursor">
-                    <cursorShape>PointingHandCursor</cursorShape>
-                   </property>
-                   <property name="layoutDirection">
-                    <enum>Qt::LayoutDirection::LeftToRight</enum>
-                   </property>
-                   <property name="text">
-                    <string>Tabelas</string>
-                   </property>
-                   <property name="checked">
-                    <bool>true</bool>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QLabel" name="label_10">
-                   <property name="text">
-                    <string/>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QLabel" name="label_4">
-                   <property name="text">
-                    <string/>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
+                </widget>
                </item>
                <item>
                 <layout class="QHBoxLayout" name="horizontalLayout_2">
                  <item>
-                  <layout class="QVBoxLayout" name="verticalLayout_5">
+                  <layout class="QHBoxLayout" name="horizontalLayout">
                    <item>
-                    <widget class="QLabel" name="label_5">
-                     <property name="font">
-                      <font>
-                       <family>Gabriola</family>
-                       <pointsize>18</pointsize>
-                       <bold>false</bold>
-                      </font>
-                     </property>
-                     <property name="text">
-                      <string>Cadastro:</string>
-                     </property>
-                     <property name="alignment">
-                      <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
-                     </property>
-                    </widget>
+                    <layout class="QVBoxLayout" name="verticalLayout_5">
+                     <item>
+                      <widget class="QLabel" name="label_5">
+                       <property name="font">
+                        <font>
+                         <family>Gabriola</family>
+                         <pointsize>18</pointsize>
+                         <bold>false</bold>
+                        </font>
+                       </property>
+                       <property name="text">
+                        <string>Cadastro:</string>
+                       </property>
+                       <property name="alignment">
+                        <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QCheckBox" name="cb_cadastro_consorciado">
+                       <property name="sizePolicy">
+                        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
+                       </property>
+                       <property name="maximumSize">
+                        <size>
+                         <width>16777215</width>
+                         <height>16777215</height>
+                        </size>
+                       </property>
+                       <property name="font">
+                        <font>
+                         <family>Gabriola</family>
+                         <pointsize>18</pointsize>
+                        </font>
+                       </property>
+                       <property name="cursor">
+                        <cursorShape>PointingHandCursor</cursorShape>
+                       </property>
+                       <property name="layoutDirection">
+                        <enum>Qt::LayoutDirection::RightToLeft</enum>
+                       </property>
+                       <property name="text">
+                        <string notr="true">Consorciado</string>
+                       </property>
+                       <property name="iconSize">
+                        <size>
+                         <width>16</width>
+                         <height>16</height>
+                        </size>
+                       </property>
+                       <property name="checked">
+                        <bool>true</bool>
+                       </property>
+                       <property name="autoRepeat">
+                        <bool>false</bool>
+                       </property>
+                       <property name="autoExclusive">
+                        <bool>false</bool>
+                       </property>
+                       <property name="autoRepeatDelay">
+                        <number>300</number>
+                       </property>
+                       <property name="autoRepeatInterval">
+                        <number>100</number>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QCheckBox" name="cb_cadastro_funcionaio">
+                       <property name="sizePolicy">
+                        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
+                       </property>
+                       <property name="font">
+                        <font>
+                         <family>Gabriola</family>
+                         <pointsize>18</pointsize>
+                        </font>
+                       </property>
+                       <property name="cursor">
+                        <cursorShape>PointingHandCursor</cursorShape>
+                       </property>
+                       <property name="layoutDirection">
+                        <enum>Qt::LayoutDirection::RightToLeft</enum>
+                       </property>
+                       <property name="text">
+                        <string>Funcionário</string>
+                       </property>
+                       <property name="checked">
+                        <bool>true</bool>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QCheckBox" name="cb_cadastro_ata">
+                       <property name="sizePolicy">
+                        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
+                       </property>
+                       <property name="font">
+                        <font>
+                         <family>Gabriola</family>
+                         <pointsize>18</pointsize>
+                        </font>
+                       </property>
+                       <property name="cursor">
+                        <cursorShape>PointingHandCursor</cursorShape>
+                       </property>
+                       <property name="layoutDirection">
+                        <enum>Qt::LayoutDirection::RightToLeft</enum>
+                       </property>
+                       <property name="text">
+                        <string>Ata</string>
+                       </property>
+                       <property name="checked">
+                        <bool>true</bool>
+                       </property>
+                      </widget>
+                     </item>
+                    </layout>
                    </item>
                    <item>
-                    <widget class="QCheckBox" name="cb_cadastro_consorciado">
-                     <property name="sizePolicy">
-                      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                       <horstretch>0</horstretch>
-                       <verstretch>0</verstretch>
-                      </sizepolicy>
+                    <spacer name="horizontalSpacer">
+                     <property name="orientation">
+                      <enum>Qt::Orientation::Horizontal</enum>
                      </property>
-                     <property name="maximumSize">
+                     <property name="sizeType">
+                      <enum>QSizePolicy::Policy::Maximum</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
                       <size>
-                       <width>16777215</width>
-                       <height>16777215</height>
+                       <width>13</width>
+                       <height>125</height>
                       </size>
                      </property>
-                     <property name="font">
-                      <font>
-                       <family>Gabriola</family>
-                       <pointsize>18</pointsize>
-                      </font>
-                     </property>
-                     <property name="cursor">
-                      <cursorShape>PointingHandCursor</cursorShape>
-                     </property>
-                     <property name="layoutDirection">
-                      <enum>Qt::LayoutDirection::RightToLeft</enum>
-                     </property>
-                     <property name="text">
-                      <string notr="true">Consorciado</string>
-                     </property>
-                     <property name="iconSize">
-                      <size>
-                       <width>16</width>
-                       <height>16</height>
-                      </size>
-                     </property>
-                     <property name="checked">
-                      <bool>true</bool>
-                     </property>
-                     <property name="autoRepeat">
-                      <bool>false</bool>
-                     </property>
-                     <property name="autoExclusive">
-                      <bool>false</bool>
-                     </property>
-                     <property name="autoRepeatDelay">
-                      <number>300</number>
-                     </property>
-                     <property name="autoRepeatInterval">
-                      <number>100</number>
-                     </property>
-                    </widget>
+                    </spacer>
                    </item>
                    <item>
-                    <widget class="QCheckBox" name="cb_cadastro_funcionaio">
-                     <property name="sizePolicy">
-                      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                       <horstretch>0</horstretch>
-                       <verstretch>0</verstretch>
-                      </sizepolicy>
-                     </property>
-                     <property name="font">
-                      <font>
-                       <family>Gabriola</family>
-                       <pointsize>18</pointsize>
-                      </font>
-                     </property>
-                     <property name="cursor">
-                      <cursorShape>PointingHandCursor</cursorShape>
-                     </property>
-                     <property name="layoutDirection">
-                      <enum>Qt::LayoutDirection::RightToLeft</enum>
-                     </property>
-                     <property name="text">
-                      <string>Funcionário</string>
-                     </property>
-                     <property name="checked">
-                      <bool>true</bool>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QCheckBox" name="cb_cadastro_ata">
-                     <property name="sizePolicy">
-                      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                       <horstretch>0</horstretch>
-                       <verstretch>0</verstretch>
-                      </sizepolicy>
-                     </property>
-                     <property name="font">
-                      <font>
-                       <family>Gabriola</family>
-                       <pointsize>18</pointsize>
-                      </font>
-                     </property>
-                     <property name="cursor">
-                      <cursorShape>PointingHandCursor</cursorShape>
-                     </property>
-                     <property name="layoutDirection">
-                      <enum>Qt::LayoutDirection::RightToLeft</enum>
-                     </property>
-                     <property name="text">
-                      <string>Ata</string>
-                     </property>
-                     <property name="checked">
-                      <bool>true</bool>
-                     </property>
-                    </widget>
+                    <layout class="QVBoxLayout" name="verticalLayout_3">
+                     <item>
+                      <widget class="QLabel" name="label_19">
+                       <property name="font">
+                        <font>
+                         <family>Gabriola</family>
+                         <pointsize>18</pointsize>
+                        </font>
+                       </property>
+                       <property name="text">
+                        <string>Comissões:</string>
+                       </property>
+                       <property name="alignment">
+                        <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QCheckBox" name="cb_comissoes_configuracao">
+                       <property name="sizePolicy">
+                        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
+                       </property>
+                       <property name="font">
+                        <font>
+                         <family>Gabriola</family>
+                         <pointsize>18</pointsize>
+                        </font>
+                       </property>
+                       <property name="cursor">
+                        <cursorShape>PointingHandCursor</cursorShape>
+                       </property>
+                       <property name="text">
+                        <string>Configuração</string>
+                       </property>
+                       <property name="iconSize">
+                        <size>
+                         <width>1600</width>
+                         <height>1600</height>
+                        </size>
+                       </property>
+                       <property name="checked">
+                        <bool>true</bool>
+                       </property>
+                       <property name="autoExclusive">
+                        <bool>false</bool>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QCheckBox" name="cb_comissoes_configPagamento">
+                       <property name="sizePolicy">
+                        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
+                       </property>
+                       <property name="font">
+                        <font>
+                         <family>Gabriola</family>
+                         <pointsize>18</pointsize>
+                        </font>
+                       </property>
+                       <property name="cursor">
+                        <cursorShape>PointingHandCursor</cursorShape>
+                       </property>
+                       <property name="text">
+                        <string>Config. Pagamento</string>
+                       </property>
+                       <property name="checked">
+                        <bool>true</bool>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QLabel" name="label_20">
+                       <property name="text">
+                        <string/>
+                       </property>
+                      </widget>
+                     </item>
+                    </layout>
                    </item>
                   </layout>
                  </item>
                  <item>
-                  <spacer name="horizontalSpacer">
+                  <spacer name="horizontalSpacer_3">
                    <property name="orientation">
                     <enum>Qt::Orientation::Horizontal</enum>
                    </property>
@@ -1032,147 +1062,151 @@ QPushButton:disabled {
                    </property>
                    <property name="sizeHint" stdset="0">
                     <size>
-                     <width>13</width>
-                     <height>13</height>
+                     <width>55</width>
+                     <height>15</height>
                     </size>
                    </property>
                   </spacer>
-                 </item>
-                 <item>
-                  <layout class="QVBoxLayout" name="verticalLayout_3">
-                   <item>
-                    <widget class="QLabel" name="label_19">
-                     <property name="font">
-                      <font>
-                       <family>Gabriola</family>
-                       <pointsize>18</pointsize>
-                      </font>
-                     </property>
-                     <property name="text">
-                      <string>Comissões:</string>
-                     </property>
-                     <property name="alignment">
-                      <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QCheckBox" name="cb_comissoes_configuracao">
-                     <property name="sizePolicy">
-                      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                       <horstretch>0</horstretch>
-                       <verstretch>0</verstretch>
-                      </sizepolicy>
-                     </property>
-                     <property name="font">
-                      <font>
-                       <family>Gabriola</family>
-                       <pointsize>18</pointsize>
-                      </font>
-                     </property>
-                     <property name="cursor">
-                      <cursorShape>PointingHandCursor</cursorShape>
-                     </property>
-                     <property name="text">
-                      <string>Configuração</string>
-                     </property>
-                     <property name="iconSize">
-                      <size>
-                       <width>1600</width>
-                       <height>1600</height>
-                      </size>
-                     </property>
-                     <property name="checked">
-                      <bool>true</bool>
-                     </property>
-                     <property name="autoExclusive">
-                      <bool>false</bool>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QCheckBox" name="cb_comissoes_configPagamento">
-                     <property name="sizePolicy">
-                      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                       <horstretch>0</horstretch>
-                       <verstretch>0</verstretch>
-                      </sizepolicy>
-                     </property>
-                     <property name="font">
-                      <font>
-                       <family>Gabriola</family>
-                       <pointsize>18</pointsize>
-                      </font>
-                     </property>
-                     <property name="cursor">
-                      <cursorShape>PointingHandCursor</cursorShape>
-                     </property>
-                     <property name="text">
-                      <string>Config. Pagamento</string>
-                     </property>
-                     <property name="checked">
-                      <bool>true</bool>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QLabel" name="label_20">
-                     <property name="text">
-                      <string/>
-                     </property>
-                    </widget>
-                   </item>
-                  </layout>
                  </item>
                 </layout>
                </item>
               </layout>
              </item>
              <item>
-              <widget class="QPushButton" name="btn_carregar">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="minimumSize">
-                <size>
-                 <width>0</width>
-                 <height>40</height>
-                </size>
-               </property>
-               <property name="font">
-                <font>
-                 <family>Gabriola</family>
-                 <pointsize>18</pointsize>
-                </font>
-               </property>
-               <property name="cursor">
-                <cursorShape>PointingHandCursor</cursorShape>
-               </property>
-               <property name="focusPolicy">
-                <enum>Qt::FocusPolicy::TabFocus</enum>
-               </property>
-               <property name="styleSheet">
-                <string notr="true"/>
-               </property>
-               <property name="text">
-                <string>Carregar</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QTextEdit" name="te_table">
-               <property name="font">
-                <font>
-                 <family>Gabriola</family>
-                 <pointsize>18</pointsize>
-                </font>
-               </property>
-              </widget>
+              <layout class="QVBoxLayout" name="verticalLayout_2">
+               <item>
+                <widget class="QLabel" name="label_13">
+                 <property name="font">
+                  <font>
+                   <family>Gabriola</family>
+                   <pointsize>18</pointsize>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string/>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="label_12">
+                 <property name="font">
+                  <font>
+                   <family>Gabriola</family>
+                   <pointsize>18</pointsize>
+                  </font>
+                 </property>
+                 <property name="cursor">
+                  <cursorShape>ArrowCursor</cursorShape>
+                 </property>
+                 <property name="text">
+                  <string>Unir todas:</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QRadioButton" name="cb_juntar_tabela">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <family>Gabriola</family>
+                   <pointsize>18</pointsize>
+                  </font>
+                 </property>
+                 <property name="cursor">
+                  <cursorShape>PointingHandCursor</cursorShape>
+                 </property>
+                 <property name="layoutDirection">
+                  <enum>Qt::LayoutDirection::LeftToRight</enum>
+                 </property>
+                 <property name="text">
+                  <string>Tabelas</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="label_10">
+                 <property name="font">
+                  <font>
+                   <family>Gabriola</family>
+                   <pointsize>14</pointsize>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string/>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="label_4">
+                 <property name="font">
+                  <font>
+                   <family>Gabriola</family>
+                   <pointsize>11</pointsize>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string/>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </item>
             </layout>
+           </item>
+           <item>
+            <widget class="QPushButton" name="btn_carregar">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>40</height>
+              </size>
+             </property>
+             <property name="font">
+              <font>
+               <family>Gabriola</family>
+               <pointsize>18</pointsize>
+              </font>
+             </property>
+             <property name="cursor">
+              <cursorShape>PointingHandCursor</cursorShape>
+             </property>
+             <property name="focusPolicy">
+              <enum>Qt::FocusPolicy::TabFocus</enum>
+             </property>
+             <property name="styleSheet">
+              <string notr="true"/>
+             </property>
+             <property name="text">
+              <string>Carregar</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QTextEdit" name="te_table">
+             <property name="font">
+              <font>
+               <family>Gabriola</family>
+               <pointsize>14</pointsize>
+              </font>
+             </property>
+             <property name="sizeAdjustPolicy">
+              <enum>QAbstractScrollArea::SizeAdjustPolicy::AdjustIgnored</enum>
+             </property>
+            </widget>
            </item>
           </layout>
          </widget>
