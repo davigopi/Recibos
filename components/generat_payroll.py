@@ -16,6 +16,15 @@ except ImportError:
         raise ImportError("Não foi possível importar 'Path_fiel'")
 
 
+def resource_path(relative_path):
+    try:
+        base_path = sys._MEIPASS  # type: ignore[attr-defined]
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
+
+
 def create_table(table_created, path):
     table_created.columns = (table_created.columns.str.strip())
     table_created.to_csv(path, sep=';', index=False, header=True)
@@ -25,6 +34,7 @@ def create_table(table_created, path):
 class Generat_payroll:
     def __init__(self, *args, **kwargs) -> None:
         self.path_file = Path_file()
+        self.father = kwargs.get('father')
 
         self.model = ''
 
@@ -112,7 +122,7 @@ class Generat_payroll:
         self.table_single_merge: pd.DataFrame = pd.DataFrame()
         self.table_seller_single: pd.DataFrame = pd.DataFrame()
 
-        self.arqTableTest1 = self.path_file.path_file_create('tables', 'table_test1.csv')  # noqa
+        # self.arqTableTest1 = self.path_file.path_file_create_user('Appdata', 'tables', 'table_test1.csv')  # noqa
     # create_table(table,self.arqTableTeste1)
 
     @property
@@ -742,6 +752,7 @@ class Generat_payroll:
 
     def table_convert_pdf(self):
         # Configurar a localização para o Brasil
+        path_file = Path_file()
         locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
         size_font = 8
         size_font2 = 7
@@ -762,7 +773,8 @@ class Generat_payroll:
         pdf.cell_height = 4
         pdf.space_columns = 4
         pdf.add_page()
-        pdf.add_image('select.jpg', 172, 10, 28, 9)
+        image_path = resource_path('img/select.jpg')
+        pdf.add_image(image_path, 172, 10, 28, 9)
         if self.list_table_edit == []:
             print("Lista vazia")
             return '0', 'zerado'
@@ -785,6 +797,7 @@ class Generat_payroll:
             cargo,
             list_administradora_qtdcotas_parc
         ) in self.list_table_edit:
+
             if begin is True:
                 pdf.set_font('Arial', '', size_font)
                 comissao = locale.currency(
@@ -916,10 +929,11 @@ class Generat_payroll:
         text2 = 'FORTALEZA, ____/____/____ '
         pdf.add_content_in_columns([text, text2], 2, size_font, size_line)
         # Salva o PDF
-        folder_documnts = os.path.expanduser("~/Documents")
-        new_folder = os.path.join(folder_documnts, "RECIBO")
-        if not os.path.exists(new_folder):
-            os.makedirs(new_folder)
+        # folder_documnts = os.path.expanduser("~/Documents")
+        # new_folder = os.path.join(folder_documnts, "RECIBO")
+        # if not os.path.exists(new_folder):
+        #     os.makedirs(new_folder)
+
         name_ata = self.date_ata_single
         name_ata = name_ata.replace('/', ' ').lower().capitalize()
         if self.profession == 'Gerente':
@@ -937,7 +951,8 @@ class Generat_payroll:
                 word_seller = word_seller.capitalize()
             text_seller += " " + word_seller
         name_file = f'RP {text_profession} {name_ata} {text_seller}.pdf'
-        path_file = os.path.join(new_folder, name_file)
+        path_file = path_file.path_file_create_user(path_user="Documentos", path_origin="RECIBO", name_file=name_file)  # noqa
+        # path_file = os.path.join(new_folder, name_file)
         pdf.output(path_file)
         return comissao, vendedor
 

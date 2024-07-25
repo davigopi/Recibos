@@ -16,10 +16,10 @@ def load_table(path):
 class Main_gerar:
     def __init__(self, *args, **kwargs) -> None:
         self.father = kwargs.get('father')
-        self.generat_payroll = Generat_payroll()
+        self.generat_payroll = Generat_payroll(father=self.father)
         self.path_file = Path_file()
-        self.arqtableMerge = self.path_file.path_file_create('tables', 'tableMerge.csv')  # noqa
-        self.arqtableDatasSemanais = self.path_file.path_file_create('tables', 'table_datas_semanais.csv')  # noqa
+        self.arqtableMerge = self.path_file.path_file_create_user('Appdata', 'tables', 'tableMerge.csv')  # noqa
+        self.arqtableDatasSemanais = self.path_file.path_file_create_user('Appdata', 'tables', 'table_datas_semanais.csv')  # noqa
         self.model = '1'
         self.model = '2'
         self.seller_single_unit = ''
@@ -154,7 +154,10 @@ class Main_gerar:
             self.generate_employee()
 
     def generate_list_seller(self):
-        self.table_full = pd.read_csv(self.arqtableMerge, sep=';', encoding='utf-8', dtype=str)  # noqa
+        try:
+            self.table_full = pd.read_csv(self.arqtableMerge, sep=';', encoding='utf-8', dtype=str)  # noqa
+        except pd.errors.EmptyDataError:
+            return []
         list_seller_vendedores = list(self.table_full['Vendedor'].unique())
         list_seller_supervisores = list(self.table_full['Gerente'].unique())
         list_seller = list_seller_vendedores + list_seller_supervisores
@@ -201,10 +204,10 @@ class Main_gerar:
             self.column_ata_cad_adm_qtd_cotas,
             self.column_ata_cad_adm_qtd_cotas_ger
         ]
-
-        self.table_full = pd.read_csv(self.arqtableMerge, sep=';',
-                                      encoding='utf-8', dtype=str)
-
+        try:
+            self.table_full = pd.read_csv(self.arqtableMerge, sep=';', encoding='utf-8', dtype=str)  # noqa
+        except pd.errors.EmptyDataError:
+            return
         self.generat_payroll.table_full = self.table_full
         self.generat_payroll.num_columns = ['ATA ', 'º Parc']
         self.num_atas_parc = self.generat_payroll.number  # ncol->ATA{N}ºParc
@@ -244,8 +247,8 @@ class Main_gerar:
             if self.seller_single_unit:
                 if self.seller_single_unit not in self.seller_single:
                     continue
-            print('\n \n', self.seller_single)
-            self.generat_payroll = Generat_payroll()
+            # print('\n \n', self.seller_single)
+            self.generat_payroll = Generat_payroll(father=self.father)
             text_seller = ''
             words_sellers = self.seller_single.lower().split()
             for word_seller in words_sellers:
@@ -399,6 +402,7 @@ class Main_gerar:
             self.generat_payroll.columns_to_list_full_seller()
             self.generat_payroll.columns_ata_full_seller_single()
             self.generat_payroll.tables_columns_ata_seller_single()
+
             self.generat_payroll.tables_concat_seller_single()
             self.generat_payroll.is_to_stop_program()
             self.stop_program = self.generat_payroll.stop_program
@@ -423,6 +427,7 @@ class Main_gerar:
                 self.father.prog2(text)  # type: ignore
             self.comissao = self.comissao.replace('R$', '').replace(' ', '')
             self.comissao = self.comissao.replace('.', '').replace(',', '.')
+
             self.comissao = float(self.comissao)
             if self.comissao >= self.comissao_anterior1:
                 self.comissao_anterior3 = self.comissao_anterior2

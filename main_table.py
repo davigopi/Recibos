@@ -22,9 +22,12 @@ locale.setlocale(locale.LC_TIME, 'pt_BR.UTF-8')
 
 
 def load_table(path):
-    table_loaded = pd.read_csv(path, sep=';', encoding='utf-8', dtype=str)
-    # remover espaços inicio fim
-    table_loaded.columns = (table_loaded.columns.str.strip())
+    try:
+        table_loaded = pd.read_csv(path, sep=';', encoding='utf-8', dtype=str)
+        # remover espaços inicio fim
+        table_loaded.columns = (table_loaded.columns.str.strip())
+    except pd.errors.EmptyDataError:
+        table_loaded: pd.DataFrame = pd.DataFrame()
     return table_loaded
 
 
@@ -60,21 +63,21 @@ class Main_table:
 
         self.start = True
 
-        self.arqTableCadastroConsorciado = self.path_file.path_file_create('tables', 'table_Cadastro_Consorciado.csv')  # noqa
-        self.arqTableCadastroFuncionario = self.path_file.path_file_create('tables', 'table_Cadastro_Funcionario.csv')  # noqa
-        self.arqTableCadastroAta = self.path_file.path_file_create('tables', 'table_Cadastro_Ata.csv')  # noqa
-        self.arqTableComissoesConfiguracao = self.path_file.path_file_create('tables', 'table_Comissoes_Configuracao.csv')  # noqa
-        self.arqTableComissoesConfigPag = self.path_file.path_file_create('tables', 'table_Comissoes_ConfigPagamento.csv')  # noqa
-        self.arqTableComissoesConfigPagTratada = self.path_file.path_file_create('tables', 'table_Comissoes_ConfigPagTratada.csv')  # noqa
-        self.arqTableComissoesConfigPagDupl = self.path_file.path_file_create('tables', 'table_Comissoes_ConfigPagamento_Dupl.csv')  # noqa
-        self.arqtableMerge = self.path_file.path_file_create('tables', 'tableMerge.csv')  # noqa
-        self.arqTableDatasSemanais = self.path_file.path_file_create('tables', 'table_datas_semanais.csv')  # noqa
-        self.arq_log = self.path_file.path_file_create('', 'log.txt')  # noqa
-        self.arqTableTeste1 = self.path_file.path_file_create('tables', 'table_teste1.csv')  # noqa
-        self.arqTableTeste2 = self.path_file.path_file_create('tables', 'table_teste2.csv')  # noqa
-        self.arqTableTeste3 = self.path_file.path_file_create('tables', 'table_teste3.csv')  # noqa
+        self.arqTableCadastroConsorciado = self.path_file.path_file_create_user('Appdata', 'tables', 'table_Cadastro_Consorciado.csv')  # noqa
+        self.arqTableCadastroFuncionario = self.path_file.path_file_create_user('Appdata', 'tables', 'table_Cadastro_Funcionario.csv')  # noqa
+        self.arqTableCadastroAta = self.path_file.path_file_create_user('Appdata', 'tables', 'table_Cadastro_Ata.csv')  # noqa
+        self.arqTableComissoesConfiguracao = self.path_file.path_file_create_user('Appdata', 'tables', 'table_Comissoes_Configuracao.csv')  # noqa
+        self.arqTableComissoesConfigPag = self.path_file.path_file_create_user('Appdata', 'tables', 'table_Comissoes_ConfigPagamento.csv')  # noqa
+        self.arqTableComissoesConfigPagTratada = self.path_file.path_file_create_user('Appdata', 'tables', 'table_Comissoes_ConfigPagTratada.csv')  # noqa
+        self.arqTableComissoesConfigPagDupl = self.path_file.path_file_create_user('Appdata', 'tables', 'table_Comissoes_ConfigPagamento_Dupl.csv')  # noqa
+        self.arqtableMerge = self.path_file.path_file_create_user('Appdata', 'tables', 'tableMerge.csv')  # noqa
+        self.arqTableDatasSemanais = self.path_file.path_file_create_user('Appdata', 'tables', 'table_datas_semanais.csv')  # noqa
+        self.arq_log = self.path_file.path_file_create_user('Appdata', 'log', 'log.txt')  # noqa
+        # self.arqTableTeste1 = self.path_file.path_file_create_user('Appdata', 'tables', 'table_teste1.csv')  # noqa
+        # self.arqTableTeste2 = self.path_file.path_file_create_user('Appdata', 'tables', 'table_teste2.csv')  # noqa
+        # self.arqTableTeste3 = self.path_file.path_file_create_user('Appdata', 'tables', 'table_teste3.csv')  # noqa
 
-        self.fileManip.arq_log = self.arq_log
+        self.fileManip.arq_log = self.arq_log  # type: ignore
 
         self.pathDonwload = os.environ['USERPROFILE'] + '\\Downloads'
         self.arqDonwloadSales = self.pathDonwload + '\\consorciados.csv'
@@ -330,7 +333,7 @@ class Main_table:
         self.driver = webdriver.Chrome(service=service, options=options)
         self.connect = Connect(driver=self.driver)
         xpathManip = XpathManip(driver=self.driver)
-        self.connect.arq_log = self.arq_log
+        self.connect.arq_log = self.arq_log  # type: ignore
         self.driver.get(self.siteSircon)
         # logar
         self.connect.user = self.user
@@ -394,6 +397,7 @@ class Main_table:
             self.father.prog1(text_te)  # type: ignore
             self.table_Cadastro_Consorciado = load_table(
                 self.arqTableCadastroConsorciado)
+        self.father.prog1(f'Arqvuivos:  {self.arqTableCadastroConsorciado}')  # type: ignore # noqa
 
     def create_table_Cadastro_Funcionario(self):
         '''table_Cadastro_Funcionario '''
@@ -420,6 +424,7 @@ class Main_table:
             self.father.prog1(text_te)  # type: ignore
             self.table_Cadastro_Funcionario = load_table(
                 self.arqTableCadastroFuncionario)
+        self.father.prog1(f'Arqvuivos:  {self.arqTableCadastroFuncionario}')  # type: ignore # noqa
 
     def create_table_Cadastro_Ata(self):
         '''#################### LIMITAR PESQUISAS ##########################'''

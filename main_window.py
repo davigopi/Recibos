@@ -1,13 +1,26 @@
 from PySide6.QtWidgets import QApplication, QMainWindow
 from PySide6.QtCore import QDate, QObject, QThread, Signal
-from PySide6.QtGui import QIcon
+from PySide6.QtGui import QIcon, QPixmap
 # from pandas import value_counts
 # from distutils.log import Log
 from ui_main import Ui_MainWindow
 import sys
+import os
 from main_table import Main_table
 from main_gerar import Main_gerar
 import time
+
+
+def resource_path(relative_path):
+    """Obtem o caminho absoluto para o recurso, trabalhando para dev e
+    PyInstaller"""
+    try:
+        base_path = sys._MEIPASS  # type: ignore[attr-defined]
+        # base_path = os.path.appdata()
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
 
 
 class Worker1(QObject):
@@ -133,9 +146,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # super(MainWindow, self).__init__()
         self.setupUi(self)
         self.setWindowTitle("Select carregar informações e gerar recibos")
-        # Carregar o ícone e definir para a janela
-        icon = QIcon('img/icon.png')
-        self.setWindowIcon(icon)
+        self.adjust_image_paths()
         # Inicializar QDateEdit com a data atual
         self.data_inicial.setDate(QDate.currentDate().addYears(-1))
         self.data_ata.setDate(QDate.currentDate())
@@ -153,6 +164,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.btn_gerar.clicked.connect(self.gerar_btn)
         self.thread1 = None
         self.thread2 = None
+
+    def adjust_image_paths(self):
+        # Ajuste os caminhos das imagens:
+        image_path = resource_path('img/icon.png')
+        icon = QIcon(image_path)
+        self.setWindowIcon(icon)
+        image_path = resource_path('img/select2.png')
+        self.label_9.setPixmap(QPixmap(image_path))
+        image_path = resource_path('img/select.png')
+        self.label.setPixmap(QPixmap(image_path))
+        image_path = resource_path('img/select2.png')
+        self.label_11.setPixmap(QPixmap(image_path))
 
     def tables_btn(self):
         self.pages.setCurrentWidget(self.pg_table)

@@ -1,11 +1,24 @@
 from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QStackedWidget  # noqa
-from PySide6.QtGui import QIcon
+from PySide6.QtGui import QIcon, QPixmap
+
 # from PySide6.QtCore import Qt
 from login import Ui_login
 from main_window import MainWindow
 from components.cryptography_utils import Key_encrypt
 import sys
 import time
+import os
+
+
+def resource_path(relative_path):
+    """Obtem o caminho absoluto para o recurso, trabalhando para dev e
+    PyInstaller"""
+    try:
+        base_path = sys._MEIPASS  # type: ignore
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
 
 
 class Login(QWidget, Ui_login):
@@ -13,12 +26,17 @@ class Login(QWidget, Ui_login):
         super(Login, self).__init__()
         self.setupUi(self)
         self.setWindowTitle("Login Select")
-
-        # Carregar o ícone e definir para a janela
-        icon = QIcon('img/icon.png')
-        self.setWindowIcon(icon)
+        self.adjust_image_paths()
 
         self.btnEntrar.clicked.connect(self.open_system)
+
+    def adjust_image_paths(self):
+        # Ajuste os caminhos das imagens:
+        image_path = resource_path('img/icon.png')
+        icon = QIcon(image_path)
+        self.setWindowIcon(icon),
+        image_path = resource_path('img/login1.png')
+        self.label.setPixmap(QPixmap(image_path))
 
     def keyPressEvent(self, event):
         # if event.key() in [Qt.Key_Return, Qt.Key_Enter]:
