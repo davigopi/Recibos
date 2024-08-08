@@ -13,7 +13,7 @@ def load_table(path):
     return table_loaded
 
 
-class Main_gerar:
+class Main_recibo:
     def __init__(self, *args, **kwargs) -> None:
         self.father = kwargs.get('father')
         self.generat_payroll = Generat_payroll(father=self.father)
@@ -65,10 +65,26 @@ class Main_gerar:
         self.column_ata_entrega_qtd_cotas_ger = 'ATA Entrega qtd cotas Ger'
         self.column_ata_cad_adm_qtd_cotas = 'ATA Cad Adm qtd cotas'
         self.column_ata_cad_adm_qtd_cotas_ger = 'ATA Cad Adm qtd cotas Ger'
+
+        self.column_mes_entrega_qtd_cotas = 'Mes Ent qtd cotas'
+        self.column_mes_entrega_qtd_cotas_ger = 'Mes Ent qtd cotas Ger'
+        self.column_mes_cad_adm_qtd_cotas = 'Mes Cad Adm qtd cotas'
+        self.column_mes_cad_adm_qtd_cotas_ger = 'Mes Cad Adm qtd cotas Ger'
+
         self.data_date_pay = 'DIA DA SEMANA'
         self.data_cadastro = 'CADASTRO'
         self.column_n_semana_mes = 'N Semana Mes'
         self.column_data_semana = 'Data semana'
+
+        self.column_total_sma_cad_adm = 'Total Sma Cad Adm'
+        self.column_total_sma_cad_adm_ger = 'Total Sma Cad Adm Ger'
+        self.column_total_ata_cad_adm = 'Total ATA Cad Adm'
+        self.column_total_ata_cad_adm_ger = 'Total ATA Cad Adm Ger'
+        self.column_total_sma_ent = 'Total Sma Ent'
+        self.column_total_sma_ent_ger = 'Total Sma Ent Ger'
+        self.column_total_ata_entrega = 'Total ATA Entrega'
+        self.column_total_ata_entrega_ger = 'Total ATA Entrega Ger'
+
         # definição de variavel
         self.date_ata_single = 'MAIO/2024'
         self.date_sma_single = '1ª/MAIO/2024'
@@ -79,6 +95,7 @@ class Main_gerar:
             'MAIO': 5, 'JUNHO': 6, 'JULHO': 7, 'AGOSTO': 8, 'SETEMBRO': 9,
             'OUTUBRO': 10, 'NOVEMBRO': 11, 'DEZEMBRO': 12
         }
+
         # Inverte o dicionário
         self.inverted_dic_months = {v: k for k, v in self.dic_months.items()}
         # para calcular maiores comissões
@@ -168,7 +185,6 @@ class Main_gerar:
     def generate_employee(self):
         if self.error:
             return
-
         self.list_columns_full_ata = [
             self.column_ata_entrega,
             self.column_ata_cad_adm
@@ -204,6 +220,16 @@ class Main_gerar:
             self.column_ata_cad_adm_qtd_cotas,
             self.column_ata_cad_adm_qtd_cotas_ger
         ]
+
+        self.list_columns_mes_ent = [
+            self.column_mes_entrega_qtd_cotas,
+            self.column_mes_entrega_qtd_cotas_ger
+        ]
+        self.list_columns_mes_cad = [
+            self.column_mes_cad_adm_qtd_cotas,
+            self.column_mes_cad_adm_qtd_cotas_ger
+        ]
+
         try:
             self.table_full = pd.read_csv(self.arqtableMerge, sep=';', encoding='utf-8', dtype=str)  # noqa
         except pd.errors.EmptyDataError:
@@ -241,13 +267,11 @@ class Main_gerar:
             if seller not in list_seller_single:
                 list_seller_single.append(seller)
         list_seller_single.sort()
-
         for self.seller_single in list_seller_single:
-            # realizar teste antes de continuar
+            # Foi escolhido um vededor?
             if self.seller_single_unit:
                 if self.seller_single_unit not in self.seller_single:
                     continue
-            # print('\n \n', self.seller_single)
             self.generat_payroll = Generat_payroll(father=self.father)
             text_seller = ''
             words_sellers = self.seller_single.lower().split()
@@ -355,6 +379,15 @@ class Main_gerar:
             self.generat_payroll.column_sma_entrega = self.column_sma_entrega
             self.generat_payroll.column_ata_cad_adm = self.column_ata_cad_adm
             self.generat_payroll.column_sma_cad_adm = self.column_sma_cad_adm
+            self.generat_payroll.column_total_sma_cad_adm = self.column_total_sma_cad_adm  # noqa
+            self.generat_payroll.column_total_sma_cad_adm_ger = self.column_total_sma_cad_adm_ger  # noqa
+            self.generat_payroll.column_total_ata_cad_adm = self.column_total_ata_cad_adm  # noqa
+            self.generat_payroll.column_total_ata_cad_adm_ger = self.column_total_ata_cad_adm_ger  # noqa
+            self.generat_payroll.column_total_sma_ent = self.column_total_sma_ent  # noqa
+            self.generat_payroll.column_total_sma_ent_ger = self.column_total_sma_ent_ger  # noqa
+            self.generat_payroll.column_total_ata_entrega = self.column_total_ata_entrega  # noqa
+            self.generat_payroll.column_total_ata_entrega_ger = self.column_total_ata_entrega_ger  # noqa
+
             # self.generat_payroll.column_situacao_d = self.column_situacao_d
 
             self.generat_payroll.data_date_pay = self.data_date_pay
@@ -368,6 +401,9 @@ class Main_gerar:
             self.generat_payroll.list_columns_end = self.list_columns_end
             self.generat_payroll.list_columns_ata_ent = self.list_columns_ata_ent  # noqa
             self.generat_payroll.list_columns_ata_cad = self.list_columns_ata_cad  # noqa
+
+            self.generat_payroll.list_columns_mes_ent = self.list_columns_mes_ent  # noqa
+            self.generat_payroll.list_columns_mes_cad = self.list_columns_mes_cad  # noqa
 
             self.generat_payroll.list_qtd_cotas_inicial = self.list_qtd_cotas_inicial  # noqa
             self.generat_payroll.list_qtd_cotas_final = self.list_qtd_cotas_final  # noqa
@@ -396,13 +432,14 @@ class Main_gerar:
             )
             self.list_columns_str_to_float.append(self.column_credito)
             self.generat_payroll.list_columns_str_to_float = self.list_columns_str_to_float  # noqa
-            self.generat_payroll.convert_str_float = self.table_full
+
+            # self.generat_payroll.convert_str_float = self.table_full
+
             # self.generat_payroll.table_full = (
             # self.generat_payroll.convert_str_float)
             self.generat_payroll.columns_to_list_full_seller()
             self.generat_payroll.columns_ata_full_seller_single()
             self.generat_payroll.tables_columns_ata_seller_single()
-
             self.generat_payroll.tables_concat_seller_single()
             self.generat_payroll.is_to_stop_program()
             self.stop_program = self.generat_payroll.stop_program
@@ -410,11 +447,11 @@ class Main_gerar:
                 text = text_seller + ' -> Cargo não gera comissão.'
                 self.father.prog2(text)  # type: ignore
                 continue
-            self.generat_payroll.create_dictionary_datas()
-            self.generat_payroll.table_list_administradora_add_line()
+            # self.generat_payroll.create_dictionary_datas()
+            # self.generat_payroll.table_list_administradora_add_line()
             self.generat_payroll.table_list_administradora_line_add_sum()
-            self.generat_payroll.table_list_administradora_sum_add_qtdcotasinicial()  # noqa
-            self.generat_payroll.table_list_administradora_sum_add_full()
+            # self.generat_payroll.table_list_administradora_sum_add_qtdcotasinicial()  # noqa
+            # self.generat_payroll.table_list_administradora_sum_add_full()
             self.generat_payroll.add_column_comissao()
             # self.generat_payroll.table_columns_end()
             self.generat_payroll.edit_table()

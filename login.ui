@@ -44,7 +44,11 @@ QPushButton:hover {
 QPushButton:disabled {
 	background-color: rgba(255, 255, 255, 0.1);
   	color: rgb(245, 245, 245);
- }</string>
+ }
+
+QLineEdit{
+	color: rgb(255,102, 0);
+}</string>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout">
    <item>
@@ -58,7 +62,7 @@ QPushButton:disabled {
      <property name="frameShadow">
       <enum>QFrame::Shadow::Raised</enum>
      </property>
-     <widget class="QWidget" name="">
+     <widget class="QWidget" name="layoutWidget">
       <property name="geometry">
        <rect>
         <x>8</x>

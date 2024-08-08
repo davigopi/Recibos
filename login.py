@@ -54,7 +54,11 @@ class Ui_login(object):
 "QPushButton:disabled {\n"
 "	background-color: rgba(255, 255, 255, 0.1);\n"
 "  	color: rgb(245, 245, 245);\n"
-" }")
+" }\n"
+"\n"
+"QLineEdit{\n"
+"	color: rgb(255,102, 0);\n"
+"}")
         self.horizontalLayout = QHBoxLayout(login)
         self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.frame = QFrame(login)
@@ -62,23 +66,23 @@ class Ui_login(object):
         self.frame.setStyleSheet(u"")
         self.frame.setFrameShape(QFrame.Shape.StyledPanel)
         self.frame.setFrameShadow(QFrame.Shadow.Raised)
-        self.widget = QWidget(self.frame)
-        self.widget.setObjectName(u"widget")
-        self.widget.setGeometry(QRect(8, 7, 271, 401))
-        self.verticalLayout = QVBoxLayout(self.widget)
+        self.layoutWidget = QWidget(self.frame)
+        self.layoutWidget.setObjectName(u"layoutWidget")
+        self.layoutWidget.setGeometry(QRect(8, 7, 271, 401))
+        self.verticalLayout = QVBoxLayout(self.layoutWidget)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
         self.verticalSpacer = QSpacerItem(20, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.verticalLayout.addItem(self.verticalSpacer)
 
-        self.label = QLabel(self.widget)
+        self.label = QLabel(self.layoutWidget)
         self.label.setObjectName(u"label")
         self.label.setPixmap(QPixmap(u"img/login1.png"))
 
         self.verticalLayout.addWidget(self.label)
 
-        self.user = QLineEdit(self.widget)
+        self.user = QLineEdit(self.layoutWidget)
         self.user.setObjectName(u"user")
         font = QFont()
         font.setPointSize(11)
@@ -88,7 +92,7 @@ class Ui_login(object):
 
         self.verticalLayout.addWidget(self.user)
 
-        self.password = QLineEdit(self.widget)
+        self.password = QLineEdit(self.layoutWidget)
         self.password.setObjectName(u"password")
         self.password.setFont(font)
         self.password.setStyleSheet(u"")
@@ -97,7 +101,7 @@ class Ui_login(object):
 
         self.verticalLayout.addWidget(self.password)
 
-        self.btnEntrar = QPushButton(self.widget)
+        self.btnEntrar = QPushButton(self.layoutWidget)
         self.btnEntrar.setObjectName(u"btnEntrar")
         self.btnEntrar.setFont(font)
         self.btnEntrar.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
@@ -109,7 +113,7 @@ class Ui_login(object):
 
         self.verticalLayout.addItem(self.verticalSpacer_2)
 
-        self.lb_user_password = QLabel(self.widget)
+        self.lb_user_password = QLabel(self.layoutWidget)
         self.lb_user_password.setObjectName(u"lb_user_password")
         font1 = QFont()
         font1.setFamilies([u"Gabriola"])

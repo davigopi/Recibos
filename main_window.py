@@ -7,13 +7,12 @@ from ui_main import Ui_MainWindow
 import sys
 import os
 from main_table import Main_table
-from main_gerar import Main_gerar
+from main_recibo import Main_recibo
 import time
 
 
 def resource_path(relative_path):
-    """Obtem o caminho absoluto para o recurso, trabalhando para dev e
-    PyInstaller"""
+    # Obter caminho absoluto para o recurso, trabalhando para dev e PyInstaller
     try:
         base_path = sys._MEIPASS  # type: ignore[attr-defined]
         # base_path = os.path.appdata()
@@ -69,6 +68,7 @@ class Worker1(QObject):
         main_table.create_table_Cadastro_Ata()
         main_table.create_table_Comissoes_Configuracao()
         main_table.create_table_Comissoes_ConfigPagamento()
+        main_table.create_table_gerente()
         main_table.date_weekly_new()
         main_table.table_manip_funcionario()
         main_table.table_manip_cadastro_consorciado()
@@ -82,9 +82,11 @@ class Worker1(QObject):
         main_table.merge_consorciado_funcionario_gerente()
         main_table.merge_full_comissoes_configuracao()
         main_table.merge_full_comissoes_configuracao_gerente()
+        main_table.merge_full_comissoes_configuracao_gerente_geral()
         main_table.create_columns_ata()
         main_table.merge_full_weekly()
         main_table.merge_full_ata()
+        main_table.merge_full_configPagamento()
         main_table.column_add()
         main_table.order_column()
         main_table.save_full()
@@ -111,7 +113,7 @@ class Worker2(QObject):
         parceiros = kwargs.get('parceiros')
         selecionado_funcionario = kwargs.get('selecionado_funcionario')
         data_ata = kwargs.get('data_ata')
-        main_gerar = Main_gerar(father=self)
+        main_gerar = Main_recibo(father=self)
         if vendedores is not None:
             main_gerar.is_vendedores = vendedores
         if supervisores is not None:
@@ -142,7 +144,7 @@ class Worker2(QObject):
 class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
-        main_gerar = Main_gerar()
+        main_gerar = Main_recibo()
         # super(MainWindow, self).__init__()
         self.setupUi(self)
         self.setWindowTitle("Select carregar informações e gerar recibos")

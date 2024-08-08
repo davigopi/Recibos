@@ -33,7 +33,7 @@ class Date_weekly:
         self.calend = []
         self.table: pd.DataFrame = pd.DataFrame()
 
-    # reconhecer os anos traves dos meses informados
+    # 1º PASSO reconhecer os anos traves dos meses informados
     @property
     def year_weeklys(self):
         return None
@@ -54,7 +54,7 @@ class Date_weekly:
                 self.year_weekly.append(year_salve)
             months -= 1
 
-         # Criar a estrutura de dados com todos os dias de um year
+    # 2º PASSO Criar a estrutura de dados com todos os dias de um year
     @property
     def create_weekYear_week_date(self):
         return None
@@ -79,7 +79,7 @@ class Date_weekly:
                                          ])
                 data += datetime.timedelta(days=1)
 
-    # Organiza a estruturas por semans
+    # 3º PASSO Organiza a estruturas por semanais colocando em listas
     @property
     def edit_weekYear_week_date_separate_week(self):
         return None
@@ -97,7 +97,7 @@ class Date_weekly:
             calend.append(calend_interno)
         self.calend = calend
 
-    # edita os valores da week anual para week mensal
+    # 4º PASSO edita os valores da week anual para week mensal
     @property
     def edit_weekYear_week_date_separate_weekMonth(self):
         return None
@@ -124,11 +124,13 @@ class Date_weekly:
             num_week -= variavel
             name_month = self.meses.get(month)
             week_mth_year = str(num_week) + 'ª/' + name_month + '/' + year  # type: ignore # noqa
-            calend.append([calend_interno, week_mth_year])
+            mth_year = name_month + '/' + year  # type: ignore
+            calend.append([calend_interno, week_mth_year, mth_year])
             calend_interno = []
         self.calend = calend
         # print(self.calend)
 
+    # 5º PASSO organizar as informações em uma unica lista
     @property
     def edit_weekMonth_week_date(self):
         return self.calend
@@ -136,11 +138,12 @@ class Date_weekly:
     @edit_weekMonth_week_date.setter
     def edit_weekMonth_week_date(self, none):
         calend = []
-        for day_weekly, weekly_month in self.calend:
-            for weekly, day in day_weekly:
-                calend.append([weekly_month, day, weekly])
+        for calend_interno, week_mth_year, mth_year in self.calend:
+            for weekly, day in calend_interno:
+                calend.append([week_mth_year, day, weekly, mth_year])
         self.calend = calend
 
+    # 6º PASSO criar uma biblioteca com as informações e logo depois a tabela
     @property
     def create_table_weekMonth_week_date(self):
         return None
@@ -148,11 +151,14 @@ class Date_weekly:
     @create_table_weekMonth_week_date.setter
     def create_table_weekMonth_week_date(self, List_colunms):
         tableManip = TableManip()
+        # criar uma tabela vazia com as list_columns
+        #        'N Semana Mes',   'Data semana',  'Dia semana', 'Mes ano'
         tableManip.create_table = List_colunms
-        for weekMonth, data, week in self.calend:
-            new_line = {List_colunms[0]: weekMonth,
-                        List_colunms[1]: data,
-                        List_colunms[2]: week}
+        for week_mth_year, day, weekly, mth_year in self.calend:
+            new_line = {List_colunms[0]: week_mth_year,
+                        List_colunms[1]: day,
+                        List_colunms[2]: weekly,
+                        List_colunms[3]: mth_year, }
             tableManip.add_line_dictionary = new_line
         self.table = tableManip.table
 
@@ -172,7 +178,7 @@ class Date_weekly:
 if __name__ == '__main__':
     # Criar o calendário para o year desejado (por exemplo, 2024)
     date_weekly = Date_weekly()
-    date_weekly.year_weeklys = 24
+    date_weekly.year_weeklys = 24  # OBS VER PORQUE NAO ESTA PUZANDO AUTOMATICO
     date_weekly.create_weekYear_week_date = None
     date_weekly.edit_weekYear_week_date_separate_week = None
     date_weekly.edit_weekYear_week_date_separate_weekMonth = None

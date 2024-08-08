@@ -12,6 +12,7 @@ from components.tableManip import TableManip
 from components.xpathManip import XpathManip
 from components.table_manip_value import Table_manip_value
 from components.date_weekly import Date_weekly
+from components.creat_table_gerente import Creat_table_gerente
 # from PySide6.QtCore import QThread
 from typing import Optional
 from path_file import Path_file
@@ -45,6 +46,7 @@ class Main_table:
         self.date_weekly = Date_weekly()
         self.fileManip = FileManip()
         self.path_file = Path_file()
+        self.creat_table_gerente = Creat_table_gerente()
 
         self.siteSircon = "https://app.sistemasircon.com.br/login"
         self.user = 'usuario@gmail.com'
@@ -70,6 +72,7 @@ class Main_table:
         self.arqTableComissoesConfigPag = self.path_file.path_file_create_user('Appdata', 'tables', 'table_Comissoes_ConfigPagamento.csv')  # noqa
         self.arqTableComissoesConfigPagTratada = self.path_file.path_file_create_user('Appdata', 'tables', 'table_Comissoes_ConfigPagTratada.csv')  # noqa
         self.arqTableComissoesConfigPagDupl = self.path_file.path_file_create_user('Appdata', 'tables', 'table_Comissoes_ConfigPagamento_Dupl.csv')  # noqa
+        self.arqTableGerente = self.path_file.path_file_create_user('Appdata', 'tables', 'table_Gerente.csv')  # noqa
         self.arqtableMerge = self.path_file.path_file_create_user('Appdata', 'tables', 'tableMerge.csv')  # noqa
         self.arqTableDatasSemanais = self.path_file.path_file_create_user('Appdata', 'tables', 'table_datas_semanais.csv')  # noqa
         self.arq_log = self.path_file.path_file_create_user('Appdata', 'log', 'log.txt')  # noqa
@@ -85,20 +88,32 @@ class Main_table:
 
         '''Variaveis'''
         self.column_primary_key = 'PK'
+
         self.column_total_vendidos = 'Total'
         self.column_vendedor = 'Vendedor'
         self.column_gerente = 'Gerente'
+        self.column_cargo_gerente_geral = 'Cargo_Gerente_Geral'
         self.column_credito = 'Crédito'
+        self.periodo_valor_qtd_vendas = '1 Periodo valor qtd vendas'
+        self.column_qtd_valor_vend = 'Qtd Valor Vend'
+
         self.column_ata_entrega = 'ATA Entrega'
+        self.column_mes_ent = 'Mes Ent'
         self.column_sma_ent = 'Sma Ent'
         self.column_ata_cad_adm = 'ATA Cad Adm'
+        self.column_mes_cad_adm = 'Mes Cad Adm'
         self.column_sma_cad_adm = 'Sma Cad Adm'
 
         self.list_columns_total_vendidos = [
             self.column_total_vendidos, self.column_vendedor,
             self.column_gerente, self.column_credito,
-            self.column_ata_entrega, self.column_sma_ent,
-            self.column_ata_cad_adm, self.column_sma_cad_adm]
+            self.periodo_valor_qtd_vendas, self.column_qtd_valor_vend,
+            self.column_cargo_gerente_geral]
+
+        self.list_columns_ata_mes_sma = [
+            self.column_ata_entrega, self.column_mes_ent, self.column_sma_ent,
+            self.column_ata_cad_adm, self.column_mes_cad_adm, self.column_sma_cad_adm  # noqa
+        ]
 
         '''#################### TAGS #######################################'''
         self.tag_option = 'option'
@@ -272,18 +287,25 @@ class Main_table:
         ]
 
         self.list_columns_ATA = [
-            ['Situação', 'Data de Entrega', 'ATA Entrega', 'Sma Ent'],
-            ['Situação', 'Data Cad. Adm', 'ATA Cad Adm', 'Sma Cad Adm']
+            ['Situação', 'Data de Entrega', 'ATA Entrega', 'Sma Ent', 'Mes Ent'],  # noqa
+            ['Situação', 'Data Cad. Adm', 'ATA Cad Adm', 'Sma Cad Adm', 'Mes Cad Adm']  # noqa
         ]
 
+        self.list_columns_ATA_venc = []
+
         self.columns_data_venc = ['Data Venc. ', 'º Parc']
+        self.columns_data_pag = ['Data Pag. ', 'º Parc']
         self.columns_ata = ['ATA ', 'º Parc']
         self.columns_sma = ['Sma ', 'º Parc']
+        self.columns_mes = ['Mes ', 'º Parc']
+        self.columns_ata_venc = ['ATA ', 'º Parc Venc']
+        self.columns_sma_venc = ['Sma ', 'º Parc Venc']
+        self.columns_mes_venc = ['Mes ', 'º Parc Venc']
         self.columns_situacao = ['Situação ', 'º Parc']
 
         self.listColumnsStart = [
-            'Administradora', 'Cargo', 'Cargo_Gerente', 'Vendedor',
-            'Gerente', 'Cliente', 'Crédito', 'Valor Parc. Inicial',
+            'Cliente', 'Administradora', 'Cargo', 'Cargo_Gerente', 'Vendedor',
+            'Gerente', 'Crédito', 'Valor Parc. Inicial',
             'Data Pag. 1º Parc', 'Dt pag. por', 'dia pag.',
             '1P recebera', 'D+ recebera', 'FAT recebera',
             '1P referencia', 'D+ referencia'
@@ -296,6 +318,7 @@ class Main_table:
         self.table_Cadastro_Ata: pd.DataFrame = pd.DataFrame()
         self.table_Comissoes_Configuracao: pd.DataFrame = pd.DataFrame()
         self.table_Comissoes_ConfigPagamento: pd.DataFrame = pd.DataFrame()
+        self.table_Gerente: pd.DataFrame = pd.DataFrame()
         self.table_date_weekly: pd.DataFrame = pd.DataFrame()
         self.table_Cadastro_funcionario_gerente: pd.DataFrame = pd.DataFrame()
         self.table_Comissoes_Configuracao_gerente: pd.DataFrame = (
@@ -331,6 +354,7 @@ class Main_table:
         options.add_experimental_option('excludeSwitches', ['enable-logging'])
         service = Service(ChromeDriverManager().install())
         self.driver = webdriver.Chrome(service=service, options=options)
+        self.driver.maximize_window()
         self.connect = Connect(driver=self.driver)
         xpathManip = XpathManip(driver=self.driver)
         self.connect.arq_log = self.arq_log  # type: ignore
@@ -397,7 +421,7 @@ class Main_table:
             self.father.prog1(text_te)  # type: ignore
             self.table_Cadastro_Consorciado = load_table(
                 self.arqTableCadastroConsorciado)
-        self.father.prog1(f'Arqvuivos:  {self.arqTableCadastroConsorciado}')  # type: ignore # noqa
+        # self.father.prog1(f'Arqvuivos:  {self.arqTableCadastroConsorciado}')  # type: ignore # noqa
 
     def create_table_Cadastro_Funcionario(self):
         '''table_Cadastro_Funcionario '''
@@ -424,7 +448,7 @@ class Main_table:
             self.father.prog1(text_te)  # type: ignore
             self.table_Cadastro_Funcionario = load_table(
                 self.arqTableCadastroFuncionario)
-        self.father.prog1(f'Arqvuivos:  {self.arqTableCadastroFuncionario}')  # type: ignore # noqa
+        # self.father.prog1(f'Arqvuivos:  {self.arqTableCadastroFuncionario}')  # type: ignore # noqa
 
     def create_table_Cadastro_Ata(self):
         '''#################### LIMITAR PESQUISAS ##########################'''
@@ -568,6 +592,16 @@ class Main_table:
             self.table_Comissoes_ConfigPagamento = load_table(
                 self.arqTableComissoesConfigPag)
 
+    def create_table_gerente(self):
+        text_lc = 'comissões Gerente'
+        text_te = 'Início da criação da tabela de ' + text_lc + ':'
+        self.father.prog1(text_te)  # type: ignore
+        self.table_Gerente = self.creat_table_gerente.table_salve
+        self.table_Gerente = create_table(
+            self.table_Gerente,
+            self.arqTableGerente)
+        self.table_Gerente = self.creat_table_gerente.table
+
     def date_weekly_new(self):
         '''tabela numero da semana no mes'''
         text_te = 'Início da criação da tabela de Atas semanais exclusivamente'
@@ -576,14 +610,15 @@ class Main_table:
         if self.connected is False:
             # print('False => date_weekly_new')
             return
-        self.date_weekly.year_weeklys = 60
+        self.date_weekly.year_weeklys = self.month + 12
         self.date_weekly.create_weekYear_week_date = None
         self.date_weekly.edit_weekYear_week_date_separate_week = None
         self.date_weekly.edit_weekYear_week_date_separate_weekMonth = None
         self.date_weekly.edit_weekMonth_week_date = None
         self.date_weekly.create_table_weekMonth_week_date = ['N Semana Mes',
                                                              'Data semana',
-                                                             'Dia semana']
+                                                             'Dia semana',
+                                                             'Mes ano']
         self.table_date_weekly = self.date_weekly.return_table
         self.table_date_weekly = create_table(
             self.table_date_weekly,
@@ -702,7 +737,7 @@ class Main_table:
     def merge_consorciado_funcionario(self):
         # self.prog1('Mesclar tabela consorciado com funcionário')
         text_te = 'Mesclar a tebela de cadastro de consorciado com a '
-        text_te += 'tabela de cadastro de funcionário'
+        text_te += 'tabela de cadastro de funcionário.'
         self.father.prog1(text_te)  # type: ignore
         if self.mix is False or self.table_Cadastro_Consorciado.empty or (
            self.table_Cadastro_Funcionario.empty
@@ -723,7 +758,7 @@ class Main_table:
 
     def merge_consorciado_funcionario_gerente(self):
         text_te = 'Mesclar a tebela já unida anteriomente coma a '
-        text_te += 'tabela de cadastro de funcionário de gerente'
+        text_te += 'tabela de cadastro de funcionário de gerente.'
         self.father.prog1(text_te)  # type: ignore
         if self.mix is False or self.table_full.empty or (
            self.table_Cadastro_funcionario_gerente.empty
@@ -741,7 +776,7 @@ class Main_table:
 
     def merge_full_comissoes_configuracao(self):
         text_te = 'Mesclar a tebela já unida anteriomente coma a '
-        text_te += 'tabela de cadastro de funcionário de gerente'
+        text_te += 'tabela de cadastro de funcionário.'
         self.father.prog1(text_te)  # type: ignore
         if self.mix is False or self.table_full.empty or (
            self.table_Comissoes_Configuracao.empty
@@ -757,7 +792,7 @@ class Main_table:
 
     def merge_full_comissoes_configuracao_gerente(self):
         text_te = 'Mesclar a tebela já unida anteriomente coma a '
-        text_te += 'tabela de comissões configuração de gerente'
+        text_te += 'tabela de comissões configuração de gerente.'
         self.father.prog1(text_te)  # type: ignore
         if self.mix is False or self.table_full.empty or (
             self.table_Comissoes_Configuracao_gerente.empty
@@ -773,9 +808,25 @@ class Main_table:
                       'Tabela_Gerente'],
             how='left')
 
+    def merge_full_comissoes_configuracao_gerente_geral(self):
+        text_te = 'Mesclar a tebela já unida anteriomente coma a '
+        text_te += 'tabela de cadastro de funcionário de gerente geral.'
+        self.father.prog1(text_te)  # type: ignore
+        if self.mix is False or self.table_full.empty or (
+           self.table_Gerente.empty
+           ):
+            # print('False => merge_full_comissoes_configuracao')
+            self.table_full = load_table(self.arqtableMerge)
+            return
+        self.table_full = pd.merge(
+            self.table_full,
+            self.table_Gerente,
+            on=['Administradora', 'Cargo_Gerente'],
+            how='left')
+
     def create_columns_ata(self):
         # descori a quantidade de num_atas_parc
-        text_te = 'A partir da tabela mesclada criar uma nova colunas ATAs '
+        text_te = 'A partir da tabela mesclada criar uma nova colunas ATAs.'
         self.father.prog1(text_te)  # type: ignore
         if self.mix is False:
             # print('False => create_columns_ata')
@@ -784,18 +835,33 @@ class Main_table:
         num_atas_parc = 10000
         for i in range(2, num_atas_parc + 1):
             name_column_data_venc = (
-                self.columns_data_venc[0] + str(i) + (
-                    self.columns_data_venc[1])
+                self.columns_data_venc[0] + str(i) + (self.columns_data_venc[1])  # noqa
             )
-            if name_column_data_venc in self.table_full.columns:
+            name_column_data_pag = (
+                self.columns_data_pag[0] + str(i) + (self.columns_data_pag[1])
+            )
+            if name_column_data_pag in self.table_full.columns:
                 name_column_ata = (self.columns_ata[0] + str(i) + self.columns_ata[1])  # noqa
                 name_column_sma = (self.columns_sma[0] + str(i) + self.columns_sma[1])  # noqa
+                name_column_mes = (self.columns_mes[0] + str(i) + self.columns_mes[1])  # noqa
+                name_column_ata_venc = (self.columns_ata_venc[0] + str(i) + self.columns_ata_venc[1])  # noqa
+                name_column_sma_venc = (self.columns_sma_venc[0] + str(i) + self.columns_sma_venc[1])  # noqa
+                name_column_mes_venc = (self.columns_mes_venc[0] + str(i) + self.columns_mes_venc[1])  # noqa
                 name_column_situacao = (self.columns_situacao[0] + str(i) + (self.columns_situacao[1]))  # noqa
                 self.list_columns_ATA.append(
                     [name_column_situacao,
-                        name_column_data_venc,
-                        name_column_ata,
-                        name_column_sma,
+                     name_column_data_pag,
+                     name_column_ata,
+                     name_column_sma,
+                     name_column_mes
+                     ]
+                )
+                self.list_columns_ATA_venc.append(
+                    [name_column_situacao,
+                     name_column_data_venc,
+                     name_column_ata_venc,
+                     name_column_sma_venc,
+                     name_column_mes_venc
                      ]
                 )
             else:
@@ -803,60 +869,90 @@ class Main_table:
 
     def merge_full_weekly(self):
         text_te = 'Mesclar a tebela já unida coma a '
-        text_te += 'tabela de ATAs semanais.'
+        text_te += 'tabela de ATAs apenas semanais(Sma).'
         self.father.prog1(text_te)  # type: ignore
-        '''# mesclar table_full com table_date_weekly_changed'''
+        '''# mesclar table_full com table_weekly_month_year'''
         if self.mix is False or self.table_full.empty or (
             self.table_date_weekly.empty
         ):
             # print('False => merge_full_weekly')
             self.table_full = load_table(self.arqtableMerge)
             return
-        self.tableManip.table = self.table_date_weekly
+
+        table1: pd.DataFrame = self.table_date_weekly.copy()  # type: ignore
+        self.tableManip.table = table1
+        # deixar apenas as duas colunas 'N Semanda Mes e Data semana'
         self.tableManip.del_column = 'Dia semana'
-        table_date_weekly_changed = self.tableManip.table
-        for columns_date in self.list_columns_ATA:
-            name_column_data_venc = columns_date[1]
-            name_column_sma = columns_date[3]
-            self.table_full = pd.merge(
-                self.table_full,
-                table_date_weekly_changed,
-                left_on=name_column_data_venc,
-                right_on='Data semana',
-                how='left'
-            )
-            self.tableManip.table = self.table_full
-            self.tableManip.rename_name_column = [
-                'N Semana Mes', name_column_sma]
-            self.tableManip.del_column = 'Data semana'
-            self.table_full = self.tableManip.table
+        self.tableManip.del_column = 'Mes ano'
+        table_weekly_month_year = self.tableManip.table
+
+        self.tableManip.table = self.table_date_weekly.copy()
+        # deixar apenas as duas colunas 'Mes ano e Data semana'
+        self.tableManip.del_column = 'Dia semana'
+        self.tableManip.del_column = 'N Semana Mes'
+        table_month_year = self.tableManip.table
+        list_table_date = [table_weekly_month_year, table_month_year]
+        list_column_rename = ['N Semana Mes', 'Mes ano']
+        list_ATAs = [self.list_columns_ATA, self.list_columns_ATA_venc]
+        for list_ATA in list_ATAs:
+            for data_sma in list_ATA:
+                #                      ['Data Pag. Xº Parc']
+                name_column_data_pag = data_sma[1]
+                n_sma_mes = 3
+                for key, table_date in enumerate(list_table_date):
+                    self.table_full = pd.merge(
+                        self.table_full,
+                        table_date,
+                        left_on=name_column_data_pag,
+                        right_on='Data semana',
+                        how='left'
+                    )
+                    #   Renomear coluna
+                    #                    ['Sma ou Mes Xº Parc']
+                    name_column_sma = data_sma[n_sma_mes]
+                    self.tableManip.table = self.table_full
+                    self.tableManip.rename_name_column = [list_column_rename[key], name_column_sma]  # noqa
+                    self.tableManip.del_column = 'Data semana'
+                    self.table_full = self.tableManip.table
+                    n_sma_mes += 1
 
     def merge_full_ata(self):
         text_te = 'Integrar a tabela previamente consolidada com a '
-        text_te += 'tabela de ATAs. '
+        text_te += 'tabela de ATAs mensais. '
         self.father.prog1(text_te)  # type: ignore
         ''' manipular table ATA  e colocar na table_full'''
         if self.mix is False or self.table_full.empty:
-            # print('False => merge_full_ata')
             self.table_full = load_table(self.arqtableMerge)
             return
         self.table_manip_value.table_2 = self.table_Cadastro_Ata
-        for date_ATA in self.list_columns_ATA:
-            name_column_data_venc = date_ATA[1]
-            name_column_ata = date_ATA[2]
-            self.tableManip.table = self.table_full
-            self.tableManip.add_value_fixed_column = [name_column_ata]
-            self.table_full = self.tableManip.table
-            self.table_manip_value.table = self.table_full
-            self.table_manip_value.edit_data_column_ATA = [
-                name_column_data_venc,
-                name_column_ata,
-                'Periodo_inicial',
-                'Periodo_final',
-                'ATA']
-            self.table_full = self.table_manip_value.table
-        self.table_manip_value.table_2 = (
-            self.table_Comissoes_ConfigPagamento)
+        list_ATAs = [self.list_columns_ATA, self.list_columns_ATA_venc]
+        for list_ATA in list_ATAs:
+            for data_ata in list_ATA:
+                name_column_data_pag = data_ata[1]
+                name_column_ata = data_ata[2]
+                self.tableManip.table = self.table_full
+                self.tableManip.add_value_fixed_column = [name_column_ata]
+                self.table_full = self.tableManip.table
+                self.table_manip_value.table = self.table_full
+                # mescla os valores da tabela ATA com table_full
+                self.table_manip_value.edit_data_column_ATA = [
+                    name_column_data_pag,
+                    name_column_ata,
+                    'Periodo_inicial',
+                    'Periodo_final',
+                    'ATA']
+                self.table_full = self.table_manip_value.table
+
+    def merge_full_configPagamento(self):
+        text_te = 'Combinar a tabela unificada com a '
+        text_te += 'tabela de Configuração de Pagamento. '
+        self.father.prog1(text_te)  # type: ignore
+        ''' manipular table ATA  e colocar na table_full'''
+        if self.mix is False or self.table_full.empty:
+            self.table_full = load_table(self.arqtableMerge)
+            return
+        self.table_manip_value.table_2 = self.table_Comissoes_ConfigPagamento
+        # mescla os valores da tablea ConfigPagamento com table_full
         self.table_manip_value.add_columns_full = [
             'Cargo',
             'Administradora',
@@ -865,16 +961,23 @@ class Main_table:
         self.table_full = self.table_manip_value.table
 
     def column_add(self):
-        text_te = 'Adicionar colunas contendo informações específicas '
-        text_te += 'à tabela consolidada anteriormente.'
+        text_te = 'Incorporar as colunas de totais e cota correspondentes à '
+        text_te += 'tabela agregada.'
         self.father.prog1(text_te)  # type: ignore
         if self.mix is False or self.table_full.empty:
             # print('False => column_add')
             self.table_full = load_table(self.arqtableMerge)
             return
         self.tableManip.table = self.table_full
-        self.tableManip.alter_value_line_total_sum = (
-            self.list_columns_total_vendidos)
+        self.tableManip.column_vendedor = self.column_vendedor
+        self.tableManip.column_gerente = self.column_gerente
+        self.tableManip.column_cargo_gerente_geral = self.column_cargo_gerente_geral  # noqa
+        self.tableManip.column_credito = self.column_credito
+        self.tableManip.periodo_valor_qtd_vendas = self.periodo_valor_qtd_vendas  # noqa
+        self.tableManip.column_qtd_valor_vend = self.column_qtd_valor_vend
+
+        self.tableManip.list_columns_ata_mes_sma = self.list_columns_ata_mes_sma  # noqa
+        self.tableManip.alter_value_line_total_sum = self.list_columns_total_vendidos  # noqa
         self.table_full = self.tableManip.table
 
     def order_column(self):
@@ -887,6 +990,9 @@ class Main_table:
             return
         for columns_ata in self.list_columns_ATA:
             for column_ata in columns_ata:
+                # remover coluna Mes Xº Parc
+                # if 'Mes ' in column_ata and 'º Parc' in column_ata:
+                #     continue
                 if column_ata not in self.listColumnsStart:
                     self.listColumnsStart.append(column_ata)
         columnsList = self.table_full.columns.to_list()
@@ -1033,35 +1139,3 @@ class Main_table:
                 text += 'devido a mesclagem entre as tabelas. '
                 self.fileManip.writeLog = text
         # print(text)
-
-
-# if __name__ == '__main__':
-#     main = Main_table()
-#     main.log_start_end()
-#     main.create_table_Cadastro_Consorciado()
-#     main.create_table_Cadastro_Funcionario()
-#     main.create_table_Cadastro_Ata()
-#     main.create_table_Comissoes_Configuracao()
-#     main.create_table_Comissoes_ConfigPagamento()
-#     main.date_weekly_new()
-#     main.table_manip_funcionario()
-#     main.table_manip_cadastro_consorciado()
-#     main.table_manip_comissoes_configuracao()
-#     main.test_table_Comissoes_ConfigPagamento()
-#     main.table_manip_Cadastro_funcionario_gerente()
-#     main.test_table_Cadastro_Funcionario()
-#     main.table_manip_comissoes_configuracao_gerente()
-#     main.merge_star()
-#     main.merge_consorciado_funcionario()
-#     main.merge_consorciado_funcionario_gerente()
-#     main.merge_full_comissoes_configuracao()
-#     main.merge_full_comissoes_configuracao_gerente()
-#     main.create_columns_ata()
-#     main.merge_full_weekly()
-#     main.merge_full_ata()
-#     main.column_add()
-#     main.order_column()
-#     main.save_full()
-#     main.test_full_double()
-#     main.test_primary_key()
-#     main.log_start_end()

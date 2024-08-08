@@ -295,6 +295,7 @@ class Table_manip_value():
                 data_inicio = datetime.strptime(data_inicio_str, '%d/%m/%Y')  # type: ignore # noqa
                 data_fim_str = self.table_2.iloc[key_2][data_final]
                 data_fim = datetime.strptime(data_fim_str, '%d/%m/%Y')  # type: ignore # noqa
+                # data_1 entre valores?
                 if data_1 >= data_inicio and data_1 <= data_fim:
                     data_ata = self.table_2.iloc[key_2][ata_2]
                     self.table.loc[key_1, ata_1] = data_ata
@@ -320,6 +321,7 @@ class Table_manip_value():
             if name_column in list_columns:
                 continue
             tableManip.add_value_fixed_column = name_column
+            # todas as cols configPagamento menos cargo, admin, tipoPag e index
             list_columns_add.append(name_column)
         self.table = tableManip.table
         # add valores as colunas
