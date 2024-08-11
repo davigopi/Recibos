@@ -27,14 +27,15 @@ class Main_recibo:
         self.is_supervisores = False
         self.is_gerentes = True
         self.is_parceiros = False
-        self.prof_vendedores = 'Vendedor'
-        self.prof_supervisores = 'Gerente'
-        self.prof_gerentes = 'Gerente_geral'
-        self.prof_parceiros = 'Parceiro'
-        self.word = ''
+        # self.prof_vendedores = 'Vendedor'
+        # self.prof_supervisores = 'Supervisor'
+        # self.prof_gerentes = 'Gerente'
+        # self.prof_parceiros = 'Parceiro'
+        # self.word = ''
         self.column_profissao = ''
         self.column_vendedor = 'Vendedor'
         self.column_gerente = 'Gerente'
+        self.column_cargo_gerente_geral = 'Cargo_Gerente_Geral'
         self.column_cargo = 'Cargo'
         self.column_administradora = 'Administradora'
         self.column_tabela = 'Tabela'
@@ -61,15 +62,20 @@ class Main_recibo:
         self.column_new_parcela = 'Parcela'
         self.column_new_adimplencia = 'Adimplência'
         self.column_new_porcentagem_comissão = '%'
+
         self.column_ata_entrega_qtd_cotas = 'ATA Entrega qtd cotas'
         self.column_ata_entrega_qtd_cotas_ger = 'ATA Entrega qtd cotas Ger'
+        self.column_ata_entrega_qtd_cotas_ger_ger = 'ATA Entrega qtd cotas Ger Ger'  # noqa
         self.column_ata_cad_adm_qtd_cotas = 'ATA Cad Adm qtd cotas'
         self.column_ata_cad_adm_qtd_cotas_ger = 'ATA Cad Adm qtd cotas Ger'
+        self.column_ata_cad_adm_qtd_cotas_ger_ger = 'ATA Cad Adm qtd cotas Ger Ger'  # noqa
 
         self.column_mes_entrega_qtd_cotas = 'Mes Ent qtd cotas'
         self.column_mes_entrega_qtd_cotas_ger = 'Mes Ent qtd cotas Ger'
+        self.column_mes_entrega_qtd_cotas_ger_ger = 'Mes Ent qtd cotas Ger Ger'
         self.column_mes_cad_adm_qtd_cotas = 'Mes Cad Adm qtd cotas'
         self.column_mes_cad_adm_qtd_cotas_ger = 'Mes Cad Adm qtd cotas Ger'
+        self.column_mes_cad_adm_qtd_cotas_ger_ger = 'Mes Cad Adm qtd cotas Ger Ger'  # noqa
 
         self.data_date_pay = 'DIA DA SEMANA'
         self.data_cadastro = 'CADASTRO'
@@ -78,12 +84,16 @@ class Main_recibo:
 
         self.column_total_sma_cad_adm = 'Total Sma Cad Adm'
         self.column_total_sma_cad_adm_ger = 'Total Sma Cad Adm Ger'
+        self.column_total_sma_cad_adm_ger_ger = 'Total Sma Cad Adm Ger Ger'
         self.column_total_ata_cad_adm = 'Total ATA Cad Adm'
         self.column_total_ata_cad_adm_ger = 'Total ATA Cad Adm Ger'
+        self.column_total_ata_cad_adm_ger_ger = 'Total ATA Cad Adm Ger Ger'
         self.column_total_sma_ent = 'Total Sma Ent'
         self.column_total_sma_ent_ger = 'Total Sma Ent Ger'
+        self.column_total_sma_ent_ger_ger = 'Total Sma Ent Ger Ger'
         self.column_total_ata_entrega = 'Total ATA Entrega'
         self.column_total_ata_entrega_ger = 'Total ATA Entrega Ger'
+        self.column_total_ata_entrega_ger_ger = 'Total ATA Entrega Ger Ger'
 
         # definição de variavel
         self.date_ata_single = 'MAIO/2024'
@@ -134,8 +144,8 @@ class Main_recibo:
         if self.error:
             return
         if self.is_vendedores:
-            self.word = ''
-            self.profession = self.prof_vendedores
+            # self.word = ''
+            self.profession = 'Vendedor'
             self.column_profissao = self.column_vendedor
             self.father.prog2('Gerar recibos dos vendores:')  # type: ignore
             self.generate_employee()
@@ -144,8 +154,8 @@ class Main_recibo:
         if self.error:
             return
         if self.is_supervisores:
-            self.word = '_Gerente'
-            self.profession = self.prof_supervisores
+            # self.word = '_Gerente'
+            self.profession = 'Supervisor'
             self.column_profissao = self.column_gerente
             self.father.prog2('Gerar recibos dos supervisores:')  # type: ignore # noqa
             self.generate_employee()
@@ -154,18 +164,18 @@ class Main_recibo:
         if self.error:
             return
         if self.is_gerentes:
-            self.word = '_Gerente'
-            self.profession = self.prof_gerentes
-            self.column_profissao = self.column_gerente
+            # self.word = '_Gerente_Geral'
+            self.profession = 'Gerente'
+            self.column_profissao = self.column_cargo_gerente_geral
             self.father.prog2('Gerar recibos dos gerentes:')  # type: ignore
-            # self.generate_employee()
+            self.generate_employee()
 
     def generate_is_parceiros(self):
         if self.error:
             return
         if self.is_parceiros:
-            self.word = ''
-            self.profession = self.prof_parceiros
+            # self.word = ''
+            self.profession = 'Parceiro'
             self.column_profissao = self.column_vendedor
             self.father.prog2('Gerar recibos dos parceiros:')  # type: ignore
             self.generate_employee()
@@ -193,11 +203,8 @@ class Main_recibo:
             self.column_sma_entrega,
             self.column_sma_cad_adm
         ]
-        self.list_columns_new = [
-            self.column_new_parcela,
-            self.column_new_adimplencia,
-            self.column_new_porcentagem_comissão
-        ]
+
+        # as colunas da tabela ficara no arqvuio pdf
         self.list_columns_end = [
             self.column_new_parcela,
             self.column_administradora,
@@ -211,23 +218,30 @@ class Main_recibo:
             # self.column_cad_adm,
             # self.column_grupo,
             # self.column_cota,
+
         ]
         self.list_columns_ata_ent = [
             self.column_ata_entrega_qtd_cotas,
-            self.column_ata_entrega_qtd_cotas_ger
+            self.column_ata_entrega_qtd_cotas_ger,
+            self.column_ata_entrega_qtd_cotas_ger_ger
         ]
+
         self.list_columns_ata_cad = [
             self.column_ata_cad_adm_qtd_cotas,
-            self.column_ata_cad_adm_qtd_cotas_ger
+            self.column_ata_cad_adm_qtd_cotas_ger,
+            self.column_ata_cad_adm_qtd_cotas_ger_ger
         ]
 
         self.list_columns_mes_ent = [
             self.column_mes_entrega_qtd_cotas,
-            self.column_mes_entrega_qtd_cotas_ger
+            self.column_mes_entrega_qtd_cotas_ger,
+            self.column_mes_entrega_qtd_cotas_ger_ger
         ]
+
         self.list_columns_mes_cad = [
             self.column_mes_cad_adm_qtd_cotas,
-            self.column_mes_cad_adm_qtd_cotas_ger
+            self.column_mes_cad_adm_qtd_cotas_ger,
+            self.column_mes_cad_adm_qtd_cotas_ger_ger
         ]
 
         try:
@@ -242,19 +256,21 @@ class Main_recibo:
         for i in range(2, self.num_atas_parc + 1):
             self.list_columns_full_ata.append(f'ATA {i}º Parc')
             self.list_columns_full_weekly.append(f'Sma {i}º Parc')
-        list_seller_single_all = []
 
+        list_seller_single_all = []
         # é por ata ou por semana ata?
-        if self.profession == self.prof_parceiros:
+        if self.profession == 'Parceiro':
             data_ata = self.date_sma_single
             self.table_full = self.table_full.loc[
                 (self.table_full['Dt pag. por'] == 'DIA DA SEMANA')
             ]
             list_columns_full = self.list_columns_full_weekly
-        else:
-            # profesion(Vendedor, supervisor ou  Gerete)
+        else:  # profesion(Vendedor, supervisor, Gerete, Gerente_Geral)
+            # MES / ANO
             data_ata = self.date_ata_single
+            #                   ATA Entreta, ATA Cad Adm
             list_columns_full = self.list_columns_full_ata
+
         # ira selecionar tabela que tenha date_ata_single e o
         for column in list_columns_full:
             table_full_def = self.table_full.loc[self.table_full[column] == data_ata]  # noqa
@@ -265,7 +281,8 @@ class Main_recibo:
         list_seller_single = []
         for seller in list_seller_single_all:
             if seller not in list_seller_single:
-                list_seller_single.append(seller)
+                if not pd.isna(seller):
+                    list_seller_single.append(seller)
         list_seller_single.sort()
         for self.seller_single in list_seller_single:
             # Foi escolhido um vededor?
@@ -276,7 +293,6 @@ class Main_recibo:
             text_seller = ''
             words_sellers = self.seller_single.lower().split()
             for word_seller in words_sellers:
-                # print(len(word_seller))
                 if len(word_seller) >= 3:
                     word_seller = word_seller.capitalize()
                 text_seller += " " + word_seller
@@ -298,29 +314,29 @@ class Main_recibo:
             self.num_regras = self.generat_payroll.number  # ncol->{N}Qtd.CotIn
             self.generat_payroll.num_columns = [str(self.num_regras) + ' Parc ', '']  # noqa
             self.num_parcelas = self.generat_payroll.number  # ncol->Parc {N}
-            self.generat_payroll.word = self.word
+            # self.generat_payroll.word = self.word
             self.list_columns_full_ata = [self.column_ata_entrega, self.column_ata_cad_adm]  # noqa
             self.list_columns_full_weekly = [self.column_sma_entrega, self.column_sma_cad_adm]  # noqa
             # Preencher a lista sequencialmente
             for i in range(2, self.num_atas_parc + 1):
                 self.list_columns_full_ata.append(f'ATA {i}º Parc')
                 self.list_columns_full_weekly.append(f'Sma {i}º Parc')
-            self.list_qtd_cotas_parc = []
-            self.list_qtd_cotas_inicial = []
-            self.list_qtd_cotas_final = []
-            self.dic_qtd_cotas_parc = {}
-            for i in range(1, self.num_regras + 1):
-                self.list_qtd_cotas_parc.append(f'{i} Qtd. Cotas Inicial{self.word}')  # noqa
-                self.list_qtd_cotas_inicial.append(f'{i} Qtd. Cotas Inicial{self.word}')  # noqa
-                self.list_qtd_cotas_parc.append(f'{i} Qtd. Cotas Final{self.word}')  # noqa
-                self.list_qtd_cotas_final.append(f'{i} Qtd. Cotas Final{self.word}')  # noqa
-                self.list = []
-                for j in range(1, self.num_parcelas + 1):
-                    self.list_qtd_cotas_parc.append(f'{i} Parc {j}{self.word}')
-                    self.list.append(f'{i} Parc {j}{self.word}')
-                self.chave = f'{i} Qtd. Cotas Inicial{self.word}'
-                self.valor = [f'{i} Qtd. Cotas Final{self.word}'] + self.list
-                self.dic_qtd_cotas_parc[self.chave] = self.valor
+            # self.list_qtd_cotas_parc = []
+            # self.list_qtd_cotas_inicial = []
+            # self.list_qtd_cotas_final = []
+            # self.dic_qtd_cotas_parc = {}
+            # for i in range(1, self.num_regras + 1):
+                # self.list_qtd_cotas_parc.append(f'{i} Qtd. Cotas Inicial{self.profession}')  # noqa
+                # self.list_qtd_cotas_inicial.append(f'{i} Qtd. Cotas Inicial{self.profession}')  # noqa
+                # self.list_qtd_cotas_parc.append(f'{i} Qtd. Cotas Final{self.profession}')  # noqa
+                # self.list_qtd_cotas_final.append(f'{i} Qtd. Cotas Final{self.profession}')  # noqa
+                # self.list = []
+                # for j in range(1, self.num_parcelas + 1):
+                # self.list_qtd_cotas_parc.append(f'{i} Parc {j}{self.profession}')  # noqa
+                # self.list.append(f'{i} Parc {j}{self.profession}')
+                # self.chave = f'{i} Qtd. Cotas Inicial{self.profession}'
+                # self.valor = [f'{i} Qtd. Cotas Final{self.profession}'] + self.list  # noqa
+                # self.dic_qtd_cotas_parc[self.chave] = self.valor
 
             # variaveis criada atravez de outras
 
@@ -381,13 +397,16 @@ class Main_recibo:
             self.generat_payroll.column_sma_cad_adm = self.column_sma_cad_adm
             self.generat_payroll.column_total_sma_cad_adm = self.column_total_sma_cad_adm  # noqa
             self.generat_payroll.column_total_sma_cad_adm_ger = self.column_total_sma_cad_adm_ger  # noqa
+            self.generat_payroll.column_total_sma_cad_adm_ger_ger = self.column_total_sma_cad_adm_ger_ger  # noqa
             self.generat_payroll.column_total_ata_cad_adm = self.column_total_ata_cad_adm  # noqa
             self.generat_payroll.column_total_ata_cad_adm_ger = self.column_total_ata_cad_adm_ger  # noqa
+            self.generat_payroll.column_total_ata_cad_adm_ger_ger = self.column_total_ata_cad_adm_ger_ger  # noqa
             self.generat_payroll.column_total_sma_ent = self.column_total_sma_ent  # noqa
             self.generat_payroll.column_total_sma_ent_ger = self.column_total_sma_ent_ger  # noqa
+            self.generat_payroll.column_total_sma_ent_ger_ger = self.column_total_sma_ent_ger_ger  # noqa
             self.generat_payroll.column_total_ata_entrega = self.column_total_ata_entrega  # noqa
             self.generat_payroll.column_total_ata_entrega_ger = self.column_total_ata_entrega_ger  # noqa
-
+            self.generat_payroll.column_total_ata_entrega_ger_ger = self.column_total_ata_entrega_ger_ger  # noqa
             # self.generat_payroll.column_situacao_d = self.column_situacao_d
 
             self.generat_payroll.data_date_pay = self.data_date_pay
@@ -397,47 +416,51 @@ class Main_recibo:
             self.generat_payroll.list_recebera_to_comission = self.list_recebera_to_comission  # noqa
             self.generat_payroll.list_condition_ata = self.list_condition_ata
             self.generat_payroll.list_cargo_not_calc_commis = self.list_cargo_not_calc_commis  # noqa
-            self.generat_payroll.list_columns_new = self.list_columns_new
             self.generat_payroll.list_columns_end = self.list_columns_end
             self.generat_payroll.list_columns_ata_ent = self.list_columns_ata_ent  # noqa
             self.generat_payroll.list_columns_ata_cad = self.list_columns_ata_cad  # noqa
+            self.generat_payroll.column_new_porcentagem_comissão = self.column_new_porcentagem_comissão  # noqa
+            self.generat_payroll.column_new_parcela = self.column_new_parcela
+            self.generat_payroll.column_new_adimplencia = self.column_new_adimplencia  # noqa
 
             self.generat_payroll.list_columns_mes_ent = self.list_columns_mes_ent  # noqa
             self.generat_payroll.list_columns_mes_cad = self.list_columns_mes_cad  # noqa
 
-            self.generat_payroll.list_qtd_cotas_inicial = self.list_qtd_cotas_inicial  # noqa
-            self.generat_payroll.list_qtd_cotas_final = self.list_qtd_cotas_final  # noqa
+            # self.generat_payroll.list_qtd_cotas_inicial = self.list_qtd_cotas_inicial  # noqa
+            # self.generat_payroll.list_qtd_cotas_final = self.list_qtd_cotas_final  # noqa
             self.generat_payroll.list_columns_full_ata = self.list_columns_full_ata  # noqa
             self.generat_payroll.list_columns_full_weekly = self.list_columns_full_weekly  # noqa
             self.generat_payroll.list_columns_full_ata_entrega = self.list_columns_full_ata_entrega  # noqa
             self.generat_payroll.list_columns_full_ata_cadastro = self.list_columns_full_ata_cadastro  # noqa
             self.generat_payroll.list_columns_full_sma_entrega = self.list_columns_full_sma_entrega  # noqa
             self.generat_payroll.list_columns_full_sma_cadastro = self.list_columns_full_sma_cadastro  # noqa
-            self.generat_payroll.list_qtd_cotas_parc = self.list_qtd_cotas_parc
+            # self.generat_payroll.list_qtd_cotas_parc = self.list_qtd_cotas_parc # noqa
             self.generat_payroll.name_columns_full = self.name_columns_full
 
             self.generat_payroll.quantity_line_full = self.quantity_line_full
             self.generat_payroll.quantity_line_ata = self.quantity_line_ata
             self.generat_payroll.quantity_line_weekly = self.quantity_line_weekly  # noqa
 
-            self.generat_payroll.dic_qtd_cotas_parc = self.dic_qtd_cotas_parc
+            # self.generat_payroll.dic_qtd_cotas_parc = self.dic_qtd_cotas_parc
             self.generat_payroll.dic_months = self.dic_months
 
             self.generat_payroll.table_full_ata = self.table_full_ata  # type: ignore # noqa
             self.generat_payroll.table_full_weekly = self.table_full_weekly  # type: ignore # noqa
 
-            # fim da exportacao variavel
-            self.list_columns_str_to_float = (
-                self.list_qtd_cotas_inicial + self.list_qtd_cotas_final
-            )
-            self.list_columns_str_to_float.append(self.column_credito)
-            self.generat_payroll.list_columns_str_to_float = self.list_columns_str_to_float  # noqa
+            # # fim da exportacao variavel
+            # self.list_columns_str_to_float = (
+            #     self.list_qtd_cotas_inicial + self.list_qtd_cotas_final
+            # )
+            # self.list_columns_str_to_float.append(self.column_credito)
+            # self.generat_payroll.list_columns_str_to_float = self.list_columns_str_to_float  # noqa
 
             # self.generat_payroll.convert_str_float = self.table_full
 
             # self.generat_payroll.table_full = (
             # self.generat_payroll.convert_str_float)
-            self.generat_payroll.columns_to_list_full_seller()
+
+            # self.generat_payroll.columns_to_list_full_seller()
+
             self.generat_payroll.columns_ata_full_seller_single()
             self.generat_payroll.tables_columns_ata_seller_single()
             self.generat_payroll.tables_concat_seller_single()

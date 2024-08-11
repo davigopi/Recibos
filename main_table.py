@@ -95,6 +95,8 @@ class Main_table:
         self.column_cargo_gerente_geral = 'Cargo_Gerente_Geral'
         self.column_credito = 'Crédito'
         self.periodo_valor_qtd_vendas = '1 Periodo valor qtd vendas'
+        self.periodo_valor_qtd_vendas_Gerente = '1 Periodo valor qtd vendas_Gerente'  # noqa
+        self.periodo_valor_qtd_vendas_Gerente_Geral = '1 Periodo valor qtd vendas_Gerente_Geral'
         self.column_qtd_valor_vend = 'Qtd Valor Vend'
 
         self.column_ata_entrega = 'ATA Entrega'
@@ -105,10 +107,11 @@ class Main_table:
         self.column_sma_cad_adm = 'Sma Cad Adm'
 
         self.list_columns_total_vendidos = [
-            self.column_total_vendidos, self.column_vendedor,
-            self.column_gerente, self.column_credito,
-            self.periodo_valor_qtd_vendas, self.column_qtd_valor_vend,
-            self.column_cargo_gerente_geral]
+            self.column_total_vendidos]
+        # self.column_vendedor,
+        # self.column_gerente, self.column_credito,
+        # self.periodo_valor_qtd_vendas, self.column_qtd_valor_vend,
+        # self.column_cargo_gerente_geral]
 
         self.list_columns_ata_mes_sma = [
             self.column_ata_entrega, self.column_mes_ent, self.column_sma_ent,
@@ -304,10 +307,10 @@ class Main_table:
         self.columns_situacao = ['Situação ', 'º Parc']
 
         self.listColumnsStart = [
-            'Cliente', 'Administradora', 'Cargo', 'Cargo_Gerente', 'Vendedor',
-            'Gerente', 'Crédito', 'Valor Parc. Inicial',
-            'Data Pag. 1º Parc', 'Dt pag. por', 'dia pag.',
-            '1P recebera', 'D+ recebera', 'FAT recebera',
+            'Cliente', 'Administradora', 'Cargo', 'Cargo_Gerente',
+            'Cargo_Gerente_Geral', 'Vendedor', 'Gerente', 'Crédito',
+            'Valor Parc. Inicial', 'Data Pag. 1º Parc', 'Dt pag. por',
+            'dia pag.', '1P recebera', 'D+ recebera', 'FAT recebera',
             '1P referencia', 'D+ referencia'
         ]
 
@@ -600,7 +603,7 @@ class Main_table:
         self.table_Gerente = create_table(
             self.table_Gerente,
             self.arqTableGerente)
-        self.table_Gerente = self.creat_table_gerente.table
+        # self.table_Gerente = self.creat_table_gerente.table
 
     def date_weekly_new(self):
         '''tabela numero da semana no mes'''
@@ -974,6 +977,8 @@ class Main_table:
         self.tableManip.column_cargo_gerente_geral = self.column_cargo_gerente_geral  # noqa
         self.tableManip.column_credito = self.column_credito
         self.tableManip.periodo_valor_qtd_vendas = self.periodo_valor_qtd_vendas  # noqa
+        self.tableManip.periodo_valor_qtd_vendas_Gerente = self.periodo_valor_qtd_vendas_Gerente  # noqa
+        self.tableManip.periodo_valor_qtd_vendas_Gerente_Geral = self.periodo_valor_qtd_vendas_Gerente_Geral  # noqa
         self.tableManip.column_qtd_valor_vend = self.column_qtd_valor_vend
 
         self.tableManip.list_columns_ata_mes_sma = self.list_columns_ata_mes_sma  # noqa

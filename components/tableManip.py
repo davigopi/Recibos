@@ -45,11 +45,13 @@ class TableManip:
         self.column_cargo_gerente_geral = ''
         self.column_credito = ''
         self.periodo_valor_qtd_vendas = ''
+        self.periodo_valor_qtd_vendas_Gerente = ''
+        self.periodo_valor_qtd_vendas_Gerente_Geral = ''
         self.column_qtd_valor_vend = ''
 
         self.fileManip = FileManip()
         self.path_file = Path_file()
-        self.arq_log = self.path_file.path_file_create_user('Appdata', 'log', 'teste.txt')  # noqa
+        self.arq_log = self.path_file.path_file_create_user('Appdata', 'log', 'Prob_data.txt')  # noqa
         self.fileManip.arq_log = self.arq_log  # type: ignore
 
     @property
@@ -268,14 +270,7 @@ class TableManip:
                 gerente = self.table.iloc[line][self.column_gerente]
                 cargo_gerente_geral = self.table.iloc[line][self.column_cargo_gerente_geral]  # noqa
                 list_profession = [vendedor, gerente, cargo_gerente_geral]
-                periodo_valor_qtd_vendas = self.table.iloc[line][self.periodo_valor_qtd_vendas]  # noqa
-                periodo_valor_qtd_vendas = str(periodo_valor_qtd_vendas)
-                if 'Qtd. Vendas' in periodo_valor_qtd_vendas:
-                    self.table.at[line, self.column_qtd_valor_vend] = 'Qtd Vend'  # noqa
-                    valor_qtd = 'Qtd Vend'
-                else:
-                    self.table.at[line, self.column_qtd_valor_vend] = 'Valor Vend'  # noqa
-                    valor_qtd = 'Valor Vend'
+
                 ata = self.table.iloc[line][column_ata_mes_sma]
                 # num_ger = 0
                 for key_prof, profession in enumerate(list_profession):
@@ -284,107 +279,120 @@ class TableManip:
                     # ata entrega, ata cad adm, sma entrega...
                     if profession == vendedor:
                         column_prof = self.column_vendedor
+                        periodo_valor_qtd_vendas = self.table.iloc[line][self.periodo_valor_qtd_vendas]  # noqa
                     elif profession == gerente:
                         column_prof = self.column_gerente
+                        periodo_valor_qtd_vendas = self.table.iloc[line][self.periodo_valor_qtd_vendas_Gerente]  # noqa
                     elif profession == cargo_gerente_geral:
                         column_prof = self.column_cargo_gerente_geral
+                        periodo_valor_qtd_vendas = self.table.iloc[line][self.periodo_valor_qtd_vendas_Gerente_Geral]  # noqa
+                    periodo_valor_qtd_vendas = str(periodo_valor_qtd_vendas)
+                    if 'Qtd. Vendas' in periodo_valor_qtd_vendas:
+                        self.table.at[line, self.column_qtd_valor_vend] = 'Qtd Vendas'  # noqa
+                    else:
+                        self.table.at[line, self.column_qtd_valor_vend] = 'Valor Vendas'  # noqa
+
                     sum_profession = self.table.loc[
                         (self.table[column_prof] == profession) &
                         (self.table[column_ata_mes_sma] == ata),
                         self.column_credito].apply(convert_str_float).sum()  # type: ignore # noqa
-                    # n_col = key_prof + num_ger
-                    # coluna Total ATA Entrega ou + Ger recebe valor
                     #         Total ATA Entrega  0  |  Total ATA Entrega Ger  2
                     self.table.at[line, list_column_ata[key_prof]] = (
                         locale.format_string(
                             "%.2f", sum_profession, grouping=True
                         )
                     )
-                    # e diferente de 'Sma'
-                    if 'Sma' not in column_ata_mes_sma:
-                        count_profession = self.table.loc[
-                            (self.table[column_prof] == profession) &
-                            (self.table[column_ata_mes_sma] == ata),
-                            self.column_credito].count()  # type: ignore
-                        self.table.at[line, list_column_qtd_vendas[key_prof]] = (  # noqa
-                            locale.format_string(
-                                "%.2f", count_profession, grouping=True
-                            )
+                    # 'Sma' tem na coluna ata?
+                    if 'Sma' in column_ata_mes_sma:
+                        continue
+                    count_profession = self.table.loc[
+                        (self.table[column_prof] == profession) &
+                        (self.table[column_ata_mes_sma] == ata),
+                        self.column_credito].count()  # type: ignore
+                    self.table.at[line, list_column_qtd_vendas[key_prof]] = (  # noqa
+                        locale.format_string(
+                            "%.2f", count_profession, grouping=True
                         )
-                        # saber se vai compara como quantidade ou total
-                        if valor_qtd == 'Qtd Vend':
-                            value_compare = count_profession
+                    )
+                    # saber se vai compara como quantidade ou total
+                    if 'Qtd. Vendas' in periodo_valor_qtd_vendas:
+                        value_compare = count_profession
+                    else:
+                        value_compare = sum_profession
+                    # vendedor 0  5 Qtd. Cotas Inicial, 4...  '1 Qtd. Cotas
+                    # gerente 1  5 Qtd. Cotas Inicial_Gerente', '4.. '1 Qtd
+                    # gerente 2  5 Qtd. Cotas Inicial_Gerente_Geral',.. 1 Q
+                    num_cota_temp = 0
+                    for column_qtd_data in list_qtd_data_full[key_prof]:
+                        column_qtd_cotas_inicial = column_qtd_data[0]
+                        value_qci = self.table.iloc[line][column_qtd_cotas_inicial]  # noqa
+                        # passar para o proximo se o valor nao exitir
+                        if column_qtd_data != list_qtd_data_full[key_prof][-1]:  # noqa
+                            if str(value_qci).lower() == 'nan' or value_qci is None:  # noqa
+                                continue
+                        # receber o valor da coluna Qtd.
+                        column_qtd_cotas_final = column_qtd_data[1]
+                        column_data_incial = column_qtd_data[2]
+                        column_data_final = column_qtd_data[3]
+                        value_qcf = self.table.iloc[line][column_qtd_cotas_final]  # noqa
+                        value_di = self.table.iloc[line][column_data_incial]
+                        value_df = self.table.iloc[line][column_data_final]
+                        value_qci = convert_str_float(value_qci)
+                        value_qcf = convert_str_float(value_qcf)
+                        value_di = convert_to_date(value_di)
+                        value_df = convert_to_date(value_df)
+                        value_pr = self.table.iloc[line][column_1p_referencia]
+                        value_pr = str(value_pr)
+                        if 'CADASTRO' in value_pr:
+                            column_data = column_data_cad_adm
                         else:
-                            value_compare = sum_profession
-                        # vendedor 0  5 Qtd. Cotas Inicial, 4...  '1 Qtd. Cotas
-                        # gerente 1  5 Qtd. Cotas Inicial_Gerente', '4.. '1 Qtd
-                        num_cota_temp = 0
-                        for column_qtd_data in list_qtd_data_full[key_prof]:
-                            column_qtd_cotas_inicial = column_qtd_data[0]
-                            value_qci = self.table.iloc[line][column_qtd_cotas_inicial]  # noqa
-                            # passar para o proximo se o valor nao exitir
-                            if column_qtd_data != list_qtd_data_full[key_prof][-1]:  # noqa
-                                if str(value_qci).lower() == 'nan' or value_qci is None:  # noqa
-                                    continue
-                            # receber o valor da coluna Qtd.
-                            column_qtd_cotas_final = column_qtd_data[1]
-                            column_data_incial = column_qtd_data[2]
-                            column_data_final = column_qtd_data[3]
-                            value_qcf = self.table.iloc[line][column_qtd_cotas_final]  # noqa
-                            value_di = self.table.iloc[line][column_data_incial]  # noqa
-                            value_df = self.table.iloc[line][column_data_final]  # noqa
-                            value_qci = convert_str_float(value_qci)
-                            value_qcf = convert_str_float(value_qcf)
-                            value_di = convert_to_date(value_di)
-                            value_df = convert_to_date(value_df)
-
-                            value_pr = self.table.iloc[line][column_1p_referencia]  # noqa
-                            if 'CADASTRO' in value_pr:
-                                column_data = column_data_cad_adm
-                            else:
-                                column_data = column_data_entrega
-                            value_data = self.table.iloc[line][column_data]
-                            value_data = convert_to_date(value_data)
-                            num_cota = column_qtd_cotas_inicial[0]
+                            column_data = column_data_entrega
+                        value_data = self.table.iloc[line][column_data]
+                        value_data = convert_to_date(value_data)
+                        num_cota = column_qtd_cotas_inicial[0]
+                        # if value_compare == 4639466:
+                        #     print(f'{value_compare >= value_qci} -> {value_compare} >= {value_qci}')
+                        #     if value_compare >= value_qci:
+                        #         pass
+                        if (
+                            value_compare >= value_qci and
+                            value_compare <= value_qcf and
+                            value_data <= value_df
+                        ):
+                            # devido a mudança n categoria do tipo de
+                            # pagamentos tem vendas antigas que não se
+                            # encaixa no inicio da função
+                            if value_data >= value_di:
+                                break
+                            num_cota_temp = num_cota
+                        if num_cota == '1':
                             if (
                                 value_compare >= value_qci and
                                 value_compare <= value_qcf and
+                                # value_data >= value_di and
                                 value_data <= value_df
                             ):
-                                # devido a mudança n categoria do tipo de
-                                # pagamentos tem vendas antigas que não se
-                                # encaixa no inicio da função
-                                if value_data >= value_di:
-                                    break
-                                num_cota_temp = num_cota
-                            if num_cota == '1':
-                                if (
-                                    value_compare >= value_qci and
-                                    value_compare <= value_qcf and
-                                    # value_data >= value_di and
-                                    value_data <= value_df
-                                ):
-                                    text = f'cliente: {self.table.iloc[line]['Cliente']} \n'  # noqa
-                                    text += f'cargo: {self.table.iloc[line]['Cargo']} \n'  # noqa
-                                    text += f'Vendedor: {self.table.iloc[line]['Vendedor']} \n'  # noqa
-                                    text += f'{value_compare} >= {value_qci}  -> {value_compare >= value_qci} \n'  # noqa
-                                    text += f'{value_compare} <= {value_qcf}  -> {value_compare <= value_qcf}'  # noqa
-                                    # text += f'{value_data} >= {value_di}  -> {value_data >= value_di} \n'  # noqa
-                                    text += f'{value_data} <= {value_df}  -> {value_data <= value_df} \n'  # noqa
-                                    text += '\n'
-                                    self.fileManip.writeLog = text
-                                if num_cota_temp != 0:
-                                    num_cota = num_cota_temp
-                                else:
-                                    num_cota = 0
-                                break
+                                text = f'cliente: {self.table.iloc[line]['Cliente']} \n'  # noqa
+                                text += f'cargo: {self.table.iloc[line]['Cargo']} \n'  # noqa
+                                text += f'Vendedor: {self.table.iloc[line]['Vendedor']} \n'  # noqa
+                                text += f'{value_compare} >= {value_qci}  -> {value_compare >= value_qci} \n'  # noqa
+                                text += f'{value_compare} <= {value_qcf}  -> {value_compare <= value_qcf}'  # noqa
+                                # text += f'{value_data} >= {value_di}  -> {value_data >= value_di} \n'  # noqa
+                                text += f'{value_data} <= {value_df}  -> {value_data <= value_df} \n'  # noqa
+                                text += '\n'
+                                self.fileManip.writeLog = text
+                            if num_cota_temp != 0:
+                                num_cota = num_cota_temp
+                            else:
+                                num_cota = 0
+                            break
 
-                        # ATA Entrega qtd cotas 1 | ATA Entrega qtd costa Ger 3
-                        num_cota = '{:g}'.format(float(num_cota))
-                        self.table.at[line, list_comumn_qtd_cotas[key_prof]] = num_cota  # noqa
-                        # n_col = key_prof + 1 + num_ger
-                        # self.table.at[line, list_name_columns[n_col]] = num_cota  # noqa
-                    # num_ger += 1
+                    # ATA Entrega qtd cotas 1 | ATA Entrega qtd costa Ger 3
+                    num_cota = '{:g}'.format(float(num_cota))
+                    self.table.at[line, list_comumn_qtd_cotas[key_prof]] = num_cota  # noqa
+                    # n_col = key_prof + 1 + num_ger
+                    # self.table.at[line, list_name_columns[n_col]] = num_cota  # noqa
+                # num_ger += 1
 
     @ property
     def del_column(self):
