@@ -217,7 +217,7 @@ class Generat_payroll:
     #                 self.list_ata.append(data_ata)
     #     for column_weekly in self.list_columns_full_weekly:
     #         for line in range(self.quantity_line_weekly):
-    #             data_weekly = self.table_full_weekly.iloc[line][column_weekly]
+    #             data_weekly = self.table_full_weekly.iloc[line][column_weekly]  # noqa
     #             if data_weekly not in self.list_weekly and not pd.isna(
     #                     data_weekly):
     #                 self.list_weekly.append(data_weekly)
@@ -392,17 +392,25 @@ class Generat_payroll:
                 divisor = 'pag'
 
             if divisor == 'venc':
-                quantity_line_table = table_venc.shape[0]
-                for line in range(quantity_line_table):
-                    value = table_venc.iloc[line][self.column_credito]
-                    value = self.convert_str_float(value)
-                    sums_all += value
+                table_choose = table_venc
             elif divisor == 'pag':
-                quantity_line_table = table_pag.shape[0]
-                for line in range(quantity_line_table):
-                    value = table_pag.iloc[line][self.column_credito]
-                    value = self.convert_str_float(value)
-                    sums_all += value
+                table_choose = table_pag
+            quantity_line_table = table_choose.shape[0]
+            for line in range(quantity_line_table):
+                value = table_choose.iloc[line][self.column_credito]
+                value = self.convert_str_float(value)
+                sums_all += value
+
+            # quantity_line_table = table_pag.shape[0]
+            # for line in range(quantity_line_table):
+            #     value = table_pag.iloc[line][self.column_credito]
+            #     value = self.convert_str_float(value)
+            #     sums_all += value
+
+            if dividend == 'venc':
+                table_choose = table_venc
+            elif dividend == 'pag':
+                table_choose = table_pag
 
             # é primeira parcela? ATA ou Sma Entrega ou ATA ou Sma Cad Adm
             if ata in self.column_ata_sma:
@@ -411,20 +419,20 @@ class Generat_payroll:
                 column = ata
                 column = column.replace('ATA ', '').replace('Sma ', '')
                 column_situacao = 'Situação ' + column
-                quantity_line_table = table_venc.shape[0]
+                quantity_line_table = table_choose.shape[0]
                 for line in range(quantity_line_table):
-                    situacao = table_venc.iloc[line][column_situacao]
-                    #                   'NORMAL', 'PAGA'
+                    situacao = table_choose.iloc[line][column_situacao]
+                    #             'NORMAL', 'PAGA'
                     if situacao in self.list_situacao_to_comission:
-                        value = table_venc.iloc[line][self.column_credito]
+                        value = table_choose.iloc[line][self.column_credito]
                         value = self.convert_str_float(value)
                         sums_compliance += value
-            elif dividend == 'pag':
-                quantity_line_table = table_pag.shape[0]
-                for line in range(quantity_line_table):
-                    value = table_pag.iloc[line][self.column_credito]
-                    value = self.convert_str_float(value)
-                    sums_compliance += value
+            # elif dividend == 'pag':
+            #     quantity_line_table = table_pag.shape[0]
+            #     for line in range(quantity_line_table):
+            #         value = table_pag.iloc[line][self.column_credito]
+            #         value = self.convert_str_float(value)
+            #         sums_compliance += value
 
             self.list_tables_ata_sums.append([
                 table_pag,

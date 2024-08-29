@@ -1,6 +1,7 @@
-# from dbm import _Database
+# flake8: noqa
+# pyright: # type: ignore
+
 import os
-# from pathlib import Path
 from webdriver_manager.chrome import ChromeDriverManager
 import pandas as pd
 from datetime import datetime
@@ -51,6 +52,7 @@ class Main_table:
         self.siteSircon = "https://app.sistemasircon.com.br/login"
         self.user = 'usuario@gmail.com'
         self.password = 'Senha'
+
         self.month = 1
 
         self.new_table_Cadastro_Consorciado = False
@@ -76,11 +78,11 @@ class Main_table:
         self.arqtableMerge = self.path_file.path_file_create_user('Appdata', 'tables', 'tableMerge.csv')  # noqa
         self.arqTableDatasSemanais = self.path_file.path_file_create_user('Appdata', 'tables', 'table_datas_semanais.csv')  # noqa
         self.arq_log = self.path_file.path_file_create_user('Appdata', 'log', 'log.txt')  # noqa
-        # self.arqTableTeste1 = self.path_file.path_file_create_user('Appdata', 'tables', 'table_teste1.csv')  # noqa
+        self.arqTableTeste1 = self.path_file.path_file_create_user('Appdata', 'tables', 'table_teste1.csv')  # noqa
         # self.arqTableTeste2 = self.path_file.path_file_create_user('Appdata', 'tables', 'table_teste2.csv')  # noqa
         # self.arqTableTeste3 = self.path_file.path_file_create_user('Appdata', 'tables', 'table_teste3.csv')  # noqa
 
-        self.fileManip.arq_log = self.arq_log  # type: ignore
+        self.fileManip.arq_log = self.arq_log
 
         self.pathDonwload = os.environ['USERPROFILE'] + '\\Downloads'
         self.arqDonwloadSales = self.pathDonwload + '\\consorciados.csv'
@@ -95,7 +97,7 @@ class Main_table:
         self.column_cargo_gerente_geral = 'Cargo_Gerente_Geral'
         self.column_credito = 'Crédito'
         self.periodo_valor_qtd_vendas = '1 Periodo valor qtd vendas'
-        self.periodo_valor_qtd_vendas_Gerente = '1 Periodo valor qtd vendas_Gerente'  # noqa
+        self.periodo_valor_qtd_vendas_Gerente = '1 Periodo valor qtd vendas_Gerente'
         self.periodo_valor_qtd_vendas_Gerente_Geral = '1 Periodo valor qtd vendas_Gerente_Geral'
         self.column_qtd_valor_vend = 'Qtd Valor Vend'
 
@@ -115,7 +117,7 @@ class Main_table:
 
         self.list_columns_ata_mes_sma = [
             self.column_ata_entrega, self.column_mes_ent, self.column_sma_ent,
-            self.column_ata_cad_adm, self.column_mes_cad_adm, self.column_sma_cad_adm  # noqa
+            self.column_ata_cad_adm, self.column_mes_cad_adm, self.column_sma_cad_adm
         ]
 
         '''#################### TAGS #######################################'''
@@ -290,8 +292,8 @@ class Main_table:
         ]
 
         self.list_columns_ATA = [
-            ['Situação', 'Data de Entrega', 'ATA Entrega', 'Sma Ent', 'Mes Ent'],  # noqa
-            ['Situação', 'Data Cad. Adm', 'ATA Cad Adm', 'Sma Cad Adm', 'Mes Cad Adm']  # noqa
+            ['Situação', 'Data de Entrega', 'ATA Entrega', 'Sma Ent', 'Mes Ent'],
+            ['Situação', 'Data Cad. Adm', 'ATA Cad Adm', 'Sma Cad Adm', 'Mes Cad Adm']
         ]
 
         self.list_columns_ATA_venc = []
@@ -334,22 +336,22 @@ class Main_table:
     def date_file(self):
         text_te = 'Datas das tabelas de: \n'
         date_table_Cadastro_Consorciado = datetime.fromtimestamp(os.path.getmtime(self.arqTableCadastroConsorciado)).strftime('%c')  # noqa
-        text_te += f'Cadastro de consorciado: {date_table_Cadastro_Consorciado} \n'  # noqa
+        text_te += f'Cadastro de consorciado: {date_table_Cadastro_Consorciado} \n'
         date_table_Cadastro_Funcionario = datetime.fromtimestamp(os.path.getmtime(self.arqTableCadastroFuncionario)).strftime('%c')  # noqa
-        text_te += f'Cadastro de funcionario: {date_table_Cadastro_Funcionario} \n'  # noqa
+        text_te += f'Cadastro de funcionario: {date_table_Cadastro_Funcionario} \n'
         date_table_Cadastro_Ata = datetime.fromtimestamp(os.path.getmtime(self.arqTableCadastroAta)).strftime('%c')  # noqa
-        text_te += f'Cadastro de ATAs: {date_table_Cadastro_Ata} \n'  # noqa
+        text_te += f'Cadastro de ATAs: {date_table_Cadastro_Ata} \n'
         date_table_Comissoes_Configuracao = datetime.fromtimestamp(os.path.getmtime(self.arqTableComissoesConfiguracao)).strftime('%c')  # noqa
-        text_te += f'Comissões configuração: {date_table_Comissoes_Configuracao} \n'  # noqa
+        text_te += f'Comissões configuração: {date_table_Comissoes_Configuracao} \n'
         date_table_Comissoes_ConfigPagamento = datetime.fromtimestamp(os.path.getmtime(self.arqTableComissoesConfigPag)).strftime('%c')  # noqa
-        text_te += f'Comissões configuração de pagamento: {date_table_Comissoes_ConfigPagamento} \n'  # noqa
+        text_te += f'Comissões configuração de pagamento: {date_table_Comissoes_ConfigPagamento} \n'
         return (text_te)
-        # self.father.prog1(text_te)  # type: ignore
+        # self.father.prog1(text_te)
 
     def openSite(self):
         ''' defined '''
         text_te = f'Abrindo site: {self.siteSircon}'
-        self.father.prog1(text_te)  # type: ignore
+        self.father.prog1(text_te)
         options = webdriver.ChromeOptions()
         options.add_argument('--ignore-certificate-errors')
         options.add_experimental_option(
@@ -360,7 +362,7 @@ class Main_table:
         self.driver.maximize_window()
         self.connect = Connect(driver=self.driver)
         xpathManip = XpathManip(driver=self.driver)
-        self.connect.arq_log = self.arq_log  # type: ignore
+        self.connect.arq_log = self.arq_log
         self.driver.get(self.siteSircon)
         # logar
         self.connect.user = self.user
@@ -374,7 +376,6 @@ class Main_table:
                 return True
             count += 1
             if count >= 3:
-                # print('FALSE => CONNECT FALSO | Usuário e/ou senha errado')
                 self.new_table_Cadastro_Consorciado = False
                 self.new_table_Cadastro_Funcionario = False
                 self.new_table_Cadastro_Ata = False
@@ -402,14 +403,14 @@ class Main_table:
         text_lc = 'cadastro de consorciado'
         if self.new_table_Cadastro_Consorciado:
             text_te = 'Início da criação da tabela de ' + text_lc + ':'
-            self.father.prog1(text_te)  # type: ignore
+            self.father.prog1(text_te)
             self.connected = self.openSite()
             if self.connected is False:
                 return
-            self.connect.file = self.arqDonwloadSales  # type: ignore
+            self.connect.file = self.arqDonwloadSales
             self.connect.month = self.month
             text_te = 'Obtendo informações da tabela de ' + text_lc + '.'
-            self.father.prog1(text_te)  # type: ignore
+            self.father.prog1(text_te)
             self.connect.sales = self.listXpathSales
             self.connect.create_primary_key = self.column_primary_key
             self.table_Cadastro_Consorciado = self.connect.dfNew
@@ -421,23 +422,23 @@ class Main_table:
                 self.arqTableCadastroConsorciado)
         else:
             text_te = 'Ler a tabela de ' + text_lc + ' dos arquivos já salvos.'
-            self.father.prog1(text_te)  # type: ignore
+            self.father.prog1(text_te)
             self.table_Cadastro_Consorciado = load_table(
                 self.arqTableCadastroConsorciado)
-        # self.father.prog1(f'Arqvuivos:  {self.arqTableCadastroConsorciado}')  # type: ignore # noqa
+        # self.father.prog1(f'Arqvuivos:  {self.arqTableCadastroConsorciado}')
 
     def create_table_Cadastro_Funcionario(self):
         '''table_Cadastro_Funcionario '''
         text_lc = 'cadastro de funcionário'
         if self.new_table_Cadastro_Funcionario:
             text_te = 'Início da criação da tabela de ' + text_lc + ':'
-            self.father.prog1(text_te)  # type: ignore
+            self.father.prog1(text_te)
             self.connected = self.openSite()
             if self.connected is False:
                 return
-            self.connect.file = self.arqDonwloadFunction  # type: ignore
+            self.connect.file = self.arqDonwloadFunction
             text_te = 'Obtendo informações da tabela de ' + text_lc + '.'
-            self.father.prog1(text_te)  # type: ignore
+            self.father.prog1(text_te)
             self.connect.function = self.listXpathFunction
             self.table_Cadastro_Funcionario = self.connect.dfNew
             if self.driver:
@@ -448,17 +449,17 @@ class Main_table:
                 self.arqTableCadastroFuncionario)
         else:
             text_te = 'Ler a tabela de ' + text_lc + ' dos arquivos já salvos.'
-            self.father.prog1(text_te)  # type: ignore
+            self.father.prog1(text_te)
             self.table_Cadastro_Funcionario = load_table(
                 self.arqTableCadastroFuncionario)
-        # self.father.prog1(f'Arqvuivos:  {self.arqTableCadastroFuncionario}')  # type: ignore # noqa
+        # self.father.prog1(f'Arqvuivos:  {self.arqTableCadastroFuncionario}')
 
     def create_table_Cadastro_Ata(self):
         '''#################### LIMITAR PESQUISAS ##########################'''
         text_lc = 'cadastro de ATA'
         if self.new_table_Cadastro_Ata is True:
             text_te = 'Início da criação da tabela de ' + text_lc + ':'
-            self.father.prog1(text_te)  # type: ignore
+            self.father.prog1(text_te)
             self.connected = self.openSite()
             if self.connected is False:
                 return
@@ -470,13 +471,13 @@ class Main_table:
             self.limited_search_administradoras()
             self.limited_search_cargos()
             text_te = 'Obtendo informações da tabela de ' + text_lc + '.'
-            self.father.prog1(text_te)  # type: ignore
+            self.father.prog1(text_te)
             self.connect.minutes = self.listXpathMinutes
             self.table_Cadastro_Ata = self.connect.table
             if self.driver:
                 self.driver.quit()
                 self.driver = None
-            self.tableManip.table = self.table_Cadastro_Ata  # type: ignore
+            self.tableManip.table = self.table_Cadastro_Ata
             list_columns_rename = [[1, 'Mes'],
                                    [2, 'Periodo_inicial'],
                                    [3, 'Periodo_final']]
@@ -490,7 +491,7 @@ class Main_table:
                 self.arqTableCadastroAta)
         else:
             text_te = 'Ler a tabela de ' + text_lc + ' dos arquivos já salvos.'
-            self.father.prog1(text_te)  # type: ignore
+            self.father.prog1(text_te)
             self.table_Cadastro_Ata = load_table(self.arqTableCadastroAta)
 
     def create_table_Comissoes_Configuracao(self):
@@ -498,7 +499,7 @@ class Main_table:
         text_lc = 'comissões configuração'
         if self.new_table_Comissoes_Configuracao:
             text_te = 'Início da criação da tabela de ' + text_lc + ':'
-            self.father.prog1(text_te)  # type: ignore
+            self.father.prog1(text_te)
             self.connected = self.openSite()
             if self.connected is False:
                 return
@@ -510,22 +511,19 @@ class Main_table:
             self.connect.tagReturnValue
             # criar lista de administradoras
             text_te = 'Obtendo informações da tabela de ' + text_lc + '.'
-            self.father.prog1(text_te)  # type: ignore
+            self.father.prog1(text_te)
             self.limited_search_administradoras()
             self.connect.pressXpathResultListValue = self.xpathAdministradora
             # criar lista de administradoras + tabela de recebiemnto
-            self.connect.pressListValueXpathResultListValue = (
-                self.xpathTabelaRecebimento)
+            self.connect.pressListValueXpathResultListValue = self.xpathTabelaRecebimento
             # criar lista de administradoras + tabela de recebiemnto + cargos
             self.limited_search_cargos()
-            self.connect.pressListValueXpathResultListValueDouble = (
-                self.xpathCargo)
+            self.connect.pressListValueXpathResultListValueDouble = self.xpathCargo
             # alterar a tagets
             self.connect.tagGet = self.tag_value
             self.connect.tagReturnValue
             # lista administradoras, tabela de recebiemnto, cargos, valores
-            self.connect.pressListValueResultListValueTriple = (
-                self.listCampoCotaPeriodoParcela)
+            self.connect.pressListValueResultListValueTriple = self.listCampoCotaPeriodoParcela
             # adicionar 'None' para todos terem o mesmo quantidade de elementos
             # e tambem o ultimo elemento adiciona uma coluna 'None'
             self.connect.addNone
@@ -539,26 +537,24 @@ class Main_table:
             self.connect.noneToEmpty
             # excluir se tudo for ''
             self.connect.killAllEmpty
-            self.connect.listColunmToTable
+            table = self.connect.listColunmToTable
+            create_table(table, self.arqTableTeste1)
             self.table_Comissoes_Configuracao = self.connect.renameColumn
             if self.driver:
                 self.driver.quit()
                 self.driver = None
-            self.table_Comissoes_Configuracao = create_table(
-                self.table_Comissoes_Configuracao,
-                self.arqTableComissoesConfiguracao)
+            self.table_Comissoes_Configuracao = create_table(self.table_Comissoes_Configuracao, self.arqTableComissoesConfiguracao)  # noqa
         else:
             text_te = 'Ler a tabela de ' + text_lc + ' dos arquivos já salvos.'
-            self.father.prog1(text_te)  # type: ignore
-            self.table_Comissoes_Configuracao = load_table(
-                self.arqTableComissoesConfiguracao)
+            self.father.prog1(text_te)
+            self.table_Comissoes_Configuracao = load_table(self.arqTableComissoesConfiguracao)
 
     def create_table_Comissoes_ConfigPagamento(self):
         '''table_Comissoes_ConfigPagamento'''
         text_lc = 'comissões configuração de pagamento'
         if self.new_table_Comissoes_ConfigPagamento:
             text_te = 'Início da criação da tabela de ' + text_lc + ':'
-            self.father.prog1(text_te)  # type: ignore
+            self.father.prog1(text_te)
             self.connected = self.openSite()
             if self.connected is False:
                 return
@@ -575,7 +571,7 @@ class Main_table:
             self.limited_search_administradoras()
             self.limited_search_cargos()
             text_te = 'Obtendo informações da tabela de ' + text_lc + '.'
-            self.father.prog1(text_te)  # type: ignore
+            self.father.prog1(text_te)
             self.connect.pressListXpathReturnListValue = (
                 self.listXpathCargAdminsPag)
             self.connect.pressListValueReturnListValue = (
@@ -591,14 +587,14 @@ class Main_table:
                 self.arqTableComissoesConfigPag)
         else:
             text_te = 'Ler a tabela de ' + text_lc + ' dos arquivos já salvos.'
-            self.father.prog1(text_te)  # type: ignore
+            self.father.prog1(text_te)
             self.table_Comissoes_ConfigPagamento = load_table(
                 self.arqTableComissoesConfigPag)
 
     def create_table_gerente(self):
         text_lc = 'comissões Gerente'
         text_te = 'Início da criação da tabela de ' + text_lc + ':'
-        self.father.prog1(text_te)  # type: ignore
+        self.father.prog1(text_te)
         self.table_Gerente = self.creat_table_gerente.table_salve
         self.table_Gerente = create_table(
             self.table_Gerente,
@@ -609,9 +605,8 @@ class Main_table:
         '''tabela numero da semana no mes'''
         text_te = 'Início da criação da tabela de Atas semanais exclusivamente'
         text_te += ' com base nas datas.'
-        self.father.prog1(text_te)  # type: ignore
+        self.father.prog1(text_te)
         if self.connected is False:
-            # print('False => date_weekly_new')
             return
         self.date_weekly.year_weeklys = self.month + 12
         self.date_weekly.create_weekYear_week_date = None
@@ -633,9 +628,8 @@ class Main_table:
         tem dois ou mais cargos'''
         text_te = 'Manipular a tabela de cadastro de funcionários para '
         text_te += 'duplicação de cargos.'
-        self.father.prog1(text_te)  # type: ignore
+        self.father.prog1(text_te)
         if self.table_Cadastro_Funcionario.empty or self.connected is False:
-            # print('False => table_manip_funcionario')
             return
         self.table_manip_value.table = self.table_Cadastro_Funcionario
         self.table_manip_value.row_duplicate_column = ['Nome']
@@ -653,10 +647,8 @@ class Main_table:
         e igualar aos alterados no table_Cadastro_Funcionario'''
         text_te = 'Manipular a tabela de cadastro de consorciado para alterar '
         text_te += 'coluna igual a funcionário.'
-        self.father.prog1(text_te)  # type: ignore
-        if self.table_Cadastro_Consorciado.empty or (
-                self.connected is False):
-            # print('False => table_manip_cadastro_consorciado')
+        self.father.prog1(text_te)
+        if self.table_Cadastro_Consorciado.empty or (self.connected is False):
             return
         self.table_manip_value.table = self.table_Cadastro_Consorciado
         self.table_manip_value.data_duplicate_change = 'Vendedor'
@@ -667,10 +659,8 @@ class Main_table:
         colunas 'Administradora' e 'Cargo' '''
         text_te = 'Manipular a tabela de comissões configuração de pagamento '
         text_te += 'para remover duplicação colunas admin. cargo.'
-        self.father.prog1(text_te)  # type: ignore
-        if self.table_Comissoes_Configuracao.empty or (
-                self.connected is False):
-            # print('False => table_manip_comissoes_configuracao')
+        self.father.prog1(text_te)
+        if self.table_Comissoes_Configuracao.empty or (self.connected is False):
             return
         cols_comConf_rept = ['Administradora', 'Cargo',
                              'Tabela de recebimento']
@@ -685,10 +675,8 @@ class Main_table:
     def table_manip_Cadastro_funcionario_gerente(self):
         text_te = 'Manipular a tabela de cadastro de funcionario'
         text_te += 'para adicionar colunas para cargo supervisor(gerente).'
-        self.father.prog1(text_te)  # type: ignore
-        if self.table_Cadastro_funcionario_gerente.empty or (
-                self.connected is False):
-            # print('False => table_manip_Cadastro_funcionario_gerente')
+        self.father.prog1(text_te)
+        if self.table_Cadastro_funcionario_gerente.empty or (self.connected is False):
             return
         self.tableManip = TableManip()
         names_columns = self.table_Cadastro_funcionario_gerente.columns
@@ -702,10 +690,8 @@ class Main_table:
     def table_manip_comissoes_configuracao_gerente(self):
         text_te = 'Manipular a tabela de comissões configuração para o '
         text_te += 'para adicionar colunas para cargo supervisor(gerente).'
-        self.father.prog1(text_te)  # type: ignore
-        if self.table_Comissoes_Configuracao.empty or (
-                self.connected is False):
-            # print('False => table_manip_comissoes_configuracao_gerente')
+        self.father.prog1(text_te)
+        if self.table_Comissoes_Configuracao.empty or (self.connected is False):
             return
         self.table_Comissoes_Configuracao_gerente = (
             self.table_Comissoes_Configuracao)
@@ -727,28 +713,21 @@ class Main_table:
             or self.new_table_Comissoes_Configuracao
             or self.new_table_Comissoes_ConfigPagamento
         ):
-            # print('True => merge_star')
             self.mix = True
         if self.connected is False:
-            # print('False => merge_star')
             self.mix = False
             text_cd = 'Não'
         text_te = 'Foi solicitado fazer a mesclagem entre tabelas: '
         text_te += text_cd
-        self.father.prog1(text_te)  # type: ignore
+        self.father.prog1(text_te)
 
     def merge_consorciado_funcionario(self):
         # self.prog1('Mesclar tabela consorciado com funcionário')
         text_te = 'Mesclar a tebela de cadastro de consorciado com a '
         text_te += 'tabela de cadastro de funcionário.'
-        self.father.prog1(text_te)  # type: ignore
-        if self.mix is False or self.table_Cadastro_Consorciado.empty or (
-           self.table_Cadastro_Funcionario.empty
-           ):
-            print(self.mix is False,
-                  self.table_Cadastro_Consorciado.empty,
-                  self.table_Cadastro_Funcionario.empty)
-            # print('False => merge_consorciado_funcionario')
+        self.father.prog1(text_te)
+        if self.mix is False or self.table_Cadastro_Consorciado.empty or (self.table_Cadastro_Funcionario.empty):  # noqa
+            print(self.mix is False, self.table_Cadastro_Consorciado.empty, self.table_Cadastro_Funcionario.empty)  # noqa
             self.table_full = load_table(self.arqtableMerge)
             return
         self.table_full = pd.merge(
@@ -762,11 +741,8 @@ class Main_table:
     def merge_consorciado_funcionario_gerente(self):
         text_te = 'Mesclar a tebela já unida anteriomente coma a '
         text_te += 'tabela de cadastro de funcionário de gerente.'
-        self.father.prog1(text_te)  # type: ignore
-        if self.mix is False or self.table_full.empty or (
-           self.table_Cadastro_funcionario_gerente.empty
-           ):
-            # print('False => merge_consorciado_funcionario_gerente')
+        self.father.prog1(text_te)
+        if self.mix is False or self.table_full.empty or (self.table_Cadastro_funcionario_gerente.empty):  # noqa
             self.table_full = load_table(self.arqtableMerge)
             return
         self.table_full = pd.merge(
@@ -780,11 +756,8 @@ class Main_table:
     def merge_full_comissoes_configuracao(self):
         text_te = 'Mesclar a tebela já unida anteriomente coma a '
         text_te += 'tabela de cadastro de funcionário.'
-        self.father.prog1(text_te)  # type: ignore
-        if self.mix is False or self.table_full.empty or (
-           self.table_Comissoes_Configuracao.empty
-           ):
-            # print('False => merge_full_comissoes_configuracao')
+        self.father.prog1(text_te)
+        if self.mix is False or self.table_full.empty or (self.table_Comissoes_Configuracao.empty):
             self.table_full = load_table(self.arqtableMerge)
             return
         self.table_full = pd.merge(
@@ -796,11 +769,8 @@ class Main_table:
     def merge_full_comissoes_configuracao_gerente(self):
         text_te = 'Mesclar a tebela já unida anteriomente coma a '
         text_te += 'tabela de comissões configuração de gerente.'
-        self.father.prog1(text_te)  # type: ignore
-        if self.mix is False or self.table_full.empty or (
-            self.table_Comissoes_Configuracao_gerente.empty
-        ):
-            # print('False => merge_full_comissoes_configuracao_gerente')
+        self.father.prog1(text_te)
+        if self.mix is False or self.table_full.empty or (self.table_Comissoes_Configuracao_gerente.empty):  # noqa
             self.table_full = load_table(self.arqtableMerge)
             return
         self.table_full = pd.merge(
@@ -814,11 +784,8 @@ class Main_table:
     def merge_full_comissoes_configuracao_gerente_geral(self):
         text_te = 'Mesclar a tebela já unida anteriomente coma a '
         text_te += 'tabela de cadastro de funcionário de gerente geral.'
-        self.father.prog1(text_te)  # type: ignore
-        if self.mix is False or self.table_full.empty or (
-           self.table_Gerente.empty
-           ):
-            # print('False => merge_full_comissoes_configuracao')
+        self.father.prog1(text_te)
+        if self.mix is False or self.table_full.empty or (self.table_Gerente.empty):
             self.table_full = load_table(self.arqtableMerge)
             return
         self.table_full = pd.merge(
@@ -830,23 +797,22 @@ class Main_table:
     def create_columns_ata(self):
         # descori a quantidade de num_atas_parc
         text_te = 'A partir da tabela mesclada criar uma nova colunas ATAs.'
-        self.father.prog1(text_te)  # type: ignore
+        self.father.prog1(text_te)
         if self.mix is False:
-            # print('False => create_columns_ata')
             self.table_full = load_table(self.arqtableMerge)
             return
         num_atas_parc = 10000
         for i in range(2, num_atas_parc + 1):
             name_column_data_venc = (
-                self.columns_data_venc[0] + str(i) + (self.columns_data_venc[1])  # noqa
+                self.columns_data_venc[0] + str(i) + (self.columns_data_venc[1])
             )
             name_column_data_pag = (
                 self.columns_data_pag[0] + str(i) + (self.columns_data_pag[1])
             )
             if name_column_data_pag in self.table_full.columns:
-                name_column_ata = (self.columns_ata[0] + str(i) + self.columns_ata[1])  # noqa
-                name_column_sma = (self.columns_sma[0] + str(i) + self.columns_sma[1])  # noqa
-                name_column_mes = (self.columns_mes[0] + str(i) + self.columns_mes[1])  # noqa
+                name_column_ata = (self.columns_ata[0] + str(i) + self.columns_ata[1])
+                name_column_sma = (self.columns_sma[0] + str(i) + self.columns_sma[1])
+                name_column_mes = (self.columns_mes[0] + str(i) + self.columns_mes[1])
                 name_column_ata_venc = (self.columns_ata_venc[0] + str(i) + self.columns_ata_venc[1])  # noqa
                 name_column_sma_venc = (self.columns_sma_venc[0] + str(i) + self.columns_sma_venc[1])  # noqa
                 name_column_mes_venc = (self.columns_mes_venc[0] + str(i) + self.columns_mes_venc[1])  # noqa
@@ -873,16 +839,12 @@ class Main_table:
     def merge_full_weekly(self):
         text_te = 'Mesclar a tebela já unida coma a '
         text_te += 'tabela de ATAs apenas semanais(Sma).'
-        self.father.prog1(text_te)  # type: ignore
+        self.father.prog1(text_te)
         '''# mesclar table_full com table_weekly_month_year'''
-        if self.mix is False or self.table_full.empty or (
-            self.table_date_weekly.empty
-        ):
-            # print('False => merge_full_weekly')
+        if self.mix is False or self.table_full.empty or (self.table_date_weekly.empty):
             self.table_full = load_table(self.arqtableMerge)
             return
-
-        table1: pd.DataFrame = self.table_date_weekly.copy()  # type: ignore
+        table1: pd.DataFrame = self.table_date_weekly.copy()
         self.tableManip.table = table1
         # deixar apenas as duas colunas 'N Semanda Mes e Data semana'
         self.tableManip.del_column = 'Dia semana'
@@ -922,7 +884,7 @@ class Main_table:
     def merge_full_ata(self):
         text_te = 'Integrar a tabela previamente consolidada com a '
         text_te += 'tabela de ATAs mensais. '
-        self.father.prog1(text_te)  # type: ignore
+        self.father.prog1(text_te)
         ''' manipular table ATA  e colocar na table_full'''
         if self.mix is False or self.table_full.empty:
             self.table_full = load_table(self.arqtableMerge)
@@ -949,7 +911,7 @@ class Main_table:
     def merge_full_configPagamento(self):
         text_te = 'Combinar a tabela unificada com a '
         text_te += 'tabela de Configuração de Pagamento. '
-        self.father.prog1(text_te)  # type: ignore
+        self.father.prog1(text_te)
         ''' manipular table ATA  e colocar na table_full'''
         if self.mix is False or self.table_full.empty:
             self.table_full = load_table(self.arqtableMerge)
@@ -966,38 +928,35 @@ class Main_table:
     def column_add(self):
         text_te = 'Incorporar as colunas de totais e cota correspondentes à '
         text_te += 'tabela agregada.'
-        self.father.prog1(text_te)  # type: ignore
+        self.father.prog1(text_te)
         if self.mix is False or self.table_full.empty:
-            # print('False => column_add')
             self.table_full = load_table(self.arqtableMerge)
             return
         self.tableManip.table = self.table_full
         self.tableManip.column_vendedor = self.column_vendedor
         self.tableManip.column_gerente = self.column_gerente
-        self.tableManip.column_cargo_gerente_geral = self.column_cargo_gerente_geral  # noqa
+        self.tableManip.column_cargo_gerente_geral = self.column_cargo_gerente_geral
         self.tableManip.column_credito = self.column_credito
-        self.tableManip.periodo_valor_qtd_vendas = self.periodo_valor_qtd_vendas  # noqa
-        self.tableManip.periodo_valor_qtd_vendas_Gerente = self.periodo_valor_qtd_vendas_Gerente  # noqa
-        self.tableManip.periodo_valor_qtd_vendas_Gerente_Geral = self.periodo_valor_qtd_vendas_Gerente_Geral  # noqa
+        self.tableManip.periodo_valor_qtd_vendas = self.periodo_valor_qtd_vendas
+        self.tableManip.periodo_valor_qtd_vendas_Gerente = self.periodo_valor_qtd_vendas_Gerente
+        self.tableManip.periodo_valor_qtd_vendas_Gerente_Geral = self.periodo_valor_qtd_vendas_Gerente_Geral
         self.tableManip.column_qtd_valor_vend = self.column_qtd_valor_vend
 
-        self.tableManip.list_columns_ata_mes_sma = self.list_columns_ata_mes_sma  # noqa
-        self.tableManip.alter_value_line_total_sum = self.list_columns_total_vendidos  # noqa
+        self.tableManip.list_columns_ata_mes_sma = self.list_columns_ata_mes_sma
+        self.tableManip.alter_value_line_total_sum = self.list_columns_total_vendidos
         self.table_full = self.tableManip.table
 
     def order_column(self):
         ''' Ordenar colunas da tabela para a forma que quiser'''
-        text_te = 'Ordenar as colunas, colocando as mais importantes no início '  # noqa
-        self.father.prog1(text_te)  # type: ignore
+        text_te = 'Ordenar as colunas, colocando as mais importantes no início '
+        self.father.prog1(text_te)
         if self.mix is False or self.table_full.empty:
-            # print('False => order_column')
             self.table_full = load_table(self.arqtableMerge)
             return
         for columns_ata in self.list_columns_ATA:
             for column_ata in columns_ata:
                 # remover coluna Mes Xº Parc
                 # if 'Mes ' in column_ata and 'º Parc' in column_ata:
-                #     continue
                 if column_ata not in self.listColumnsStart:
                     self.listColumnsStart.append(column_ata)
         columnsList = self.table_full.columns.to_list()
@@ -1009,14 +968,13 @@ class Main_table:
             if columnList in self.listColumnsStart:
                 continue
             columnsListNew.append(columnList)
-        self.table_full = self.table_full[columnsListNew]  # type: ignore
+        self.table_full = self.table_full[columnsListNew]
 
     def save_full(self):
         text_te = 'Salvar uma tabela previamente consolidada e tratada.'
-        self.father.prog1(text_te)  # type: ignore
+        self.father.prog1(text_te)
         # salvar a tabela
         if self.table_full.empty:
-            # print('False => save_full')
             return
         self.table_full = create_table(self.table_full, self.arqtableMerge)
 
@@ -1025,13 +983,10 @@ class Main_table:
         text_te += 'consolidada e a tabela de cadastro de consorciado para '
         text_te += 'identificar discrepâncias nas vendas. '
         text_te += 'Registrar os resultados no arquivo de log (log.txt).'
-        self.father.prog1(text_te)  # type: ignore
+        self.father.prog1(text_te)
         ''' teste para sabEr a diferença e mostra que é diferente.
         pois se existir diferença ele ira salvar no log'''
-        if self.table_full.empty or self.table_Cadastro_Consorciado.empty or (
-            self.connected is False or self.mix is False
-        ):
-            # print('False => test_full_double')
+        if self.table_full.empty or self.table_Cadastro_Consorciado.empty or (self.connected is False or self.mix is False):  # noqa
             return
         text = 'OK'
         num_line = len(self.table_full)
@@ -1057,7 +1012,6 @@ class Main_table:
             text2 += '\n table_merge | table_cadastro_consorciado'
             text2 += '\n' + text
             text = text2
-        # print(text)
         self.fileManip.writeLog = text
 
     def test_table_Comissoes_ConfigPagamento(self):
@@ -1066,10 +1020,8 @@ class Main_table:
         text_te += 'a configuração de pagamentos duplicados, que possam '
         text_te += 'resultar em vendas adicionais. '
         text_te += 'Registrar os resultados no arquivo de log (log.txt).'
-        self.father.prog1(text_te)  # type: ignore
-        if self.table_Comissoes_ConfigPagamento.empty or (
-                self.connected is False or self.mix is False):
-            # print('False => test_table_Comissoes_ConfigPagamento')
+        self.father.prog1(text_te)
+        if self.table_Comissoes_ConfigPagamento.empty or (self.connected is False or self.mix is False):  # noqa
             return
         self.table_manip_value.table = self.table_Comissoes_ConfigPagamento
         colummns = [
@@ -1092,21 +1044,14 @@ class Main_table:
             self.table_duplicate = create_table(
                 self.table_duplicate,
                 self.arqTableComissoesConfigPagDupl)
-        # print(text)
         # tratar tabela para não existir duplicancia
-        # table_Comissoes_ConfigPagTratada = self.table_manip_value.table
-        # table_Comissoes_ConfigPagTratada.to_csv(
-        #     self.arqTableComissoesConfigPagTratada,
-        #     index=False, header=True, sep=';')
 
     def test_table_Cadastro_Funcionario(self):
         text_te = 'Realizar um teste na tabela de cadastro de funcionários '
-        text_te += 'para identificar casos de homônimos com funções distintas. '  # noqa
+        text_te += 'para identificar casos de homônimos com funções distintas. '
         text_te += 'Registrar os resultados no arquivo de log (log.txt).'
-        self.father.prog1(text_te)  # type: ignore
-        if (self.table_Cadastro_Funcionario.empty or self.connected is False
-                or self.mix is False):
-            # print('False => test_table_Cadastro_Funcionario')
+        self.father.prog1(text_te)
+        if (self.table_Cadastro_Funcionario.empty or self.connected is False or self.mix is False):
             return
         list_funcionario_double = (
             self.table_Cadastro_Funcionario['Nome'].tolist())
@@ -1122,16 +1067,13 @@ class Main_table:
                 text += f'mesmo nome: ({funcionario_double}) com duas funções '
                 text += 'diferentes.'
                 self.fileManip.writeLog = text
-        # print(text)
 
     def test_primary_key(self):
         text_te = 'Realizar uma verificação de integridade na tabela '
         text_te += 'consolidada para evitar a duplicação de chaves primárias. '
         text_te += 'Registrar os resultados no arquivo de log (log.txt).'
-        self.father.prog1(text_te)  # type: ignore
-        if (self.table_full.empty or self.connected is False
-                or self.mix is False):
-            # print('False => test_primary_key')
+        self.father.prog1(text_te)
+        if (self.table_full.empty or self.connected is False or self.mix is False):
             return
         list_primary_key = self.table_full[self.column_primary_key].tolist()
         text = 'OK: tabelaMergem full não exite chave primaria duplicada. '
@@ -1143,4 +1085,3 @@ class Main_table:
                 text += 'Isso siguinifica que tem vendas duplicados, '
                 text += 'devido a mesclagem entre as tabelas. '
                 self.fileManip.writeLog = text
-        # print(text)

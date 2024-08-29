@@ -1,7 +1,8 @@
-from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QStackedWidget  # noqa
-from PySide6.QtGui import QIcon, QPixmap
+# flake8: noqa
+# pyright: # type: ignore
 
-# from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QStackedWidget
+from PySide6.QtGui import QIcon, QPixmap
 from login import Ui_login
 from main_window import MainWindow
 from components.cryptography_utils import Key_encrypt
@@ -14,7 +15,7 @@ def resource_path(relative_path):
     """Obtem o caminho absoluto para o recurso, trabalhando para dev e
     PyInstaller"""
     try:
-        base_path = sys._MEIPASS  # type: ignore
+        base_path = sys._MEIPASS
     except Exception:
         base_path = os.path.abspath(".")
 

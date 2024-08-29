@@ -307,6 +307,10 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_12 = QHBoxLayout()
         self.horizontalLayout_12.setObjectName(u"horizontalLayout_12")
+        self.horizontalSpacer_6 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+
+        self.horizontalLayout_12.addItem(self.horizontalSpacer_6)
+
         self.label_7 = QLabel(self.pg_recibo)
         self.label_7.setObjectName(u"label_7")
         self.label_7.setFont(font)
@@ -327,11 +331,18 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_12.addWidget(self.cbb_funcionario)
 
+        self.horizontalLayout_12.setStretch(0, 2)
+        self.horizontalLayout_12.setStretch(1, 11)
+        self.horizontalLayout_12.setStretch(2, 36)
 
         self.verticalLayout_12.addLayout(self.horizontalLayout_12)
 
         self.horizontalLayout_6 = QHBoxLayout()
         self.horizontalLayout_6.setObjectName(u"horizontalLayout_6")
+        self.horizontalSpacer_5 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+
+        self.horizontalLayout_6.addItem(self.horizontalSpacer_5)
+
         self.label_3 = QLabel(self.pg_recibo)
         self.label_3.setObjectName(u"label_3")
         sizePolicy2.setHeightForWidth(self.label_3.sizePolicy().hasHeightForWidth())
@@ -349,8 +360,39 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_6.addWidget(self.data_ata)
 
+        self.horizontalLayout_6.setStretch(0, 2)
+        self.horizontalLayout_6.setStretch(1, 11)
+        self.horizontalLayout_6.setStretch(2, 26)
 
         self.verticalLayout_12.addLayout(self.horizontalLayout_6)
+
+        self.horizontalLayout_11 = QHBoxLayout()
+        self.horizontalLayout_11.setObjectName(u"horizontalLayout_11")
+        self.label_15 = QLabel(self.pg_recibo)
+        self.label_15.setObjectName(u"label_15")
+        sizePolicy2.setHeightForWidth(self.label_15.sizePolicy().hasHeightForWidth())
+        self.label_15.setSizePolicy(sizePolicy2)
+        self.label_15.setFont(font)
+
+        self.horizontalLayout_11.addWidget(self.label_15)
+
+        self.data_semana = QDateEdit(self.pg_recibo)
+        self.data_semana.setObjectName(u"data_semana")
+        font3 = QFont()
+        font3.setFamilies([u"Gabriola"])
+        font3.setPointSize(14)
+        self.data_semana.setFont(font3)
+        self.data_semana.setToolTipDuration(3)
+        self.data_semana.setAlignment(Qt.AlignmentFlag.AlignRight|Qt.AlignmentFlag.AlignTrailing|Qt.AlignmentFlag.AlignVCenter)
+        self.data_semana.setAccelerated(True)
+        self.data_semana.setCalendarPopup(True)
+
+        self.horizontalLayout_11.addWidget(self.data_semana)
+
+        self.horizontalLayout_11.setStretch(0, 11)
+        self.horizontalLayout_11.setStretch(1, 11)
+
+        self.verticalLayout_12.addLayout(self.horizontalLayout_11)
 
         self.verticalLayout_9 = QVBoxLayout()
         self.verticalLayout_9.setObjectName(u"verticalLayout_9")
@@ -368,9 +410,6 @@ class Ui_MainWindow(object):
 
         self.te_recibo = QTextEdit(self.pg_recibo)
         self.te_recibo.setObjectName(u"te_recibo")
-        font3 = QFont()
-        font3.setFamilies([u"Gabriola"])
-        font3.setPointSize(14)
         self.te_recibo.setFont(font3)
 
         self.verticalLayout_9.addWidget(self.te_recibo)
@@ -760,12 +799,14 @@ class Ui_MainWindow(object):
         self.cb_supervisor.setText(QCoreApplication.translate("MainWindow", u"Supervisores", None))
         self.cb_gerente.setText(QCoreApplication.translate("MainWindow", u"Gerentes", None))
         self.cb_parceiro.setText(QCoreApplication.translate("MainWindow", u"Parceiros", None))
-        self.label_7.setText(QCoreApplication.translate("MainWindow", u"Selecionar funcion\u00e1rio: ", None))
+        self.label_7.setText(QCoreApplication.translate("MainWindow", u"Funcion\u00e1rio: ", None))
         self.cbb_funcionario.setItemText(0, QCoreApplication.translate("MainWindow", u"TODOS OS FUNCION\u00c1RIOS", None))
 
         self.cbb_funcionario.setCurrentText(QCoreApplication.translate("MainWindow", u"TODOS OS FUNCION\u00c1RIOS", None))
-        self.label_3.setText(QCoreApplication.translate("MainWindow", u"Data a ATA mensal e semanal:   ", None))
-        self.data_ata.setDisplayFormat(QCoreApplication.translate("MainWindow", u"dd   'de'   MMMM   'de'   yyyy   ", None))
+        self.label_3.setText(QCoreApplication.translate("MainWindow", u"Per\u00edodo ATA:   ", None))
+        self.data_ata.setDisplayFormat(QCoreApplication.translate("MainWindow", u"'ATA  de '  MMMM   'de'   yyyy   ", None))
+        self.label_15.setText(QCoreApplication.translate("MainWindow", u"Per\u00edodo semanal:   ", None))
+        self.data_semana.setDisplayFormat(QCoreApplication.translate("MainWindow", u"'Um dos dias da semana \u00e9 o dia 'd' de 'MMMM' de ' yyyy   ", None))
         self.btn_gerar.setText(QCoreApplication.translate("MainWindow", u"Gerar", None))
         self.label.setText("")
         self.label_11.setText("")

@@ -409,7 +409,20 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
             </layout>
            </item>
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_12">
+            <layout class="QHBoxLayout" name="horizontalLayout_12" stretch="2,11,36">
+             <item>
+              <spacer name="horizontalSpacer_6">
+               <property name="orientation">
+                <enum>Qt::Orientation::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
              <item>
               <widget class="QLabel" name="label_7">
                <property name="font">
@@ -419,7 +432,7 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
                 </font>
                </property>
                <property name="text">
-                <string>Selecionar funcionário: </string>
+                <string>Funcionário: </string>
                </property>
               </widget>
              </item>
@@ -456,7 +469,20 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
             </layout>
            </item>
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_6">
+            <layout class="QHBoxLayout" name="horizontalLayout_6" stretch="2,11,26">
+             <item>
+              <spacer name="horizontalSpacer_5">
+               <property name="orientation">
+                <enum>Qt::Orientation::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
              <item>
               <widget class="QLabel" name="label_3">
                <property name="sizePolicy">
@@ -472,7 +498,7 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
                 </font>
                </property>
                <property name="text">
-                <string>Data a ATA mensal e semanal:   </string>
+                <string>Período ATA:   </string>
                </property>
               </widget>
              </item>
@@ -491,7 +517,55 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
                 <bool>true</bool>
                </property>
                <property name="displayFormat">
-                <string>dd   'de'   MMMM   'de'   yyyy   </string>
+                <string>'ATA  de '  MMMM   'de'   yyyy   </string>
+               </property>
+               <property name="calendarPopup">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_11" stretch="11,11">
+             <item>
+              <widget class="QLabel" name="label_15">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="font">
+                <font>
+                 <family>Gabriola</family>
+                 <pointsize>18</pointsize>
+                </font>
+               </property>
+               <property name="text">
+                <string>Período semanal:   </string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QDateEdit" name="data_semana">
+               <property name="font">
+                <font>
+                 <family>Gabriola</family>
+                 <pointsize>14</pointsize>
+                </font>
+               </property>
+               <property name="toolTipDuration">
+                <number>3</number>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+               </property>
+               <property name="accelerated">
+                <bool>true</bool>
+               </property>
+               <property name="displayFormat">
+                <string>'Um dos dias da semana é o dia 'd' de 'MMMM' de ' yyyy   </string>
                </property>
                <property name="calendarPopup">
                 <bool>true</bool>

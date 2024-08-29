@@ -99,7 +99,7 @@ class Main_recibo:
         self.date_ata_single = 'MAIO/2024'
         self.date_sma_single = '1ª/MAIO/2024'
         self.data_ata = datetime.now()
-        self.data_ata_semana = datetime.now()
+        self.data_semana = datetime.now()
         self.dic_months = {
             'JANEIRO': 1, 'FEVEREIRO': 2, 'MARÇO': 3, 'ABRIL': 4,
             'MAIO': 5, 'JUNHO': 6, 'JULHO': 7, 'AGOSTO': 8, 'SETEMBRO': 9,
@@ -122,15 +122,16 @@ class Main_recibo:
             return
         month = self.data_ata.strftime('%m')
         year = self.data_ata.strftime('%Y')
+        # ATA
         month = int(month)
         month_written = self.inverted_dic_months.get(month, None)
         if month_written is None:
             self.error = True
             return
         self.date_ata_single = month_written + '/' + year
-
+        # semana
         table_datas_semanais = load_table(self.arqtableDatasSemanais)
-        data = self.data_ata.strftime('%d/%m/%Y')
+        data = self.data_semana.strftime('%d/%m/%Y')
         quantity_line = table_datas_semanais.shape[0]
         for line in range(quantity_line):
             data_table = table_datas_semanais.iloc[line][self.column_data_semana]  # noqa

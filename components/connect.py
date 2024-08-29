@@ -1,4 +1,6 @@
-# from ast import While
+# flake8: noqa
+# pyright: # type: ignore
+
 import pandas as pd
 from pathlib import Path
 from time import sleep
@@ -122,7 +124,7 @@ class Connect:
             error = ''
             while repeat:  # para persistencia
                 error = ''
-                self.mouseKeyboard.error = error  # type: ignore
+                self.mouseKeyboard.error = error
                 self.fileManip.error = error
                 for key, xpath in enumerate(listXpath):
                     func = self.mouseKeyboard
@@ -164,7 +166,7 @@ class Connect:
                                     func.clickXpath = xpath
                                     clickOk = func.clickOk
                                     column += 1
-                                    if (column == 3 and line == 6) or (clickOk is False):  # noqa
+                                    if (column == 3 and line == 6) or (clickOk is False):
                                         clickOk = True
                                         break
                                     if column == 8:
@@ -177,7 +179,7 @@ class Connect:
                             self.mouseKeyboard.clickXpath = xpath
                             clickOk = self.mouseKeyboard.clickOk
                         if key == 11:  # botao de download
-                            self.df = self.fileManip.readCsv  # type: ignore
+                            self.df = self.fileManip.readCsv
                             error = self.fileManip.error
                         info = self.mouseKeyboard.info
                         '''O arquvi nao existe devido ao não existir nada para
@@ -195,7 +197,7 @@ class Connect:
             if error == '':
                 # if fileNotExist is True:
                 tableManip = TableManip()
-                tableManip.df = self.df  # type: ignore
+                tableManip.df = self.df
                 tableManip.dfNew = self.dfNew
                 self.dfNew = tableManip.merge
             else:
@@ -231,11 +233,11 @@ class Connect:
                 self.mouseKeyboard.clickXpath = xpath
                 clickOk = self.mouseKeyboard.clickOk
                 if key == 3:  # botao de download
-                    self.df = file.readCsv  # type: ignore
+                    self.df = file.readCsv
                 if self.df is False:  # tem que repetir se download nao exis
                     clickOk = False
                 sleep(0.5)
-        self.dfNew = self.df  # type: ignore
+        self.dfNew = self.df
 
     @property
     def minutes(self):
@@ -245,7 +247,7 @@ class Connect:
     def minutes(self, listXpath):
         # returnValue = ReturnValue()
         self.dateMonthYear.listMonthYear = self.month
-        listMonthYear = self.dateMonthYear.listMonthYear  # type: ignore
+        listMonthYear = self.dateMonthYear.listMonthYear
         for key, xpath in enumerate(listXpath):
             clickOk = False
             while clickOk is False:
@@ -264,7 +266,7 @@ class Connect:
                         self.mouseKeyboard.clickXpath = xpath
                         # clickOk = self.mouseKeyboard.clickOk
                         self.mouseKeyboard.clickValue = administradora
-                        for listYear in listMonthYear[0]:  # type: ignore
+                        for listYear in listMonthYear[0]:
                             self.mouseKeyboard.clickXpath = xpathYear
                             clickOk = self.mouseKeyboard.clickOk
                             self.mouseKeyboard.clickValue = listYear
@@ -412,10 +414,8 @@ class Connect:
                     if cargo in self.listExistCargos:
                         listCargoTemp.append(cargo)
                 listCargo = listCargoTemp
-                listValueTabelarecebimentoCargo.append(
-                    [tablaRecebimento, listCargo])
-            listValueTemp.append(
-                [administradora, listValueTabelarecebimentoCargo])
+                listValueTabelarecebimentoCargo.append([tablaRecebimento, listCargo])
+            listValueTemp.append([administradora, listValueTabelarecebimentoCargo])
         self.listValue = listValueTemp
 
     @property
@@ -441,8 +441,7 @@ class Connect:
                     for campoCotaPeriodoParcela in listXpath:
                         if listEnd is True:
                             break
-                        for key, xpaths in enumerate(
-                                campoCotaPeriodoParcela):
+                        for key, xpaths in enumerate(campoCotaPeriodoParcela):
                             if key == 0:
                                 # indica qual cabecalho pai
                                 self.returnValue.xpathFather = xpaths
@@ -472,6 +471,38 @@ class Connect:
                             listValueTemp2.append(value)
                     listValueTemp.append(listValueTemp2)
         self.listValue = listValueTemp
+
+    @property
+    def addNone(self):
+        # ira mostra o maior numero de quantidade de lelemnetos list da list
+        maximumNumberColumm = 0
+        for listValueTemp in self.listValue:
+            if maximumNumberColumm < len(listValueTemp):
+                maximumNumberColumm = len(listValueTemp)
+        maximumNumberColumm += 1
+        listValue = []
+        # adiciona 'None' no maior quantidade e tambem completa os restante
+        for listValueTemp in self.listValue:
+            listValueTemp.append('None')
+            listLineTemp = []
+            for valueTemp in listValueTemp:
+                listLineTemp.append(valueTemp)
+                if valueTemp == 'None':
+                    numberColumnMiss = maximumNumberColumm - len(listValueTemp)
+                    for _ in range(numberColumnMiss):
+                        listLineTemp.append('None')
+            listValue.append(listLineTemp)
+        self.listValue = listValue
+
+    @property
+    def addIndex(self):
+        listValue = []
+        for key, listValueTemp in enumerate(self.listValue):
+            key = str(key)
+            key = key.rjust(6, '0')
+            listValueTemp[-1] = key  # substituir o ultimo 'None' pelo key
+            listValue.append(listValueTemp)
+        self.listValue = listValue
 
     @property
     def pressListXpathReturnListValue(self):
@@ -592,38 +623,6 @@ class Connect:
             # Adicionar a nova linha ao DataFrame existente
             self.table.loc[len(self.table)] = line
         return self.table
-
-    @property
-    def addNone(self):
-        # ira mostra o maior numero de quantidade de lelemnetos list da list
-        maximumNumberColumm = 0
-        for listValueTemp in self.listValue:
-            if maximumNumberColumm < len(listValueTemp):
-                maximumNumberColumm = len(listValueTemp)
-        maximumNumberColumm += 1
-        listValue = []
-        # adiciona 'None' no maior quantidade e tambem completa os restante
-        for listValueTemp in self.listValue:
-            listValueTemp.append('None')
-            listLineTemp = []
-            for valueTemp in listValueTemp:
-                listLineTemp.append(valueTemp)
-                if valueTemp == 'None':
-                    numberColumnMiss = maximumNumberColumm - len(listValueTemp)
-                    for _ in range(numberColumnMiss):
-                        listLineTemp.append('None')
-            listValue.append(listLineTemp)
-        self.listValue = listValue
-
-    @property
-    def addIndex(self):
-        listValue = []
-        for key, listValueTemp in enumerate(self.listValue):
-            key = str(key)
-            key = key.rjust(6, '0')
-            listValueTemp[-1] = key  # substituir o ultimo 'None' pelo key
-            listValue.append(listValueTemp)
-        self.listValue = listValue
 
     @property
     def addEnd(self):
@@ -747,25 +746,20 @@ class Connect:
                                     key2Barra = True
                                 if key == 5 and letter == '/' and key2Barra:
                                     if dateStart:
-                                        nameNumberColumn = str(
-                                            qtvVendas) + ' Data inicial'
+                                        nameNumberColumn = str(qtvVendas) + ' Data inicial'
                                         dateStart = False
                                     else:
-                                        nameNumberColumn = str(
-                                            qtvVendas) + ' Data final'
+                                        nameNumberColumn = str(qtvVendas) + ' Data final'
                                         dateStart = True
                                         parcStart = True
                                     key2Barra = False
                                     break
                                 if value == word:  # fim. palavra completa
                                     if parcStart is True:
-                                        nameNumberColumn = str(
-                                            qtvVendas) + ' Parc ' + str(nParc)
+                                        nameNumberColumn = str(qtvVendas) + ' Parc ' + str(nParc)
                                         nParc += 1
                                     else:
-                                        nameNumberColumn = (
-                                            self.table.columns.values[
-                                                countColumn])
+                                        nameNumberColumn = (self.table.columns.values[countColumn])
                                     break
                             break
                         else:
@@ -780,4 +774,4 @@ class Connect:
 
 
 # if __name__ == '__main__':
-#     from .. import mainbkp  # noqa
+#     from .. import mainbkp

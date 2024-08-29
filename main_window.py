@@ -1,8 +1,9 @@
+# flake8: noqa
+# pyright: # type: ignore
+
 from PySide6.QtWidgets import QApplication, QMainWindow
 from PySide6.QtCore import QDate, QObject, QThread, Signal
 from PySide6.QtGui import QIcon, QPixmap
-# from pandas import value_counts
-# from distutils.log import Log
 from ui_main import Ui_MainWindow
 import sys
 import os
@@ -56,9 +57,9 @@ class Worker1(QObject):
         if cadastro_ata is not None:
             main_table.new_table_Cadastro_Ata = cadastro_ata
         if comissoes_configuracao is not None:
-            main_table.new_table_Comissoes_Configuracao = comissoes_configuracao  # noqa
+            main_table.new_table_Comissoes_Configuracao = comissoes_configuracao
         if comissoes_configPagamento is not None:
-            main_table.new_table_Comissoes_ConfigPagamento = comissoes_configPagamento  # noqa
+            main_table.new_table_Comissoes_ConfigPagamento = comissoes_configPagamento
         if mix is not None:
             main_table.mix = mix
             # print(mix)
@@ -113,6 +114,7 @@ class Worker2(QObject):
         parceiros = kwargs.get('parceiros')
         selecionado_funcionario = kwargs.get('selecionado_funcionario')
         data_ata = kwargs.get('data_ata')
+        data_semana = kwargs.get('data_semana')
         main_gerar = Main_recibo(father=self)
         if vendedores is not None:
             main_gerar.is_vendedores = vendedores
@@ -125,14 +127,13 @@ class Worker2(QObject):
         if selecionado_funcionario is not None:
             if selecionado_funcionario != 'TODOS OS FUNCIONÁRIOS':
                 main_gerar.seller_single_unit = selecionado_funcionario
-        if data_ata is not None:
+        if data_ata is not None and data_semana is not None:
             data_ata = data_ata.toPython()
+            data_semana = data_semana.toPython()
             main_gerar.data_ata = data_ata
+            main_gerar.data_semana = data_semana
             main_gerar.generate_date_ata()
-        # if data_ata_semana is not None:
-        #     data_ata_semana = data_ata_semana.toPython()
-        #     main_gerar.data_ata_semana = data_ata_semana
-        #     main_gerar.generate_date_ata_semana()
+
         main_gerar.generate_is_vendedores()
         main_gerar.generate_is_supervisores()
         main_gerar.generate_is_gerentes()
@@ -152,6 +153,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # Inicializar QDateEdit com a data atual
         self.data_inicial.setDate(QDate.currentDate().addYears(-1))
         self.data_ata.setDate(QDate.currentDate())
+        self.data_semana.setDate(QDate.currentDate())
         # Adiciona itens ao QComboBox
         list_seller = main_gerar.generate_list_seller()
         # list_seller = list(list_seller)
@@ -160,8 +162,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.cbb_funcionario.addItems(list_seller)
         # paguinaas do sistema
         self.btn_tables.clicked.connect(self.tables_btn)
-        self.btn_recibo.clicked.connect(
-            lambda: self.pages.setCurrentWidget(self.pg_recibo))
+        self.btn_recibo.clicked.connect(lambda: self.pages.setCurrentWidget(self.pg_recibo))
         self.btn_carregar.clicked.connect(self.carregar_btn)
         self.btn_gerar.clicked.connect(self.gerar_btn)
         self.thread1 = None
@@ -209,8 +210,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             cadastro_funcionaio=self.cb_cadastro_funcionaio.isChecked(),
             cadastro_ata=self.cb_cadastro_ata.isChecked(),
             comissoes_configuracao=self.cb_comissoes_configuracao.isChecked(),
-            comissoes_configPagamento=(
-                self.cb_comissoes_configPagamento.isChecked()),
+            comissoes_configPagamento=(self.cb_comissoes_configPagamento.isChecked()),
             mix=self.cb_juntar_tabela.isChecked()
         ))
 
@@ -240,6 +240,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             parceiros=self.cb_parceiro.isChecked(),
             selecionado_funcionario=self.cbb_funcionario.currentText(),
             data_ata=self.data_ata.date(),
+            data_semana=self.data_semana.date(),
         ))
 
         self.worker2.finished2.connect(self.thread2.quit)
