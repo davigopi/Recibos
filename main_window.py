@@ -70,7 +70,8 @@ class Worker1(QObject):
         main_table.create_table_Comissoes_Configuracao()
         main_table.create_table_Comissoes_ConfigPagamento()
         main_table.create_table_gerente()
-        main_table.date_weekly_new()
+        main_table.create_date_weekly_new()
+        main_table.merge_table_Cadastro_Ata_table_date_weekly()
         main_table.table_manip_funcionario()
         main_table.table_manip_cadastro_consorciado()
         main_table.table_manip_comissoes_configuracao()
@@ -85,8 +86,8 @@ class Worker1(QObject):
         main_table.merge_full_comissoes_configuracao_gerente()
         main_table.merge_full_comissoes_configuracao_gerente_geral()
         main_table.create_columns_ata()
-        main_table.merge_full_weekly()
-        main_table.merge_full_ata()
+        main_table.merge_full_ata_weekly_month()
+        # main_table.merge_full_ata()
         main_table.merge_full_configPagamento()
         main_table.column_add()
         main_table.order_column()
@@ -213,7 +214,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             comissoes_configPagamento=(self.cb_comissoes_configPagamento.isChecked()),
             mix=self.cb_juntar_tabela.isChecked()
         ))
-
         # Quando o worker terminar, para a thread.
         self.worker1.finished1.connect(self.thread1.quit)
         # Deleta a thread depois que ela termina.
@@ -232,7 +232,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # Move o worker para a thread.
         self.worker2.moveToThread(self.thread2)
         self.te_recibo.clear()
-
         self.thread2.started.connect(lambda: self.worker2.scall_main_table(
             vendedores=self.cb_vendedor.isChecked(),
             supervisores=self.cb_supervisor.isChecked(),
@@ -242,7 +241,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             data_ata=self.data_ata.date(),
             data_semana=self.data_semana.date(),
         ))
-
         self.worker2.finished2.connect(self.thread2.quit)
         self.thread2.finished.connect(self.thread2.deleteLater)
         self.worker2.finished2.connect(self.worker2.deleteLater)

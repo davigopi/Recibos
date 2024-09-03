@@ -1,3 +1,6 @@
+# flake8: noqa
+# pyright: # type: ignore
+
 import pandas as pd
 import locale
 import os
@@ -113,6 +116,9 @@ class Generat_payroll:
         self.column_total_ata_entrega_ger = ''
         self.column_total_ata_entrega_ger_ger = ''
 
+        self.word_Gerente = ''
+        self.word_Gerente_Geral = ''
+
         self.quantity_line_full = 0
         self.quantity_line_ata = 0
         self.quantity_line_weekly = 0
@@ -207,7 +213,7 @@ class Generat_payroll:
     #     self.list_seller_ata = self.table_full_ata[self.column_profissao]
     #     self.list_seller_ata = self.list_seller_ata.unique()
     #     self.list_seller_ata.sort()
-    #     self.list_seller_weekly = self.table_full_weekly[self.column_profissao]  # noqa
+    #     self.list_seller_weekly = self.table_full_weekly[self.column_profissao]
     #     self.list_seller_weekly = self.list_seller_weekly.unique()
     #     self.list_seller_weekly.sort()
     #     for column_ata in self.list_columns_full_ata:
@@ -217,7 +223,7 @@ class Generat_payroll:
     #                 self.list_ata.append(data_ata)
     #     for column_weekly in self.list_columns_full_weekly:
     #         for line in range(self.quantity_line_weekly):
-    #             data_weekly = self.table_full_weekly.iloc[line][column_weekly]  # noqa
+    #             data_weekly = self.table_full_weekly.iloc[line][column_weekly]
     #             if data_weekly not in self.list_weekly and not pd.isna(
     #                     data_weekly):
     #                 self.list_weekly.append(data_weekly)
@@ -239,9 +245,9 @@ class Generat_payroll:
     # 2º define se vendedor/parceiro a primeira é pela ata entrea/cadastro
     def columns_ata_full_seller_single(self):
         # 1ª inf da coluna '1P referencia' -> ENTREGA ou CADASRO
-        p1_referencia = str(self.table_seller_single.iloc[0][self.column_1p_referencia])  # noqa
+        p1_referencia = str(self.table_seller_single.iloc[0][self.column_1p_referencia])
         # 1ª inf da coluna 'Dt pag. por' -> ATA ou DIA DA SEMANA
-        dt_pag_por = str(self.table_seller_single.iloc[0][self.column_dt_pag_por])  # noqa
+        dt_pag_por = str(self.table_seller_single.iloc[0][self.column_dt_pag_por])
 
         #   'DIA DA SEMANA'
         if self.data_date_pay == dt_pag_por:
@@ -260,7 +266,7 @@ class Generat_payroll:
                 #                     Sma Cad Adm
                 self.column_ata_sma = self.column_sma_cad_adm
                 #            '[Sma Cad Adm', 'Sma 2º Parc', ..., 'Sma 6º Parc']
-                self.list_cols_full_ata_sing = self.list_columns_full_sma_cadastro  # noqa
+                self.list_cols_full_ata_sing = self.list_columns_full_sma_cadastro
                 # ['Total Sma Cad Adm', 'Total Sma Cad Adm Ger']
                 list_columns_sum = [
                     self.column_total_sma_cad_adm,
@@ -272,7 +278,7 @@ class Generat_payroll:
                 #                     ATA Cad Adm
                 self.column_ata_sma = self.column_ata_cad_adm
                 # ['ATA Cad Adm', 'ATA 2º Parc', 'ATA 3º P ..., 'ATA 6º Parc']
-                self.list_cols_full_ata_sing = self.list_columns_full_ata_cadastro  # noqa
+                self.list_cols_full_ata_sing = self.list_columns_full_ata_cadastro
                 # ['Total ATA Cad Adm', 'Total ATA Cad Adm Ger']
                 list_columns_sum = [
                     self.column_total_ata_cad_adm,
@@ -286,7 +292,7 @@ class Generat_payroll:
                 #                     Sma Ent
                 self.column_ata_sma = self.column_sma_entrega
                 # '[Sma Ent', 'Sma 2º Parc', ..., 'Sma 6º Parc']
-                self.list_cols_full_ata_sing = self.list_columns_full_sma_entrega  # noqa
+                self.list_cols_full_ata_sing = self.list_columns_full_sma_entrega
                 # ['Total Sma Ent', 'Total Sma Ent Ger']
                 list_columns_sum = [
                     self.column_total_sma_ent,
@@ -298,7 +304,7 @@ class Generat_payroll:
                 #                     ATA Entrega
                 self.column_ata_sma = self.column_ata_entrega
                 # ['ATA Entrega', 'ATA 2º Parc', ..., 'ATA 6º Parc']
-                self.list_cols_full_ata_sing = self.list_columns_full_ata_entrega  # noqa
+                self.list_cols_full_ata_sing = self.list_columns_full_ata_entrega
                 # ['Total ATA Entrega', 'Total ATA Entrega Ger']
                 list_columns_sum = [
                     self.column_total_ata_entrega,
@@ -328,7 +334,7 @@ class Generat_payroll:
         self.list_tables_ata = []
         # ['ATA Entrega', 'ATA 2º Parc', ..., 'ATA 6º Parc']
         for column_ata in self.list_cols_full_ata_sing:
-            #                                                                            MES/ANO ou Xº/MES/ANO  # noqa
+            # MES/ANO ou Xº/MES/ANO
             table_pag = self.table_seller_single[self.table_seller_single[column_ata] == self.data_single].copy()  # noqa
             table_pag.reset_index(drop=True, inplace=True)
             #                ATA Entrega, Sma Ent, ATA cad Adm, Sma Cad Adm
@@ -340,7 +346,7 @@ class Generat_payroll:
             table_venc.reset_index(drop=True, inplace=True)
             # table não é fazia?
             if not table_pag.empty:
-                self.list_tables_ata.append([table_pag, table_venc, column_ata])  # noqa
+                self.list_tables_ata.append([table_pag, table_venc, column_ata])
         # informações unicas para o pdf      MES/ANO
         self.list_unique_information.append(self.data_single)
         # for table_pag, table_venc, column_ata in self.list_tables_ata:
@@ -483,9 +489,9 @@ class Generat_payroll:
             if text != '1':
                 column_situacao_parc += ' ' + text + 'º Parc'
             if self.profession == 'Supervisor':
-                text += '_Gerente'
+                text += ' ' + self.word_Gerente
             elif self.profession == 'Gerente':
-                text += '_Gerente_Geral'
+                text += ' ' + self.word_Gerente_Geral
             quantity_line_table = table_pag.shape[0]
             for line in range(quantity_line_table):
                 text2 = table_pag.iloc[line][self.column_ata_mes_qtd]
@@ -510,7 +516,7 @@ class Generat_payroll:
                     data_percentual = convert_str_float(data_percentual)
                     data_percentual = float(data_percentual)
                 text_perc = str(data_percentual) + ' %'
-                table_pag.loc[line, self.column_new_porcentagem_comissão] = text_perc  # noqa
+                table_pag.loc[line, self.column_new_porcentagem_comissão] = text_perc
                 # data_percentual = data_percentual / 100
                 if minimum:
                     data_percentual = data_percentual / 100
@@ -623,12 +629,12 @@ class Generat_payroll:
              cargo
              ) in self.list_table_column_comissao:
             # excluir comissão zerada
-            table_pag = table_pag[table_pag[self.column_comissao] != '0,00'].copy()  # noqa
+            table_pag = table_pag[table_pag[self.column_comissao] != '0,00'].copy()
             table_pag.reset_index(drop=True, inplace=True)
             # colocar coluna Parcela
             text = ata
             text = rename_ata(text, 'mod2')
-            # text = text.replace('ATA', '').replace('Sma', '').replace('º Parc', 'ª')  # noqa
+            # text = text.replace('ATA', '').replace('Sma', '').replace('º Parc', 'ª')
             # text = text.replace('Entrega', '1ª').replace('Cad Adm', '1ª')
             table_pag[self.column_new_parcela] = text
             table_pag[self.column_new_adimplencia] = percentage_compliance
@@ -637,7 +643,7 @@ class Generat_payroll:
             if table_full.empty:
                 table_full = table_pag
             else:
-                table_full = pd.concat([table_full, table_pag], ignore_index=True)  # noqa
+                table_full = pd.concat([table_full, table_pag], ignore_index=True)
             # excluir linhas comissão zerada
             table_full.reset_index(drop=True, inplace=True)
             table_pag = table_pag[self.list_columns_end]
@@ -653,7 +659,7 @@ class Generat_payroll:
                 vendedor,
                 cargo
             ])
-        table_full = table_full[self.list_columns_end]  # type: ignore
+        table_full = table_full[self.list_columns_end]
         self.list_unique_information.append(table_full)
         # for (table_pag,
         #         table_venc,
@@ -728,7 +734,7 @@ class Generat_payroll:
             if begin is True:
                 pdf.set_font('Arial', '', size_font)
                 comissao = locale.currency(
-                    comissao,  # type: ignore
+                    comissao,
                     grouping=True
                 )
                 # Guarda a posição inicial do texto
@@ -741,8 +747,8 @@ class Generat_payroll:
                 text1 = f'{vendedor}'
                 text3 = f'{cargo}'
                 pdf.add_underlined_text(text, size_font, size_line)
-                pdf.add_content_in_columns([text1, text2], 2, size_font, size_line)  # noqa
-                pdf.add_content_in_columns([text3, comissao], 2, size_font, size_line)  # noqa
+                pdf.add_content_in_columns([text1, text2], 2, size_font, size_line)
+                pdf.add_content_in_columns([text3, comissao], 2, size_font, size_line)
                 pdf.ln(space_paragraph * 2)
                 begin = False
             # Adiciona texto ao PDF

@@ -1,3 +1,7 @@
+# flake8: noqa
+# pyright: # type: ignore
+
+
 from time import sleep
 from bs4 import BeautifulSoup
 # from selenium import webdriver
@@ -49,7 +53,7 @@ class ReturnValue:
         while True:
             try:
                 count += 1
-                self.value = self.driver.find_element(  # type: ignore
+                self.value = self.driver.find_element(
                     By.XPATH, self.xpathFather).find_element(
                         By.XPATH, xpath).get_attribute(self.tagGet)
                 break
@@ -70,7 +74,7 @@ class ReturnValue:
         while True:
             try:
                 count += 1
-                self.value = self.driver.find_element(  # type: ignore
+                self.value = self.driver.find_element(
                     By.XPATH, self.xpathFather).find_element(
                         By.XPATH, xpath).text
                 break
@@ -90,7 +94,7 @@ class ReturnValue:
         while True:
             try:
                 count += 1
-                self.value = self.driver.find_element(  # type: ignore
+                self.value = self.driver.find_element(
                     By.XPATH, self.xpathFather).find_element(
                         By.NAME, name).get_attribute(self.tagGet)
                 break
@@ -110,7 +114,7 @@ class ReturnValue:
         while True:
             count += 1
             try:
-                self.value = self.driver.find_element(By.XPATH, xpath).text  # type: ignore # noqa
+                self.value = self.driver.find_element(By.XPATH, xpath).text
                 break
             except excecaoAll:
                 if count >= 3:
@@ -126,13 +130,13 @@ class ReturnValue:
     def xpathTag(self, xpath):
         while True:
             try:
-                self.value = self.driver.find_element(  # type: ignore
+                self.value = self.driver.find_element(
                     By.XPATH, xpath).get_attribute(
                         self.tagGet)  # retornar o outerHTML
                 # pip install lxml
                 self.value = BeautifulSoup(
                     self.value, "lxml").find(
-                        self.tagFather).findAll(  # type: ignore
+                        self.tagFather).findAll(
                             self.tagSon)  # formatar outerHTMl
                 listValue = []
                 for key in range(1, len(self.value), 1):
@@ -155,12 +159,10 @@ class ReturnValue:
             count += 1
             try:
                 # return all tags
-                self.value = self.driver.find_element(  # type: ignore
-                    By.XPATH, xpath).get_attribute(self.tagGet)
-                # Erro (FeatureNotFound) if not install: pip install lxml
+                self.value = self.driver.find_element(By.XPATH, xpath).get_attribute(self.tagGet)
+                # OBS: ERROR (FeatureNotFound) if not install: pip install lxml
                 # test loading table
-                BeautifulSoup(self.value, "lxml").find(
-                    self.tagFather).findAll(self.tagSon)  # type: ignore
+                BeautifulSoup(self.value, "lxml").find(self.tagFather).findAll(self.tagSon)
                 break
             except (AttributeError, Exception):
                 if count >= 5:

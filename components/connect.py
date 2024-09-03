@@ -86,6 +86,8 @@ class Connect:
 
     @logarSircon.setter
     def logarSircon(self, listXpath):
+        # self.user = 'davigopi@gmail.com'
+        # self.password = ''
         for xpath in listXpath:
             indexNumber = listXpath.index(xpath)
             if indexNumber == 0:
@@ -278,29 +280,21 @@ class Connect:
                                 self.tableManip.renemar_data = table
                                 self.tableManip.del_column = 'Ações'
                                 self.tableManip.column_clone = 'Período'
-                                self.tableManip.add_column_clone = (
-                                    'Período final')
-                                self.tableManip.rename_name_column_origin = (
-                                    'Período')
-                                self.tableManip.rename_name_column_destiny = (
-                                    'Período inicial')
+                                self.tableManip.add_column_clone = 'Período final'
+                                self.tableManip.rename_name_column_origin = 'Período'
+                                self.tableManip.rename_name_column_destiny = 'Período inicial'
                                 self.tableManip.value_separate = 'à'
-                                self.tableManip.rename_value_column_before = (
-                                    'Período inicial')
-                                self.tableManip.rename_value_column_after = (
-                                    'Período final')
-                                self.tableManip.value_fixed_column = (
-                                    administradora)
-                                self.tableManip.add_value_fixed_column = (
-                                    'Administradora')
+                                self.tableManip.rename_value_column_before = 'Período inicial'
+                                self.tableManip.rename_value_column_after = 'Período final'
+                                self.tableManip.value_fixed_column = administradora
+                                self.tableManip.add_value_fixed_column = 'Administradora'
                                 self.tableManip.value_fixed_column = listYear
                                 self.tableManip.add_value_fixed_column = 'Ano'
                                 table: pd.DataFrame = self.tableManip.table
                                 if tableComplete.empty:
                                     tableComplete = table
                                 else:
-                                    tableComplete = pd.concat([tableComplete,
-                                                               table])
+                                    tableComplete = pd.concat([tableComplete, table])
         self.table = tableComplete
 
     @property
