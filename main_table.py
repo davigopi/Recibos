@@ -35,7 +35,7 @@ def load_table(path):
 
 def create_table(table_created, path):
     table_created.columns = (table_created.columns.str.strip())
-    table_created.to_csv(path, sep=';', index=False, header=True)
+    table_created.to_csv(path, sep=';', index=False, header=True, decimal=',')
     return table_created
 
 
@@ -92,10 +92,12 @@ class Main_table:
         '''Variaveis'''
         self.column_primary_key = 'PK'
 
-        self.name_column_total = 'Total'
         self.column_Vendedor = 'Vendedor'
         self.column_gerente = 'Gerente'
         self.column_Credito = 'Crédito'
+
+        self.column_ATA_Entrega = 'ATA Entrega'
+        self.column_Total_ATA_Entrega = 'Total ATA Entrega'
 
         self.column_qtd_valor_vend = 'Qtd Valor Vend'
         self.column_1p_referencia = '1P referencia'
@@ -143,6 +145,8 @@ class Main_table:
         self.word_Gerente_Geral = 'Gerente Geral'
         self.word_Cliente = 'Cliente'
 
+        self.word_column_total = 'Total'
+
         self.column_Nome_Funcionario = self.column_Nome + ' ' + self.word_Funcionario
 
         self.column_Nome_Gerente = self.column_Nome + ' ' + self.word_Gerente
@@ -163,6 +167,10 @@ class Main_table:
         self.word_Sma = 'Sma '
         self.word_Mes = 'Mes '
         self.word_Situacao = 'Situação '
+        self.word_Num = 'Num. '
+        self.word_1_Porc = '1º % '
+        self.word_2_Porc = '2º % '
+        self.word_3_Porc = '3º % '
 
         # self.list_columns_total_vendidos = [
         #     self.column_total_vendidos]
@@ -372,7 +380,7 @@ class Main_table:
 
         self.list_columns_venc = []
 
-        self.list_columns_order = [[
+        self.list_list_columns_order = [[
             self.column_Situacao,
             self.column_Data_de_Entrega,
             self.column_Data_Cad_Adm,
@@ -382,6 +390,10 @@ class Main_table:
             self.column_Sma_Cad_Adm,
             self.column_Mes_Entrega,
             self.column_Mes_Cad_Adm]]
+
+        self.list_list_columns_situacao_num_ATA = []
+
+        self.list_list_columns_percentage = []
 
         # self.columns_data_venc = ['Data Venc. ', 'º Parc']
         # self.columns_data_pag = ['Data Pag. ', 'º Parc']
@@ -479,6 +491,13 @@ class Main_table:
                 return False
 
     def log_start_end(self):
+        self.new_table_Cadastro_Consorciado = False
+        self.new_table_Cadastro_Funcionario = False
+        self.new_table_Cadastro_Ata = False
+        self.new_table_Comissoes_Configuracao = False
+        self.new_table_Comissoes_ConfigPagamento = False
+
+        self.mix = False
         if self.start:
             text = '\n' + 'Inicio: '
             self.start = False
@@ -492,6 +511,15 @@ class Main_table:
 
     def limited_search_cargos(self):
         self.connect.valueExistCargos = self.table_Cadastro_Funcionario
+
+    def mesclar_tables(self):
+        text = 'Unir todas Tabelas: '
+        if self.mix is False:
+            text += 'Não'
+            self.table_full = load_table(self.arqtableMerge)
+        else:
+            text += 'Sim'
+        self.father.prog1(text)
 
     def create_table_Cadastro_Consorciado(self):
         '''table_Cadastro_Consorciado'''
@@ -545,8 +573,7 @@ class Main_table:
         else:
             text_te = 'Ler a tabela de ' + text_lc + ' dos arquivos já salvos.'
             self.father.prog1(text_te)
-            self.table_Cadastro_Funcionario = load_table(
-                self.arqTableCadastroFuncionario)
+            self.table_Cadastro_Funcionario = load_table(self.arqTableCadastroFuncionario)
         # self.father.prog1(f'Arqvuivos:  {self.arqTableCadastroFuncionario}')
 
     def create_table_Cadastro_Ata(self):
@@ -681,6 +708,8 @@ class Main_table:
             self.table_Comissoes_ConfigPagamento = load_table(self.arqTableComissoesConfigPag)
 
     def create_table_gerente(self):
+        if self.mix is False:
+            return
         text_lc = 'comissões Gerente'
         text_te = 'Início da criação da tabela de ' + text_lc + ':'
         self.father.prog1(text_te)
@@ -693,7 +722,7 @@ class Main_table:
         text_te = 'Início da criação da tabela de Atas semanais exclusivamente'
         text_te += ' com base nas datas.'
         self.father.prog1(text_te)
-        if self.connected is False:
+        if self.mix is False:
             return
         self.date_weekly.year_weeklys = self.month + 12
         self.date_weekly.create_weekYear_week_date = None
@@ -707,6 +736,8 @@ class Main_table:
         self.table_date_weekly = self.date_weekly.return_table
 
     def merge_table_Cadastro_Ata_table_date_weekly(self):
+        if self.mix is False:
+            return
         self.tableManip.column_Data_semana = self.column_Data_semana
         self.tableManip.column_Periodo_final = self.column_Periodo_final
         self.tableManip.column_Periodo_inicial = self.column_Periodo_inicial
@@ -724,7 +755,7 @@ class Main_table:
         text_te = 'Manipular a tabela de cadastro de funcionários para '
         text_te += 'duplicação de cargos.'
         self.father.prog1(text_te)
-        if self.table_Cadastro_Funcionario.empty or self.connected is False:
+        if self.table_Cadastro_Funcionario.empty or self.connected is False or self.mix is False:
             return
         self.tableManip.table = self.table_Cadastro_Funcionario
         self.tableManip.row_duplicate_column = [self.column_Nome]
@@ -744,7 +775,7 @@ class Main_table:
         text_te = 'Manipular a tabela de cadastro de consorciado para alterar '
         text_te += 'coluna igual a funcionário.'
         self.father.prog1(text_te)
-        if self.table_Cadastro_Consorciado.empty or (self.connected is False):
+        if self.table_Cadastro_Consorciado.empty or self.connected is False or self.mix is False:
             return
         self.tableManip.table = self.table_Cadastro_Consorciado
 
@@ -762,7 +793,7 @@ class Main_table:
         text_te = 'Manipular a tabela de comissões configuração de pagamento '
         text_te += 'para remover duplicação colunas admin. cargo.'
         self.father.prog1(text_te)
-        if self.table_Comissoes_Configuracao.empty or (self.connected is False):
+        if self.table_Comissoes_Configuracao.empty or self.connected is False or self.mix is False:
             return
         cols_comConf_rept = [self.column_Administradora, self.column_Cargo,
                              'Tabela de recebimento']
@@ -778,7 +809,7 @@ class Main_table:
         text_te = 'Manipular a tabela de cadastro de funcionario'
         text_te += 'para adicionar colunas para cargo supervisor(gerente).'
         self.father.prog1(text_te)
-        if self.table_Cadastro_funcionario_gerente.empty or (self.connected is False):
+        if self.table_Cadastro_funcionario_gerente.empty or self.connected is False or self.mix is False:
             return
         self.tableManip = TableManip()
         # names_columns = self.table_Cadastro_funcionario_gerente.columns
@@ -794,7 +825,7 @@ class Main_table:
         text_te = 'Manipular a tabela de comissões configuração para  '
         text_te += 'adicionar colunas do cargo supervisor(gerente).'
         self.father.prog1(text_te)
-        if self.table_Comissoes_Configuracao.empty or (self.connected is False):
+        if self.table_Comissoes_Configuracao.empty or self.connected is False or self.mix is False:
             return
         self.table_Comissoes_Configuracao_gerente = self.table_Comissoes_Configuracao
         self.tableManip = TableManip()
@@ -831,8 +862,8 @@ class Main_table:
         text_te += 'tabela de cadastro de funcionário.'
         self.father.prog1(text_te)
         if self.mix is False or self.table_Cadastro_Consorciado.empty or (self.table_Cadastro_Funcionario.empty):  # noqa
-            print(self.mix is False, self.table_Cadastro_Consorciado.empty, self.table_Cadastro_Funcionario.empty)  # noqa
-            self.table_full = load_table(self.arqtableMerge)
+            # print(self.mix is False, self.table_Cadastro_Consorciado.empty, self.table_Cadastro_Funcionario.empty)  # noqa
+            # self.table_full = load_table(self.arqtableMerge)
             return
         self.table_full = pd.merge(
             self.table_Cadastro_Consorciado,
@@ -847,7 +878,7 @@ class Main_table:
         text_te += 'tabela de cadastro de funcionário de gerente.'
         self.father.prog1(text_te)
         if self.mix is False or self.table_full.empty or (self.table_Cadastro_funcionario_gerente.empty):  # noqa
-            self.table_full = load_table(self.arqtableMerge)
+            # self.table_full = load_table(self.arqtableMerge)
             return
         self.table_full = pd.merge(
             self.table_full,
@@ -862,7 +893,7 @@ class Main_table:
         text_te += 'tabela de cadastro de funcionário.'
         self.father.prog1(text_te)
         if self.mix is False or self.table_full.empty or (self.table_Comissoes_Configuracao.empty):
-            self.table_full = load_table(self.arqtableMerge)
+            # self.table_full = load_table(self.arqtableMerge)
             return
         self.table_full = pd.merge(
             self.table_full,
@@ -875,7 +906,7 @@ class Main_table:
         text_te += 'tabela de comissões configuração de gerente.'
         self.father.prog1(text_te)
         if self.mix is False or self.table_full.empty or self.table_Comissoes_Configuracao_gerente.empty:  # noqa
-            self.table_full = load_table(self.arqtableMerge)
+            # self.table_full = load_table(self.arqtableMerge)
             return
         self.table_full = pd.merge(
             self.table_full,
@@ -895,7 +926,7 @@ class Main_table:
         text_te += 'tabela de cadastro de funcionário de gerente geral.'
         self.father.prog1(text_te)
         if self.mix is False or self.table_full.empty or (self.table_Gerente.empty):
-            self.table_full = load_table(self.arqtableMerge)
+            # self.table_full = load_table(self.arqtableMerge)
             return
         self.table_full = pd.merge(
             self.table_full,
@@ -907,66 +938,81 @@ class Main_table:
         # descori a quantidade de num_atas_parc
         text_te = 'A partir da tabela mesclada criar os nomes das colunas.'
         self.father.prog1(text_te)
-        if self.mix is False:
-            self.table_full = load_table(self.arqtableMerge)
-            return
+        # if self.mix is False:
+        #     return
         # num_atas_parc = 10000
         # for i in range(2, num_atas_parc + 1):
         i = 1
         while True:
             i += 1
-            name_column_situacao = self.word_Situacao + str(i) + self.word_º_Parc
+            n_parc = str(i) + self.word_º_Parc
+            name_column_situacao = self.word_Situacao + n_parc
             if name_column_situacao not in self.table_full.columns:
                 break
 
-            # name_column_data_pag = self.columns_data_pag[0] + str(i) + self.columns_data_pag[1]
-            # name_column_ata_pag = self.columns_ata[0] + str(i) + self.columns_ata[1]
-            # name_column_sma_pag = self.columns_sma[0] + str(i) + self.columns_sma[1]
-            # name_column_mes_pag = self.columns_mes[0] + str(i) + self.columns_mes[1]
+            name_column_data_pag = self.word_Data + self.word_Pag + n_parc
+            name_column_ata_pag = self.word_ATA + self.word_Pag + n_parc
+            name_column_sma_pag = self.word_Sma + self.word_Pag + n_parc
+            name_column_mes_pag = self.word_Mes + self.word_Pag + n_parc
 
-            name_column_data_pag = self.word_Data + self.word_Pag + str(i) + self.word_º_Parc
-            name_column_ata_pag = self.word_ATA + self.word_Pag + str(i) + self.word_º_Parc
-            name_column_sma_pag = self.word_Sma + self.word_Pag + str(i) + self.word_º_Parc
-            name_column_mes_pag = self.word_Mes + self.word_Pag + str(i) + self.word_º_Parc
+            name_column_data_venc = self.word_Data + self.word_Venc + n_parc
+            name_column_ata_venc = self.word_ATA + self.word_Venc + n_parc
+            name_column_sma_venc = self.word_Sma + self.word_Venc + n_parc
+            name_column_mes_venc = self.word_Mes + self.word_Venc + n_parc
 
-            # name_column_data_venc = self.columns_data_venc[0] + str(i) + self.columns_data_venc[1]
-            # name_column_ata_venc = self.columns_ata_venc[0] + str(i) + self.columns_ata_venc[1]
-            # name_column_sma_venc = self.columns_sma_venc[0] + str(i) + self.columns_sma_venc[1]
-            # name_column_mes_venc = self.columns_mes_venc[0] + str(i) + self.columns_mes_venc[1]
+            mane_column_situacao_ata = self.word_Situacao + self.word_ATA + n_parc
 
-            name_column_data_venc = self.word_Data + self.word_Venc + str(i) + self.word_º_Parc
-            name_column_ata_venc = self.word_ATA + self.word_Venc + str(i) + self.word_º_Parc
-            name_column_sma_venc = self.word_Sma + self.word_Venc + str(i) + self.word_º_Parc
-            name_column_mes_venc = self.word_Mes + self.word_Venc + str(i) + self.word_º_Parc
+            name_column_num_ata = self.word_Num + self.word_ATA + n_parc
 
-            self.list_columns_pag.append(
-                [name_column_situacao,
-                    name_column_data_pag,
-                    name_column_ata_pag,
-                    name_column_sma_pag,
-                    name_column_mes_pag
-                 ]
-            )
-            self.list_columns_venc.append(
-                [name_column_situacao,
-                    name_column_data_venc,
-                    name_column_ata_venc,
-                    name_column_sma_venc,
-                    name_column_mes_venc
-                 ]
-            )
-            self.list_columns_order.append(
-                [name_column_situacao,
-                    name_column_data_pag,
-                    name_column_data_venc,
-                    name_column_ata_pag,
-                    name_column_ata_venc,
-                    name_column_sma_pag,
-                    name_column_sma_venc,
-                    name_column_mes_pag,
-                    name_column_mes_venc
-                 ]
-            )
+            name_column_1_porc_ata = self.word_1_Porc + self.word_ATA + n_parc
+            name_column_2_porc_ata = self.word_2_Porc + self.word_ATA + n_parc
+            name_column_3_porc_ata = self.word_3_Porc + self.word_ATA + n_parc
+
+            self.list_columns_pag.append([
+                name_column_situacao,
+                name_column_data_pag,
+                name_column_ata_pag,
+                name_column_sma_pag,
+                name_column_mes_pag
+            ])
+            self.list_columns_venc.append([
+                name_column_situacao,
+                name_column_data_venc,
+                name_column_ata_venc,
+                name_column_sma_venc,
+                name_column_mes_venc
+            ])
+            self.list_list_columns_order.append([
+                name_column_situacao,
+                name_column_data_pag,
+                name_column_data_venc,
+                mane_column_situacao_ata,
+                name_column_ata_pag,
+                name_column_ata_venc,
+                name_column_num_ata,
+                name_column_1_porc_ata,
+                name_column_2_porc_ata,
+                name_column_3_porc_ata,
+                name_column_sma_pag,
+                name_column_sma_venc,
+                name_column_mes_pag,
+                name_column_mes_venc
+            ])
+            self.list_list_columns_situacao_num_ATA.append([
+                name_column_situacao,
+                name_column_data_pag,
+                name_column_data_venc,
+                name_column_ata_pag,
+                name_column_ata_venc,
+                mane_column_situacao_ata,
+                name_column_num_ata
+            ])
+            self.list_list_columns_percentage.append([
+                name_column_1_porc_ata,
+                name_column_2_porc_ata,
+                name_column_3_porc_ata,
+                name_column_num_ata
+            ])
 
     def merge_full_ata_weekly_month(self):
         text_te = 'Mesclar a tebela já unida coma a '
@@ -974,10 +1020,8 @@ class Main_table:
         self.father.prog1(text_te)
         '''# mesclar table_full com table_weekly'''
         if self.mix is False or self.table_full.empty or (self.table_date_weekly.empty):
-            self.table_full = load_table(self.arqtableMerge)
+            # self.table_full = load_table(self.arqtableMerge)
             return
-
-        # table1: pd.DataFrame = self.table_date_weekly.copy()
         self.tableManip.table = self.table_date_weekly.copy()
         # deixar apenas as duas colunas 'N Semanda Mes e Data semana'
         self.tableManip.del_column = self.column_Dia_semana
@@ -1040,41 +1084,13 @@ class Main_table:
                     self.table_full = self.tableManip.table
                     # num_name_column_sma_full += 1
 
-    # def merge_full_ata(self):
-    #     text_te = 'Integrar a tabela previamente consolidada com a '
-    #     text_te += 'tabela de ATAs mensais. '
-    #     self.father.prog1(text_te)
-    #     ''' manipular table ATA  e colocar na table_full'''
-    #     if self.mix is False or self.table_full.empty:
-    #         self.table_full = load_table(self.arqtableMerge)
-    #         return
-    #     self.table_manip_value.table_2 = self.table_Cadastro_Ata
-    #     list_list_full = [self.list_columns_pag, self.list_columns_venc]
-    #     for list_full in list_list_full:
-    #         for columns_all in list_full:
-    #             name_column_data_full = columns_all[1]
-    #             name_column_ata_full = columns_all[2]
-    #             self.tableManip.table = self.table_full
-    #             # self.tableManip.add_value_fixed_column = [name_column_ata_full]
-    #             self.tableManip.add_value_fixed_column = name_column_ata_full
-    #             self.table_full = self.tableManip.table
-    #             self.table_manip_value.table = self.table_full
-    #             # mescla os valores da tabela ATA com table_full
-    #             self.table_manip_value.edit_data_column_ATA = [
-    #                 name_column_data_full,
-    #                 name_column_ata_full,
-    #                 self.column_Periodo_inicial,
-    #                 self.column_Periodo_final,
-    #                 self.column_ATA]
-    #             self.table_full = self.table_manip_value.table
-
     def merge_full_configPagamento(self):
         text_te = 'Combinar a tabela unificada com a '
         text_te += 'tabela de Configuração de Pagamento. '
         self.father.prog1(text_te)
         ''' manipular table ATA  e colocar na table_full'''
         if self.mix is False or self.table_full.empty:
-            self.table_full = load_table(self.arqtableMerge)
+            # self.table_full = load_table(self.arqtableMerge)
             return
 
         self.tableManip.column_Cargo = self.column_Cargo
@@ -1092,8 +1108,9 @@ class Main_table:
         text_te += 'tabela agregada.'
         self.father.prog1(text_te)
         if self.mix is False or self.table_full.empty:
-            self.table_full = load_table(self.arqtableMerge)
+            # self.table_full = load_table(self.arqtableMerge)
             return
+        # Variaveis
         self.tableManip.column_vendedor = self.column_Vendedor
         self.tableManip.column_gerente = self.column_gerente
         self.tableManip.column_cargo_gerente_geral = self.column_cargo_gerente_geral
@@ -1105,6 +1122,7 @@ class Main_table:
         self.tableManip.column_1p_referencia = self.column_1p_referencia
         self.tableManip.column_data_entrega = self.column_Data_de_Entrega
         self.tableManip.column_data_cad_adm = self.column_Data_Cad_Adm
+        # self.tebleManip.column_ata_entrega = self.column_ATA_Entrega
 
         self.tableManip.keyword_periodo_valor_qtd = self.keyword_periodo_valor_qtd
         self.tableManip.keyword_1p_referencia = self.keyword_1p_referencia
@@ -1112,23 +1130,25 @@ class Main_table:
         self.tableManip.list_columns_ata_mes_sma = self.list_columns_ata_mes_sma
 
         self.tableManip.table = self.table_full
-
-        self.tableManip.alter_value_line_total_sum = self.name_column_total
+        # programa:
+        self.tableManip.alter_value_line_total_sum = self.word_column_total
+        # retorno
         self.table_full = self.tableManip.table
+        self.list_list_column_orden_total = self.tableManip.list_list_column_orden_total
 
     def order_column(self):
         ''' Ordenar colunas da tabela para a forma que quiser'''
         text_te = 'Ordenar as colunas, colocando as mais importantes no início '
         self.father.prog1(text_te)
         if self.mix is False or self.table_full.empty:
-            self.table_full = load_table(self.arqtableMerge)
+            # self.table_full = load_table(self.arqtableMerge)
             return
-        for columns_ata in self.list_columns_order:
-            for column_ata in columns_ata:
+        for list_columns_ata in self.list_list_columns_order:
+            for columns_ata in list_columns_ata:
                 # remover coluna Mes Xº Parc
                 # if 'Mes ' in column_ata and 'º Parc' in column_ata:
-                if column_ata not in self.listColumnsStart:
-                    self.listColumnsStart.append(column_ata)
+                if columns_ata not in self.listColumnsStart:
+                    self.listColumnsStart.append(columns_ata)
         columnsList = self.table_full.columns.to_list()
         columnsListNew = []
         for key, columnList in enumerate(columnsList):
@@ -1143,6 +1163,8 @@ class Main_table:
     def save_full(self):
         text_te = 'Salvar uma tabela previamente consolidada e tratada.'
         self.father.prog1(text_te)
+        if self.mix is False:
+            return
         # salvar a tabela
         if self.table_full.empty:
             return
@@ -1156,7 +1178,7 @@ class Main_table:
         self.father.prog1(text_te)
         ''' teste para sabEr a diferença e mostra que é diferente.
         pois se existir diferença ele ira salvar no log'''
-        if self.table_full.empty or self.table_Cadastro_Consorciado.empty or (self.connected is False or self.mix is False):  # noqa
+        if self.table_full.empty or self.table_Cadastro_Consorciado.empty or self.connected is False or self.mix is False:  # noqa
             return
         text = 'OK'
         num_line = len(self.table_full)
@@ -1191,7 +1213,7 @@ class Main_table:
         text_te += 'resultar em vendas adicionais. '
         text_te += 'Registrar os resultados no arquivo de log (log.txt).'
         self.father.prog1(text_te)
-        if self.table_Comissoes_ConfigPagamento.empty or (self.connected is False or self.mix is False):  # noqa
+        if self.table_Comissoes_ConfigPagamento.empty or self.connected is False or self.mix is False:  # noqa
             return
         self.tableManip.table = self.table_Comissoes_ConfigPagamento
         colummns = [
@@ -1226,7 +1248,7 @@ class Main_table:
         text_te += 'para identificar casos de homônimos com funções distintas. '
         text_te += 'Registrar os resultados no arquivo de log (log.txt).'
         self.father.prog1(text_te)
-        if (self.table_Cadastro_Funcionario.empty or self.connected is False or self.mix is False):
+        if self.table_Cadastro_Funcionario.empty or self.connected is False or self.mix is False:
             return
         list_funcionario_double = self.table_Cadastro_Funcionario[self.column_Nome_Funcionario].tolist(
         )
@@ -1260,3 +1282,48 @@ class Main_table:
                 text += 'Isso siguinifica que tem vendas duplicados, '
                 text += 'devido a mesclagem entre as tabelas. '
                 self.fileManip.writeLog = text
+
+    def ata_atrasada_adiantada_igual(self):
+        self.tableManip.table = self.table_full
+        self.tableManip.add_value_situacao_num_ATA = self.list_list_columns_situacao_num_ATA
+        self.table_full = self.tableManip.table
+
+    def calc_percentual(self):
+        self.tableManip.table = self.table_full
+        self.tableManip.column_vendedor = self.column_Vendedor
+        self.tableManip.column_ata_entrega = self.column_ATA_Entrega
+        self.tableManip.column_total_ata_entrega = self.column_Total_ATA_Entrega
+        self.tableManip.column_credito = self.column_Credito
+        self.tableManip.add_value_porcentagem = self.list_list_columns_percentage
+        self.table_full = self.tableManip.table
+        # ordenar
+
+        # colunas total
+        self.tableManip.list_columns_ata_mes_sma = self.list_columns_ata_mes_sma
+        self.tableManip.keyword_periodo_valor_qtd = self.keyword_periodo_valor_qtd
+        self.tableManip.columns_total = self.word_column_total
+        list_list_column_orden_total = self.tableManip.list_list_column_orden_total
+        for list_column_orden_total in list_list_column_orden_total:
+            for column_orden_total in list_column_orden_total:
+                self.listColumnsStart.append(column_orden_total)
+
+        for list_columns_ata in self.list_list_columns_order:
+            for columns_ata in list_columns_ata:
+                # remover coluna Mes Xº Parc
+                # if 'Mes ' in column_ata and 'º Parc' in column_ata:
+                if columns_ata not in self.listColumnsStart:
+                    self.listColumnsStart.append(columns_ata)
+
+        columnsList = self.table_full.columns.to_list()
+        columnsListNew = []
+        for key, columnList in enumerate(columnsList):
+            if key == 0:
+                for listColumnStart in self.listColumnsStart:
+                    columnsListNew.append(listColumnStart)
+            if columnList in self.listColumnsStart:
+                continue
+            columnsListNew.append(columnList)
+        self.table_full = self.table_full[columnsListNew]
+        # salvar
+        self.table_full = create_table(self.table_full, self.arqTableTeste1)
+        # print(self.table_full)

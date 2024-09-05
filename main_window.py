@@ -64,6 +64,7 @@ class Worker1(QObject):
             main_table.mix = mix
             # print(mix)
         main_table.log_start_end()
+        main_table.mesclar_tables()
         main_table.create_table_Cadastro_Consorciado()
         main_table.create_table_Cadastro_Funcionario()
         main_table.create_table_Cadastro_Ata()
@@ -87,7 +88,6 @@ class Worker1(QObject):
         main_table.merge_full_comissoes_configuracao_gerente_geral()
         main_table.create_columns_ata()
         main_table.merge_full_ata_weekly_month()
-        # main_table.merge_full_ata()
         main_table.merge_full_configPagamento()
         main_table.column_add()
         main_table.order_column()
@@ -95,6 +95,8 @@ class Worker1(QObject):
         main_table.test_full_double()
         main_table.test_primary_key()
         main_table.log_start_end()
+        main_table.ata_atrasada_adiantada_igual()
+        main_table.calc_percentual()
         self.finished1.emit()
 
 
