@@ -4,10 +4,12 @@
 from PySide6.QtWidgets import QApplication, QMainWindow
 from PySide6.QtCore import QDate, QObject, QThread, Signal
 from PySide6.QtGui import QIcon, QPixmap
+# from components import fileManip
 from ui_main import Ui_MainWindow
 import sys
 import os
 from main_table import Main_table
+from components.variables import Variables
 from main_recibo import Main_recibo
 import time
 
@@ -31,7 +33,7 @@ class Worker1(QObject):
     def prog1(self, text):
         self.progressed1.emit(text)
 
-    def scall_main_table(self, *args, **kwargs) -> None:
+    def scall_main_table1(self, *args, **kwargs) -> None:
         self.prog1('Iniciar')
         self.started1.emit()
         user = kwargs.get('user')
@@ -62,41 +64,47 @@ class Worker1(QObject):
             main_table.new_table_Comissoes_ConfigPagamento = comissoes_configPagamento
         if mix is not None:
             main_table.mix = mix
-            # print(mix)
+
         main_table.log_start_end()
-        main_table.mesclar_tables()
         main_table.create_table_Cadastro_Consorciado()
         main_table.create_table_Cadastro_Funcionario()
         main_table.create_table_Cadastro_Ata()
         main_table.create_table_Comissoes_Configuracao()
         main_table.create_table_Comissoes_ConfigPagamento()
-        main_table.create_table_gerente()
+        main_table.create_table_gerencia()
         main_table.create_date_weekly_new()
         main_table.merge_table_Cadastro_Ata_table_date_weekly()
         main_table.table_manip_funcionario()
         main_table.table_manip_cadastro_consorciado()
         main_table.table_manip_comissoes_configuracao()
         main_table.test_table_Comissoes_ConfigPagamento()
-        main_table.table_manip_Cadastro_funcionario_gerente()
+        main_table.table_manip_Cadastro_funcionario_supervisor()
         main_table.test_table_Cadastro_Funcionario()
-        main_table.table_manip_comissoes_configuracao_gerente()
+        main_table.table_manip_comissoes_configuracao_supervisor()
         main_table.merge_star()
         main_table.merge_consorciado_funcionario()
-        main_table.merge_consorciado_funcionario_gerente()
+        main_table.merge_consorciado_funcionario_supervisor()
         main_table.merge_full_comissoes_configuracao()
-        main_table.merge_full_comissoes_configuracao_gerente()
-        main_table.merge_full_comissoes_configuracao_gerente_geral()
+        main_table.merge_full_comissoes_configuracao_Supervisor()
+        main_table.merge_full_comissoes_configuracao_gerencia()
         main_table.create_columns_ata()
         main_table.merge_full_ata_weekly_month()
         main_table.merge_full_configPagamento()
+        # main_table.save_full_teste(1)
         main_table.column_add()
+        main_table.create_column_pk_vend_ata_entrega()
+        main_table.create_columns_ata_atrasada_adiantada_igual()
+        main_table.create_columns_ata_atrasadas()
+        main_table.create_columns_calc_percentual()
+        main_table.create_columns_ata_pag_atrasado_n_ata()
+        main_table.create_columns_comissao_atrasada()
+        main_table.save_full()
         main_table.order_column()
         main_table.save_full()
         main_table.test_full_double()
         main_table.test_primary_key()
         main_table.log_start_end()
-        main_table.ata_atrasada_adiantada_igual()
-        main_table.calc_percentual()
+
         self.finished1.emit()
 
 
@@ -108,7 +116,7 @@ class Worker2(QObject):
     def prog2(self, text):
         self.progressed2.emit(text)
 
-    def scall_main_table(self, *args, **kwargs) -> None:
+    def scall_main_table2(self, *args, **kwargs) -> None:
         self.prog2('Iniciar')
         self.started2.emit()
         vendedores = kwargs.get('vendedores')
@@ -205,7 +213,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.te_table.clear()
         # Conecta os sinais e slots.,
         # Quando a thread iniciar, chama scall_main_table.
-        self.thread1.started.connect(lambda: self.worker1.scall_main_table(
+        self.thread1.started.connect(lambda: self.worker1.scall_main_table1(
             user=self.le_usuario.text(),
             password=self.le_senha.text(),
             months=self.calculate_month(self.data_inicial.date()),
@@ -234,7 +242,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # Move o worker para a thread.
         self.worker2.moveToThread(self.thread2)
         self.te_recibo.clear()
-        self.thread2.started.connect(lambda: self.worker2.scall_main_table(
+        self.thread2.started.connect(lambda: self.worker2.scall_main_table2(
             vendedores=self.cb_vendedor.isChecked(),
             supervisores=self.cb_supervisor.isChecked(),
             gerentes=self.cb_gerente.isChecked(),
@@ -266,7 +274,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.te_table.setText(text)
         self.scroll(40)
         QApplication.processEvents()
-        time.sleep(0.5)
+        time.sleep(0.1)
 
     def worker2Progressed(self, new_text):
         text_original = self.te_recibo.toPlainText()
@@ -304,8 +312,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         return (months)
 
     def date_path_file(self):
-        main_table = Main_table(father=self)
-        text_te = main_table.date_file()
+        variables = Variables()
+        text_te = variables.date_file()
         text_original = self.te_table.toPlainText()
         text = text_original + text_te + '\n'
         self.te_table.setText(text)

@@ -11,37 +11,37 @@ from components.mouseKeyboard import MouseKeyboard
 from components.tableManip import TableManip
 from components.table_from_tags import Table_from_tags
 from components.fileManip import FileManip
+from components.variables import *
 
 
 class Connect:
     def __init__(self, *args, **kwargs) -> None:
+        self.variables = Variables()
         self.driver = kwargs.get('driver')
         self.df: pd.DataFrame = pd.DataFrame()
         self.dfNew: pd.DataFrame = pd.DataFrame()
-        self.listValue = []
         self.table: pd.DataFrame = pd.DataFrame()
-        self.clickOk = None
-        self.xpathOk = None
-        self.user = ''
-        self.password = ''
-        self.tagSon = ''
-        self.tagFather = ''
-        self.tagGet = ''
-        self.tagSelected = ''
         self.file: Path = Path()
-        self.arq_log: Path = Path()
-        self.month = 0
-        self.valueAdministradora = []
-        self.cargo = []
         self.mouseKeyboard = MouseKeyboard(driver=self.driver)
         self.returnValue = ReturnValue(driver=self.driver)
         self.dateMonthYear = DateMonthYear()
         self.table_from_tags = Table_from_tags()
         self.tableManip = TableManip()
         self.fileManip = FileManip()
-        self.listExistCargos = []
-        self.listExistAdministradoras: list = []
-        self.listExistTabelarecebimento = []
+        self.month = month
+        self.user = user
+        self.password = password
+        self.clickOk = clickOk
+        self.tagSon = tagSon
+        self.tagFather = tagFather
+        self.tagGet = tagGet
+        self.tagSelected = tagSelected
+        self.listValue = listValue
+        self.list_administradora_limit = list_administradora_limit
+        self.list_cargo_limit = list_cargo_limit
+        self.list_cargos_limit_exist = list_cargos_limit_exist
+        self.list_administradoras_limit_exist = list_administradoras_limit_exist
+        self.list_tabela_recebiemnto_limit_exist = list_tabela_recebiemnto_limit_exist
 
     @property
     def tagReturnValue(self):
@@ -50,20 +50,24 @@ class Connect:
         self.returnValue.tagGet = self.tagGet
         self.returnValue.tagSelected = self.tagSelected
 
+    def test_valueAdministradora(self, valueAdministradora):
+        if self.list_administradora_limit:
+            if valueAdministradora not in self.list_administradora_limit:
+                return True
+        return False
+
     @property
     def valueExistAdministradora(self):
         return None
 
     @valueExistAdministradora.setter
     def valueExistAdministradora(self, table_Cadastro_Consorciado):
-        nLine = table_Cadastro_Consorciado[
-            table_Cadastro_Consorciado.columns[0]].count()
+        nLine = table_Cadastro_Consorciado[table_Cadastro_Consorciado.columns[0]].count()  # noqa
         listFullAdministradora = []
         for i in range(nLine):
-            listFullAdministradora.append(
-                table_Cadastro_Consorciado.at[i, 'Administradora'])
-        self.listExistAdministradoras = list(set(listFullAdministradora))
-        self.listExistAdministradoras.sort()
+            listFullAdministradora.append(table_Cadastro_Consorciado.at[i, column_Administradora])  # noqa
+        self.list_administradoras_limit_exist = list(set(listFullAdministradora))
+        self.list_administradoras_limit_exist.sort()
 
     @property
     def valueExistCargos(self):
@@ -75,19 +79,18 @@ class Connect:
             table_Cadastro_Funcionario.columns[0]].count()
         listFullCargos = []
         for i in range(nLine):
-            listFullCargos.append(table_Cadastro_Funcionario.at[i, 'Cargo'])
-        self.listExistCargos = list(set(listFullCargos))
-        self.listExistCargos.sort()
+            listFullCargos.append(table_Cadastro_Funcionario.at[i, column_Cargo])
+        self.list_cargos_limit_exist = list(set(listFullCargos))
+        self.list_cargos_limit_exist.sort()
 
-    ''' ###########  logar  ###############'''
     @property
     def logarSircon(self):
         return None
 
     @logarSircon.setter
     def logarSircon(self, listXpath):
-        # self.user = 'davigopi@gmail.com'
-        # self.password = ''
+        self.user = 'davigopi@gmail.com'
+        self.password = '36vad28'
         for xpath in listXpath:
             indexNumber = listXpath.index(xpath)
             if indexNumber == 0:
@@ -118,7 +121,6 @@ class Connect:
     @sales.setter
     def sales(self, listXpath):
         self.fileManip.arq_cons = self.file  # type:ignore
-        self.fileManip.arq_log = self.arq_log  # type:ignore
         for lastMonth in range(self.month, -1, -1):
             self.fileManip.delete  # type:ignore
             # fileNotExist = True
@@ -198,10 +200,10 @@ class Connect:
                         repeat = False
             if error == '':
                 # if fileNotExist is True:
-                tableManip = TableManip()
-                tableManip.df = self.df
-                tableManip.dfNew = self.dfNew
-                self.dfNew = tableManip.merge
+                #
+                self.tableManip.df = self.df
+                self.tableManip.dfNew = self.dfNew
+                self.dfNew = self.tableManip.merge
             else:
                 error += f' Quantidade de meses anteirores são: {lastMonth}'
                 error += f' O key do erro é: {key}'
@@ -264,7 +266,7 @@ class Connect:
                     clickOk = True
                 if key == 4:
                     tableComplete: pd.DataFrame = pd.DataFrame()
-                    for administradora in self.listExistAdministradoras:
+                    for administradora in self.list_administradoras_limit_exist:
                         self.mouseKeyboard.clickXpath = xpath
                         # clickOk = self.mouseKeyboard.clickOk
                         self.mouseKeyboard.clickValue = administradora
@@ -278,18 +280,18 @@ class Connect:
                                 self.table_from_tags.tables = html
                                 table = self.table_from_tags.tables
                                 self.tableManip.renemar_data = table
-                                self.tableManip.del_column = 'Ações'
-                                self.tableManip.column_clone = 'Período'
-                                self.tableManip.add_column_clone = 'Período final'
-                                self.tableManip.rename_name_column_origin = 'Período'
-                                self.tableManip.rename_name_column_destiny = 'Período inicial'
-                                self.tableManip.value_separate = 'à'
-                                self.tableManip.rename_value_column_before = 'Período inicial'
-                                self.tableManip.rename_value_column_after = 'Período final'
+                                self.tableManip.del_column = word_Acoes
+                                # self.tableManip.column_clone = word_Periodo
+                                self.tableManip.add_column_clone = word_Periodo_final
+                                # self.tableManip.rename_name_column_origin = word_Periodo
+                                self.tableManip.rename_name_column_destiny = word_Periodo_inicial
+                                # self.tableManip.value_separate = word_a
+                                self.tableManip.rename_value_column_before = word_Periodo_inicial
+                                self.tableManip.rename_value_column_after = word_Periodo_final
                                 self.tableManip.value_fixed_column = administradora
-                                self.tableManip.add_value_fixed_column = 'Administradora'
+                                self.tableManip.add_value_fixed_column = column_Administradora
                                 self.tableManip.value_fixed_column = listYear
-                                self.tableManip.add_value_fixed_column = 'Ano'
+                                self.tableManip.add_value_fixed_column = word_Ano
                                 table: pd.DataFrame = self.tableManip.table
                                 if tableComplete.empty:
                                     tableComplete = table
@@ -328,14 +330,14 @@ class Connect:
         # limitar
         for valueAdministradora in listValue:
             # limita se a pessoa colocar na lista as administradora
-            if self.valueAdministradora:
-                if valueAdministradora not in self.valueAdministradora:
+            if self.list_administradora_limit:
+                if valueAdministradora not in self.list_administradora_limit:
                     continue
             # limita apenas as administradoras que existe nas vendas existentes
-            if self.listExistAdministradoras:
-                if valueAdministradora not in self.listExistAdministradoras:
+            if self.list_administradoras_limit_exist:
+                if valueAdministradora not in self.list_administradoras_limit_exist:
                     continue
-            if valueAdministradora in self.listExistAdministradoras:
+            if valueAdministradora in self.list_administradoras_limit_exist:
                 listValueTemp.append(valueAdministradora)
         self.listValue = listValueTemp
 
@@ -359,18 +361,17 @@ class Connect:
             listValueTabelarecebimento = self.returnValue.xpathTag
             listValueTemp = []
             # limitar
-            if self.listExistTabelarecebimento:
+            if self.list_tabela_recebiemnto_limit_exist:
                 for valueTabelarecebimento in listValueTabelarecebimento:
                     existWord = False
-                    for wordDelete in self.listExistTabelarecebimento:
+                    for wordDelete in self.list_tabela_recebiemnto_limit_exist:
                         if wordDelete in valueTabelarecebimento:
                             existWord = True
                             break
                     if existWord is False:
                         listValueTemp.append(valueTabelarecebimento)
                 listValueTabelarecebimento = listValueTemp
-            listValueAdministradoraTablarecebimento.append(
-                [valueAdministradora, listValueTabelarecebimento])
+            listValueAdministradoraTablarecebimento.append([valueAdministradora, listValueTabelarecebimento])  # noqa
         self.listValue = listValueAdministradoraTablarecebimento
 
     # com valores da administ. e tabela receb ira acrecentar valores do cargo
@@ -398,14 +399,11 @@ class Connect:
                 # limitar
                 for cargo in listCargo:
                     # limita se a pessoa digita os cargos
-                    if self.cargo:  # limitar pesquis
-                        if cargo not in self.cargo:
+                    if self.list_cargo_limit:  # limitar pesquis
+                        if cargo not in self.list_cargo_limit:
                             continue
                     # limitar apenas o que existe nos cargo da lista de funcion
-                    # if self.listExistCargos:
-                    #     if cargo not in self.listExistCargos:
-                    #         continue
-                    if cargo in self.listExistCargos:
+                    if cargo in self.list_cargos_limit_exist:
                         listCargoTemp.append(cargo)
                 listCargo = listCargoTemp
                 listValueTabelarecebimentoCargo.append([tablaRecebimento, listCargo])
@@ -517,21 +515,19 @@ class Connect:
             for value in self.returnValue.xpathTag:
                 if key == 0:
                     # limita se a pessoa digita os cargos
-                    if self.cargo:  # limitar pesquis
-                        if value not in self.cargo:
+                    if self.list_cargo_limit:  # limitar pesquis
+                        if value not in self.list_cargo_limit:
                             continue
                     # limitar apenas o que existe nos cargo da lista de funcion
-                    # if self.listExistCargos:
-                    if value not in self.listExistCargos:
+                    if value not in self.list_cargos_limit_exist:
                         continue
                 elif key == 1:
                     # limita se a pessoa colocar na lista as administradora
-                    if self.valueAdministradora:
-                        if value not in self.valueAdministradora:
+                    if self.list_administradora_limit:
+                        if value not in self.list_administradora_limit:
                             continue
                     # limita administradoras que existe nas vendas existentes
-                    # if self.listExistAdministradoras:
-                    if value not in self.listExistAdministradoras:
+                    if value not in self.list_administradoras_limit_exist:
                         continue
                 listValueTemp.append(value)
             listTemp.append(listValueTemp)
@@ -674,8 +670,8 @@ class Connect:
 
     @property
     def listColunmToTable(self):
-        self.table = pd.DataFrame(index=self.listValue[-1], columns=['Index'])
-        self.table['Index'] = self.listValue[-1]
+        self.table = pd.DataFrame(index=self.listValue[-1], columns=[column_Index])
+        self.table[column_Index] = self.listValue[-1]
         for number in range(100):
             if len(self.listValue) / (10**number) < 1:
                 nStr = number
@@ -684,18 +680,18 @@ class Connect:
         for key, column in enumerate(self.listValue):
             key = str(key)
             key = key.rjust(nStr, '0')
-            nameNumberColumn = 'Column' + '-' + key
-            self.table[nameNumberColumn] = column
+            number_Column = 'Column' + '-' + key
+            self.table[number_Column] = column
         return self.table
 
     @property
     def renameColumn(self):
-        tableManip = TableManip()
+        # tableManip = TableManip()
         countColumn = 0
         dateStart = True
         parcStart = False
         qtvVendas = 0
-        nameNumberColumn1 = False
+        number_Column_1 = False
         while True:
             try:
                 self.table.columns.values[countColumn]
@@ -703,36 +699,36 @@ class Connect:
                 break
             match countColumn:
                 case 0:
-                    nameNumberColumn = 'Index'
+                    number_Column = column_Index
                 case 1:
-                    nameNumberColumn = 'Administradora'
+                    number_Column = column_Administradora
                 case 2:
-                    nameNumberColumn = 'Tabela de recebimento'
+                    number_Column = column_Tabela_de_recebimento
                 case 3:
-                    nameNumberColumn = 'Cargo'
+                    number_Column = column_Cargo
                 case _:
-                    tableManip.nameNumberColumn = countColumn
+                    self.tableManip.number_Column = countColumn
                     countLine = 0
                     while True:
-                        tableManip.nameNumberLine = countLine
-                        tableManip.infTable = self.table
-                        value = tableManip.infTable
+                        self.tableManip.number_Line = countLine
+                        self.tableManip.infTable = self.table
+                        value = self.tableManip.infTable
                         value = str(value)
                         if value != '' and value != 'nan':
                             word = ''
                             key2Barra = False
                             for key, letter in enumerate(value):
                                 word += letter
-                                word_1 = 'Período Venda'
-                                word_2 = 'PerÃ­odo Venda:'
-                                word_3 = ' Periodo valor qtd vendas'
-                                word_4 = ' Qtd. Cotas Inicial'
-                                word_5 = ' Qtd. Cotas Final'
+                                word_1 = word_Periodo_Venda
+                                word_2 = word_Periodo_Venda2
+                                word_3 = word__Periodo_Valor_Qtd_Vendas
+                                word_4 = word__Valor_Qtd_Vendas_Inicial
+                                word_5 = word__Valor_Qtd_Vendas_Final
                                 if word == word_1 or word == word_2:
                                     qtvVendas += 1
-                                    nameNumberColumn = str(qtvVendas) + word_3
-                                    nameNumberColumn1 = str(qtvVendas) + word_4
-                                    nameNumberColumn2 = str(qtvVendas) + word_5
+                                    number_Column = str(qtvVendas) + word_3
+                                    number_Column_1 = str(qtvVendas) + word_4
+                                    number_Column_2 = str(qtvVendas) + word_5
                                     nParc = 1
                                     parcStart = False
                                     break
@@ -740,32 +736,28 @@ class Connect:
                                     key2Barra = True
                                 if key == 5 and letter == '/' and key2Barra:
                                     if dateStart:
-                                        nameNumberColumn = str(qtvVendas) + ' Data inicial'
+                                        number_Column = str(qtvVendas) + word__Data_Inicial
                                         dateStart = False
                                     else:
-                                        nameNumberColumn = str(qtvVendas) + ' Data final'
+                                        number_Column = str(qtvVendas) + word__Data_Final
                                         dateStart = True
                                         parcStart = True
                                     key2Barra = False
                                     break
                                 if value == word:  # fim. palavra completa
                                     if parcStart is True:
-                                        nameNumberColumn = str(qtvVendas) + ' Parc ' + str(nParc)
+                                        number_Column = str(qtvVendas) + word__Parc_ + str(nParc)  # noqa
                                         nParc += 1
                                     else:
-                                        nameNumberColumn = (self.table.columns.values[countColumn])
+                                        number_Column = (self.table.columns.values[countColumn])
                                     break
                             break
                         else:
                             countLine += 1
-            self.table.columns.values[countColumn] = nameNumberColumn
-            if nameNumberColumn1 is not False:
-                self.table.columns.values[countColumn + 1] = nameNumberColumn1
-                self.table.columns.values[countColumn + 2] = nameNumberColumn2
-                nameNumberColumn1 = False
+            self.table.columns.values[countColumn] = number_Column
+            if number_Column_1 is not False:
+                self.table.columns.values[countColumn + 1] = number_Column_1
+                self.table.columns.values[countColumn + 2] = number_Column_2
+                number_Column_1 = False
             countColumn += 1
         return self.table
-
-
-# if __name__ == '__main__':
-#     from .. import mainbkp

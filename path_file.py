@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+# import sys
 
 
 class Path_file:
@@ -42,7 +43,9 @@ class Path_file:
         elif path_user == 'Desktop':
             user_path = os.path.expanduser(self.path_desktop)
         elif path_user == 'Appdata':
-            user_path = os.getenv(self.path_appdata)
+            user_path = os.getenv('APPDATA')
+            if not user_path:
+                user_path = os.path.expanduser("~")
         else:
             user_path = os.path.expanduser(self.path_home)
         if not user_path:

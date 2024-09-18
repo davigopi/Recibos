@@ -7,6 +7,7 @@ import os
 import sys
 from pathlib import Path
 from components.fileManip import PDF
+from components.variables import *
 
 try:
     from path_file import Path_file
@@ -44,10 +45,12 @@ def rename_ata(text, model):
         text = text.replace('º', '')
         text = text.replace('Entrega', '1')
         text = text.replace('CadAdm', '1')
+        text = text.replace('Cad.Adm', '1')
     elif model == 'mod2':
         text = text.replace('º', 'ª')
         text = text.replace('Entrega', '1ª')
         text = text.replace('CadAdm', '1ª')
+        text = text.replace('Cad.Adm', '1ª')
     return text
 
 
@@ -75,49 +78,45 @@ class Generat_payroll:
 
         self.profession = ''
         self.column_profissao = ''
-        self.column_cargo = ''
-        self.column_administradora = ''
-        self.column_tabela = ''
-        self.column_dt_pag_por = ''
-        self.column_1p_referencia = ''
-        self.column_1P_recebera = ''
-        self.column_D_referencia = ''
-        self.column_D_recebera = ''
-        self.column_FAT_referencia = ''
-        self.column_FAT_recebera = ''
-        self.column_credito = ''
-        self.column_comissao = ''
-        self.column_situacao = ''
-        self.column_ata_entrega = ''
-        self.column_ata_cad_adm = ''
-        self.column_sma_entrega = ''
-        self.column_sma_cad_adm = ''
+        self.column_Cargo = column_Cargo
+        self.column_Data_Pag_Por = column_Data_Pag_Por
+        self.column_1_Parcela_Referencia = column_1_Parcela_Referencia
+        self.column_1_Parcela_Recebera = column_1_Parcela_Recebera
+        self.column_Demais_Recebera = column_Demais_Recebera
+        self.column_FAT_Recebera = column_FAT_Recebera
+        self.column_Credito = column_Credito
+        self.column_Comissao = column_Comissao
+        self.column_Situacao = column_Situacao
+        self.column_ATA_Entrega = column_ATA_Entrega
+        self.column_Ata_Cad_Adm = column_Ata_Cad_Adm
+        self.column_Sma_Entrega = column_Sma_Entrega
+        self.column_Sma_Cad_Adm = column_Sma_Cad_Adm
         self.column_ata_sma = ''
         self.date_ata_single = ''
         self.date_sma_single = ''
         self.seller_single = ''
-        self.data_date_pay = ''
-        self.data_cadastro = ''
+        self.word_DIA_DA_SEMANA = word_DIA_DA_SEMANA
+        self.word_CADASTRO = word_CADASTRO
         # self.word = ''
         self.column_sum_sing = ''
 
         self.data_single = ''
 
-        self.column_total_sma_cad_adm = ''
-        self.column_total_sma_cad_adm_ger = ''
-        self.column_total_sma_cad_adm_ger_ger = ''
-        self.column_total_ata_cad_adm = ''
-        self.column_total_ata_cad_adm_ger = ''
-        self.column_total_ata_cad_adm_ger_ger = ''
-        self.column_total_sma_ent = ''
-        self.column_total_sma_ent_ger = ''
-        self.column_total_sma_ent_ger_ger = ''
-        self.column_total_ata_entrega = ''
-        self.column_total_ata_entrega_ger = ''
-        self.column_total_ata_entrega_ger_ger = ''
+        self.column_Total_Sma_Cad_Adm_Vend = column_Total_Sma_Cad_Adm_Vend
+        self.column_Total_Sma_Cad_Adm_Sup = column_Total_Sma_Cad_Adm_Sup
+        self.column_Total_Sma_Cad_Adm_Ger = column_Total_Sma_Cad_Adm_Ger
+        self.column_Total_ATA_Cad_Adm_Vend = column_Total_ATA_Cad_Adm_Vend
+        self.column_Total_ATA_Cad_Adm_Sup = column_Total_ATA_Cad_Adm_Sup
+        self.column_Total_ATA_Cad_Adm_Ger = column_Total_ATA_Cad_Adm_Ger
+        self.column_Total_Sma_Ent_Vend = column_Total_Sma_Ent_Vend
+        self.column_Total_Sma_Ent_Sup = column_Total_Sma_Ent_Sup
+        self.column_Total_Sma_Ent_Ger = column_Total_Sma_Ent_Ger
+        self.column_Total_ATA_Entrega_Vend = column_Total_ATA_Entrega_Vend
+        self.column_Total_ATA_Entrega_Sup = column_Total_ATA_Entrega_Sup
+        self.column_Total_ATA_Entrega_Ger = column_Total_ATA_Entrega_Ger
 
-        self.word_Gerente = ''
-        self.word_Gerente_Geral = ''
+        self.word_Supervisor = word_Supervisor
+        self.word_Gerencia = word_Gerencia
 
         self.quantity_line_full = 0
         self.quantity_line_ata = 0
@@ -129,17 +128,16 @@ class Generat_payroll:
         self.list_recebera_to_comission = []
         self.list_condition_ata = []
         self.list_cargo_not_calc_commis = []
-        self.list_columns_end = []
+        self.list_columns_end = list_columns_end
 
-        self.column_new_porcentagem_comissão = ''
-        self.column_new_parcela = ''
-        self.column_new_adimplencia = ''
+        self.column_Porcentagem = column_Porcentagem
+        self.column_Parcela = column_Parcela
+        self.column_Adimplencia = column_Adimplencia
 
-        self.list_columns_ata_ent = []
-        self.list_columns_ata_cad = []
-
-        self.list_columns_mes_ent = []
-        self.list_columns_mes_cad = []
+        self.list_columns_ata_ent = list_columns_ata_ent
+        self.list_columns_ata_cad = list_columns_ata_cad
+        self.list_columns_mes_ent = list_columns_mes_ent
+        self.list_columns_mes_cad = list_columns_mes_cad
 
         self.column_ata_mes_qtd = []
 
@@ -172,10 +170,6 @@ class Generat_payroll:
 
         self.table_full_single_ata = []
 
-        # self.dic_qtd_cotas_parc = {}
-        self.dic_months = {}
-        # self.dic_administradoras = {}
-
         self.table: pd.DataFrame = pd.DataFrame()
         self.table_full: pd.DataFrame = pd.DataFrame()
         self.table_full_ata: pd.DataFrame = pd.DataFrame()
@@ -207,50 +201,16 @@ class Generat_payroll:
         value = round(value, 2)
         return value
 
-    # # não mais utilizado
-    # # 1º ira criar duas lista de todos os vendedores clt e parceiros
-    # def columns_to_list_full_seller(self):
-    #     self.list_seller_ata = self.table_full_ata[self.column_profissao]
-    #     self.list_seller_ata = self.list_seller_ata.unique()
-    #     self.list_seller_ata.sort()
-    #     self.list_seller_weekly = self.table_full_weekly[self.column_profissao]
-    #     self.list_seller_weekly = self.list_seller_weekly.unique()
-    #     self.list_seller_weekly.sort()
-    #     for column_ata in self.list_columns_full_ata:
-    #         for line in range(self.quantity_line_ata):
-    #             data_ata = self.table_full_ata.iloc[line][column_ata]
-    #             if data_ata not in self.list_ata and not pd.isna(data_ata):
-    #                 self.list_ata.append(data_ata)
-    #     for column_weekly in self.list_columns_full_weekly:
-    #         for line in range(self.quantity_line_weekly):
-    #             data_weekly = self.table_full_weekly.iloc[line][column_weekly]
-    #             if data_weekly not in self.list_weekly and not pd.isna(
-    #                     data_weekly):
-    #                 self.list_weekly.append(data_weekly)
-    #     self.list_ata = sorted(
-    #         self.list_ata,
-    #         key=lambda x: (
-    #             x.split('/')[1], self.dic_months[x.split('/')[0]]
-    #         )
-    #     )
-    #     self.list_weekly = sorted(
-    #         self.list_weekly, key=lambda x: (
-    #             x.split('/')[2],
-    #             self.dic_months[x.split('/')[1]], x.split('/')[0]
-    #         )
-    #     )
-    #     # print(self.list_seller_weekly)
-    #     # print(self.list_weekly)
-
     # 2º define se vendedor/parceiro a primeira é pela ata entrea/cadastro
+
     def columns_ata_full_seller_single(self):
         # 1ª inf da coluna '1P referencia' -> ENTREGA ou CADASRO
-        p1_referencia = str(self.table_seller_single.iloc[0][self.column_1p_referencia])
+        p1_referencia = str(self.table_seller_single.iloc[0][self.column_1_Parcela_Referencia])
         # 1ª inf da coluna 'Dt pag. por' -> ATA ou DIA DA SEMANA
-        dt_pag_por = str(self.table_seller_single.iloc[0][self.column_dt_pag_por])
+        dt_pag_por = str(self.table_seller_single.iloc[0][self.column_Data_Pag_Por])
 
         #   'DIA DA SEMANA'
-        if self.data_date_pay == dt_pag_por:
+        if self.word_DIA_DA_SEMANA == dt_pag_por:
             #                  Xº/MES/ANO
             self.data_single = self.date_sma_single
         else:
@@ -259,57 +219,57 @@ class Generat_payroll:
 
         # é cadastro ou entrega
         #  'CADASTRO'
-        if self.data_cadastro in p1_referencia:
+        if self.word_CADASTRO in p1_referencia:
             # é semana ou ATA?
             #  'DIA DA SEMANA'
-            if self.data_date_pay == dt_pag_por:
+            if self.word_DIA_DA_SEMANA == dt_pag_por:
                 #                     Sma Cad Adm
-                self.column_ata_sma = self.column_sma_cad_adm
+                self.column_ata_sma = self.column_Sma_Cad_Adm
                 #            '[Sma Cad Adm', 'Sma 2º Parc', ..., 'Sma 6º Parc']
                 self.list_cols_full_ata_sing = self.list_columns_full_sma_cadastro
                 # ['Total Sma Cad Adm', 'Total Sma Cad Adm Ger']
                 list_columns_sum = [
-                    self.column_total_sma_cad_adm,
-                    self.column_total_sma_cad_adm_ger,
-                    self.column_total_sma_cad_adm_ger_ger]
+                    self.column_Total_Sma_Cad_Adm_Vend,
+                    self.column_Total_Sma_Cad_Adm_Sup,
+                    self.column_Total_Sma_Cad_Adm_Ger]
                 # ['Mes Cad Adm qtd cotas', 'Mes Cad Adm qtd cotas Ger']
                 list_ata_cad = self.list_columns_mes_cad
             else:
                 #                     ATA Cad Adm
-                self.column_ata_sma = self.column_ata_cad_adm
+                self.column_ata_sma = self.column_Ata_Cad_Adm
                 # ['ATA Cad Adm', 'ATA 2º Parc', 'ATA 3º P ..., 'ATA 6º Parc']
                 self.list_cols_full_ata_sing = self.list_columns_full_ata_cadastro
                 # ['Total ATA Cad Adm', 'Total ATA Cad Adm Ger']
                 list_columns_sum = [
-                    self.column_total_ata_cad_adm,
-                    self.column_total_ata_cad_adm_ger,
-                    self.column_total_ata_cad_adm_ger_ger]
+                    self.column_Total_ATA_Cad_Adm_Vend,
+                    self.column_Total_ATA_Cad_Adm_Sup,
+                    self.column_Total_ATA_Cad_Adm_Ger]
                 # ['ATA Cad Adm qtd cotas', 'ATA Cad Adm qtd cotas Ger']
                 list_ata_cad = self.list_columns_ata_cad
         else:
             # é semana ou ATA?
-            if self.data_date_pay == dt_pag_por:
+            if self.word_DIA_DA_SEMANA == dt_pag_por:
                 #                     Sma Ent
-                self.column_ata_sma = self.column_sma_entrega
+                self.column_ata_sma = self.column_Sma_Entrega
                 # '[Sma Ent', 'Sma 2º Parc', ..., 'Sma 6º Parc']
                 self.list_cols_full_ata_sing = self.list_columns_full_sma_entrega
                 # ['Total Sma Ent', 'Total Sma Ent Ger']
                 list_columns_sum = [
-                    self.column_total_sma_ent,
-                    self.column_total_sma_ent_ger,
-                    self.column_total_sma_ent_ger_ger]
+                    self.column_Total_Sma_Ent_Vend,
+                    self.column_Total_Sma_Ent_Sup,
+                    self.column_Total_Sma_Ent_Ger]
                 # ['Mes Ent qtd cotas', 'Mes Ent qtd cotas Ger']
                 list_ata_cad = self.list_columns_mes_ent
             else:
                 #                     ATA Entrega
-                self.column_ata_sma = self.column_ata_entrega
+                self.column_ata_sma = self.column_ATA_Entrega
                 # ['ATA Entrega', 'ATA 2º Parc', ..., 'ATA 6º Parc']
                 self.list_cols_full_ata_sing = self.list_columns_full_ata_entrega
                 # ['Total ATA Entrega', 'Total ATA Entrega Ger']
                 list_columns_sum = [
-                    self.column_total_ata_entrega,
-                    self.column_total_ata_entrega_ger,
-                    self.column_total_ata_entrega_ger_ger]
+                    self.column_Total_ATA_Entrega_Vend,
+                    self.column_Total_ATA_Entrega_Sup,
+                    self.column_Total_ATA_Entrega_Ger]
                 # ['ATA Entrega qtd cotas', 'ATA Entrega qtd cotas Ger']
                 list_ata_cad = self.list_columns_ata_ent
         # é gerente?
@@ -374,7 +334,7 @@ class Generat_payroll:
         if self.table_single_merge.empty:
             self.stop_program = True
             return
-        cargo = self.table_single_merge.iloc[0][self.column_cargo]
+        cargo = self.table_single_merge.iloc[0][self.column_Cargo]
         # se for o cargo especifico sair
         #                            ['ESTAGIÁRIO', 'ZERADO']
         for cargo_not_calc_commis in self.list_cargo_not_calc_commis:
@@ -385,7 +345,7 @@ class Generat_payroll:
     # ira detarminar os 50%
     def table_list_administradora_line_add_sum(self):
         # OBS: infelizmente o comando self.sums =
-        # table[self.column_credito].sum(), nao funciona
+        # table[self.column_Credito].sum(), nao funciona
         self.list_tables_ata_sums = []
         for (table_pag, table_venc, ata) in self.list_tables_ata:
             sums_compliance = 0
@@ -403,13 +363,13 @@ class Generat_payroll:
                 table_choose = table_pag
             quantity_line_table = table_choose.shape[0]
             for line in range(quantity_line_table):
-                value = table_choose.iloc[line][self.column_credito]
+                value = table_choose.iloc[line][self.column_Credito]
                 value = self.convert_str_float(value)
                 sums_all += value
 
             # quantity_line_table = table_pag.shape[0]
             # for line in range(quantity_line_table):
-            #     value = table_pag.iloc[line][self.column_credito]
+            #     value = table_pag.iloc[line][self.column_Credito]
             #     value = self.convert_str_float(value)
             #     sums_all += value
 
@@ -430,13 +390,13 @@ class Generat_payroll:
                     situacao = table_choose.iloc[line][column_situacao]
                     #             'NORMAL', 'PAGA'
                     if situacao in self.list_situacao_to_comission:
-                        value = table_choose.iloc[line][self.column_credito]
+                        value = table_choose.iloc[line][self.column_Credito]
                         value = self.convert_str_float(value)
                         sums_compliance += value
             # elif dividend == 'pag':
             #     quantity_line_table = table_pag.shape[0]
             #     for line in range(quantity_line_table):
-            #         value = table_pag.iloc[line][self.column_credito]
+            #         value = table_pag.iloc[line][self.column_Credito]
             #         value = self.convert_str_float(value)
             #         sums_compliance += value
 
@@ -464,7 +424,7 @@ class Generat_payroll:
 
     # 7º adiciona sum_comissao, sum_comissao_compliance, percentage_compliance,
     # vendedor, cargo
-    def add_column_comissao(self):
+    def add_column_Comissao(self):
         sum_all_comissao = 0
         sum_all_comissao_gerente = 0
         percentage_compliance = ''
@@ -477,21 +437,21 @@ class Generat_payroll:
             sums_compliance
         ) in self.list_tables_ata_sums:
             # nova tabela que esta sendo criada para o pdf
-            table_pag[self.column_new_porcentagem_comissão] = '0'
+            table_pag[self.column_Porcentagem] = '0'
             vendedor = table_pag.iloc[0][self.column_profissao]
-            cargo = table_pag.iloc[0][self.column_cargo]
+            cargo = table_pag.iloc[0][self.column_Cargo]
             sum_comissao = 0
             sum_comissao_compliance = 0
             text = ata
             text = rename_ata(text, 'mod1')
             #                       'Situação'
-            column_situacao_parc = self.column_situacao
+            column_situacao_parc = self.column_Situacao
             if text != '1':
                 column_situacao_parc += ' ' + text + 'º Parc'
             if self.profession == 'Supervisor':
-                text += ' ' + self.word_Gerente
+                text += ' ' + self.word_Supervisor
             elif self.profession == 'Gerente':
-                text += ' ' + self.word_Gerente_Geral
+                text += ' ' + self.word_Gerencia
             quantity_line_table = table_pag.shape[0]
             for line in range(quantity_line_table):
                 text2 = table_pag.iloc[line][self.column_ata_mes_qtd]
@@ -516,7 +476,7 @@ class Generat_payroll:
                     data_percentual = convert_str_float(data_percentual)
                     data_percentual = float(data_percentual)
                 text_perc = str(data_percentual) + ' %'
-                table_pag.loc[line, self.column_new_porcentagem_comissão] = text_perc
+                table_pag.loc[line, self.column_Porcentagem] = text_perc
                 # data_percentual = data_percentual / 100
                 if minimum:
                     data_percentual = data_percentual / 100
@@ -529,13 +489,13 @@ class Generat_payroll:
                 fat = self.list_condition_ata[3]
                 if entrega in ata or cad_adm in ata:
                     data_recebera = (
-                        table_pag.iloc[line][self.column_1P_recebera])
+                        table_pag.iloc[line][self.column_1_Parcela_Recebera])
                 elif parc in ata:
                     data_recebera = (
-                        table_pag.iloc[line][self.column_D_recebera])
+                        table_pag.iloc[line][self.column_Demais_Recebera])
                 elif fat in ata:
                     data_recebera = (
-                        table_pag.iloc[line][self.column_FAT_recebera])
+                        table_pag.iloc[line][self.column_FAT_Recebera])
                 data_situacao = table_pag.iloc[line][column_situacao_parc]
                 # list_situacao_to_comission = ['NORMAL', 'PAGA']
                 list_situacao = self.list_situacao_to_comission
@@ -548,7 +508,7 @@ class Generat_payroll:
                     no momento certo'''
                     if entrega in ata or cad_adm in ata:
                         data_recebera = (
-                            table_pag.iloc[line][self.column_1P_recebera])
+                            table_pag.iloc[line][self.column_1_Parcela_Recebera])
                 # list_recebera_to_comission = ['SIM']
                 list_recebera = self.list_recebera_to_comission
                 if data_recebera in list_recebera:
@@ -556,7 +516,7 @@ class Generat_payroll:
                 else:
                     calculate_commission = False
                 if calculate_commission:
-                    value = table_pag.iloc[line][self.column_credito]
+                    value = table_pag.iloc[line][self.column_Credito]
                     value = self.convert_str_float(value)
                     comissao = value * data_percentual
                     sum_comissao += comissao
@@ -564,7 +524,7 @@ class Generat_payroll:
                     comissao = 0
                 comissao = locale.format_string(
                     "%.2f", comissao, grouping=True)
-                table_pag.loc[line, self.column_comissao] = comissao
+                table_pag.loc[line, self.column_Comissao] = comissao
             if sums_all != 0:
                 if (sums_compliance / sums_all) >= 0.5:
                     sum_comissao_compliance = sum_comissao
@@ -629,15 +589,15 @@ class Generat_payroll:
              cargo
              ) in self.list_table_column_comissao:
             # excluir comissão zerada
-            table_pag = table_pag[table_pag[self.column_comissao] != '0,00'].copy()
+            table_pag = table_pag[table_pag[self.column_Comissao] != '0,00'].copy()
             table_pag.reset_index(drop=True, inplace=True)
             # colocar coluna Parcela
             text = ata
             text = rename_ata(text, 'mod2')
             # text = text.replace('ATA', '').replace('Sma', '').replace('º Parc', 'ª')
             # text = text.replace('Entrega', '1ª').replace('Cad Adm', '1ª')
-            table_pag[self.column_new_parcela] = text
-            table_pag[self.column_new_adimplencia] = percentage_compliance
+            table_pag[self.column_Parcela] = text
+            table_pag[self.column_Adimplencia] = percentage_compliance
             # adicionar coluna comissão
             text = text.replace('ª', '')
             if table_full.empty:

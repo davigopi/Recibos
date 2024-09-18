@@ -1,3 +1,6 @@
+# flake8: noqa
+# pyright: # type: ignore
+
 import pandas as pd
 import sys
 import os
@@ -5,7 +8,9 @@ from time import sleep
 from pandas.errors import EmptyDataError
 from pathlib import Path
 from fpdf import FPDF
+from components.variables import *
 import locale
+
 
 # Configuração do local para formatação da moeda
 locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
@@ -14,7 +19,6 @@ locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
 class FileManip:
     def __init__(self) -> None:
         self.arq_cons: Path = Path()
-        self.arq_log: Path = Path()
         self._dfNew: pd.DataFrame = pd.DataFrame()
         self.error = ''
         self.time_wait = 20
@@ -35,7 +39,7 @@ class FileManip:
     @writeLog.setter
     def writeLog(self, text):
         text += '\n'
-        with open(self.arq_log, 'a') as arq:
+        with open(arq_log, 'a') as arq:
             arq.write(text)
 
     @property
@@ -49,8 +53,6 @@ class FileManip:
             except PermissionError:
                 text_error = f'Não tem permissão para apagar: {self.arq_cons}.'
                 FileManip().writeLog = text_error
-                # with open(self.arq_log, 'a') as arq:
-                #     arq.write(text)
                 sys.exit()
 
     @property

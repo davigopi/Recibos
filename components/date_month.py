@@ -41,3 +41,26 @@ class Date_month:
                 break
         num_month_full *= -1
         return num_month_full
+
+    def sum_month_ata_pag_parc(self, ata_pag_parc):
+        for chave, valor in self.meses_int.items():
+            if valor in ata_pag_parc:
+                break
+        list_new_ata_pag_parc = []
+        valor_sum = 1
+        while True:
+            new_month = chave + valor_sum
+            new_year = int(ata_pag_parc[-4:])
+            if new_month > 12:
+                new_month = new_month - 12
+                new_year = new_year + 1
+            else:
+                new_year = new_year
+            new_month_in_full = self.meses_int[new_month]
+            new_ata_pag_parc = new_month_in_full + '/' + str(new_year)
+            list_new_ata_pag_parc.append(new_ata_pag_parc)
+            if valor_sum == 1:
+                valor_sum = 2
+                continue
+            break
+        return list_new_ata_pag_parc
