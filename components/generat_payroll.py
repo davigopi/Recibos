@@ -88,7 +88,7 @@ class Generat_payroll:
         self.column_Comissao = column_Comissao
         self.column_Situacao = column_Situacao
         self.column_ATA_Entrega = column_ATA_Entrega
-        self.column_Ata_Cad_Adm = column_Ata_Cad_Adm
+        self.column_ATA_Cad_Adm = column_ATA_Cad_Adm
         self.column_Sma_Entrega = column_Sma_Entrega
         self.column_Sma_Cad_Adm = column_Sma_Cad_Adm
         self.column_ata_sma = ''
@@ -236,7 +236,7 @@ class Generat_payroll:
                 list_ata_cad = self.list_columns_mes_cad
             else:
                 #                     ATA Cad Adm
-                self.column_ata_sma = self.column_Ata_Cad_Adm
+                self.column_ata_sma = self.column_ATA_Cad_Adm
                 # ['ATA Cad Adm', 'ATA 2º Parc', 'ATA 3º P ..., 'ATA 6º Parc']
                 self.list_cols_full_ata_sing = self.list_columns_full_ata_cadastro
                 # ['Total ATA Cad Adm', 'Total ATA Cad Adm Ger']
@@ -293,6 +293,7 @@ class Generat_payroll:
     def tables_columns_ata_seller_single(self):
         self.list_tables_ata = []
         # ['ATA Entrega', 'ATA 2º Parc', ..., 'ATA 6º Parc']
+        print(self.list_cols_full_ata_sing)
         for column_ata in self.list_cols_full_ata_sing:
             # MES/ANO ou Xº/MES/ANO
             table_pag = self.table_seller_single[self.table_seller_single[column_ata] == self.data_single].copy()  # noqa

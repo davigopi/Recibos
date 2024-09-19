@@ -66,7 +66,6 @@ value_fixed_column = ''  # por padrao ''
 column_clone = ''
 rename_name_column_origin = ''
 
-listValue = []
 
 clickOk = None
 
@@ -75,6 +74,9 @@ tagFather = ''
 tagGet = ''
 tagSelected = ''
 
+#        '1' ou '2'
+model = '2'
+
 # PALAVRAS
 word_Appdata = 'Appdata'
 word_tables = 'tables'
@@ -82,7 +84,7 @@ word_log = 'log'
 word_Qtd_Vendas = 'Qtd. Vendas'
 word_CADASTRO = 'CADASTRO'
 word_DIA_DA_SEMANA = 'DIA DA SEMANA'
-word__Qtd_Cotas_Inicial = ' Qtd. Cotas Inicial'
+# word__Qtd_Cotas_Inicial = ' Qtd. Cotas Inicial'
 word_Periodo_Venda = 'Período Venda'
 word_Periodo_Venda2 = 'PerÃ­odo Venda:'
 word__Periodo_Valor_Qtd_Vendas = ' Periodo Valor Qtd Vendas'
@@ -174,6 +176,7 @@ column_Total_Sma_Ent_Ger = 'Total Sma Entrega Ger'
 column_Total_ATA_Entrega_Vend = 'Total ATA Entrega Vend'
 column_Total_ATA_Entrega_Sup = 'Total ATA Entrega Sup'
 column_Total_ATA_Entrega_Ger = 'Total ATA Entrega Ger'
+column_profissao = ''
 
 # COLUNAS
 column_primary_key = 'PK'
@@ -219,7 +222,7 @@ column_Total_ATA_Entrega_Vend = 'Total ATA Entrega Vend'
 column_ATA_Entrega = 'ATA Entrega'
 column_Mes_Entrega = 'Mes Entrega'
 column_Sma_Entrega = 'Sma Entrega'
-column_Ata_Cad_Adm = 'ATA Cad. Adm'
+column_ATA_Cad_Adm = 'ATA Cad. Adm'
 column_Mes_Cad_Adm = 'Mes Cad. Adm'
 column_Sma_Cad_Adm = 'Sma Cad. Adm'
 column_1_Parcela_Recebera = '1ª Parcela Recebera'
@@ -258,6 +261,7 @@ porcentagem_Vendas_1 = '1' + word__Atrasado + ' ' + str(porcentagem_Vendas)
 porcentagem_Vendas_2 = '2' + word__Atrasado + ' ' + str(porcentagem_Vendas)
 
 # LISTAS
+listValue = []
 list_list_columns_venc = []
 list_list_columns_situacao_num_ATA = []
 list_list_columns_ata_pag_atrasado_n_ata = []
@@ -282,17 +286,17 @@ list_columns_cliente = [
 ]
 list_columns_ata_mes_sma = [
     column_ATA_Entrega, column_Mes_Entrega, column_Sma_Entrega,
-    column_Ata_Cad_Adm, column_Mes_Cad_Adm, column_Sma_Cad_Adm
+    column_ATA_Cad_Adm, column_Mes_Cad_Adm, column_Sma_Cad_Adm
 ]
 list_list_columns_pag = [
     [column_Situacao, column_Data_de_Entrega, column_ATA_Entrega,
         column_Sma_Entrega, column_Mes_Entrega],
-    [column_Situacao, column_Data_Cad_Adm, column_Ata_Cad_Adm,
+    [column_Situacao, column_Data_Cad_Adm, column_ATA_Cad_Adm,
         column_Sma_Cad_Adm, column_Mes_Cad_Adm]
 ]
 list_list_columns_order = [
     [column_Situacao, column_Data_de_Entrega, column_Data_Cad_Adm,
-        column_ATA_Entrega, column_Ata_Cad_Adm, column_Sma_Entrega,
+        column_ATA_Entrega, column_ATA_Cad_Adm, column_Sma_Entrega,
         column_Sma_Cad_Adm, column_Mes_Entrega, column_Mes_Cad_Adm]
 ]
 list_columns_start = [
@@ -403,6 +407,16 @@ list_porcentagem_vendas = [
     porcentagem_Vendas_1,
     porcentagem_Vendas_2
 ]
+
+list_columns_full_ata = [column_ATA_Entrega, column_ATA_Cad_Adm]
+list_columns_full_weekly = [column_Sma_Entrega, column_Sma_Cad_Adm]
+
+list_columns_full_ata_entrega = [column_ATA_Entrega]
+list_columns_full_ata_cadastro = [column_ATA_Cad_Adm]
+list_columns_full_sma_entrega = [column_Sma_Entrega]
+list_columns_full_sma_cadastro = [column_Sma_Cad_Adm]
+
+list_words_ATA_Venc_º_Parc = [word_ATA_ + word_Venc_, word_º_Parc]
 list_situacao_to_comission = ['NORMAL', 'PAGA']
 list_recebera_to_comission = ['SIM']
 list_condition_ata = ['Entrega', word_Cad_Adm, 'Parc', 'FAT']

@@ -145,6 +145,7 @@ class Worker2(QObject):
             main_gerar.data_semana = data_semana
             main_gerar.generate_date_ata()
 
+        main.gerar.generate_variable_for_all()
         main_gerar.generate_is_vendedores()
         main_gerar.generate_is_supervisores()
         main_gerar.generate_is_gerentes()
@@ -167,9 +168,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.data_semana.setDate(QDate.currentDate())
         # Adiciona itens ao QComboBox
         list_seller = main_gerar.generate_list_seller()
-        # list_seller = list(list_seller)
-        # list_seller = [str(item) for item in list_seller if item is not None]
-        # list_seller.sort()
+        # Mostra todos os funcionarios no programa
         self.cbb_funcionario.addItems(list_seller)
         # paguinaas do sistema
         self.btn_tables.clicked.connect(self.tables_btn)

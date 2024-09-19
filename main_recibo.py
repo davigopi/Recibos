@@ -22,10 +22,6 @@ class Main_recibo:
         self.father = kwargs.get('father')
         self.generat_payroll = Generat_payroll(father=self.father)
         self.path_file = Path_file()
-        self.arqtableMerge = self.path_file.path_file_create_user('Appdata', 'tables', 'tableMerge.csv')  # noqa
-        self.arqtableDatasSemanais = self.path_file.path_file_create_user('Appdata', 'tables', 'table_datas_semanais.csv')  # noqa
-        self.model = '1'
-        self.model = '2'
         # variaveis alteradas:
         self.is_vendedores = False
         self.is_supervisores = False
@@ -34,50 +30,10 @@ class Main_recibo:
         self.seller_single_unit = ''
         self.date_ata_single = 'MAIO/2024'
         self.data_semana = datetime.now()
-
         self.date_sma_single = '1ª/MAIO/2024'
-
         self.data_ata = datetime.now()
-
-        # self.prof_vendedores = 'Vendedor'
-        # self.prof_supervisores = word_Supervisor
-        # self.prof_gerentes = word_Supervisor
-        # self.prof_parceiros = word_Parceiro
-        # self.word = ''
-        self.column_profissao = ''
-        self.column_Vendedor = column_Vendedor
-        self.column_Supervisor = column_Supervisor
-        self.column_Cargo_Gerencia = column_Cargo_Gerencia
-        self.column_Data_Pag_Por = column_Data_Pag_Por
-
-        self.column_Ata_Cad_Adm = column_Ata_Cad_Adm
-        self.column_ATA_Entrega = column_ATA_Entrega
-        self.column_Sma_Cad_Adm = column_Sma_Cad_Adm
-        self.column_Sma_Entrega = column_Sma_Entrega
-
-        self.word_DIA_DA_SEMANA = word_DIA_DA_SEMANA
-        self.column_N_Semana_Mes = column_N_Semana_Mes
-        self.column_Data_Semana = column_Data_Semana
-
-        self.column_Data_Pag_Por = column_Data_Pag_Por
-        self.word_DIA_DA_SEMANA = word_DIA_DA_SEMANA
-        self.word__Qtd_Cotas_Inicial = word__Qtd_Cotas_Inicial
-        self.word__Parc_ = word__Parc_
-
-        self.list_situacao_to_comission = list_situacao_to_comission
-        self.list_recebera_to_comission = list_recebera_to_comission
-        self.list_condition_ata = list_condition_ata
-        self.list_cargo_not_calc_commis = list_cargo_not_calc_commis
-
-        self.word_Vendedor = word_Vendedor
-        self.word_Supervisor = word_Supervisor
-        self.word_Parceiro = word_Parceiro
-        self.word_ATA_ = word_ATA_
-        self.word_º_Parc = word_º_Parc
-        # definição de variavel
-
-        # Inverte o dicionário
-        self.inverted_dic_months = inverted_dic_months
+        # variaveis
+        self.column_profissao = column_profissao
         # para calcular maiores comissões
         self.comissao_anterior1 = comissao_anterior1
         self.vendedor_anterior1 = vendedor_anterior1
@@ -87,6 +43,64 @@ class Main_recibo:
         self.vendedor_anterior3 = vendedor_anterior3
         self.error = error
 
+        self.list_columns_full_ata = list_columns_full_ata
+        self.list_columns_full_weekly = list_columns_full_weekly
+        self.list_columns_full_ata_entrega = list_columns_full_ata_entrega
+        self.list_columns_full_ata_cadastro = list_columns_full_ata_cadastro
+        self.list_columns_full_sma_entrega = list_columns_full_sma_entrega
+        self.list_columns_full_sma_cadastro = list_columns_full_sma_cadastro
+        # self.prof_vendedores = 'Vendedor'
+        # self.prof_supervisores = word_Supervisor
+        # self.prof_gerentes = word_Supervisor
+        # self.prof_parceiros = word_Parceiro
+        # self.word = ''
+
+        # column_Vendedor = column_Vendedor
+        # column_Supervisor = column_Supervisor
+        # column_Cargo_Gerencia = column_Cargo_Gerencia
+        # column_Data_Pag_Por = column_Data_Pag_Por
+
+        # column_ATA_Cad_Adm = column_ATA_Cad_Adm
+        # column_ATA_Entrega = column_ATA_Entrega
+        # column_Sma_Cad_Adm = column_Sma_Cad_Adm
+        # column_Sma_Entrega = column_Sma_Entrega
+
+        # word_DIA_DA_SEMANA = word_DIA_DA_SEMANA
+        # column_N_Semana_Mes = column_N_Semana_Mes
+        # column_Data_Semana = column_Data_Semana
+
+        # column_Data_Pag_Por = column_Data_Pag_Por
+        # word_DIA_DA_SEMANA = word_DIA_DA_SEMANA
+        # word__Valor_Qtd_Vendas_Inicial = word__Valor_Qtd_Vendas_Inicial
+        # word__Parc_ = word__Parc_
+
+        # list_situacao_to_comission = list_situacao_to_comission
+        # list_recebera_to_comission = list_recebera_to_comission
+        # list_condition_ata = list_condition_ata
+        # list_cargo_not_calc_commis = list_cargo_not_calc_commis
+
+        # word_Vendedor = word_Vendedor
+        # word_Supervisor = word_Supervisor
+        # word_Parceiro = word_Parceiro
+        # word_ATA_ = word_ATA_
+        # word_º_Parc = word_º_Parc
+        # definição de variavel
+
+        # Inverte o dicionário
+        # inverted_dic_months = inverted_dic_months
+
+    def generate_list_seller(self):
+        try:
+            self.table_full = pd.read_csv(arqtableMerge, sep=';', encoding='utf-8', dtype=str)
+        except pd.errors.EmptyDataError:
+            return []
+        list_seller_vendedores = list(self.table_full[column_Vendedor].unique())
+        list_seller_supervisores = list(self.table_full[column_Supervisor].unique())
+        list_seller = list_seller_vendedores + list_seller_supervisores
+        list_seller = [item for item in list_seller if item and item.strip()]
+        list_seller.sort()
+        return list_seller
+
     def generate_date_ata(self):
         if self.error:
             return
@@ -94,30 +108,30 @@ class Main_recibo:
         year = self.data_ata.strftime('%Y')
         # ATA
         month = int(month)
-        month_written = self.inverted_dic_months.get(month, None)
+        month_written = inverted_dic_months.get(month, None)
         if month_written is None:
             self.error = True
             return
         self.date_ata_single = month_written + '/' + year
         # semana
-        table_datas_semanais = load_table(self.arqtableDatasSemanais)
+        table_datas_semanais = load_table(arqTableDatasSemanais)
         data = self.data_semana.strftime('%d/%m/%Y')
         quantity_line = table_datas_semanais.shape[0]
         for line in range(quantity_line):
-            data_table = table_datas_semanais.iloc[line][self.column_Data_Semana]
+            data_table = table_datas_semanais.iloc[line][column_Data_Semana]
             if data_table == data:
-                self.date_sma_single = table_datas_semanais.iloc[line][self.column_N_Semana_Mes]
+                self.date_sma_single = table_datas_semanais.iloc[line][column_N_Semana_Mes]
                 break
-        self.father.prog2(self.word_ATA_ + f'mensal:   {self.date_ata_single}')
-        self.father.prog2(self.word_ATA_ + f'semanal:  {self.date_sma_single}')
+        self.father.prog2(word_ATA_ + f'mensal:   {self.date_ata_single}')
+        self.father.prog2(word_ATA_ + f'semanal:  {self.date_sma_single}')
 
     def generate_is_vendedores(self):
         if self.error:
             return
         if self.is_vendedores:
-            # self.word = ''
-            self.profession = self.word_Vendedor
-            self.column_profissao = self.column_Vendedor
+            self.word_profession = word_Vendedor
+            self.word_Valor_Qtd_Vendas_Inicial_profissao = ''
+            self.column_profissao = column_Vendedor
             self.father.prog2('Gerar recibos dos vendores:')
             self.generate_employee()
 
@@ -125,9 +139,9 @@ class Main_recibo:
         if self.error:
             return
         if self.is_supervisores:
-            # self.word = '_Gerente'
-            self.profession = word_Supervisor
-            self.column_profissao = self.column_Supervisor
+            self.word_profession = word_Supervisor
+            self.word_Valor_Qtd_Vendas_Inicial_profissao = word_Supervisor
+            self.column_profissao = column_Supervisor
             self.father.prog2('Gerar recibos dos supervisores:')
             self.generate_employee()
 
@@ -135,9 +149,9 @@ class Main_recibo:
         if self.error:
             return
         if self.is_gerentes:
-            # self.word = '_Gerente_Geral'
-            self.profession = word_Supervisor
-            self.column_profissao = self.column_Cargo_Gerencia
+            self.word_profession = word_Supervisor
+            self.word_Valor_Qtd_Vendas_Inicial_profissao = word_Gerencia
+            self.column_profissao = column_Cargo_Gerencia
             self.father.prog2('Gerar recibos dos gerentes:')
             self.generate_employee()
 
@@ -145,64 +159,48 @@ class Main_recibo:
         if self.error:
             return
         if self.is_parceiros:
-            # self.word = ''
-            self.profession = word_Parceiro
-            self.column_profissao = self.column_Vendedor
+            self.word_profession = word_Parceiro
+            self.word_Valor_Qtd_Vendas_Inicial_profissao = ''
+            self.column_profissao = column_Vendedor
             self.father.prog2('Gerar recibos dos parceiros:')
             self.generate_employee()
 
-    def generate_list_seller(self):
-        try:
-            self.table_full = pd.read_csv(self.arqtableMerge, sep=';', encoding='utf-8', dtype=str)
-        except pd.errors.EmptyDataError:
-            return []
-        list_seller_vendedores = list(self.table_full[self.column_Vendedor].unique())
-        list_seller_supervisores = list(self.table_full[self.column_Supervisor].unique())
-        list_seller = list_seller_vendedores + list_seller_supervisores
-        list_seller = [item for item in list_seller if item and item.strip()]
-        list_seller.sort()
-        return list_seller
-
-    def generate_employee(self):
-        if self.error:
-            return
-        self.list_columns_full_ata = [
-            self.column_ATA_Entrega,
-            self.column_Ata_Cad_Adm
-        ]
-        self.list_columns_full_weekly = [
-            self.column_Sma_Entrega,
-            self.column_Sma_Cad_Adm
-        ]
-
+    def generate_variable_for_all(self):
         # as colunas da tabela ficara no arqvuio pdf
-
-        try:
-            self.table_full = pd.read_csv(self.arqtableMerge, sep=';', encoding='utf-8', dtype=str)
-        except pd.errors.EmptyDataError:
-            return
+        # try:
+        self.table_full = pd.read_csv(arqtableMerge, sep=';', encoding='utf-8', dtype=str)
+        # except pd.errors.EmptyDataError:
+        #     return
         self.generat_payroll.table_full = self.table_full
-        self.generat_payroll.num_columns = [self.word_ATA_, self.word_ATA_]
-        self.num_atas_parc = self.generat_payroll.number  # ncol->ATA{N}ºParc
+        self.generat_payroll.num_columns = list_words_ATA_Venc_º_Parc
+        num_regras = self.generat_payroll.number  # ncol->ATA{N}ºParc
+        print(num_regras)
 
         # Preencher o restante das colunas sequenciais
-        for i in range(2, self.num_atas_parc + 1):
-            self.list_columns_full_ata.append(self.word_ATA_ + f'{i}' + self.word_ATA_)
-            self.list_columns_full_weekly.append(f'Sma {i}' + self.word_ATA_)
+        for i in range(2, num_regras + 1):
+            self.list_columns_full_ata.append(word_ATA_ + word_Pag_ + str(i) + word_º_Parc)
+            self.list_columns_full_weekly.append(word_Sma_ + word_Pag_ + str(i) + word_º_Parc)
 
+            self.list_columns_full_ata_entrega.append(word_ATA_ + word_Pag_ + str(i) + word_º_Parc)
+            self.list_columns_full_ata_cadastro.append(word_ATA_ + word_Pag_ + str(i) + word_º_Parc)
+            self.list_columns_full_sma_entrega.append(word_Sma_ + word_Pag_ + str(i) + word_º_Parc)
+            self.list_columns_full_sma_cadastro.append(word_Sma_ + word_Pag_ + str(i) + word_º_Parc)
+
+        print(self.list_columns_full_ata_entrega)
+        print(self.list_columns_full_ata_cadastro)
+        print(self.list_columns_full_sma_entrega)
+        print(self.list_columns_full_sma_cadastro)
+
+    def create_list_all_sellers(self):
         list_seller_single_all = []
         # é por ata ou por semana ata?
-        if self.profession == word_Parceiro:
+        if self.word_profession == word_Parceiro:
             data_ata = self.date_sma_single
-            self.table_full = self.table_full.loc[
-                (self.table_full[self.column_Data_Pag_Por] == self.word_DIA_DA_SEMANA)
-            ]
             list_columns_full = self.list_columns_full_weekly
+            # self.table_full = self.table_full.loc[(self.table_full[column_Data_Pag_Por] == word_DIA_DA_SEMANA)]  # noqa
         else:  # profesion(Vendedor, supervisor, Gerete, Gerente_Geral)
-            # MES / ANO
-            data_ata = self.date_ata_single
-            #                   ATA Entreta, ATA Cad Adm
-            list_columns_full = self.list_columns_full_ata
+            data_ata = self.date_ata_single  # ATA -> MES/ANO
+            list_columns_full = self.list_columns_full_ata  # ATA Entreta, ATA Cad Adm ..
 
         # ira selecionar tabela que tenha date_ata_single e o
         for column in list_columns_full:
@@ -217,78 +215,72 @@ class Main_recibo:
                 if not pd.isna(seller):
                     list_seller_single.append(seller)
         list_seller_single.sort()
+        return list_seller_single
+
+    def format_name_profissional(self):
+        text_seller = ''
+        words_sellers = self.seller_single.lower().split()
+        for word_seller in words_sellers:
+            if len(word_seller) >= 3:
+                word_seller = word_seller.capitalize()
+            text_seller += " " + word_seller
+        return text_seller
+
+    def generate_variable_for_specific(self):
+        column_profisinal = word__Valor_Qtd_Vendas_Inicial + self.word_Valor_Qtd_Vendas_Inicial_profissao
+        self.generat_payroll.num_columns = ['', column_profisinal]
+        self.num_regras = self.generat_payroll.number  # ncol->{N}Qtd.CotIn
+        self.generat_payroll.num_columns = [str(self.num_regras) + word__Parc_, '']
+        self.num_parcelas = self.generat_payroll.number  # ncol->Parc {N}
+        print(self.num_regras, self.num_parcelas)
+
+    def generate_employee(self):
+        if self.error:
+            return
+        generate_variable_for_specific()
+        list_seller_single = self.create_list_all_sellers()
         for self.seller_single in list_seller_single:
             # Foi escolhido um vededor?
             if self.seller_single_unit:
+                # só passa se for o vendedor escolhido
                 if self.seller_single_unit not in self.seller_single:
                     continue
-            self.generat_payroll = Generat_payroll(father=self.father)
-            text_seller = ''
-            words_sellers = self.seller_single.lower().split()
-            for word_seller in words_sellers:
-                if len(word_seller) >= 3:
-                    word_seller = word_seller.capitalize()
-                text_seller += " " + word_seller
+            # self.generat_payroll = Generat_payroll(father=self.father)
 
             # self.pathTables = Path(__file__).parent.parent / 'tables'
             # name_arq = 'table_teste.csv'
             # arqTableTeste = pathTables / name_arq
-            self.table_full = pd.read_csv(self.arqtableMerge, sep=';', encoding='utf-8', dtype=str)
+            # self.table_full = pd.read_csv(arqtableMerge, sep=';', encoding='utf-8', dtype=str)
 
             # Definir o número de grupos e de parcelas
-            self.generat_payroll.table_full = self.table_full
-            self.generat_payroll.num_columns = [self.word_ATA_, self.word_ATA_]
-            self.num_atas_parc = self.generat_payroll.number  # ncol->ATA{N}ºPa
-            self.generat_payroll.num_columns = ['', self.word__Qtd_Cotas_Inicial]
-            self.num_regras = self.generat_payroll.number  # ncol->{N}Qtd.CotIn
-            self.generat_payroll.num_columns = [str(self.num_regras) + self.word__Parc_, '']
-            self.num_parcelas = self.generat_payroll.number  # ncol->Parc {N}
+            # self.generat_payroll.table_full = self.table_full
+
+            # self.generat_payroll.num_columns = list_words_ATA_Venc_º_Parc
+            # num_atas_parc = self.generat_payroll.number  # ncol->ATA{N}ºPa
+
             # self.generat_payroll.word = self.word
-            self.list_columns_full_ata = [self.column_ATA_Entrega, self.column_Ata_Cad_Adm]
-            self.list_columns_full_weekly = [self.column_Sma_Entrega, self.column_Sma_Cad_Adm]
+            self.list_columns_full_ata = list_columns_full_ata
+            self.list_columns_full_weekly = list_columns_full_weekly
             # Preencher a lista sequencialmente
-            for i in range(2, self.num_atas_parc + 1):
-                self.list_columns_full_ata.append(self.word_ATA_ + f'{i}' + self.word_ATA_)
-                self.list_columns_full_weekly.append(f'Sma {i}' + self.word_ATA_)
-            # self.list_qtd_cotas_parc = []
-            # self.list_qtd_cotas_inicial = []
-            # self.list_qtd_cotas_final = []
-            # self.dic_qtd_cotas_parc = {}
-            # for i in range(1, self.num_regras + 1):
-                # self.list_qtd_cotas_parc.append(f'{i} Qtd. Cotas Inicial{self.profession}')
-                # self.list_qtd_cotas_inicial.append(f'{i} Qtd. Cotas Inicial{self.profession}')
-                # self.list_qtd_cotas_parc.append(f'{i} Qtd. Cotas Final{self.profession}')
-                # self.list_qtd_cotas_final.append(f'{i} Qtd. Cotas Final{self.profession}')
-                # self.list = []
-                # for j in range(1, self.num_parcelas + 1):
-                # self.list_qtd_cotas_parc.append(f'{i} Parc {j}{self.profession}')
-                # self.list.append(f'{i} Parc {j}{self.profession}')
-                # self.chave = f'{i} Qtd. Cotas Inicial{self.profession}'
-                # self.valor = [f'{i} Qtd. Cotas Final{self.profession}'] + self.list
-                # self.dic_qtd_cotas_parc[self.chave] = self.valor
-
-            # variaveis criada atravez de outras
-
-            # self.column_Ata_Cad_Adm = 'ATA Cad Adm'
-            # self.column_ATA_Entrega = 'ATA Entrega'
-            # self.column_Sma_Entrega = 'Sma Entrega'
-            # self.column_Sma_Cad_Adm = 'Sma Cad Adm'
+            for i in range(2, num_atas_parc + 1):
+                self.list_columns_full_ata.append(word_ATA_ + str(i) + word_º_Parc)
+                self.list_columns_full_weekly.append(word_Sma_ + str(i) + word_º_Parc)
 
             self.list_columns_full_ata_entrega = [
-                item for item in self.list_columns_full_ata if item != self.column_Ata_Cad_Adm]
+                item for item in self.list_columns_full_ata if item != column_ATA_Cad_Adm]
             self.list_columns_full_ata_cadastro = [
-                item for item in self.list_columns_full_ata if item != self.column_ATA_Entrega]
+                item for item in self.list_columns_full_ata if item != column_ATA_Entrega]
             self.list_columns_full_sma_entrega = [
-                item for item in self.list_columns_full_weekly if item != self.column_Sma_Cad_Adm]
+                item for item in self.list_columns_full_weekly if item != column_Sma_Cad_Adm]
             self.list_columns_full_sma_cadastro = [
-                item for item in self.list_columns_full_weekly if item != self.column_Sma_Entrega]
+                item for item in self.list_columns_full_weekly if item != column_Sma_Entrega]
 
             self.name_columns_full = self.table_full.columns.tolist()
 
             self.table_full_ata = self.table_full[
-                self.table_full[self.column_Data_Pag_Por] != self.word_DIA_DA_SEMANA]
+                self.table_full[column_Data_Pag_Por] != word_DIA_DA_SEMANA]
             self.table_full_weekly = self.table_full[
-                self.table_full[self.column_Data_Pag_Por] == self.word_DIA_DA_SEMANA]
+                self.table_full[column_Data_Pag_Por] == word_DIA_DA_SEMANA]
             self.table_seller_single = self.table_full[
                 self.table_full[self.column_profissao] == self.seller_single]
             self.generat_payroll.table_seller_single = self.table_seller_single
@@ -302,14 +294,14 @@ class Main_recibo:
             self.generat_payroll.date_sma_single = self.date_sma_single
             self.generat_payroll.seller_single = self.seller_single
             # self.generat_payroll.arqTableTeste = self.arqTableTeste
-            self.generat_payroll.model = self.model
-            self.generat_payroll.profession = self.profession
+            self.generat_payroll.model = model
+            self.generat_payroll.profession = self.word_profession
             self.generat_payroll.column_profissao = self.column_profissao
 
-            self.generat_payroll.list_situacao_to_comission = self.list_situacao_to_comission
-            self.generat_payroll.list_recebera_to_comission = self.list_recebera_to_comission
-            self.generat_payroll.list_condition_ata = self.list_condition_ata
-            self.generat_payroll.list_cargo_not_calc_commis = self.list_cargo_not_calc_commis
+            self.generat_payroll.list_situacao_to_comission = list_situacao_to_comission
+            self.generat_payroll.list_recebera_to_comission = list_recebera_to_comission
+            self.generat_payroll.list_condition_ata = list_condition_ata
+            self.generat_payroll.list_cargo_not_calc_commis = list_cargo_not_calc_commis
 
             # self.generat_payroll.list_qtd_cotas_inicial = self.list_qtd_cotas_inicial
             # self.generat_payroll.list_qtd_cotas_final = self.list_qtd_cotas_final
@@ -335,6 +327,7 @@ class Main_recibo:
             self.generat_payroll.tables_columns_ata_seller_single()
             self.generat_payroll.tables_concat_seller_single()
             self.generat_payroll.is_to_stop_program()
+            text_seller = self.format_name_profissional()
             self.stop_program = self.generat_payroll.stop_program
             if self.stop_program:
                 text = text_seller + ' -> Cargo não gera comissão.'
