@@ -37,20 +37,21 @@ def create_table(table_created, path):
 
 # entrada texto da ATA saida apenas o número ATA
 def rename_ata(text, model):
-    text = text.replace(' ', '')
-    text = text.replace('ATA', '')
-    text = text.replace('Sma', '')
-    text = text.replace('Parc', '')
+
+    text = text.replace(word_ATA_, '')
+    text = text.replace(word_Sma_, '')
+    text = text.replace(word_Parc, '')
+    text = text.replace(word_Pag_, '')
+    text = text.replace(word_Venc_, '')
     if model == 'mod1':
         text = text.replace('º', '')
-        text = text.replace('Entrega', '1')
-        text = text.replace('CadAdm', '1')
-        text = text.replace('Cad.Adm', '1')
+        text = text.replace(word_Entrega, '1')
+        text = text.replace(word_Cad_Adm, '1')
     elif model == 'mod2':
         text = text.replace('º', 'ª')
-        text = text.replace('Entrega', '1ª')
-        text = text.replace('CadAdm', '1ª')
-        text = text.replace('Cad.Adm', '1ª')
+        text = text.replace(word_Entrega, '1ª')
+        text = text.replace(word_Cad_Adm, '1ª')
+    text = text.replace(' ', '')
     return text
 
 
@@ -72,11 +73,11 @@ class Generat_payroll:
         self.path_file = Path_file()
         self.father = kwargs.get('father')
 
-        self.model = ''
+        self.model = model
 
         self.stop_program = False
 
-        self.profession = ''
+        self.word_profissao = ''
         self.column_profissao = ''
         self.column_Cargo = column_Cargo
         self.column_Data_Pag_Por = column_Data_Pag_Por
@@ -118,16 +119,16 @@ class Generat_payroll:
         self.word_Supervisor = word_Supervisor
         self.word_Gerencia = word_Gerencia
 
-        self.quantity_line_full = 0
-        self.quantity_line_ata = 0
-        self.quantity_line_weekly = 0
+        # self.quantity_line_full = 0
+        # self.quantity_line_ata = 0
+        # self.quantity_line_weekly = 0
         self.sums = 0
         self.number = 0
 
-        self.list_situacao_to_comission = []
-        self.list_recebera_to_comission = []
-        self.list_condition_ata = []
-        self.list_cargo_not_calc_commis = []
+        self.list_situacao_to_comission = list_situacao_to_comission
+        self.list_recebera_to_comission = list_recebera_to_comission
+        self.list_condition_ata = list_condition_ata
+        self.list_cargo_not_calc_commis = list_cargo_not_calc_commis
         self.list_columns_end = list_columns_end
 
         self.column_Porcentagem = column_Porcentagem
@@ -142,19 +143,24 @@ class Generat_payroll:
         self.column_ata_mes_qtd = []
 
         # self.list_columns_str_to_float = []
-        self.list_columns_full_ata = []
-        self.list_columns_full_weekly = []
-        self.list_columns_full_ata_entrega = []
-        self.list_columns_full_ata_cadastro = []
-        self.list_columns_full_sma_entrega = []
-        self.list_columns_full_sma_cadastro = []
+        # self.list_columns_full_ata = []
+        # self.list_columns_full_weekly = []
+        self.list_columns_full_ata_entrega_pag = list_columns_full_ata_entrega_pag
+        self.list_columns_full_ata_cadastro_pag = list_columns_full_ata_cadastro_pag
+        self.list_columns_full_sma_entrega_pag = list_columns_full_sma_entrega_pag
+        self.list_columns_full_sma_cadastro_pag = list_columns_full_sma_cadastro_pag
+        self.list_columns_full_ata_entrega_venc = list_columns_full_ata_entrega_venc
+        self.list_columns_full_ata_cadastro_venc = list_columns_full_ata_cadastro_venc
+        self.list_columns_full_sma_entrega_venc = list_columns_full_sma_entrega_venc
+        self.list_columns_full_sma_cadastro_venc = list_columns_full_sma_cadastro_venc
+        self.list_cols_full_ata_sing_pag = list_cols_full_ata_sing_pag
+        self.list_cols_full_ata_sing_venc = list_cols_full_ata_sing_venc
         # self.list_qtd_cotas_parc = []
         # self.list_qtd_cotas_inicial = []
         # self.list_qtd_cotas_final = []
-        self.name_columns_full = []
+        # self.name_columns_full = []
         self.list_ata = []
-        self.list_weekly = []
-        self.list_cols_full_ata_sing = []
+        # self.list_weekly = []
 
         self.list_tables_ata = []
         self.list_tables_ata_sums = []
@@ -168,17 +174,15 @@ class Generat_payroll:
         # self.list_table_column_define = []
         self.list_unique_information = []
 
-        self.table_full_single_ata = []
+        # self.table_full_single_ata = []
 
         self.table: pd.DataFrame = pd.DataFrame()
         self.table_full: pd.DataFrame = pd.DataFrame()
-        self.table_full_ata: pd.DataFrame = pd.DataFrame()
-        self.table_full_weekly: pd.DataFrame = pd.DataFrame()
+        # self.table_full_ata: pd.DataFrame = pd.DataFrame()
+        # self.table_full_weekly: pd.DataFrame = pd.DataFrame()
         self.table_single_merge: pd.DataFrame = pd.DataFrame()
-        self.table_seller_single: pd.DataFrame = pd.DataFrame()
 
-        self.arqTableTest1 = self.path_file.path_file_create_user('Appdata', 'tables', 'table_test1.csv')  # noqa
-        # create_table(table, self.arqTableTest1)
+        self.table_seller_single: pd.DataFrame = pd.DataFrame()
 
     @property
     def num_columns(self):
@@ -201,8 +205,7 @@ class Generat_payroll:
         value = round(value, 2)
         return value
 
-    # 2º define se vendedor/parceiro a primeira é pela ata entrea/cadastro
-
+    # 1º define se vendedor/parceiro a primeira é pela ata entrea/cadastro
     def columns_ata_full_seller_single(self):
         # 1ª inf da coluna '1P referencia' -> ENTREGA ou CADASRO
         p1_referencia = str(self.table_seller_single.iloc[0][self.column_1_Parcela_Referencia])
@@ -226,7 +229,8 @@ class Generat_payroll:
                 #                     Sma Cad Adm
                 self.column_ata_sma = self.column_Sma_Cad_Adm
                 #            '[Sma Cad Adm', 'Sma 2º Parc', ..., 'Sma 6º Parc']
-                self.list_cols_full_ata_sing = self.list_columns_full_sma_cadastro
+                self.list_cols_full_ata_sing_pag = self.list_columns_full_sma_cadastro_pag
+                self.list_cols_full_ata_sing_venc = self.list_columns_full_sma_cadastro_venc
                 # ['Total Sma Cad Adm', 'Total Sma Cad Adm Ger']
                 list_columns_sum = [
                     self.column_Total_Sma_Cad_Adm_Vend,
@@ -238,7 +242,8 @@ class Generat_payroll:
                 #                     ATA Cad Adm
                 self.column_ata_sma = self.column_ATA_Cad_Adm
                 # ['ATA Cad Adm', 'ATA 2º Parc', 'ATA 3º P ..., 'ATA 6º Parc']
-                self.list_cols_full_ata_sing = self.list_columns_full_ata_cadastro
+                self.list_cols_full_ata_sing_pag = self.list_columns_full_ata_cadastro_pag
+                self.list_cols_full_ata_sing_venc = self.list_columns_full_ata_cadastro_venc
                 # ['Total ATA Cad Adm', 'Total ATA Cad Adm Ger']
                 list_columns_sum = [
                     self.column_Total_ATA_Cad_Adm_Vend,
@@ -252,7 +257,8 @@ class Generat_payroll:
                 #                     Sma Ent
                 self.column_ata_sma = self.column_Sma_Entrega
                 # '[Sma Ent', 'Sma 2º Parc', ..., 'Sma 6º Parc']
-                self.list_cols_full_ata_sing = self.list_columns_full_sma_entrega
+                self.list_cols_full_ata_sing_pag = self.list_columns_full_sma_entrega_pag
+                self.list_cols_full_ata_sing_venc = self.list_columns_full_sma_entrega_venc
                 # ['Total Sma Ent', 'Total Sma Ent Ger']
                 list_columns_sum = [
                     self.column_Total_Sma_Ent_Vend,
@@ -264,7 +270,8 @@ class Generat_payroll:
                 #                     ATA Entrega
                 self.column_ata_sma = self.column_ATA_Entrega
                 # ['ATA Entrega', 'ATA 2º Parc', ..., 'ATA 6º Parc']
-                self.list_cols_full_ata_sing = self.list_columns_full_ata_entrega
+                self.list_cols_full_ata_sing_pag = self.list_columns_full_ata_entrega_pag
+                self.list_cols_full_ata_sing_venc = self.list_columns_full_ata_entrega_venc
                 # ['Total ATA Entrega', 'Total ATA Entrega Ger']
                 list_columns_sum = [
                     self.column_Total_ATA_Entrega_Vend,
@@ -273,12 +280,12 @@ class Generat_payroll:
                 # ['ATA Entrega qtd cotas', 'ATA Entrega qtd cotas Ger']
                 list_ata_cad = self.list_columns_ata_ent
         # é gerente?
-        if self.profession == 'Gerente':
+        if self.word_profissao == word_Gerencia:
             # ATA XX qtd cotas Ger Ger
             self.column_ata_mes_qtd = list_ata_cad[2]
             # 'Total XX Ger Ger'
             self.column_sum_sing = list_columns_sum[2]
-        elif self.profession == 'Supervisor':
+        elif self.word_profissao == word_Supervisor:
             # ATA XX qtd cotas Ger
             self.column_ata_mes_qtd = list_ata_cad[1]
             # 'Total XX Ger'
@@ -289,20 +296,23 @@ class Generat_payroll:
             # 'Total XX'
             self.column_sum_sing = list_columns_sum[0]
 
-    # 3º Criar uma lista tabelas aparti do dado ATA ou SMA
+    # 2º Criar uma lista tabelas aparti do dado ATA ou SMA
     def tables_columns_ata_seller_single(self):
         self.list_tables_ata = []
         # ['ATA Entrega', 'ATA 2º Parc', ..., 'ATA 6º Parc']
-        print(self.list_cols_full_ata_sing)
-        for column_ata in self.list_cols_full_ata_sing:
+        print('---------------------------------')
+        print(self.list_cols_full_ata_sing_pag)
+        print('---------------------------------')
+        for key, column_ata in enumerate(self.list_cols_full_ata_sing_pag):
             # MES/ANO ou Xº/MES/ANO
             table_pag = self.table_seller_single[self.table_seller_single[column_ata] == self.data_single].copy()  # noqa
             table_pag.reset_index(drop=True, inplace=True)
-            #                ATA Entrega, Sma Ent, ATA cad Adm, Sma Cad Adm
-            if column_ata == self.column_ata_sma:
-                column_ata_venc = column_ata
-            else:
-                column_ata_venc = column_ata + ' Venc'
+            # #                ATA Entrega, Sma Ent, ATA cad Adm, Sma Cad Adm
+            # if column_ata == self.column_ata_sma:
+            #     column_ata_venc = column_ata
+            # else:
+            #     column_ata_venc = column_ata + ' Venc'
+            column_ata_venc = self.list_cols_full_ata_sing_venc[key]
             table_venc = self.table_seller_single[self.table_seller_single[column_ata_venc] == self.data_single].copy()  # noqa
             table_venc.reset_index(drop=True, inplace=True)
             # table não é fazia?
@@ -318,8 +328,7 @@ class Generat_payroll:
         #         print('')
         #         print('')
 
-    # 4º ira mesclar todas as tabelas que tiver valor
-
+    # 3º ira mesclar todas as tabelas que tiver valor
     def tables_concat_seller_single(self):
         self.table_single_merge: pd.DataFrame = pd.DataFrame()
         for table_pag, table_venc, ata in self.list_tables_ata:
@@ -328,7 +337,7 @@ class Generat_payroll:
                     [self.table_single_merge, table_pag]
                 )
 
-    # 5º situações para sair e ir para o próximo vendedor
+    # 4º situações para sair e ir para o próximo vendedor
     def is_to_stop_program(self):
         self.stop_program = False
         # se junção de tabela estiver vazio sair
@@ -342,8 +351,7 @@ class Generat_payroll:
             if cargo_not_calc_commis in cargo:
                 self.stop_program = True
 
-    # 6º Ira criar a soma de todos as vendas aparti da ATA especifica
-    # ira detarminar os 50%
+    # 5º Ira criar a soma de todos as vendas aparti da ATA especifica ira detarminar os 50%
     def table_list_administradora_line_add_sum(self):
         # OBS: infelizmente o comando self.sums =
         # table[self.column_Credito].sum(), nao funciona
@@ -354,7 +362,7 @@ class Generat_payroll:
             dividend = 'venc'  # pag
             sums_all = 0
             divisor = 'venc'  # pag
-            if self.profession == 'Parceiro':
+            if self.word_profissao == word_Parceiro:
                 dividend = 'pag'
                 divisor = 'pag'
 
@@ -384,7 +392,8 @@ class Generat_payroll:
                 sums_compliance = sums_all
             elif dividend == 'venc':
                 column = ata
-                column = column.replace('ATA ', '').replace('Sma ', '')
+                column = column.replace(word_ATA_, '').replace(word_Sma_, '')
+                column = column.replace(word_Pag_, '').replace(word_Venc_, '')
                 column_situacao = 'Situação ' + column
                 quantity_line_table = table_choose.shape[0]
                 for line in range(quantity_line_table):
@@ -423,7 +432,7 @@ class Generat_payroll:
         #     print('')
         #     print('')
 
-    # 7º adiciona sum_comissao, sum_comissao_compliance, percentage_compliance,
+    # 6º adiciona sum_comissao, sum_comissao_compliance, percentage_compliance,
     # vendedor, cargo
     def add_column_Comissao(self):
         sum_all_comissao = 0
@@ -449,9 +458,9 @@ class Generat_payroll:
             column_situacao_parc = self.column_Situacao
             if text != '1':
                 column_situacao_parc += ' ' + text + 'º Parc'
-            if self.profession == 'Supervisor':
+            if self.word_profissao == word_Supervisor:
                 text += ' ' + self.word_Supervisor
-            elif self.profession == 'Gerente':
+            elif self.word_profissao == word_Gerencia:
                 text += ' ' + self.word_Gerencia
             quantity_line_table = table_pag.shape[0]
             for line in range(quantity_line_table):
@@ -483,7 +492,7 @@ class Generat_payroll:
                     data_percentual = data_percentual / 100
                 else:
                     data_percentual = 0.0000001
-                # ['Entrega', 'Cad Adm', 'Parc', 'FAT']
+                # [word_Entrega, 'Cad Adm', word_Parc, 'FAT']
                 entrega = self.list_condition_ata[0]
                 cad_adm = self.list_condition_ata[1]
                 parc = self.list_condition_ata[2]
@@ -573,7 +582,7 @@ class Generat_payroll:
         #     print('')
         #     print('')
 
-    # 8º deixar apenas valores validos nas tabelas, ou seja,
+    # 7º deixar apenas valores validos nas tabelas, ou seja,
     # valores que forma pagos e estao ativos
     def edit_table(self):
         self.list_table_edit = []
@@ -596,7 +605,7 @@ class Generat_payroll:
             text = ata
             text = rename_ata(text, 'mod2')
             # text = text.replace('ATA', '').replace('Sma', '').replace('º Parc', 'ª')
-            # text = text.replace('Entrega', '1ª').replace('Cad Adm', '1ª')
+            # text = text.replace(word_Entrega, '1ª').replace('Cad Adm', '1ª')
             table_pag[self.column_Parcela] = text
             table_pag[self.column_Adimplencia] = percentage_compliance
             # adicionar coluna comissão
@@ -646,7 +655,7 @@ class Generat_payroll:
         #     print('')
         #     print('')
 
-    # 9º montar e gerar o pdf
+    # 8º montar e gerar o pdf
     def table_convert_pdf(self):
         # Configurar a localização para o Brasil
         path_file = Path_file()
@@ -674,7 +683,7 @@ class Generat_payroll:
         pdf.add_image(image_path, 172, 10, 28, 9)
         if self.list_table_edit == []:
             return '0', 'zerado'
-        if self.profession == 'Supervisor' or self.profession == 'Gerente':
+        if self.word_profissao == word_Supervisor or self.word_profissao == word_Gerencia:
             comissao = sum_all_comissao_gerente
         else:
             comissao = sum_all_comissao
@@ -699,7 +708,7 @@ class Generat_payroll:
                     grouping=True
                 )
                 # Guarda a posição inicial do texto
-                if self.profession == 'Parceiro':
+                if self.word_profissao == word_Parceiro:
                     text = 'PARCEIRO:'
                     text2 = f'Semana: {self.date_sma_single}'
                 else:
@@ -732,7 +741,7 @@ class Generat_payroll:
                     text = ata
                     # text = text.replace('ATA', '')
                     # text = text.replace('º Parc', 'ª Parcela')
-                    # text = text.replace('Entrega', '1ª Parcela')
+                    # text = text.replace(word_Entrega, '1ª Parcela')
                     # text = text.replace('Cad Adm', '1ª Parcela')
                     text = rename_ata(text, 'mod2')
                     pdf.add_underlined_text(text, size_font, size_line)
@@ -766,7 +775,7 @@ class Generat_payroll:
             list_sum_comissao.append(sum_comissao)
             list_sum_comissao_compliance.append(sum_comissao_compliance)
             list_percentage_compliance.append(percentage_compliance)
-        if self.profession == 'Vendedor':
+        if self.word_profissao == word_Vendedor:
             data = {
                 'TOTAL': list_ata,
                 'CRÉDITO': list_sums_compliance,
@@ -796,15 +805,15 @@ class Generat_payroll:
         text2 = 'FORTALEZA, ____/____/____ '
         pdf.add_content_in_columns([text, text2], 2, size_font, size_line)
         name_ata = self.date_ata_single
-        if self.profession == 'Supervisor':
-            text_profession = 'Supervisor'
-        elif self.profession == 'Gerente':
-            text_profession = 'Gerente'
-        elif self.profession == 'Parceiro':
-            text_profession = 'Parceiro'
+        if self.word_profissao == word_Supervisor:
+            text_word_profissao = word_Supervisor
+        elif self.word_profissao == word_Gerencia:
+            text_word_profissao = word_Gerencia
+        elif self.word_profissao == word_Parceiro:
+            text_word_profissao = word_Parceiro
             name_ata = self.date_sma_single
         else:
-            text_profession = 'Vendedor'
+            text_word_profissao = word_Vendedor
         name_ata = name_ata.replace('/', ' ').lower().capitalize()
         text_seller = ''
         words_sellers = vendedor.lower().split()
@@ -812,7 +821,7 @@ class Generat_payroll:
             if len(word_seller) >= 3:
                 word_seller = word_seller.capitalize()
             text_seller += " " + word_seller
-        name_file = f'RP {text_profession} {name_ata} {text_seller}.pdf'
+        name_file = f'RP {text_word_profissao} {name_ata} {text_seller}.pdf'
         path_file = path_file.path_file_create_user(path_user="Documentos", path_origin="RECIBO", name_file=name_file)  # noqa
         # path_file = os.path.join(new_folder, name_file)
         pdf.output(path_file)

@@ -101,6 +101,7 @@ word__Valor_Qtd_Vendas_Final_Gerencia = ' Valor Qtd Vendas Final Gerencia'
 word__Data_Inicial_Gerencia = ' Data inicial Gerencia'
 word__Data_Final_Gerencia = ' Data final Gerencia'
 word__Parc_ = ' Parc '
+word_Parc = 'Parc'
 word_Acoes = 'Ações'
 word_a = 'à'
 word_Periodo = 'Período'
@@ -114,6 +115,7 @@ word_Sma_ = 'Sma '
 word_Vendedor = 'Vendedor'
 word_Supervisor = 'Supervisor'
 word_Gerencia = 'Gerencia'
+word_Parceiro = 'Parceiro'
 word_Cliente = 'Cliente'
 word__Vend = ' Vend'
 word__Sup = ' Sup'
@@ -141,9 +143,8 @@ word_1_Parcela = '1ª Parcela'
 word_Demais = 'Demais'
 word_FAT = 'FAT'
 word_Comissao_Atrasada_ = 'Comissao Atrasada '
-word_Vendedor = 'Vendedor'
-word_Supervisor = 'Supervisor'
-word_Parceiro = 'Parceiro'
+word_Entrega = 'Entrega'
+
 
 column_Parcela = 'Parcela'
 column_Data_de_Entrega = 'Data de Entrega'
@@ -279,6 +280,20 @@ list_cargos_limit_exist = []
 list_administradoras_limit_exist = []
 list_tabela_recebiemnto_limit_exist = []
 
+# list_columns_full_ata_entrega =
+# list_columns_full_ata_cadastro =
+# list_columns_full_sma_entrega =
+# list_columns_full_sma_cadastro =
+list_columns_full_ata_entrega_pag = [column_ATA_Entrega]
+list_columns_full_ata_cadastro_pag = [column_ATA_Cad_Adm]
+list_columns_full_sma_entrega_pag = [column_Sma_Entrega]
+list_columns_full_sma_cadastro_pag = [column_Sma_Cad_Adm]
+list_columns_full_ata_entrega_venc = [column_ATA_Entrega]
+list_columns_full_ata_cadastro_venc = [column_ATA_Cad_Adm]
+list_columns_full_sma_entrega_venc = [column_Sma_Entrega]
+list_columns_full_sma_cadastro_venc = [column_Sma_Cad_Adm]
+list_cols_full_ata_sing_pag = []
+list_cols_full_ata_sing_venc = []
 list_columns_cliente = [
     column_CEP, column_Nascimento, column_Telefone,
     column_Celular, column_WhatsApp, column_EMail,
@@ -411,15 +426,11 @@ list_porcentagem_vendas = [
 list_columns_full_ata = [column_ATA_Entrega, column_ATA_Cad_Adm]
 list_columns_full_weekly = [column_Sma_Entrega, column_Sma_Cad_Adm]
 
-list_columns_full_ata_entrega = [column_ATA_Entrega]
-list_columns_full_ata_cadastro = [column_ATA_Cad_Adm]
-list_columns_full_sma_entrega = [column_Sma_Entrega]
-list_columns_full_sma_cadastro = [column_Sma_Cad_Adm]
 
 list_words_ATA_Venc_º_Parc = [word_ATA_ + word_Venc_, word_º_Parc]
 list_situacao_to_comission = ['NORMAL', 'PAGA']
 list_recebera_to_comission = ['SIM']
-list_condition_ata = ['Entrega', word_Cad_Adm, 'Parc', 'FAT']
+list_condition_ata = [word_Entrega, word_Cad_Adm, word_Parc, word_FAT]
 list_cargo_not_calc_commis = ['ESTAGIÁRIO', 'ZERADO']
 dict_duplicate_sum = {}
 dict_duplicate_count = {}
