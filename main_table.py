@@ -87,103 +87,6 @@ class Main_table:
         self.table_full = table_full
         self.table_duplicate = table_duplicate
         self.list_list_column_orden_total = list_list_column_orden_total
-        # Variaveis fixa
-        # siteSircon = siteSircon
-        # self.connected = connected
-        #
-        # self.arqTableCadastroConsorciado = arqTableCadastroConsorciado
-        # self.arqTableCadastroFuncionario = arqTableCadastroFuncionario
-        # self.arqTableCadastroAta = arqTableCadastroAta
-        # self.arqTableComissoesConfiguracao = arqTableComissoesConfiguracao
-        # self.arqTableComissoesConfigPag = arqTableComissoesConfigPag
-        # self.arqTesteDuplTableComissoesConfigPag = arqTesteDuplTableComissoesConfigPag
-        # self.arqTableGerencia = arqTableGerencia
-        # self.arqTableComissoesConfigPagSupervisor = arqTableComissoesConfigPagSupervisor
-        # self.arqtableMerge = arqtableMerge
-        # self.arqtableMergeOrder = arqtableMergeOrder
-        # self.arqTableDatasSemanais = arqTableDatasSemanais
-        # self.arq_log = arq_log
-        # self.arqTableTeste1 = arqTableTeste1
-        # self.arqTableTeste2 = arqTableTeste2
-        # self.arqTableTeste3 = arqTableTeste3
-        # self.arqDonwloadSales = arqDonwloadSales
-        # self.arqDonwloadFunction = arqDonwloadFunction
-        # self.word_Data_ = word_Data_
-        # self.word_Ano = word_Ano
-        # self.word_Mes = word_Mes
-        # self.word_Mes_ = word_Mes_
-        # self.word_Sma_ = word_Sma_
-        # self.word_Vendedor = word_Vendedor
-        # self.word_Supervisor = word_Supervisor
-        # self.word_Cliente = word_Cliente
-        # self.word_Venc_ = word_Venc_
-        # self.word_Pag_ = word_Pag_
-        # self.word_º_Parc = word_º_Parc
-        # self.word_ATA_ = word_ATA_
-        # self.word_Cad_Adm = word_Cad_Adm
-        # self.word_Situacao_ = word_Situacao_
-        # self.word_Num_ = word_Num_
-        # self.word_1_Porc_ = word_1_Porc_
-        # self.word_2_Porc_ = word_2_Porc_
-        # self.word_3_Porc_ = word_3_Porc_
-        # self.word__Atrasado = word__Atrasado
-        # self.word__Atrasado_1_ATA = word__Atrasado_1_ATA
-        # self.word__Atrasado_2_ATAs = word__Atrasado_2_ATAs
-        # self.word_Comissao_Atrasada_ = word_Comissao_Atrasada_
-        # self.column_primary_key = column_primary_key
-        # self.column_Index = column_Index
-        # self.column_Cliente = column_Cliente
-        # self.column_Vendedor = column_Vendedor
-        # self.column_Gerente = column_Gerente
-        # self.column_Supervisor = column_Supervisor
-        # self.column_Nome = column_Nome
-        # self.column_Cargo = column_Cargo
-        # self.column_Administradora = column_Administradora
-        # self.column_Tabela_de_recebimento = column_Tabela_de_recebimento
-        # self.column_Tabela = column_Tabela
-        # self.column_N_Semana_Mes = column_N_Semana_Mes
-        # self.column_Data_Semana = column_Data_Semana
-        # self.column_Dia_semana = column_Dia_semana
-        # self.column_Mes_ano = column_Mes_ano
-        # self.column_Periodo_final = column_Periodo_final
-        # self.column_Periodo_inicial = column_Periodo_inicial
-        # self.column_ATA = column_ATA
-        # self.column_Nome_Vendedor = column_Nome_Vendedor
-        # self.column_Nome_Supervisor = column_Nome_Supervisor
-        # self.column_Cargo_Supervisor = column_Cargo_Supervisor
-        # self.column_Administradora_Supervisor = column_Administradora_Supervisor
-        # self.column_Tabela_Supervisor = column_Tabela_Supervisor
-
-        #
-        # self.list_columns_cliente = list_columns_cliente
-        # self.list_columns_ata_mes_sma = list_columns_ata_mes_sma
-
-        # self.headerDtPagamentoParcelas = headerDtPagamentoParcelas
-        # self.list_columns_test_table_configPag_1 = list_columns_test_table_configPag_1
-        # self.list_columns_test_table_configPag_2 = list_columns_test_table_configPag_2
-        # self.list_columns_date_weekly_new = list_columns_date_weekly_new
-
-        # self.tag_option = tag_option
-        # self.tag_select = tag_select
-        # self.tag_outerHTML = tag_outerHTML
-        # self.tag_value = tag_value
-        # self.tag_selected = tag_selected
-        # self.tag_row = tag_row
-        # self.tag_data = tag_data
-        # listXpathLog = listXpathLog
-        # self.listXpathSales = listXpathSales
-        # self.listXpathComissoesConfiguracao = listXpathComissoesConfiguracao
-        # self.xpathTipoComissao = xpathTipoComissao
-        # self.xpathAdministradora = xpathAdministradora
-        # self.xpathTabelaRecebimento = xpathTabelaRecebimento
-        # self.xpathCargo = xpathCargo
-        # self.listCampoCotaPeriodoParcela = listCampoCotaPeriodoParcela
-        # self.listXpathFunction = listXpathFunction
-        # self.listXpathComissoesConfPagamento = listXpathComissoesConfPagamento
-        # self.xpathTipoComissaoPagamento = xpathTipoComissaoPagamento
-        # self.listXpathCargAdminsPag = listXpathCargAdminsPag
-        # self.listXpathDtPagamentoParcelas = listXpathDtPagamentoParcelas
-        # self.listXpathMinutes = listXpathMinutes
 
     def openSite(self):
         ''' defined '''
@@ -657,7 +560,7 @@ class Main_table:
             column_num_ata_nparc_atrasado = word_Num_ + word_ATA_ + n_parc + word__Atrasado
             column_ata_pag_atrasado_1_ata = column_ata_pag + word__Atrasado_1_ATA
             column_ata_pag_atrasado_2_atas = column_ata_pag + word__Atrasado_2_ATAs
-            column_comissao_atrasada = word_Comissao_Atrasada_ + n_parc
+            column_comissao_atrasada = word_Pagar_Comissao_ + n_parc
 
             self.list_list_columns_pag.append([
                 column_situacao,
@@ -859,7 +762,7 @@ class Main_table:
         if self.mix is False or self.table_full.empty:
             return
         self.tableManip.table = self.table_full
-        self.tableManip.add_value_comissao_atrasada = self.list_list_columns_comissao_atrasada
+        self.tableManip.add_value_pagar_comissao = self.list_list_columns_comissao_atrasada
         self.table_full = self.tableManip.table
 
     def create_list_order_columns(self):
@@ -870,7 +773,9 @@ class Main_table:
         list_columns_Sma = []
         list_columns_1Parcela_Demais_FAT = []
         for column_full in list_columns_full:
-            if word_Cliente in column_full:
+            if column_full in list_columns_start:
+                continue
+            elif word_Cliente in column_full:
                 list_columns_cliente.append(column_full)
             elif word_Cad_Adm in column_full:
                 list_columns_Cad_Adm.append(column_full)

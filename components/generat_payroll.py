@@ -99,22 +99,9 @@ class Generat_payroll:
         self.word_DIA_DA_SEMANA = word_DIA_DA_SEMANA
         self.word_CADASTRO = word_CADASTRO
         # self.word = ''
-        self.column_sum_sing = ''
+        self.list_columns_Total = ''
 
         self.data_single = ''
-
-        self.column_Total_Sma_Cad_Adm_Vend = column_Total_Sma_Cad_Adm_Vend
-        self.column_Total_Sma_Cad_Adm_Sup = column_Total_Sma_Cad_Adm_Sup
-        self.column_Total_Sma_Cad_Adm_Ger = column_Total_Sma_Cad_Adm_Ger
-        self.column_Total_ATA_Cad_Adm_Vend = column_Total_ATA_Cad_Adm_Vend
-        self.column_Total_ATA_Cad_Adm_Sup = column_Total_ATA_Cad_Adm_Sup
-        self.column_Total_ATA_Cad_Adm_Ger = column_Total_ATA_Cad_Adm_Ger
-        self.column_Total_Sma_Ent_Vend = column_Total_Sma_Ent_Vend
-        self.column_Total_Sma_Ent_Sup = column_Total_Sma_Ent_Sup
-        self.column_Total_Sma_Ent_Ger = column_Total_Sma_Ent_Ger
-        self.column_Total_ATA_Entrega_Vend = column_Total_ATA_Entrega_Vend
-        self.column_Total_ATA_Entrega_Sup = column_Total_ATA_Entrega_Sup
-        self.column_Total_ATA_Entrega_Ger = column_Total_ATA_Entrega_Ger
 
         self.word_Supervisor = word_Supervisor
         self.word_Gerencia = word_Gerencia
@@ -122,8 +109,7 @@ class Generat_payroll:
         # self.quantity_line_full = 0
         # self.quantity_line_ata = 0
         # self.quantity_line_weekly = 0
-        self.sums = 0
-        self.number = 0
+        self.number_in_column = number_in_column
 
         self.list_situacao_to_comission = list_situacao_to_comission
         self.list_recebera_to_comission = list_recebera_to_comission
@@ -135,16 +121,8 @@ class Generat_payroll:
         self.column_Parcela = column_Parcela
         self.column_Adimplencia = column_Adimplencia
 
-        self.list_columns_ata_ent = list_columns_ata_ent
-        self.list_columns_ata_cad = list_columns_ata_cad
-        self.list_columns_mes_ent = list_columns_mes_ent
-        self.list_columns_mes_cad = list_columns_mes_cad
+        self.list_columns_ATA_Mes = []
 
-        self.column_ata_mes_qtd = []
-
-        # self.list_columns_str_to_float = []
-        # self.list_columns_full_ata = []
-        # self.list_columns_full_weekly = []
         self.list_columns_full_ata_entrega_pag = list_columns_full_ata_entrega_pag
         self.list_columns_full_ata_cadastro_pag = list_columns_full_ata_cadastro_pag
         self.list_columns_full_sma_entrega_pag = list_columns_full_sma_entrega_pag
@@ -155,46 +133,34 @@ class Generat_payroll:
         self.list_columns_full_sma_cadastro_venc = list_columns_full_sma_cadastro_venc
         self.list_cols_full_ata_sing_pag = list_cols_full_ata_sing_pag
         self.list_cols_full_ata_sing_venc = list_cols_full_ata_sing_venc
-        # self.list_qtd_cotas_parc = []
-        # self.list_qtd_cotas_inicial = []
-        # self.list_qtd_cotas_final = []
-        # self.name_columns_full = []
+
+        self.list_name_columns_Pagar_Comissao_N_Parc = list_name_columns_Pagar_Comissao_N_Parc
+
         self.list_ata = []
-        # self.list_weekly = []
 
         self.list_tables_ata = []
         self.list_tables_ata_sums = []
-        # self.list_single_administradora = []
-        # self.list_administradora_line = []
-        # self.list_administradora_sum_qtdcotasinicial = []
-        # self.list_administradora_sum_qtdcotasinicial_parc = []
 
         self.list_table_column_comissao = []
         self.list_table_edit = []
-        # self.list_table_column_define = []
         self.list_unique_information = []
-
-        # self.table_full_single_ata = []
 
         self.table: pd.DataFrame = pd.DataFrame()
         self.table_full: pd.DataFrame = pd.DataFrame()
-        # self.table_full_ata: pd.DataFrame = pd.DataFrame()
-        # self.table_full_weekly: pd.DataFrame = pd.DataFrame()
         self.table_single_merge: pd.DataFrame = pd.DataFrame()
-
         self.table_seller_single: pd.DataFrame = pd.DataFrame()
 
     @property
-    def num_columns(self):
-        return self.number
+    def find_number_in_column(self):
+        return None
 
     # recebe uma lista de texto para formar uma palavra que proc nas colunas
-    @num_columns.setter
-    def num_columns(self, list_text):
+    @find_number_in_column.setter
+    def find_number_in_column(self, list_text):
         for num in range(2, 100):
             column = list_text[0] + str(num) + list_text[1]
             if column not in self.table_full.columns:
-                self.number = num - 1
+                self.number_in_column = num - 1
                 break
 
     def convert_str_float(self, value):
@@ -205,7 +171,35 @@ class Generat_payroll:
         value = round(value, 2)
         return value
 
-    # 1º define se vendedor/parceiro a primeira é pela ata entrea/cadastro
+    # Mesclar todas as tabelas que tiver valor
+    def tables_concat_seller_single(self):
+        for table_pag, table_venc, ata in self.list_tables_ata:
+            if not table_pag.empty:
+                self.table_single_merge = pd.concat([self.table_single_merge, table_pag])  # noqa
+
+    # 1º criar lista de variaveis
+    def generate_variable_for_all(self):
+        # as colunas da tabela ficara no arqvuio pdf
+        self.table_full = pd.read_csv(arqtableMerge, sep=';', encoding='utf-8', dtype=str)
+        self.find_number_in_column = list_words_ATA_Venc_º_Parc
+        # Preencher o restante das colunas sequenciais
+        for i in range(2, self.number_in_column + 1):
+            n_Parc = str(i) + word_º_Parc
+            self.list_columns_full_sma_cadastro_pag.append(word_Sma_ + word_Pag_ + n_Parc)  # noqa
+            self.list_columns_full_sma_cadastro_venc.append(word_Sma_ + word_Venc_ + n_Parc)  # noqa
+
+            self.list_columns_full_ata_cadastro_pag.append(word_ATA_ + word_Pag_ + n_Parc)  # noqa
+            self.list_columns_full_ata_cadastro_venc.append(word_ATA_ + word_Venc_ + n_Parc)  # noqa
+
+            self.list_columns_full_sma_entrega_pag.append(word_Sma_ + word_Pag_ + n_Parc)  # noqa
+            self.list_columns_full_sma_entrega_venc.append(word_Sma_ + word_Venc_ + n_Parc)  # noqa
+
+            self.list_columns_full_ata_entrega_pag.append(word_ATA_ + word_Pag_ + n_Parc)  # noqa
+            self.list_columns_full_ata_entrega_venc.append(word_ATA_ + word_Venc_ + n_Parc)  # noqa
+
+            self.list_name_columns_Pagar_Comissao_N_Parc.append(word_Pagar_Comissao_ + n_Parc)  # noqa
+
+    # 2º define se vendedor/parceiro a primeira é pela ata entrea/cadastro
     def columns_ata_full_seller_single(self):
         # 1ª inf da coluna '1P referencia' -> ENTREGA ou CADASRO
         p1_referencia = str(self.table_seller_single.iloc[0][self.column_1_Parcela_Referencia])
@@ -219,90 +213,54 @@ class Generat_payroll:
         else:
             #                  MES/ANO
             self.data_single = self.date_ata_single
-
-        # é cadastro ou entrega
-        #  'CADASTRO'
-        if self.word_CADASTRO in p1_referencia:
-            # é semana ou ATA?
-            #  'DIA DA SEMANA'
-            if self.word_DIA_DA_SEMANA == dt_pag_por:
-                #                     Sma Cad Adm
-                self.column_ata_sma = self.column_Sma_Cad_Adm
-                #            '[Sma Cad Adm', 'Sma 2º Parc', ..., 'Sma 6º Parc']
-                self.list_cols_full_ata_sing_pag = self.list_columns_full_sma_cadastro_pag
-                self.list_cols_full_ata_sing_venc = self.list_columns_full_sma_cadastro_venc
-                # ['Total Sma Cad Adm', 'Total Sma Cad Adm Ger']
-                list_columns_sum = [
-                    self.column_Total_Sma_Cad_Adm_Vend,
-                    self.column_Total_Sma_Cad_Adm_Sup,
-                    self.column_Total_Sma_Cad_Adm_Ger]
-                # ['Mes Cad Adm qtd cotas', 'Mes Cad Adm qtd cotas Ger']
-                list_ata_cad = self.list_columns_mes_cad
-            else:
-                #                     ATA Cad Adm
-                self.column_ata_sma = self.column_ATA_Cad_Adm
-                # ['ATA Cad Adm', 'ATA 2º Parc', 'ATA 3º P ..., 'ATA 6º Parc']
-                self.list_cols_full_ata_sing_pag = self.list_columns_full_ata_cadastro_pag
-                self.list_cols_full_ata_sing_venc = self.list_columns_full_ata_cadastro_venc
-                # ['Total ATA Cad Adm', 'Total ATA Cad Adm Ger']
-                list_columns_sum = [
-                    self.column_Total_ATA_Cad_Adm_Vend,
-                    self.column_Total_ATA_Cad_Adm_Sup,
-                    self.column_Total_ATA_Cad_Adm_Ger]
-                # ['ATA Cad Adm qtd cotas', 'ATA Cad Adm qtd cotas Ger']
-                list_ata_cad = self.list_columns_ata_cad
-        else:
-            # é semana ou ATA?
-            if self.word_DIA_DA_SEMANA == dt_pag_por:
-                #                     Sma Ent
-                self.column_ata_sma = self.column_Sma_Entrega
-                # '[Sma Ent', 'Sma 2º Parc', ..., 'Sma 6º Parc']
-                self.list_cols_full_ata_sing_pag = self.list_columns_full_sma_entrega_pag
-                self.list_cols_full_ata_sing_venc = self.list_columns_full_sma_entrega_venc
-                # ['Total Sma Ent', 'Total Sma Ent Ger']
-                list_columns_sum = [
-                    self.column_Total_Sma_Ent_Vend,
-                    self.column_Total_Sma_Ent_Sup,
-                    self.column_Total_Sma_Ent_Ger]
-                # ['Mes Ent qtd cotas', 'Mes Ent qtd cotas Ger']
-                list_ata_cad = self.list_columns_mes_ent
-            else:
-                #                     ATA Entrega
-                self.column_ata_sma = self.column_ATA_Entrega
-                # ['ATA Entrega', 'ATA 2º Parc', ..., 'ATA 6º Parc']
-                self.list_cols_full_ata_sing_pag = self.list_columns_full_ata_entrega_pag
-                self.list_cols_full_ata_sing_venc = self.list_columns_full_ata_entrega_venc
-                # ['Total ATA Entrega', 'Total ATA Entrega Ger']
-                list_columns_sum = [
-                    self.column_Total_ATA_Entrega_Vend,
-                    self.column_Total_ATA_Entrega_Sup,
-                    self.column_Total_ATA_Entrega_Ger]
-                # ['ATA Entrega qtd cotas', 'ATA Entrega qtd cotas Ger']
-                list_ata_cad = self.list_columns_ata_ent
-        # é gerente?
+        if self.word_CADASTRO in p1_referencia and self.word_DIA_DA_SEMANA == dt_pag_por:
+            self.column_ata_sma = self.column_Sma_Cad_Adm
+            #            '[Sma Cad Adm', 'Sma 2º Parc', ..., 'Sma 6º Parc']
+            self.list_cols_full_ata_sing_pag = self.list_columns_full_sma_cadastro_pag
+            self.list_cols_full_ata_sing_venc = self.list_columns_full_sma_cadastro_venc
+            list_columns_ATA_Mes = list_columns_Mes_Cad_Adm_Qtd_Cotas
+            # list_columns_Total = list_columns_Total_Sma_Cad_Adm
+        elif self.word_CADASTRO in p1_referencia and self.word_DIA_DA_SEMANA != dt_pag_por:
+            self.column_ata_sma = self.column_ATA_Cad_Adm
+            # ['ATA Cad Adm', 'ATA 2º Parc', 'ATA 3º P ..., 'ATA 6º Parc']
+            self.list_cols_full_ata_sing_pag = self.list_columns_full_ata_cadastro_pag
+            self.list_cols_full_ata_sing_venc = self.list_columns_full_ata_cadastro_venc
+            list_columns_ATA_Mes = list_columns_ATA_Cad_Adm_Qtd_Cotas
+            # list_columns_Total = list_columns_Total_ATA_Cad_Adm
+        elif self.word_CADASTRO not in p1_referencia and self.word_DIA_DA_SEMANA == dt_pag_por:
+            self.column_ata_sma = self.column_Sma_Entrega
+            # '[Sma Ent', 'Sma 2º Parc', ..., 'Sma 6º Parc']
+            self.list_cols_full_ata_sing_pag = self.list_columns_full_sma_entrega_pag
+            self.list_cols_full_ata_sing_venc = self.list_columns_full_sma_entrega_venc
+            list_columns_ATA_Mes = list_columns_Mes_Entrega_Qtd_Cotas
+            # list_columns_Total = list_columns_Total_Sma_Entrega
+        elif self.word_CADASTRO not in p1_referencia and self.word_DIA_DA_SEMANA != dt_pag_por:
+            self.column_ata_sma = self.column_ATA_Entrega
+            # ['ATA Entrega', 'ATA 2º Parc', ..., 'ATA 6º Parc']
+            self.list_cols_full_ata_sing_pag = self.list_columns_full_ata_entrega_pag
+            self.list_cols_full_ata_sing_venc = self.list_columns_full_ata_entrega_venc
+            list_columns_ATA_Mes = list_columns_ATA_Entrega_Qtd_Cotas
+            # list_columns_Total = list_columns_Total_ATA_Entrega
         if self.word_profissao == word_Gerencia:
             # ATA XX qtd cotas Ger Ger
-            self.column_ata_mes_qtd = list_ata_cad[2]
+            self.list_columns_ATA_Mes = list_columns_ATA_Mes[2]
             # 'Total XX Ger Ger'
-            self.column_sum_sing = list_columns_sum[2]
+            self.list_columns_Total = list_columns_Total[2]
         elif self.word_profissao == word_Supervisor:
             # ATA XX qtd cotas Ger
-            self.column_ata_mes_qtd = list_ata_cad[1]
+            self.list_columns_ATA_Mes = list_columns_ATA_Mes[1]
             # 'Total XX Ger'
-            self.column_sum_sing = list_columns_sum[1]
+            self.list_columns_Total = list_columns_Total[1]
         else:
             # ATA XX qtd cotas
-            self.column_ata_mes_qtd = list_ata_cad[0]
+            self.list_columns_ATA_Mes = list_columns_ATA_Mes[0]
             # 'Total XX'
-            self.column_sum_sing = list_columns_sum[0]
+            self.list_columns_Total = list_columns_Total[0]
 
-    # 2º Criar uma lista tabelas aparti do dado ATA ou SMA
+    # 3º Criar uma lista tabelas aparti do dado ATA ou SMA
     def tables_columns_ata_seller_single(self):
         self.list_tables_ata = []
         # ['ATA Entrega', 'ATA 2º Parc', ..., 'ATA 6º Parc']
-        print('---------------------------------')
-        print(self.list_cols_full_ata_sing_pag)
-        print('---------------------------------')
         for key, column_ata in enumerate(self.list_cols_full_ata_sing_pag):
             # MES/ANO ou Xº/MES/ANO
             table_pag = self.table_seller_single[self.table_seller_single[column_ata] == self.data_single].copy()  # noqa
@@ -328,17 +286,10 @@ class Generat_payroll:
         #         print('')
         #         print('')
 
-    # 3º ira mesclar todas as tabelas que tiver valor
-    def tables_concat_seller_single(self):
-        self.table_single_merge: pd.DataFrame = pd.DataFrame()
-        for table_pag, table_venc, ata in self.list_tables_ata:
-            if not table_pag.empty:
-                self.table_single_merge = pd.concat(
-                    [self.table_single_merge, table_pag]
-                )
-
     # 4º situações para sair e ir para o próximo vendedor
+
     def is_to_stop_program(self):
+        self.tables_concat_seller_single()
         self.stop_program = False
         # se junção de tabela estiver vazio sair
         if self.table_single_merge.empty:
@@ -464,8 +415,7 @@ class Generat_payroll:
                 text += ' ' + self.word_Gerencia
             quantity_line_table = table_pag.shape[0]
             for line in range(quantity_line_table):
-                text2 = table_pag.iloc[line][self.column_ata_mes_qtd]
-
+                text2 = table_pag.iloc[line][self.list_columns_ATA_Mes]
                 # cliente = table_pag.iloc[line]['Cliente']
                 # if cliente == 'LIZANDRA MAXIMO DE OLIVEIRA':
                 #     pass

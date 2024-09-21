@@ -77,6 +77,12 @@ tagSelected = ''
 #        '1' ou '2'
 model = '2'
 
+number_in_column = 0
+
+
+date_ata_single = 'MAIO/2024'
+date_sma_single = '1ª/MAIO/2024'
+
 # PALAVRAS
 word_Appdata = 'Appdata'
 word_tables = 'tables'
@@ -133,8 +139,8 @@ word_1_Porc_ = '1º % '
 word_2_Porc_ = '2º % '
 word_3_Porc_ = '3º % '
 word__Atrasado = ' Atrasado'
-word__Atrasado_1_ATA = ' Atrasado 1 ATA'
-word__Atrasado_2_ATAs = ' Atrasado 2 ATAs'
+word__Atrasado_1_ATA = word__Atrasado + ' 1 ATA'
+word__Atrasado_2_ATAs = word__Atrasado + ' 2 ATAs'
 word_Data_Pag_Errada = 'Data Pag. Errada'
 word_Pag_Mesma_ATA = 'Pag. Mesma ATA'
 word_Pag_Adiantado_ATA = 'Pag. Adiantado ATA'
@@ -142,7 +148,7 @@ word_Pag_Atrasado_ATA = 'Pag. Atrasado ATA'
 word_1_Parcela = '1ª Parcela'
 word_Demais = 'Demais'
 word_FAT = 'FAT'
-word_Comissao_Atrasada_ = 'Comissao Atrasada '
+word_Pagar_Comissao_ = 'Pagar Comissao '
 word_Entrega = 'Entrega'
 
 
@@ -171,9 +177,9 @@ column_Total_Sma_Cad_Adm_Ger = 'Total Sma Cad Adm Ger'
 column_Total_ATA_Cad_Adm_Vend = 'Total ATA Cad Adm Vend'
 column_Total_ATA_Cad_Adm_Sup = 'Total ATA Cad Adm Sup'
 column_Total_ATA_Cad_Adm_Ger = 'Total ATA Cad Adm Ger'
-column_Total_Sma_Ent_Vend = 'Total Sma Entrega Vend'
-column_Total_Sma_Ent_Sup = 'Total Sma Entrega Sup'
-column_Total_Sma_Ent_Ger = 'Total Sma Entrega Ger'
+column_Total_Sma_Entrega_Vend = 'Total Sma Entrega Vend'
+column_Total_Sma_Entrega_Sup = 'Total Sma Entrega Sup'
+column_Total_Sma_Entrega_Ger = 'Total Sma Entrega Ger'
 column_Total_ATA_Entrega_Vend = 'Total ATA Entrega Vend'
 column_Total_ATA_Entrega_Sup = 'Total ATA Entrega Sup'
 column_Total_ATA_Entrega_Ger = 'Total ATA Entrega Ger'
@@ -258,8 +264,8 @@ column_Periodo_Valor_Qtd_Vendas_Supervisor = column_Periodo_Valor_Qtd_Vendas + '
 column_Periodo_Valor_Qtd_Vendas_Gerencia = column_Periodo_Valor_Qtd_Vendas + ' ' + word_Gerencia
 column_Cargo_Gerencia = column_Cargo + ' ' + word_Gerencia
 
-porcentagem_Vendas_1 = '1' + word__Atrasado + ' ' + str(porcentagem_Vendas)
-porcentagem_Vendas_2 = '2' + word__Atrasado + ' ' + str(porcentagem_Vendas)
+# porcentagem_Vendas_1 = '1' + word__Atrasado + ' ' + str(porcentagem_Vendas)
+# porcentagem_Vendas_2 = '2' + word__Atrasado + ' ' + str(porcentagem_Vendas)
 
 # LISTAS
 listValue = []
@@ -279,11 +285,9 @@ list_cargo_limit = []
 list_cargos_limit_exist = []
 list_administradoras_limit_exist = []
 list_tabela_recebiemnto_limit_exist = []
-
-# list_columns_full_ata_entrega =
-# list_columns_full_ata_cadastro =
-# list_columns_full_sma_entrega =
-# list_columns_full_sma_cadastro =
+list_cols_full_ata_sing_pag = []
+list_cols_full_ata_sing_venc = []
+list_name_columns_Pagar_Comissao_N_Parc = []
 list_columns_full_ata_entrega_pag = [column_ATA_Entrega]
 list_columns_full_ata_cadastro_pag = [column_ATA_Cad_Adm]
 list_columns_full_sma_entrega_pag = [column_Sma_Entrega]
@@ -292,8 +296,6 @@ list_columns_full_ata_entrega_venc = [column_ATA_Entrega]
 list_columns_full_ata_cadastro_venc = [column_ATA_Cad_Adm]
 list_columns_full_sma_entrega_venc = [column_Sma_Entrega]
 list_columns_full_sma_cadastro_venc = [column_Sma_Cad_Adm]
-list_cols_full_ata_sing_pag = []
-list_cols_full_ata_sing_venc = []
 list_columns_cliente = [
     column_CEP, column_Nascimento, column_Telefone,
     column_Celular, column_WhatsApp, column_EMail,
@@ -325,17 +327,20 @@ list_columns_start = [
     column_Credito,
     column_Valor_Parc_Inicial,
     column_Data_Pag_1_Parc,
-    column_Data_Pag_Por,
+    column_Data_de_Entrega,
     column_Dia_Pag,
-    column_Qtd_Valor_Vend,
-    column_1_Parcela_Recebera,
-    column_Demais_Recebera,
-    column_FAT_Recebera,
-    column_1_Parcela_Referencia,
-    column_Demais_Referencia,
     column_Grupo,
     column_Cota,
     column_N_Contrato,
+    column_1_Parcela_Recebera,
+    column_Demais_Recebera,
+    column_FAT_Recebera,
+    column_Demais_Referencia,
+    column_Qtd_Valor_Vend,
+    column_Data_Pag_Por,
+    column_1_Parcela_Referencia,
+    column_ATA_Cad_Adm,
+    column_ATA_Entrega,
     column_PK_Vend_ATA_Entrega
 ]
 headerDtPagamentoParcelas = [
@@ -397,32 +402,50 @@ list_columns_end = [
     column_Comissao,
     column_Adimplencia,
 ]
-list_columns_ata_ent = [
+list_columns_ATA_Entrega_Qtd_Cotas = [
     column_ATA_Entrega_Qtd_Cotas_Vend,
     column_ATA_Entrega_Qtd_Cotas_Sup,
     column_ATA_Entrega_Qtd_Cotas_Ger
 ]
-list_columns_ata_cad = [
+list_columns_ATA_Cad_Adm_Qtd_Cotas = [
     column_ATA_Cad_Adm_Qtd_Cotas_Vend,
     column_ATA_Cad_Adm_Qtd_Cotas_Sup,
     column_ATA_Cad_Adm_Qtd_Cotas_Ger
 ]
-list_columns_mes_ent = [
+list_columns_Mes_Entrega_Qtd_Cotas = [
     column_Mes_Entrega_Qtd_Cotas_Vend,
     column_Mes_Entrega_Qtd_Cotas_Sup,
     column_Mes_Entrega_Qtd_Cotas_Ger
 ]
-
-list_columns_mes_cad = [
+list_columns_Mes_Cad_Adm_Qtd_Cotas = [
     column_Mes_Cad_Adm_Qtd_Cotas_Vend,
     column_Mes_Cad_Adm_Qtd_Cotas_Sup,
     column_Mes_Cad_Adm_Qtd_Cotas_Ger
 ]
-list_porcentagem_vendas = [
-    porcentagem_Vendas_1,
-    porcentagem_Vendas_2
-]
-
+# list_columns_Total_Sma_Cad_Adm = [
+#     column_Total_Sma_Cad_Adm_Vend,
+#     column_Total_Sma_Cad_Adm_Sup,
+#     column_Total_Sma_Cad_Adm_Ger
+# ]
+# list_columns_Total_ATA_Cad_Adm = [
+#     column_Total_ATA_Cad_Adm_Vend,
+#     column_Total_ATA_Cad_Adm_Sup,
+#     column_Total_ATA_Cad_Adm_Ger
+# ]
+# list_columns_Total_Sma_Entrega = [
+#     column_Total_Sma_Entrega_Vend,
+#     column_Total_Sma_Entrega_Sup,
+#     column_Total_Sma_Entrega_Ger
+# ]
+# list_columns_Total_ATA_Entrega = [
+#     column_Total_ATA_Entrega_Vend,
+#     column_Total_ATA_Entrega_Sup,
+#     column_Total_ATA_Entrega_Ger
+# ]
+# list_porcentagem_vendas = [
+#     porcentagem_Vendas_1,
+#     porcentagem_Vendas_2
+# ]
 list_columns_full_ata = [column_ATA_Entrega, column_ATA_Cad_Adm]
 list_columns_full_weekly = [column_Sma_Entrega, column_Sma_Cad_Adm]
 

@@ -28,9 +28,9 @@ class Main_recibo:
         self.is_gerentes = True
         self.is_parceiros = False
         self.seller_single_unit = ''
-        self.date_ata_single = 'MAIO/2024'
+        self.date_ata_single = date_ata_single
         self.data_semana = datetime.now()
-        self.date_sma_single = '1ª/MAIO/2024'
+        self.date_sma_single = date_sma_single
         self.data_ata = datetime.now()
         # variaveis
         self.column_profissao = column_profissao
@@ -42,19 +42,20 @@ class Main_recibo:
         self.comissao_anterior3 = comissao_anterior3
         self.vendedor_anterior3 = vendedor_anterior3
         self.error = error
+        self.start = start
 
         self.list_columns_full_ata = list_columns_full_ata
         self.list_columns_full_weekly = list_columns_full_weekly
 
-        self.list_columns_full_ata_entrega_pag = list_columns_full_ata_entrega_pag
-        self.list_columns_full_ata_cadastro_pag = list_columns_full_ata_cadastro_pag
-        self.list_columns_full_sma_entrega_pag = list_columns_full_sma_entrega_pag
-        self.list_columns_full_sma_cadastro_pag = list_columns_full_sma_cadastro_pag
+        # self.list_columns_full_ata_entrega_pag = list_columns_full_ata_entrega_pag
+        # self.list_columns_full_ata_cadastro_pag = list_columns_full_ata_cadastro_pag
+        # self.list_columns_full_sma_entrega_pag = list_columns_full_sma_entrega_pag
+        # self.list_columns_full_sma_cadastro_pag = list_columns_full_sma_cadastro_pag
 
-        self.list_columns_full_ata_entrega_venc = list_columns_full_ata_entrega_venc
-        self.list_columns_full_ata_cadastro_venc = list_columns_full_ata_cadastro_venc
-        self.list_columns_full_sma_entrega_venc = list_columns_full_sma_entrega_venc
-        self.list_columns_full_sma_cadastro_venc = list_columns_full_sma_cadastro_venc
+        # self.list_columns_full_ata_entrega_venc = list_columns_full_ata_entrega_venc
+        # self.list_columns_full_ata_cadastro_venc = list_columns_full_ata_cadastro_venc
+        # self.list_columns_full_sma_entrega_venc = list_columns_full_sma_entrega_venc
+        # self.list_columns_full_sma_cadastro_venc = list_columns_full_sma_cadastro_venc
         # self.prof_vendedores = 'Vendedor'
         # self.prof_supervisores = word_Supervisor
         # self.prof_gerentes = word_Supervisor
@@ -171,46 +172,6 @@ class Main_recibo:
             self.father.prog2('Gerar recibos dos parceiros:')
             self.generate_employee()
 
-    def generate_variable_for_all(self):
-        # as colunas da tabela ficara no arqvuio pdf
-        # try:
-        self.table_full = pd.read_csv(arqtableMerge, sep=';', encoding='utf-8', dtype=str)
-        # except pd.errors.EmptyDataError:
-        #     return
-
-        self.name_columns_full = self.table_full.columns.tolist()
-
-        self.generat_payroll.table_full = self.table_full
-        self.generat_payroll.num_columns = list_words_ATA_Venc_º_Parc
-        num_regras = self.generat_payroll.number  # ncol->ATA{N}ºParc
-        print(num_regras)
-
-        # Preencher o restante das colunas sequenciais
-        for i in range(2, num_regras + 1):
-            # self.list_columns_full_ata_pag.append(word_ATA_ + word_Pag_ + str(i) + word_º_Parc)
-            # self.list_columns_full_weekly_pag.append(word_Sma_ + word_Pag_ + str(i) + word_º_Parc)
-            self.list_columns_full_ata_entrega_pag.append(word_ATA_ + word_Pag_ + str(i) + word_º_Parc)  # noqa
-            self.list_columns_full_ata_cadastro_pag.append(word_ATA_ + word_Pag_ + str(i) + word_º_Parc)  # noqa
-            self.list_columns_full_sma_entrega_pag.append(word_Sma_ + word_Pag_ + str(i) + word_º_Parc)  # noqa
-            self.list_columns_full_sma_cadastro_pag.append(word_Sma_ + word_Pag_ + str(i) + word_º_Parc)  # noqa
-
-            # self.list_columns_full_ata_venc.append(word_ATA_ + word_Venc_ + str(i) + word_º_Parc)
-            # self.list_columns_full_weekly_venc.append(word_Sma_ + word_Venc_ + str(i) + word_º_Parc)
-            self.list_columns_full_ata_entrega_venc.append(word_ATA_ + word_Venc_ + str(i) + word_º_Parc)  # noqa
-            self.list_columns_full_ata_cadastro_venc.append(word_ATA_ + word_Venc_ + str(i) + word_º_Parc)  # noqa
-            self.list_columns_full_sma_entrega_venc.append(word_Sma_ + word_Venc_ + str(i) + word_º_Parc)  # noqa
-            self.list_columns_full_sma_cadastro_venc.append(word_Sma_ + word_Venc_ + str(i) + word_º_Parc)  # noqa
-
-        self.generat_payroll.list_columns_full_ata_entrega_pag = self.list_columns_full_ata_entrega_pag
-        self.generat_payroll.list_columns_full_ata_cadastro_pag = self.list_columns_full_ata_cadastro_pag
-        self.generat_payroll.list_columns_full_sma_entrega_pag = self.list_columns_full_sma_entrega_pag
-        self.generat_payroll.list_columns_full_sma_cadastro_pag = self.list_columns_full_sma_cadastro_pag
-
-        self.generat_payroll.list_columns_full_ata_entrega_venc = self.list_columns_full_ata_entrega_venc
-        self.generat_payroll.list_columns_full_ata_cadastro_venc = self.list_columns_full_ata_cadastro_venc
-        self.generat_payroll.list_columns_full_sma_entrega_venc = self.list_columns_full_sma_entrega_venc
-        self.generat_payroll.list_columns_full_sma_cadastro_venc = self.list_columns_full_sma_cadastro_venc
-
     def create_list_all_sellers(self):
         list_seller_single_all = []
         # é por ata ou por semana ata?
@@ -221,9 +182,6 @@ class Main_recibo:
         else:  # profesion(Vendedor, supervisor, Gerete, Gerente_Geral)
             data_ata = self.date_ata_single  # ATA -> MES/ANO
             list_columns_full = self.list_columns_full_ata  # ATA Entreta, ATA Cad Adm ..
-
-        self.generat_payroll.date_sma_single = self.date_sma_single
-        self.generat_payroll.date_ata_single = self.date_ata_single
 
         # ira selecionar tabela que tenha date_ata_single e o
         for column in list_columns_full:
@@ -251,9 +209,9 @@ class Main_recibo:
 
     # def generate_variable_for_specific(self):
     #     column_profisinal = word__Valor_Qtd_Vendas_Inicial + self.word_Valor_Qtd_Vendas_Inicial_profissao
-    #     self.generat_payroll.num_columns = ['', column_profisinal]
+    #     self.generat_payroll.find_number_in_column = ['', column_profisinal]
     #     num_regras = self.generat_payroll.number  # ncol->{N}Qtd.CotIn
-    #     self.generat_payroll.num_columns = [str(num_regras) + word__Parc_, '']
+    #     self.generat_payroll.find_number_in_column = [str(num_regras) + word__Parc_, '']
     #     num_parcelas = self.generat_payroll.number  # ncol->Parc {N}
     #     print('===============')
     #     print(num_regras)
@@ -293,6 +251,13 @@ class Main_recibo:
         if self.error:
             return
         # self.generate_variable_for_specific()
+        if self.start:
+            self.table_full = pd.read_csv(arqtableMerge, sep=';', encoding='utf-8', dtype=str)
+            self.generat_payroll.generate_variable_for_all()
+            self.generat_payroll.date_sma_single = self.date_sma_single
+            self.generat_payroll.date_ata_single = self.date_ata_single
+            self.start = False
+
         self.generat_payroll.word_profissao = self.word_profissao
         self.generat_payroll.column_profissao = self.column_profissao
         list_seller_single = self.create_list_all_sellers()
@@ -302,6 +267,9 @@ class Main_recibo:
                 # só passa se for o vendedor escolhido
                 if self.seller_single_unit not in self.seller_single:
                     continue
+            self.generat_payroll.seller_single = self.seller_single
+            self.table_seller_single = self.table_full[self.table_full[self.column_profissao] == self.seller_single]  # noqa
+            self.generat_payroll.table_seller_single = self.table_seller_single
             # self.generat_payroll = Generat_payroll(father=self.father)
 
             # self.pathTables = Path(__file__).parent.parent / 'tables'
@@ -312,7 +280,7 @@ class Main_recibo:
             # Definir o número de grupos e de parcelas
             # self.generat_payroll.table_full = self.table_full
 
-            # self.generat_payroll.num_columns = list_words_ATA_Venc_º_Parc
+            # self.generat_payroll.find_number_in_column = list_words_ATA_Venc_º_Parc
             # num_atas_parc = self.generat_payroll.number  # ncol->ATA{N}ºPa
 
             # # self.generat_payroll.word = self.word
@@ -334,10 +302,7 @@ class Main_recibo:
 
             # self.table_full_ata = self.table_full[self.table_full[column_Data_Pag_Por] != word_DIA_DA_SEMANA]  # noqa
             # self.table_full_weekly = self.table_full[self.table_full[column_Data_Pag_Por] == word_DIA_DA_SEMANA]  # noqa
-            self.generat_payroll.seller_single = self.seller_single
 
-            self.table_seller_single = self.table_full[self.table_full[self.column_profissao] == self.seller_single]  # noqa
-            self.generat_payroll.table_seller_single = self.table_seller_single
             # self.generat_payroll.table_full_ata = self.table_full_ata
             # self.generat_payroll.table_full_weekly = self.table_full_weekly
 
@@ -371,7 +336,6 @@ class Main_recibo:
 
             self.generat_payroll.columns_ata_full_seller_single()
             self.generat_payroll.tables_columns_ata_seller_single()
-            self.generat_payroll.tables_concat_seller_single()
 
             # saber se é para para o programa
             text_seller = self.format_name_profissional()

@@ -633,7 +633,7 @@ class TableManip:
                 self.table.loc[line, list_columns_ata_pag_atrasado_n_ata[2]] = str(list_new_ata_pag_parc[1])  # noqa
 
     @property
-    def add_value_comissao_atrasada(self):
+    def add_value_pagar_comissao(self):
         return None
 
     # mane_column_comissao_atrasada,
@@ -641,21 +641,22 @@ class TableManip:
     # name_column_2_porc_ata,
     # name_column_3_porc_ata
 
-    @add_value_comissao_atrasada.setter
-    def add_value_comissao_atrasada(self, list_list_columns_comissao_atrasada):
+    @add_value_pagar_comissao.setter
+    def add_value_pagar_comissao(self, list_list_columns_comissao_atrasada):
         quantity_line = self.table.shape[0]
         for line in range(quantity_line):
             for list_columns_comissao_atrasada in list_list_columns_comissao_atrasada:
                 porc_ata_1 = float(self.table.iloc[line][list_columns_comissao_atrasada[1]])
                 if porc_ata_1 >= porcentagem_Vendas:
+                    self.table.loc[line, list_columns_comissao_atrasada[0]] = list_columns_comissao_atrasada[1]  # noqa
                     continue
                 porc_ata_2 = float(self.table.iloc[line][list_columns_comissao_atrasada[2]])
                 if porc_ata_2 >= porcentagem_Vendas:
-                    self.table.loc[line, list_columns_comissao_atrasada[0]] = list_porcentagem_vendas[0]  # noqa
+                    self.table.loc[line, list_columns_comissao_atrasada[0]] = list_columns_comissao_atrasada[2]  # noqa
                     continue
                 porc_ata_3 = float(self.table.iloc[line][list_columns_comissao_atrasada[3]])
                 if porc_ata_3 >= porcentagem_Vendas:
-                    self.table.loc[line, list_columns_comissao_atrasada[0]] = list_porcentagem_vendas[1]  # noqa
+                    self.table.loc[line, list_columns_comissao_atrasada[0]] = list_columns_comissao_atrasada[3]  # noqa
 
     @ property
     def del_column(self):

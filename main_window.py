@@ -145,7 +145,6 @@ class Worker2(QObject):
             main_gerar.data_semana = data_semana
             main_gerar.generate_date_ata()
 
-        main_gerar.generate_variable_for_all()
         main_gerar.generate_is_vendedores()
         main_gerar.generate_is_supervisores()
         main_gerar.generate_is_gerentes()
