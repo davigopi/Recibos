@@ -153,7 +153,6 @@ word_Entrega = 'Entrega'
 
 
 column_Parcela = 'Parcela'
-column_Data_de_Entrega = 'Data de Entrega'
 column_Porcentagem = '%'
 column_Comissao = 'Comissão'
 column_Adimplencia = 'Adimplência'
@@ -324,21 +323,23 @@ list_columns_start = [
     column_Cargo_Vendedor,
     column_Cargo_Supervisor,
     column_Cargo_Gerencia,
+    column_Grupo,
+    column_Cota,
+    column_N_Contrato,
     column_Credito,
     column_Valor_Parc_Inicial,
     column_Data_Pag_1_Parc,
     column_Data_de_Entrega,
+    column_Data_Cad_Adm
     column_Dia_Pag,
-    column_Grupo,
-    column_Cota,
-    column_N_Contrato,
+    column_Qtd_Valor_Vend,
+    column_Data_Pag_Por,
     column_1_Parcela_Recebera,
     column_Demais_Recebera,
     column_FAT_Recebera,
-    column_Demais_Referencia,
-    column_Qtd_Valor_Vend,
-    column_Data_Pag_Por,
     column_1_Parcela_Referencia,
+    column_Demais_Referencia,
+    column_FAT_Referencia,
     column_ATA_Cad_Adm,
     column_ATA_Entrega,
     column_PK_Vend_ATA_Entrega

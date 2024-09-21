@@ -70,7 +70,7 @@ class Main_table:
         self.list_list_columns_ata_pag_atrasado_n_ata = list_list_columns_ata_pag_atrasado_n_ata
         self.list_list_columns_comissao_atrasada = list_list_columns_comissao_atrasada
         self.list_list_columns_order = list_list_columns_order
-        self.list_columns_start = list_columns_start
+        self.list_columns_start = list_columns_start.copy()
         self.salve_first = salve_first
         self.start = start
 
