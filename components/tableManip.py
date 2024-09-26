@@ -42,6 +42,11 @@ def convert_to_date(value):
     return value
 
 
+def create_table(table_created, path):
+    table_created.columns = (table_created.columns.str.strip())
+    table_created.to_csv(path, sep=';', index=False, header=True, decimal=',')
+
+
 class TableManip:
     def __init__(self) -> None:
         self.renomear = Renomear()
@@ -74,15 +79,15 @@ class TableManip:
             column_Periodo_Valor_Qtd_Vendas,
             column_Periodo_Valor_Qtd_Vendas_Supervisor,
             column_Periodo_Valor_Qtd_Vendas_Gerencia,
-            column_Qtd_Valor_Vend,
+            column_Qtd_Valor_Vendedor,
             column_1_Parcela_Referencia,
             column_Data_de_Entrega,
             column_Data_Cad_Adm,
             column_ATA_Entrega,
-            column_Total_ATA_Entrega_Vend,
+            column_Total_ATA_Entrega_Vendedor,
             column_Data_Semana,
-            column_Periodo_final,
-            column_Periodo_inicial,
+            column_Periodo_Final,
+            column_Periodo_Inicial,
             column_ATA,
             column_Cargo,
             column_Administradora,
@@ -90,9 +95,9 @@ class TableManip:
             column_Index,
             word_Vendedor,
             word_Supervisor,
-            word__Sup,
-            word__Ger,
-            word__Qtd_Cotas,
+            word__Supervisor,
+            word__Gerencia,
+            word__Valor_Qtd_Vendas,
             word_Qtd_Vendas,
             word_CADASTRO,
             word__Valor_Qtd_Vendas_Inicial,
@@ -255,52 +260,56 @@ class TableManip:
         return list_qtd_data_full
 
     def create_list_columns_ata_qtd_cotas_vendas(self, column_ata_mes_sma):
-        new_name_column = word_Total + ' ' + column_ata_mes_sma
-        new_name_column_vendedor = new_name_column + word__Vend
-        new_name_column_supervisor = new_name_column + word__Sup
-        new_name_column_gerencia = new_name_column + word__Ger
-        list_column_ata = [new_name_column_vendedor,
-                           new_name_column_supervisor,
-                           new_name_column_gerencia]
-        new_name_column_qtd_vendas = word_Qtd_Vendas + ' ' + column_ata_mes_sma
-        new_name_column_qtd_vendas_vendedor = new_name_column_qtd_vendas + word__Vend
-        new_name_column_qtd_vendas_supervisor = new_name_column_qtd_vendas + word__Sup
-        new_name_column_qtd_vendas_gerencia = new_name_column_qtd_vendas + word__Ger
-        list_column_qtd_vendas = [new_name_column_qtd_vendas_vendedor,
-                                  new_name_column_qtd_vendas_supervisor,
-                                  new_name_column_qtd_vendas_gerencia]
-        new_name_column_qtd_cotas = column_ata_mes_sma + word__Qtd_Cotas
-        new_name_column_qtd_cotas_vendedor = new_name_column_qtd_cotas + word__Vend
-        new_name_column_qtd_cotas_supervisor = new_name_column_qtd_cotas + word__Sup
-        new_name_column_qtd_cotas_gerencia = new_name_column_qtd_cotas + word__Ger
-        list_column_qtd_cotas = [new_name_column_qtd_cotas_vendedor,
-                                 new_name_column_qtd_cotas_supervisor,
-                                 new_name_column_qtd_cotas_gerencia]
+        column_Total_ATAMes = word_Total + ' ' + column_ata_mes_sma
+        column_Total_ATAMes_Vendedor = column_Total_ATAMes + word__Vendedor
+        column_Total_ATAMes_Supervisor = column_Total_ATAMes + word__Supervisor
+        column_Total_ATAMes_Gerencia = column_Total_ATAMes + word__Gerencia
+        list_column_ata = [column_Total_ATAMes_Vendedor,
+                           column_Total_ATAMes_Supervisor,
+                           column_Total_ATAMes_Gerencia]
+        column_Qtd_Vendas_ATAMes = word_Qtd_Vendas + ' ' + column_ata_mes_sma
+        column_Qtd_Vendas_ATAMes_Vendedor = column_Qtd_Vendas_ATAMes + word__Vendedor
+        column_Qtd_Vendas_ATAMes_Supervisor = column_Qtd_Vendas_ATAMes + word__Supervisor
+        column_Qtd_Vendas_ATAMes_Gerencia = column_Qtd_Vendas_ATAMes + word__Gerencia
+        list_column_qtd_vendas = [column_Qtd_Vendas_ATAMes_Vendedor,
+                                  column_Qtd_Vendas_ATAMes_Supervisor,
+                                  column_Qtd_Vendas_ATAMes_Gerencia]
+
+        column_Escala_ATAMes = word_Escala_ + column_ata_mes_sma
+        column_Escala_ATAMes_Vendedor = column_Escala_ATAMes + word__Vendedor
+        column_Escala_ATAMes_Supervisor = column_Escala_ATAMes + word__Supervisor
+        column_Escala_ATAMes_Gerencia = column_Escala_ATAMes + word__Gerencia
+        list_column_qtd_cotas = [column_Escala_ATAMes_Vendedor,
+                                 column_Escala_ATAMes_Supervisor,
+                                 column_Escala_ATAMes_Gerencia]
+
         return list_column_ata, list_column_qtd_vendas, list_column_qtd_cotas
 
     def create_list_columns_total(self, column_ata_mes_sma):
-        new_name_column = word_Total + ' ' + column_ata_mes_sma
-        new_name_column_vendedor = new_name_column + word__Vend
-        new_name_column_supervisor = new_name_column + word__Sup
-        new_name_column_gerencia = new_name_column + word__Ger
-        if word_Sma_ in new_name_column:
+        column_Total_ATAMes = word_Total + ' ' + column_ata_mes_sma
+        column_Total_ATAMes_Vendedor = column_Total_ATAMes + word__Vendedor
+        column_Total_ATAMes_Supervisor = column_Total_ATAMes + word__Supervisor
+        column_Total_ATAMes_Gerencia = column_Total_ATAMes + word__Gerencia
+        if word_Sma_ in column_Total_ATAMes:
             list_column_total = [
-                new_name_column_vendedor, new_name_column_supervisor, new_name_column_gerencia
-            ]
+                column_Total_ATAMes_Vendedor,
+                column_Total_ATAMes_Supervisor,
+                column_Total_ATAMes_Gerencia]
             return list_column_total
-        new_name_column_qtd_vendas = word_Qtd_Vendas + ' ' + column_ata_mes_sma
-        new_name_column_qtd_vendas_vendedor = new_name_column_qtd_vendas + word__Vend
-        new_name_column_qtd_vendas_supervisor = new_name_column_qtd_vendas + word__Sup
-        new_name_column_qtd_vendas_gerencia = new_name_column_qtd_vendas + word__Ger
-        new_name_column_qtd_cotas = column_ata_mes_sma + word__Qtd_Cotas
-        new_name_column_qtd_cotas_vendedor = new_name_column_qtd_cotas + word__Vend
-        new_name_column_qtd_cotas_supervisor = new_name_column_qtd_cotas + word__Sup
-        new_name_column_qtd_cotas_gerencia = new_name_column_qtd_cotas + word__Ger
+        column_Qtd_Vendas_ATAMes = word_Qtd_Vendas + ' ' + column_ata_mes_sma
+        column_Qtd_Vendas_ATAMes_Vendedor = column_Qtd_Vendas_ATAMes + word__Vendedor
+        column_Qtd_Vendas_ATAMes_Supervisor = column_Qtd_Vendas_ATAMes + word__Supervisor
+        column_Qtd_Vendas_ATAMes_Gerencia = column_Qtd_Vendas_ATAMes + word__Gerencia
+
+        column_Escala_ATAMes = word_Escala_ + column_ata_mes_sma
+        column_Escala_ATAMes_Vendedor = column_Escala_ATAMes + word__Vendedor
+        column_Escala_ATAMes_Supervisor = column_Escala_ATAMes + word__Supervisor
+        column_Escala_ATAMes_Gerencia = column_Escala_ATAMes + word__Gerencia
 
         list_column_total = [
-            new_name_column_vendedor, new_name_column_qtd_vendas_vendedor, new_name_column_qtd_cotas_vendedor,  # noqa
-            new_name_column_supervisor, new_name_column_qtd_vendas_supervisor, new_name_column_qtd_cotas_supervisor,  # noqa
-            new_name_column_gerencia, new_name_column_qtd_vendas_gerencia, new_name_column_qtd_cotas_gerencia  # noqa
+            column_Total_ATAMes_Vendedor, column_Qtd_Vendas_ATAMes_Vendedor, column_Escala_ATAMes_Vendedor,  # noqa
+            column_Total_ATAMes_Supervisor, column_Qtd_Vendas_ATAMes_Supervisor, column_Escala_ATAMes_Supervisor,  # noqa
+            column_Total_ATAMes_Gerencia, column_Qtd_Vendas_ATAMes_Gerencia, column_Escala_ATAMes_Gerencia  # noqa
         ]
         return list_column_total
 
@@ -350,25 +359,25 @@ class TableManip:
             return num_qtd_cotas_temp, num_qtd_cotas_temp
         return None, num_qtd_cotas_temp
 
-    def data_column_Qtd_Valor_Vend(self, line, periodo_valor_qtd_vendas):
+    def data_column_Qtd_Valor_Vendedor(self, line, periodo_valor_qtd_vendas):
         #  se variavel for interavel
         if not isinstance(periodo_valor_qtd_vendas, (str, list, tuple)):
             periodo_valor_qtd_vendas = self.table.iloc[line][column_Periodo_Valor_Qtd_Vendas_Supervisor]  # noqa
             if not isinstance(periodo_valor_qtd_vendas, (str, list, tuple)):
-                self.table.at[line, column_Qtd_Valor_Vend] = 'Periodo Nulo'
+                self.table.at[line, column_Qtd_Valor_Vendedor] = 'Periodo Nulo'
                 return
         #      'Qtd Vendas'
         if word_Qtd_Vendas in periodo_valor_qtd_vendas:
             #                       'Qtd Valor Vend'
-            self.table.at[line, column_Qtd_Valor_Vend] = word_Qtd_Vendas  # noqa
+            self.table.at[line, column_Qtd_Valor_Vendedor] = word_Qtd_Vendas  # noqa
         else:
-            self.table.at[line, column_Qtd_Valor_Vend] = 'Valor Vendas'
+            self.table.at[line, column_Qtd_Valor_Vendedor] = 'Valor Vendas'
 
     def get_name_professional(self, line):
-        vendedor = self.table.iloc[line][column_Vendedor]
-        supervisor = self.table.iloc[line][column_Supervisor]
-        cargo_gerencia = self.table.iloc[line][column_Cargo_Gerencia]
-        list_professional = [vendedor, supervisor, cargo_gerencia]
+        Vendedor = self.table.iloc[line][column_Vendedor]
+        Supervisor = self.table.iloc[line][column_Supervisor]
+        cargo_Gerencia = self.table.iloc[line][column_Cargo_Gerencia]
+        list_professional = [Vendedor, Supervisor, cargo_Gerencia]
         return list_professional
 
     def data_column_Total(self, profession, ata, column_prof, column_ata_mes_sma, line, column_Total):  # noqa
@@ -439,7 +448,7 @@ class TableManip:
                     if key_prof == 0:  # vendedor
                         column_prof = column_Vendedor
                         periodo_valor_qtd_vendas = self.table.iloc[line][column_Periodo_Valor_Qtd_Vendas]  # noqa
-                        self.data_column_Qtd_Valor_Vend(line, periodo_valor_qtd_vendas)
+                        self.data_column_Qtd_Valor_Vendedor(line, periodo_valor_qtd_vendas)
                     elif key_prof == 1:  # supervisro
                         column_prof = column_Supervisor
                         periodo_valor_qtd_vendas = self.table.iloc[line][column_Periodo_Valor_Qtd_Vendas_Supervisor]  # noqa
@@ -603,7 +612,7 @@ class TableManip:
         self.dict_duplicate_sum = {}
         for line in range(quantity_line):
             PK_Vend_ATA_Entrega = self.table.iloc[line][column_PK_Vend_ATA_Entrega]
-            self.renomear.inf = self.table.iloc[line][column_Total_ATA_Entrega_Vend]
+            self.renomear.inf = self.table.iloc[line][column_Total_ATA_Entrega_Vendedor]
             Total_ATA_Entrega_Vend = float(self.renomear.valor())
             for list_columns_percentage in list_list_columns_percentage:
                 column_num_ata_nparc = list_columns_percentage[3]
@@ -702,15 +711,15 @@ class TableManip:
                 inf = inf_re.group(1)
             self.table.iat[line, self.table.columns.get_loc(name_column)] = inf
 
-    @ property
-    def create_table(self):
-        return None
+    # @ property
+    # def create_table(self):
+    #     return None
 
-    @ create_table.setter
-    def create_table(self, Name_columns):
-        self.table = pd.DataFrame()  # tabela vazia
-        for column in Name_columns:
-            self.table[column] = None
+    # @ create_table.setter
+    # def create_table(self, Name_columns):
+    #     self.table = pd.DataFrame()  # tabela vazia
+    #     for column in Name_columns:
+    #         self.table[column] = None
 
     @ property
     def add_line_dictionary(self):
@@ -762,11 +771,11 @@ class TableManip:
             data_weekly = datetime.strptime(data_weekly, '%d/%m/%Y')
             nun_line_ATA = len(table_ata)
             for line_ATA in range(nun_line_ATA):
-                data_ATA_final = table_ata.iloc[line_ATA][column_Periodo_final]
+                data_ATA_final = table_ata.iloc[line_ATA][column_Periodo_Final]
                 data_ATA_final = datetime.strptime(data_ATA_final, '%d/%m/%Y')
                 if data_weekly > data_ATA_final:
                     continue
-                data_ATA_inicial = table_ata.iloc[line_ATA][column_Periodo_inicial]
+                data_ATA_inicial = table_ata.iloc[line_ATA][column_Periodo_Inicial]
                 data_ATA_inicial = datetime.strptime(data_ATA_inicial, '%d/%m/%Y')
                 if data_weekly < data_ATA_inicial:
                     continue

@@ -126,7 +126,7 @@ class Main_table:
         text = 'Unir todas Tabelas: '
         if self.mix is False:
             text += 'Não'
-            self.table_full = load_table(self.arqtableMerge)
+            self.table_full = load_table(self.arqTableMerge)
         else:
             text += 'Sim'
         self.father.prog1(text)
@@ -178,7 +178,7 @@ class Main_table:
             if self.driver:
                 self.driver.quit()
                 self.driver = None
-            create_table(self.table_Cadastro_Consorciado, arqTableCadastroConsorciado)
+            arqTableMerge(self.table_Cadastro_Consorciado, arqTableCadastroConsorciado)
         else:
             text_te = 'Ler a tabela de ' + text_lc + ' dos arquivos já salvos.'
             self.father.prog1(text_te)
@@ -233,12 +233,11 @@ class Main_table:
             self.tableManip.table = self.table_Cadastro_Ata
             list_columns_rename = [
                 [1, word_Mes_],
-                [2, column_Periodo_inicial],
-                [3, column_Periodo_final]]
+                [2, column_Periodo_Inicial],
+                [3, column_Periodo_Final]]
             for column_rename in list_columns_rename:
                 self.tableManip.rename_name_column_indix = column_rename
-            self.tableManip.add_column_clone_two_columns = [
-                column_ATA, word_Mes_, word_Ano]
+            self.tableManip.add_column_clone_two_columns = [column_ATA, word_Mes_, word_Ano]  # noqa
             self.table_Cadastro_Ata = self.tableManip.table
             create_table(self.table_Cadastro_Ata, arqTableCadastroAta)  # noqa
         else:
@@ -539,92 +538,92 @@ class Main_table:
         i = 1
         while True:
             i += 1
-            n_parc = str(i) + word_º_Parc
-            column_situacao = word_Situacao_ + n_parc
+            n_Parc = str(i) + word_º_Parc
+            column_situacao = word_Situacao_ + n_Parc
             if column_situacao not in self.table_full.columns:
                 break
 
-            column_data_pag = word_Data_ + word_Pag_ + n_parc
-            column_ata_pag = word_ATA_ + word_Pag_ + n_parc
-            column_sma_pag = word_Sma_ + word_Pag_ + n_parc
-            column_mes_pag = word_Mes_ + word_Pag_ + n_parc
-            column_data_venc = word_Data_ + word_Venc_ + n_parc
-            column_ata_venc = word_ATA_ + word_Venc_ + n_parc
-            column_sma_venc = word_Sma_ + word_Venc_ + n_parc
-            column_mes_venc = word_Mes_ + word_Venc_ + n_parc
-            column_situacao_ata = word_Situacao_ + word_ATA_ + n_parc
-            column_num_ata_nparc = word_Num_ + word_ATA_ + n_parc
-            column_1_porc_ata = word_1_Porc_ + word_ATA_ + n_parc
-            column_2_porc_ata = word_2_Porc_ + word_ATA_ + n_parc
-            column_3_porc_ata = word_3_Porc_ + word_ATA_ + n_parc
-            column_num_ata_nparc_atrasado = word_Num_ + word_ATA_ + n_parc + word__Atrasado
-            column_ata_pag_atrasado_1_ata = column_ata_pag + word__Atrasado_1_ATA
-            column_ata_pag_atrasado_2_atas = column_ata_pag + word__Atrasado_2_ATAs
-            column_comissao_atrasada = word_Pagar_Comissao_ + n_parc
+            column_Data_Pag_n_Parc = word_Data_ + word_Pag_ + n_Parc
+            column_ATA_Pag_n_Parc = word_ATA_ + word_Pag_ + n_Parc
+            column_Sma_Pag_n_Parc = word_Sma_ + word_Pag_ + n_Parc
+            column_Mes_Pag_n_Parc = word_Mes_ + word_Pag_ + n_Parc
+            column_Data_Venc_n_Parc = word_Data_ + word_Venc_ + n_Parc
+            column_ATA_Venc_n_Parc = word_ATA_ + word_Venc_ + n_Parc
+            column_Sma_Venc_n_Parc = word_Sma_ + word_Venc_ + n_Parc
+            column_Mes_Venc_n_Parc = word_Mes_ + word_Venc_ + n_Parc
+            column_Situacao_ATA_n_Parc = word_Situacao_ + word_ATA_ + n_Parc
+            column_Num_ATA_n_Parc = word_Num_ + word_ATA_ + n_Parc
+            column_Num_ATA_n_Parc_Atrasado = word_Num_ + word_ATA_ + n_Parc + word__Atrasada
+            column_porc_ATA_Pag = word_porc_ + column_ATA_Pag_n_Parc
+            column_porc_ATA_Pag_n_Parc_1_ATA_Atrasada = word_porc_ + column_ATA_Pag_n_Parc + word__1_ATA_Atrasada
+            column_porc_ATA_Pag_n_Parc_2_ATA_Atrasada = word_porc_ + column_ATA_Pag_n_Parc + word__2_ATA_Atrasada
+            column_ATA_Pag_n_Parc_1_ATA_Atrasada = column_ATA_Pag_n_Parc + word__1_ATA_Atrasada
+            column_ATA_Pag_n_Parc_2_ATA_Atrasada = column_ATA_Pag_n_Parc + word__2_ATA_Atrasada
+            column_Pag_Comissao_n_Parc = word_Pag_Comissao_ + n_Parc
 
             self.list_list_columns_pag.append([
                 column_situacao,
-                column_data_pag,
-                column_ata_pag,
-                column_sma_pag,
-                column_mes_pag
+                column_Data_Pag_n_Parc,
+                column_ATA_Pag_n_Parc,
+                column_Sma_Pag_n_Parc,
+                column_Mes_Pag_n_Parc
             ])
             self.list_list_columns_venc.append([
                 column_situacao,
-                column_data_venc,
-                column_ata_venc,
-                column_sma_venc,
-                column_mes_venc
+                column_Data_Venc_n_Parc,
+                column_ATA_Venc_n_Parc,
+                column_Sma_Venc_n_Parc,
+                column_Mes_Venc_n_Parc
             ])
             self.list_list_columns_situacao_num_ATA.append([
                 column_situacao,
-                column_data_pag,
-                column_data_venc,
-                column_ata_pag,
-                column_ata_venc,
-                column_situacao_ata,
-                column_num_ata_nparc
+                column_Data_Pag_n_Parc,
+                column_Data_Venc_n_Parc,
+                column_ATA_Pag_n_Parc,
+                column_ATA_Venc_n_Parc,
+                column_Situacao_ATA_n_Parc,
+                column_Num_ATA_n_Parc
             ])
             self.list_list_columns_num_ATA_atrasado.append([
-                column_num_ata_nparc,
-                column_num_ata_nparc_atrasado
+                column_Num_ATA_n_Parc,
+                column_Num_ATA_n_Parc_Atrasado
             ])
             self.list_list_columns_percentage.append([
-                column_1_porc_ata,
-                column_2_porc_ata,
-                column_3_porc_ata,
-                column_num_ata_nparc
+                column_porc_ATA_Pag,
+                column_porc_ATA_Pag_n_Parc_1_ATA_Atrasada,
+                column_porc_ATA_Pag_n_Parc_2_ATA_Atrasada,
+                column_Num_ATA_n_Parc
             ])
             self.list_list_columns_ata_pag_atrasado_n_ata.append([
-                column_ata_venc,
-                column_ata_pag_atrasado_1_ata,
-                column_ata_pag_atrasado_2_atas
+                column_ATA_Venc_n_Parc,
+                column_ATA_Pag_n_Parc_1_ATA_Atrasada,
+                column_ATA_Pag_n_Parc_2_ATA_Atrasada
             ])
             self.list_list_columns_comissao_atrasada.append([
-                column_comissao_atrasada,
-                column_1_porc_ata,
-                column_2_porc_ata,
-                column_3_porc_ata
+                column_Pag_Comissao_n_Parc,
+                column_porc_ATA_Pag,
+                column_porc_ATA_Pag_n_Parc_1_ATA_Atrasada,
+                column_porc_ATA_Pag_n_Parc_2_ATA_Atrasada
             ])
             self.list_list_columns_order.append([
                 column_situacao,
-                column_situacao_ata,
-                column_data_pag,
-                column_data_venc,
-                column_num_ata_nparc,
-                column_num_ata_nparc_atrasado,
-                column_comissao_atrasada,
-                column_ata_pag,
-                column_1_porc_ata,
-                column_ata_venc,
-                column_2_porc_ata,
-                column_ata_pag_atrasado_1_ata,
-                column_3_porc_ata,
-                column_ata_pag_atrasado_2_atas,
-                column_mes_pag,
-                column_mes_venc,
-                column_sma_pag,
-                column_sma_venc
+                column_Situacao_ATA_n_Parc,
+                column_Data_Pag_n_Parc,
+                column_Data_Venc_n_Parc,
+                column_Num_ATA_n_Parc,
+                column_Num_ATA_n_Parc_Atrasado,
+                column_Pag_Comissao_n_Parc,
+                column_ATA_Pag_n_Parc,
+                column_porc_ATA_Pag,
+                column_ATA_Venc_n_Parc,
+                column_porc_ATA_Pag_n_Parc_1_ATA_Atrasada,
+                column_ATA_Pag_n_Parc_1_ATA_Atrasada,
+                column_porc_ATA_Pag_n_Parc_2_ATA_Atrasada,
+                column_ATA_Pag_n_Parc_2_ATA_Atrasada,
+                column_Mes_Pag_n_Parc,
+                column_Mes_Venc_n_Parc,
+                column_Sma_Pag_n_Parc,
+                column_Sma_Venc_n_Parc
             ])
 
     def merge_full_ata_weekly_month(self):
@@ -786,56 +785,58 @@ class Main_table:
             elif word_1_Parcela in column_full or word_Demais in column_full or word_FAT in column_full:
                 list_columns_1Parcela_Demais_FAT.append(column_full)
 
-        for columns_Cliente in list_columns_cliente:
-            if columns_Cliente in self.list_columns_start:
-                self.list_columns_start.remove(columns_Cliente)
-            self.list_columns_start.append(columns_Cliente)
+        list_all = list_columns_cliente + list_columns_Cad_Adm + list_columns_Mes + list_columns_Sma + list_columns_1Parcela_Demais_FAT
+        return list_all
 
-        for columns_Cad_Adm in list_columns_Cad_Adm:
-            if columns_Cad_Adm in self.list_columns_start:
-                self.list_columns_start.remove(columns_Cad_Adm)
-            self.list_columns_start.append(columns_Cad_Adm)
+    def discover_columns_are_not_conlumns_start(self):
+        list_columns_full = self.table_full.columns.to_list()
+        list_columns_are_not_conlumns_start = []
+        for column_full in list_columns_full:
+            if column_full not in self.list_columns_start:
+                list_columns_are_not_conlumns_start.append(column_full)
+        return list_columns_are_not_conlumns_start
 
-        for columns_Mes in list_columns_Mes:
-            if columns_Mes in self.list_columns_start:
-                self.list_columns_start.remove(columns_Mes)
-            self.list_columns_start.append(columns_Mes)
+    def alter_order_columns(self):
+        list_columns_end = []
+        for column_start in self.list_columns_start:
+            if column_start == column_Periodo_Valor_Qtd_Vendas:
+                for column_Valor_Qtd_Vendas in list_order_columns_Valor_Qtd_Vendas_Vendedor:
+                    if column_Valor_Qtd_Vendas in list_columns_end:
+                        list_columns_end.remove(column_Valor_Qtd_Vendas)
+                    list_columns_end.append(column_Valor_Qtd_Vendas)
+            elif column_start == column_Periodo_Valor_Qtd_Vendas_Supervisor:
+                for column_Valor_Qtd_Vendas in list_order_columns_Valor_Qtd_Vendas_Supervisor:
+                    if column_Valor_Qtd_Vendas in list_columns_end:
+                        list_columns_end.remove(column_Valor_Qtd_Vendas)
+                    list_columns_end.append(column_Valor_Qtd_Vendas)
+            elif column_start == column_Periodo_Valor_Qtd_Vendas_Gerencia:
+                for column_Valor_Qtd_Vendas in list_order_columns_Valor_Qtd_Vendas_Gerencia:
+                    if column_Valor_Qtd_Vendas in list_columns_end:
+                        list_columns_end.remove(column_Valor_Qtd_Vendas)
+                    list_columns_end.append(column_Valor_Qtd_Vendas)
+            list_columns_end.append(column_start)
+        return list_columns_end
 
-        for columns_Sma in list_columns_Sma:
-            if columns_Sma in self.list_columns_start:
-                self.list_columns_start.remove(columns_Sma)
-            self.list_columns_start.append(columns_Sma)
-
-        for columns_1Parcela_Demais_FAT in list_columns_1Parcela_Demais_FAT:
-            if columns_1Parcela_Demais_FAT in self.list_columns_start:
-                self.list_columns_start.remove(columns_1Parcela_Demais_FAT)
-            self.list_columns_start.append(columns_1Parcela_Demais_FAT)
+    def add_columns_list_columns_start(self, list_columns):
+        for column in list_columns:
+            if column in self.list_columns_start:
+                self.list_columns_start.remove(column)
+            self.list_columns_start.append(column)
 
     def order_column(self):
         ''' Ordenar colunas da tabela para a forma que quiser'''
         text_te = 'Ordenar as colunas, colocando as mais importantes no início '
         self.father.prog1(text_te)
         for list_columns_ata in self.list_list_columns_order:
-            for columns_ata in list_columns_ata:
-                # remover coluna Mes Xº Parc
-                if columns_ata not in self.list_columns_start:
-                    self.list_columns_start.append(columns_ata)
-
+            self.add_columns_list_columns_start(list_columns_ata)
         for list_column_orden_total in self.list_list_column_orden_total:
-            for column_orden_total in list_column_orden_total:
-                self.list_columns_start.append(column_orden_total)
-
-        self.create_list_order_columns()
-        list_columns_full = self.table_full.columns.to_list()
-        list_columns_full_new = []
-        for key, columnList in enumerate(list_columns_full):
-            if key == 0:
-                for listColumnStart in self.list_columns_start:
-                    list_columns_full_new.append(listColumnStart)
-            if columnList in self.list_columns_start:
-                continue
-            list_columns_full_new.append(columnList)
-        self.table_full = self.table_full[list_columns_full_new]
+            self.add_columns_list_columns_start(list_column_orden_total)
+        list_all = self.create_list_order_columns()
+        self.add_columns_list_columns_start(list_all)
+        list_columns_are_not_conlumns_start = self.discover_columns_are_not_conlumns_start()
+        self.add_columns_list_columns_start(list_columns_are_not_conlumns_start)
+        list_columns_end = self.alter_order_columns()
+        self.table_full = self.table_full[list_columns_end]
 
     def save_full(self):
         text_te = 'Salvar uma tabela previamente consolidada e tratada.'
@@ -844,10 +845,10 @@ class Main_table:
             return
         if self.salve_first:
             if self.mix:
-                create_table(self.table_full, arqtableMerge)
+                create_table(self.table_full, arqTableMerge)
             self.salve_first = False
         else:
-            create_table(self.table_full, arqtableMergeOrder)
+            create_table(self.table_full, arqTableMergeOrder)
 
     def save_full_teste(self, n):
         text_te = 'Salvar uma tabela em testes'

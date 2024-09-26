@@ -79,6 +79,13 @@ model = '2'
 
 number_in_column = 0
 
+sum_comissao = 0
+sum_comissao_compliance = 0
+sum_all_comissao = 0
+sum_all_comissao_gerente = 0
+sum_compliance = 0
+adimplencias = ''
+list_line_delete = []
 
 date_ata_single = 'MAIO/2024'
 date_sma_single = '1ª/MAIO/2024'
@@ -87,110 +94,168 @@ date_sma_single = '1ª/MAIO/2024'
 word_Appdata = 'Appdata'
 word_tables = 'tables'
 word_log = 'log'
-word_Qtd_Vendas = 'Qtd. Vendas'
 word_CADASTRO = 'CADASTRO'
 word_DIA_DA_SEMANA = 'DIA DA SEMANA'
-# word__Qtd_Cotas_Inicial = ' Qtd. Cotas Inicial'
-word_Periodo_Venda = 'Período Venda'
-word_Periodo_Venda2 = 'PerÃ­odo Venda:'
-word__Periodo_Valor_Qtd_Vendas = ' Periodo Valor Qtd Vendas'
-word__Valor_Qtd_Vendas_Inicial = ' Valor Qtd Vendas Inicial'
-word__Valor_Qtd_Vendas_Final = ' Valor Qtd Vendas Final'
-word__Data_Inicial = ' Data inicial'
-word__Data_Final = ' Data final'
-word__Valor_Qtd_Vendas_Inicial_Supervisor = ' Valor Qtd Vendas Inicial Supervisor'
-word__Valor_Qtd_Vendas_Final_Supervisor = ' Valor Qtd Vendas Final Supervisor'
-word__Data_Inicial_Supervisor = ' Data inicial Supervisor'
-word__Data_Final_Supervisor = ' Data final Supervisor'
-word__Valor_Qtd_Vendas_Inicial_Gerencia = ' Valor Qtd Vendas Inicial Gerencia'
-word__Valor_Qtd_Vendas_Final_Gerencia = ' Valor Qtd Vendas Final Gerencia'
-word__Data_Inicial_Gerencia = ' Data inicial Gerencia'
-word__Data_Final_Gerencia = ' Data final Gerencia'
-word__Parc_ = ' Parc '
-word_Parc = 'Parc'
+word_Situacao_ = 'Situação '
+word_Comissao = 'Comissão'
+word_porc_ = '% '
+word__Atrasada = ' Atrasada'
 word_Acoes = 'Ações'
 word_a = 'à'
-word_Periodo = 'Período'
-word_Periodo_final = 'Período final'
-word_Periodo_inicial = 'Período inicial'
-word_Data_ = 'Data '
 word_Ano = 'Ano'
-word_Mes = 'Mes'
-word_Mes_ = 'Mes '
-word_Sma_ = 'Sma '
-word_Vendedor = 'Vendedor'
-word_Supervisor = 'Supervisor'
-word_Gerencia = 'Gerencia'
-word_Parceiro = 'Parceiro'
 word_Cliente = 'Cliente'
-word__Vend = ' Vend'
-word__Sup = ' Sup'
-word__Ger = ' Ger'
-word__Qtd_Cotas = ' Qtd Cotas'
+word_Parceiro = 'Parceiro'
+word_Vendas = 'Vendas'
+word_Cotas = 'Cotas'
+word_Recebera = 'Recebera'
+word_Referencia = 'Referencia'
+word_Parcela = 'Parcela'
+word_ponto = '.'
+
+word_Escala = 'Escala'
+word_Escala_ = word_Escala + ' '
+word_PK = 'PK'
+word_PK_ = word_PK + ' '
+word_Num = 'Num' + word_ponto
+word_Num_ = word_Num + ' '
+word_Qtd = 'Qtd' + word_ponto
+word_Qtd_ = word_Qtd + ' '
+word_Parc = 'Parc'  # não pode colocar . devido a relatorio da sircon
+word_Parc_ = word_Parc + ' '
+word_º_Parc = 'º ' + word_Parc
+word__Parc_ = ' ' + word_Parc + ' '
+word_Venc = 'Venc' + word_ponto
+word_Venc_ = word_Venc + ' '
+word_Pag = 'Pag' + word_ponto
+word_Pag_ = word_Pag + ' '
+word_Periodo = 'Período'
+word_Periodo_ = word_Periodo + ' '
+word__Periodo = ' ' + word_Periodo
+word_Data = 'Data'
+word_Data_ = word_Data + ' '
+word__Data_ = ' ' + word_Data + ' '
+word_Mes = 'Mes'
+word_Mes_ = word_Mes + ' '
+word_Sma = 'Sma'
+word_Sma_ = word_Sma + ' '
+word_Valor = 'Valor'
+word_Valor_ = word_Valor + ' '
+word__Valor_ = ' ' + word_Valor + ' '
+word_Venda = 'Venda'
+word_Venda_ = word_Venda + ' '
+word_Vendedor = 'Vendedor'
+word__Vendedor = ' ' + word_Vendedor
+word_Supervisor = 'Supervisor'
+word__Supervisor = ' ' + word_Supervisor
+word_Gerencia = 'Gerencia'
+word__Gerencia = ' ' + word_Gerencia
 word_Total = 'Total'
-word_Venc_ = 'Venc. '
-word_Pag_ = 'Pag. '
-word_º_Parc = 'º Parc'
-word_ATA_ = 'ATA '
-word_Cad_Adm = 'Cad. Adm'
-word_Situacao_ = 'Situação '
-word_Num_ = 'Num. '
-word_1_Porc_ = '1º % '
-word_2_Porc_ = '2º % '
-word_3_Porc_ = '3º % '
-word__Atrasado = ' Atrasado'
-word__Atrasado_1_ATA = word__Atrasado + ' 1 ATA'
-word__Atrasado_2_ATAs = word__Atrasado + ' 2 ATAs'
-word_Data_Pag_Errada = 'Data Pag. Errada'
-word_Pag_Mesma_ATA = 'Pag. Mesma ATA'
-word_Pag_Adiantado_ATA = 'Pag. Adiantado ATA'
-word_Pag_Atrasado_ATA = 'Pag. Atrasado ATA'
-word_1_Parcela = '1ª Parcela'
-word_Demais = 'Demais'
-word_FAT = 'FAT'
-word_Pagar_Comissao_ = 'Pagar Comissao '
+word_Total_ = word_Total + ' '
+word_ATA = 'ATA'
+word_ATA_ = word_ATA + ' '
 word_Entrega = 'Entrega'
+word_Entrega_ = word_Entrega + ' '
+word_Cad_Adm = 'Cad' + word_ponto + ' Adm'
+word_Cad_Adm_ = word_Cad_Adm + ' '
+word_1_Parcela = '1ª ' + word_Parcela
+word_1_Parcela_ = word_1_Parcela + ' '
+word_Demais = 'Demais'
+word_Demais_ = word_Demais + ' '
+word_FAT = 'FAT'
+word_FAT_ = word_FAT + ' '
+word_Inicial = 'Inicial'
+word_Inicial_ = word_Inicial + ' '
+word_Final = 'Final'
+word_Final_ = word_Final + ' '
+
+word_Parc_ponto_ = word_Parc + word_ponto + ' '
+word_Qtd_Vendas = word_Qtd_ + word_Vendas
+word_Qtd_Vendas_ = word_Qtd_Vendas + ' '
+word_Valor_Qtd_Vendas = word_Valor_ + word_Qtd_Vendas
+word_Valor_Qtd_Vendas_ = word_Valor_ + word_Qtd_Vendas_
+word__Valor_Qtd_Vendas_ = ' ' + word_Valor_Qtd_Vendas_
+word__Valor_Qtd_Vendas = ' ' + word_Valor_Qtd_Vendas
+
+word__1_ATA_Atrasada = ' 1 ' + word_ATA + word__Atrasada
+word__2_ATA_Atrasada = ' 2 ' + word_ATA + word__Atrasada
+word_Data_Pag_Errada = word_Data_ + word_Pag_ + 'Errada'
+word_Pag_Comissao_ = word_Pag_ + 'Comissao '
+word_Pag_Mesma_ATA = word_Pag_ + 'Mesma ' + word_ATA
+word_Pag_Adiantado_ATA = word_Pag_ + word_ATA + word__Atrasada
+word_Pag_Atrasado_ATA = word_Pag_ + word_ATA + word__Atrasada
+
+word__Data_Inicial = word__Data_ + word_Inicial
+word__Data_Final = word__Data_ + word_Final
+word__Valor_Qtd_Vendas_Inicial = word__Valor_Qtd_Vendas_ + word_Inicial
+word__Valor_Qtd_Vendas_Final = word__Valor_Qtd_Vendas_ + word_Final
+word__Valor_Qtd_Vendas_Inicial_Supervisor = word__Valor_Qtd_Vendas_ + word_Inicial_ + word_Supervisor
+word__Valor_Qtd_Vendas_Final_Supervisor = word__Valor_Qtd_Vendas_ + word_Final_ + word_Supervisor
+word__Data_Inicial_Supervisor = word__Data_ + word_Inicial_ + word_Supervisor
+word__Data_Final_Supervisor = word__Data_ + word_Final_ + word_Supervisor
+word__Valor_Qtd_Vendas_Inicial_Gerencia = word__Valor_Qtd_Vendas_ + word_Inicial_ + word_Gerencia
+word__Valor_Qtd_Vendas_Final_Gerencia = word__Valor_Qtd_Vendas_ + word_Final_ + word_Gerencia
+word__Data_Inicial_Gerencia = word__Data_ + word_Inicial_ + word_Gerencia
+word__Data_Final_Gerencia = word__Data_ + word_Final_ + word_Gerencia
+word_Periodo_final = word_Periodo_ + word_Final
+word_Periodo_inicial = word_Periodo_ + word_Inicial
+word_Periodo_Venda = word_Periodo_ + word_Venda
+word_Periodo_Venda2 = 'PerÃ­odo ' + word_Venda + ':'
+word__Periodo_Valor_Qtd_Vendas = word__Periodo + word__Valor_ + word_Qtd_Vendas
 
 
-column_Parcela = 'Parcela'
-column_Porcentagem = '%'
-column_Comissao = 'Comissão'
-column_Adimplencia = 'Adimplência'
-column_ATA_Entrega_Qtd_Cotas_Vend = 'ATA Entrega Qtd Cotas Vend'
-column_ATA_Entrega_Qtd_Cotas_Sup = 'ATA Entrega Qtd Cotas Sup'
-column_ATA_Entrega_Qtd_Cotas_Ger = 'ATA Entrega Qtd Cotas Ger'
-column_ATA_Cad_Adm_Qtd_Cotas_Vend = 'ATA Cad. Adm Qtd Cotas Vend'
-column_ATA_Cad_Adm_Qtd_Cotas_Sup = 'ATA Cad. Adm Qtd Cotas Ger'
-column_ATA_Cad_Adm_Qtd_Cotas_Ger = 'ATA Cad. Adm Qtd Cotas Ger Ger'
-column_Mes_Entrega_Qtd_Cotas_Vend = 'Mes Entrega Qtd Cotas Vend'
-column_Mes_Entrega_Qtd_Cotas_Sup = 'Mes Entrega Qtd Cotas Sup'
-column_Mes_Entrega_Qtd_Cotas_Ger = 'Mes Entrega Qtd Cotas Ger'
-column_Mes_Cad_Adm_Qtd_Cotas_Vend = 'Mes Cad. Adm Qtd Cotas Vend'
-column_Mes_Cad_Adm_Qtd_Cotas_Sup = 'Mes Cad. Adm Qtd Cotas Sup'
-column_Mes_Cad_Adm_Qtd_Cotas_Ger = 'Mes Cad. Adm Qtd Cotas Ger'
-word_DIA_DA_SEMANA = 'DIA DA SEMANA'
-word_CADASTRO = 'CADASTRO'
-column_Total_Sma_Cad_Adm_Vend = 'Total Sma Cad Adm Vend'
-column_Total_Sma_Cad_Adm_Sup = 'Total Sma Cad Adm Sup'
-column_Total_Sma_Cad_Adm_Ger = 'Total Sma Cad Adm Ger'
-column_Total_ATA_Cad_Adm_Vend = 'Total ATA Cad Adm Vend'
-column_Total_ATA_Cad_Adm_Sup = 'Total ATA Cad Adm Sup'
-column_Total_ATA_Cad_Adm_Ger = 'Total ATA Cad Adm Ger'
-column_Total_Sma_Entrega_Vend = 'Total Sma Entrega Vend'
-column_Total_Sma_Entrega_Sup = 'Total Sma Entrega Sup'
-column_Total_Sma_Entrega_Ger = 'Total Sma Entrega Ger'
-column_Total_ATA_Entrega_Vend = 'Total ATA Entrega Vend'
-column_Total_ATA_Entrega_Sup = 'Total ATA Entrega Sup'
-column_Total_ATA_Entrega_Ger = 'Total ATA Entrega Ger'
+word_profissao = ''
+seller_single = ''
+date_atasma_single = ''
 column_profissao = ''
+column_Parcela = word_Parcela
+column_Porcentagem = '%'
+column_Comissao = word_Comissao
+column_Comissao_50_porc = word_Comissao + ' 50%'
+column_Adimplencia = 'Adimplência'
+column_ATA_Venc_pag = word_ATA_ + word_Venc_ + word_Pag
+
+column_Escala_ATA_Entrega_Vendedor = word_Escala_ + word_ATA_ + word_Entrega_ + word_Vendedor
+column_Escala_ATA_Entrega_Supervisor = word_Escala_ + word_ATA_ + word_Entrega_ + word_Supervisor
+column_Escala_ATA_Entrega_Gerencia = word_Escala_ + word_ATA_ + word_Entrega_ + word_Gerencia
+
+column_Escala_ATA_Cad_Adm_Vendedor = word_Escala_ + word_ATA_ + word_Cad_Adm_ + word_Vendedor
+column_Escala_ATA_Cad_Adm_Supervisor = word_Escala_ + word_ATA_ + word_Cad_Adm_ + word_Supervisor
+column_Escala_ATA_Cad_Adm_Gerencia = word_Escala_ + word_ATA_ + word_Cad_Adm_ + word_Gerencia
+
+column_Escala_Mes_Entrega_Vendedor = word_Escala_ + word_Mes_ + word_Entrega_ + word_Vendedor
+column_Escala_Mes_Entrega_Supervisor = word_Escala_ + word_Mes_ + word_Entrega_ + word_Supervisor
+column_Escala_Mes_Entrega_Gerencia = word_Escala_ + word_Mes_ + word_Entrega_ + word_Gerencia
+
+column_Escala_Mes_Cad_Adm_Vendedor = word_Escala_ + word_Mes_ + word_Cad_Adm_ + word_Vendedor
+column_Escala_Mes_Cad_Adm_Supervisor = word_Escala_ + word_Mes_ + word_Cad_Adm_ + word_Supervisor
+column_Escala_Mes_Cad_Adm_Gerencia = word_Escala_ + word_Mes_ + word_Cad_Adm_ + word_Gerencia
+
+column_Total_Sma_Cad_Adm_Vendedor = word_Total_ + word_Sma_ + word_Cad_Adm_ + word_Vendedor
+column_Total_Sma_Cad_Adm_Supervisor = word_Total_ + word_Sma_ + word_Cad_Adm_ + word_Supervisor
+column_Total_Sma_Cad_Adm_Gerencia = word_Total_ + word_Sma_ + word_Cad_Adm_ + word_Gerencia
+
+column_Total_ATA_Cad_Adm_Vendedor = word_Total_ + word_ATA_ + word_Cad_Adm_ + word_Vendedor
+column_Total_ATA_Cad_Adm_Supervisor = word_Total_ + word_ATA_ + word_Cad_Adm_ + word_Supervisor
+column_Total_ATA_Cad_Adm_Gerencia = word_Total_ + word_ATA_ + word_Cad_Adm_ + word_Gerencia
+
+column_Total_Sma_Entrega_Vendedor = word_Total_ + word_Sma_ + word_Entrega_ + word_Vendedor
+column_Total_Sma_Entrega_Supervisor = word_Total_ + word_Sma_ + word_Entrega_ + word_Supervisor
+column_Total_Sma_Entrega_Gerencia = word_Total_ + word_Sma_ + word_Entrega_ + word_Gerencia
+
+column_Total_ATA_Entrega_Vendedor = word_Total_ + word_ATA_ + word_Entrega_ + word_Vendedor
+column_Total_ATA_Entrega_Supervisor = word_Total_ + word_ATA_ + word_Entrega_ + word_Supervisor
+column_Total_ATA_Entrega_Gerencia = word_Total_ + word_ATA_ + word_Entrega_ + word_Gerencia
+
+column_Qtd_Vendas_ATA_Entrega_Vendedor = word_Qtd_Vendas_ + word_ATA_ + word_Entrega_ + word_Vendedor
+
 
 # COLUNAS
-column_primary_key = 'PK'
+column_primary_key = word_PK
 column_Index = 'Index'
 column_Cliente = 'Cliente'
-column_Vendedor = 'Vendedor'
+column_Vendedor = word_Vendedor
+column_Supervisor = word_Supervisor
 column_Gerente = 'Gerente'
-column_Supervisor = 'Supervisor'
 column_Cargo = 'Cargo'
 column_Nome = 'Nome'
 column_Administradora = 'Administradora'
@@ -199,9 +264,11 @@ column_Cota = 'Cota'
 column_N_Contrato = 'Nº Contrato'
 column_Tabela_de_recebimento = 'Tabela de recebimento'
 column_Tipo_Pagamento = 'Tipo Pagamento'
-column_Valor_Parc_Inicial = 'Valor Parc. Inicial'
-column_Periodo_Valor_Qtd_Vendas = '1 Periodo Valor Qtd Vendas'
-column_Qtd_Valor_Vend = 'Qtd Valor Vend'
+column_Valor_Parc_Inicial = word_Valor_ + word_Parc_ponto_ + word_Inicial
+column_Periodo_Valor_Qtd_Vendas = '1 ' + word_Periodo_ + word_Valor_ + word_Qtd_Vendas
+column_Periodo_Valor_Qtd_Vendas_Supervisor = column_Periodo_Valor_Qtd_Vendas + word_Supervisor
+column_Periodo_Valor_Qtd_Vendas_Gerencia = column_Periodo_Valor_Qtd_Vendas + word_Gerencia
+column_Qtd_Valor_Vendedor = word_Qtd_ + word_Valor_ + word_Vendedor
 column_Tabela = 'Tabela'
 column_Situacao = 'Situação'
 column_Credito = 'Crédito'
@@ -212,63 +279,65 @@ column_Celular = 'Celular'
 column_WhatsApp = 'WhatsApp'
 column_EMail = 'E-Mail'
 column_Bairro = 'Bairro'
-column_Data_Pag_Por = 'Data Pag. Por'
-column_Data_de_Entrega = 'Data de Entrega'
-column_Data_Cad_Adm = 'Data Cad. Adm'
-column_N_Semana_Mes = 'N Semana Mes'
-column_Data_Semana = 'Data Semana'
-column_Data_Pag_1_Parc = 'Data Pag. 1º Parc'
+column_Data_Pag_Por = word_Data_ + word_Pag_ + 'Por'
+column_Data_de_Entrega = word_Data_ + 'de ' + word_Entrega
+column_Data_Cad_Adm = word_Data_ + word_Cad_Adm
+column_N_Semana_Mes = 'N Semana ' + word_Mes
+column_Data_Semana = word_Data_ + 'Semana'
+column_Data_Pag_1_Parc = word_Data_ + word_Pag_ + '1º ' + word_Parc
 column_Dia_semana = 'Dia semana'
-column_Dia_Pag = 'Dia Pag.'
-column_Mes_ano = 'Mes ano'
-column_Periodo_final = 'Periodo_final'
-column_Periodo_inicial = 'Periodo_inicial'
-column_ATA = 'ATA'
-column_Total_ATA_Entrega_Vend = 'Total ATA Entrega Vend'
-column_ATA_Entrega = 'ATA Entrega'
-column_Mes_Entrega = 'Mes Entrega'
-column_Sma_Entrega = 'Sma Entrega'
-column_ATA_Cad_Adm = 'ATA Cad. Adm'
-column_Mes_Cad_Adm = 'Mes Cad. Adm'
-column_Sma_Cad_Adm = 'Sma Cad. Adm'
-column_1_Parcela_Recebera = '1ª Parcela Recebera'
-column_1_Parcela_Referencia = '1ª Parcela Referencia'
-column_1_Parcela_Periodo_Inicial = '1ª Parcela Periodo Inicial'
-column_1_Parcela_Data_Inicial = '1ª Parcela Data Inicial'
-column_1_Parcela_Periodo_Final = '1ª Parcela Periodo Final'
-column_1_Parcela_Data_Final = '1ª Parcela Data Final'
-column_Demais_Recebera = 'Demais Recebera'
-column_Demais_Referencia = 'Demais Referencia'
-column_Demais_Periodo_Inicial = 'Demais Periodo Inicial'
-column_Demais_Data_Inicial = 'Demais Data Inicial'
-column_Demais_Periodo_Final = 'Demais Periodo Final'
-column_Demais_Data_Final = 'Demais Data Final'
-column_FAT_Recebera = 'FAT Recebera'
-column_FAT_Referencia = 'FAT Referencia'
-column_FAT_Periodo_Inicial = 'FAT Periodo Inicial'
-column_FAT_Data_Inicial = 'FAT Data Inicial'
-column_FAT_Periodo_Final = 'FAT Periodo Final'
-column_FAT_Data_Final = 'FAT Data Final'
-column_PK_Vend_ATA_Entrega = 'PK Vend ATA Entrega'
+column_Dia_Pag = 'Dia ' + word_Pag
+column_Mes_ano = word_Mes_ + word_Ano
+column_Periodo_Inicial = word_Periodo_ + word_Inicial
+column_Periodo_Final = word_Periodo_ + word_Final
+
+column_ATA = word_ATA
+
+column_ATA_Entrega = word_ATA_ + word_Entrega
+column_Mes_Entrega = word_Mes_ + word_Entrega
+column_Sma_Entrega = word_Sma_ + word_Entrega
+column_ATA_Cad_Adm = word_ATA_ + word_Cad_Adm
+column_Mes_Cad_Adm = word_Mes_ + word_Cad_Adm
+column_Sma_Cad_Adm = word_Sma_ + word_Cad_Adm
+column_1_Parcela_Recebera = word_1_Parcela_ + word_Recebera
+column_1_Parcela_Referencia = word_1_Parcela_ + word_Referencia
+column_1_Parcela_Periodo_Inicial = word_1_Parcela_ + word_Periodo_ + word_Inicial
+column_1_Parcela_Data_Inicial = word_1_Parcela_ + word_Data_ + word_Inicial
+column_1_Parcela_Periodo_Final = word_1_Parcela_ + word_Periodo_ + word_Final
+column_1_Parcela_Data_Final = word_1_Parcela_ + word_Data_ + word_Final
+column_Demais_Recebera = word_Demais_ + word_Recebera
+column_Demais_Referencia = word_Demais_ + word_Referencia
+column_Demais_Periodo_Inicial = word_Demais_ + word_Periodo_ + word_Inicial
+column_Demais_Data_Inicial = word_Demais_ + word_Data_ + word_Inicial
+column_Demais_Periodo_Final = word_Demais_ + word_Periodo_ + word_Final
+column_Demais_Data_Final = word_Demais_ + word_Data_ + word_Final
+column_FAT_Recebera = word_FAT_ + word_Recebera
+column_FAT_Referencia = word_FAT_ + word_Referencia
+column_FAT_Periodo_Inicial = word_FAT_ + word_Periodo_ + word_Inicial
+column_FAT_Data_Inicial = word_FAT_ + word_Data_ + word_Inicial
+column_FAT_Periodo_Final = word_FAT_ + word_Periodo_ + word_Final
+column_FAT_Data_Final = word_FAT_ + word_Data_ + word_Final
+column_PK_Vend_ATA_Entrega = word_PK_ + word_Venda_ + word_ATA_ + word_Entrega
 
 
 # COLUNAS MONTADAS
-column_Nome_Vendedor = column_Nome + ' ' + word_Vendedor
-column_Cargo_Vendedor = column_Cargo + ' ' + word_Vendedor
-column_Nome_Supervisor = column_Nome + ' ' + word_Supervisor
-column_Cargo_Supervisor = column_Cargo + ' ' + word_Supervisor
-column_Administradora_Supervisor = column_Administradora + ' ' + word_Supervisor
-column_Tabela_Supervisor = column_Tabela + ' ' + word_Supervisor
-column_Periodo_Valor_Qtd_Vendas_Supervisor = column_Periodo_Valor_Qtd_Vendas + ' ' + word_Supervisor
-column_Periodo_Valor_Qtd_Vendas_Gerencia = column_Periodo_Valor_Qtd_Vendas + ' ' + word_Gerencia
-column_Cargo_Gerencia = column_Cargo + ' ' + word_Gerencia
+column_Nome_Vendedor = column_Nome + word__Vendedor
+column_Cargo_Vendedor = column_Cargo + word__Vendedor
+column_Nome_Supervisor = column_Nome + word__Supervisor
+column_Cargo_Supervisor = column_Cargo + word__Supervisor
+column_Administradora_Supervisor = column_Administradora + word__Supervisor
+column_Tabela_Supervisor = column_Tabela + word__Supervisor
+column_Periodo_Valor_Qtd_Vendas_Supervisor = column_Periodo_Valor_Qtd_Vendas + word__Supervisor
+column_Periodo_Valor_Qtd_Vendas_Gerencia = column_Periodo_Valor_Qtd_Vendas + word__Gerencia
+column_Cargo_Gerencia = column_Cargo + word__Gerencia
 
-# porcentagem_Vendas_1 = '1' + word__Atrasado + ' ' + str(porcentagem_Vendas)
-# porcentagem_Vendas_2 = '2' + word__Atrasado + ' ' + str(porcentagem_Vendas)
+# porcentagem_Vendas_1 = '1' + word__Atrasada + ' ' + str(porcentagem_Vendas)
+# porcentagem_Vendas_2 = '2' + word__Atrasada + ' ' + str(porcentagem_Vendas)
 
 # LISTAS
 listValue = []
 list_list_columns_venc = []
+list_columns_Situacao_n_ATA = [column_Situacao]
 list_list_columns_situacao_num_ATA = []
 list_list_columns_ata_pag_atrasado_n_ata = []
 list_list_columns_comissao_atrasada = []
@@ -284,9 +353,11 @@ list_cargo_limit = []
 list_cargos_limit_exist = []
 list_administradoras_limit_exist = []
 list_tabela_recebiemnto_limit_exist = []
-list_cols_full_ata_sing_pag = []
-list_cols_full_ata_sing_venc = []
+list_columns_ATASma_Pag_n_Parc = []
+list_columns_ATASma_Venc_n_Parc = []
 list_name_columns_Pagar_Comissao_N_Parc = []
+list_columns_Pag_Comissao_n_Parc = []
+list_unique_information = []
 list_columns_full_ata_entrega_pag = [column_ATA_Entrega]
 list_columns_full_ata_cadastro_pag = [column_ATA_Cad_Adm]
 list_columns_full_sma_entrega_pag = [column_Sma_Entrega]
@@ -315,7 +386,27 @@ list_list_columns_order = [
         column_ATA_Entrega, column_ATA_Cad_Adm, column_Sma_Entrega,
         column_Sma_Cad_Adm, column_Mes_Entrega, column_Mes_Cad_Adm]
 ]
+list_order_columns_Valor_Qtd_Vendas_Vendedor = [
+    column_Escala_ATA_Entrega_Vendedor,
+    column_Escala_ATA_Cad_Adm_Vendedor,
+    column_Escala_Mes_Entrega_Vendedor,
+    column_Escala_Mes_Cad_Adm_Vendedor
+]
+list_order_columns_Valor_Qtd_Vendas_Supervisor = [
+    column_Escala_ATA_Entrega_Supervisor,
+    column_Escala_ATA_Cad_Adm_Supervisor,
+    column_Escala_Mes_Entrega_Supervisor,
+    column_Escala_Mes_Cad_Adm_Supervisor
+]
+list_order_columns_Valor_Qtd_Vendas_Gerencia = [
+    column_Escala_ATA_Entrega_Gerencia,
+    column_Escala_ATA_Cad_Adm_Gerencia,
+    column_Escala_Mes_Entrega_Gerencia,
+    column_Escala_Mes_Cad_Adm_Gerencia
+]
 list_columns_start = [
+    column_PK_Vend_ATA_Entrega,
+    column_Cliente,
     column_Administradora,
     column_Vendedor,
     column_Supervisor,
@@ -330,9 +421,9 @@ list_columns_start = [
     column_Valor_Parc_Inicial,
     column_Data_Pag_1_Parc,
     column_Data_de_Entrega,
-    column_Data_Cad_Adm
+    column_Data_Cad_Adm,
     column_Dia_Pag,
-    column_Qtd_Valor_Vend,
+    column_Qtd_Valor_Vendedor,
     column_Data_Pag_Por,
     column_1_Parcela_Recebera,
     column_Demais_Recebera,
@@ -342,7 +433,8 @@ list_columns_start = [
     column_FAT_Referencia,
     column_ATA_Cad_Adm,
     column_ATA_Entrega,
-    column_PK_Vend_ATA_Entrega
+    column_Total_ATA_Entrega_Vendedor,
+    column_Qtd_Vendas_ATA_Entrega_Vendedor,
 ]
 headerDtPagamentoParcelas = [
     column_Cargo,
@@ -402,59 +494,59 @@ list_columns_end = [
     column_Porcentagem,
     column_Comissao,
     column_Adimplencia,
+    column_ATA_Venc_pag
 ]
-list_columns_ATA_Entrega_Qtd_Cotas = [
-    column_ATA_Entrega_Qtd_Cotas_Vend,
-    column_ATA_Entrega_Qtd_Cotas_Sup,
-    column_ATA_Entrega_Qtd_Cotas_Ger
+list_columns_Escala_ATA_Entrega = [
+    column_Escala_ATA_Entrega_Vendedor,
+    column_Escala_ATA_Entrega_Supervisor,
+    column_Escala_ATA_Entrega_Gerencia
 ]
-list_columns_ATA_Cad_Adm_Qtd_Cotas = [
-    column_ATA_Cad_Adm_Qtd_Cotas_Vend,
-    column_ATA_Cad_Adm_Qtd_Cotas_Sup,
-    column_ATA_Cad_Adm_Qtd_Cotas_Ger
+list_columns_Escala_ATA_Cad_Adm = [
+    column_Escala_ATA_Cad_Adm_Vendedor,
+    column_Escala_ATA_Cad_Adm_Supervisor,
+    column_Escala_ATA_Cad_Adm_Gerencia
 ]
-list_columns_Mes_Entrega_Qtd_Cotas = [
-    column_Mes_Entrega_Qtd_Cotas_Vend,
-    column_Mes_Entrega_Qtd_Cotas_Sup,
-    column_Mes_Entrega_Qtd_Cotas_Ger
+list_columns_Escala_Mes_Entrega = [
+    column_Escala_Mes_Entrega_Vendedor,
+    column_Escala_Mes_Entrega_Supervisor,
+    column_Escala_Mes_Entrega_Gerencia
 ]
-list_columns_Mes_Cad_Adm_Qtd_Cotas = [
-    column_Mes_Cad_Adm_Qtd_Cotas_Vend,
-    column_Mes_Cad_Adm_Qtd_Cotas_Sup,
-    column_Mes_Cad_Adm_Qtd_Cotas_Ger
+list_columns_Escala_Mes_Cad_Adm = [
+    column_Escala_Mes_Cad_Adm_Vendedor,
+    column_Escala_Mes_Cad_Adm_Supervisor,
+    column_Escala_Mes_Cad_Adm_Gerencia
 ]
 # list_columns_Total_Sma_Cad_Adm = [
-#     column_Total_Sma_Cad_Adm_Vend,
-#     column_Total_Sma_Cad_Adm_Sup,
+#     column_Total_Sma_Cad_Adm_Vendedor,
+#     column_Total_Sma_Cad_Adm_Supervisor,
 #     column_Total_Sma_Cad_Adm_Ger
 # ]
 # list_columns_Total_ATA_Cad_Adm = [
-#     column_Total_ATA_Cad_Adm_Vend,
-#     column_Total_ATA_Cad_Adm_Sup,
+#     column_Total_ATA_Cad_Adm_Vendedor,
+#     column_Total_ATA_Cad_Adm_Supervisor,
 #     column_Total_ATA_Cad_Adm_Ger
 # ]
 # list_columns_Total_Sma_Entrega = [
-#     column_Total_Sma_Entrega_Vend,
-#     column_Total_Sma_Entrega_Sup,
+#     column_Total_Sma_Entrega_Vendedor,
+#     column_Total_Sma_Entrega_Supervisor,
 #     column_Total_Sma_Entrega_Ger
 # ]
 # list_columns_Total_ATA_Entrega = [
-#     column_Total_ATA_Entrega_Vend,
-#     column_Total_ATA_Entrega_Sup,
+#     column_Total_ATA_Entrega_Vendedor,
+#     column_Total_ATA_Entrega_Supervisor,
 #     column_Total_ATA_Entrega_Ger
 # ]
 # list_porcentagem_vendas = [
 #     porcentagem_Vendas_1,
 #     porcentagem_Vendas_2
 # ]
-list_columns_full_ata = [column_ATA_Entrega, column_ATA_Cad_Adm]
-list_columns_full_weekly = [column_Sma_Entrega, column_Sma_Cad_Adm]
+list_columns_ATA_EntregaCad_Adm = [column_ATA_Entrega, column_ATA_Cad_Adm]
+list_columns_Sma_EntregaCad_Adm = [column_Sma_Entrega, column_Sma_Cad_Adm]
 
 
 list_words_ATA_Venc_º_Parc = [word_ATA_ + word_Venc_, word_º_Parc]
 list_situacao_to_comission = ['NORMAL', 'PAGA']
 list_recebera_to_comission = ['SIM']
-list_condition_ata = [word_Entrega, word_Cad_Adm, word_Parc, word_FAT]
 list_cargo_not_calc_commis = ['ESTAGIÁRIO', 'ZERADO']
 dict_duplicate_sum = {}
 dict_duplicate_count = {}
@@ -633,8 +725,8 @@ arqTableComissoesConfigPag = path_file.path_file_create_user(word_Appdata, word_
 arqTesteDuplTableComissoesConfigPag = path_file.path_file_create_user(word_Appdata, word_tables, 'Teste_Dupl_table_Comissoes_ConfigPagamento.csv')  # noqa
 arqTableGerencia = path_file.path_file_create_user(word_Appdata, word_tables, 'table_Gerencia.csv')  # noqa
 arqTableComissoesConfigPagSupervisor = path_file.path_file_create_user(word_Appdata, word_tables, 'table_Comissoes_ConfigPagamento_supervisor.csv')  # noqa
-arqtableMerge = path_file.path_file_create_user(word_Appdata, word_tables, 'tableMerge.csv')  # noqa
-arqtableMergeOrder = path_file.path_file_create_user(word_Appdata, word_tables, 'tableMergeOrder.csv')  # noqa
+arqTableMerge = path_file.path_file_create_user(word_Appdata, word_tables, 'tableMerge.csv')  # noqa
+arqTableMergeOrder = path_file.path_file_create_user(word_Appdata, word_tables, 'tableMergeOrder.csv')  # noqa
 arqTableDatasSemanais = path_file.path_file_create_user(word_Appdata, word_tables, 'table_datas_semanais.csv')  # noqa
 arqTableTeste1 = path_file.path_file_create_user(word_Appdata, word_tables, 'table_teste1.csv')  # noqa
 arqTableTeste2 = path_file.path_file_create_user(word_Appdata, word_tables, 'table_teste2.csv')  # noqa
