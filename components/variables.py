@@ -98,7 +98,6 @@ word_CADASTRO = 'CADASTRO'
 word_DIA_DA_SEMANA = 'DIA DA SEMANA'
 word_Situacao_ = 'Situação '
 word_Comissao = 'Comissão'
-word_porc_ = '% '
 word__Atrasada = ' Atrasada'
 word_Acoes = 'Ações'
 word_a = 'à'
@@ -112,6 +111,9 @@ word_Referencia = 'Referencia'
 word_Parcela = 'Parcela'
 word_ponto = '.'
 
+word_porc = '%'
+word_porc_ = word_porc + ' '
+word__porc = ' ' + word_porc
 word_Escala = 'Escala'
 word_Escala_ = word_Escala + ' '
 word_PK = 'PK'
@@ -208,11 +210,13 @@ seller_single = ''
 date_atasma_single = ''
 column_profissao = ''
 column_Parcela = word_Parcela
-column_Porcentagem = '%'
+column_porc = word_porc
+column_porc_Num = word_porc_ + word_Num
 column_Comissao = word_Comissao
-column_Comissao_50_porc = word_Comissao + ' 50%'
+column_Comissao_50_porc = word_Comissao + ' 50' + word_porc
 column_Adimplencia = 'Adimplência'
 column_ATA_Venc_pag = word_ATA_ + word_Venc_ + word_Pag
+column_ATA_Venc_n_Parc = word_ATA_ + word_Venc_ + 'n ' + word_Parc
 
 column_Escala_ATA_Entrega_Vendedor = word_Escala_ + word_ATA_ + word_Entrega_ + word_Vendedor
 column_Escala_ATA_Entrega_Supervisor = word_Escala_ + word_ATA_ + word_Entrega_ + word_Supervisor
@@ -358,14 +362,20 @@ list_columns_ATASma_Venc_n_Parc = []
 list_name_columns_Pagar_Comissao_N_Parc = []
 list_columns_Pag_Comissao_n_Parc = []
 list_unique_information = []
-list_columns_full_ata_entrega_pag = [column_ATA_Entrega]
-list_columns_full_ata_cadastro_pag = [column_ATA_Cad_Adm]
-list_columns_full_sma_entrega_pag = [column_Sma_Entrega]
-list_columns_full_sma_cadastro_pag = [column_Sma_Cad_Adm]
-list_columns_full_ata_entrega_venc = [column_ATA_Entrega]
-list_columns_full_ata_cadastro_venc = [column_ATA_Cad_Adm]
-list_columns_full_sma_entrega_venc = [column_Sma_Entrega]
-list_columns_full_sma_cadastro_venc = [column_Sma_Cad_Adm]
+list_columns_ATASma_EntregaCad_AdmVenc_n_Parc = []
+
+list_columns_Sma_Cad_AdmPag_n_Parc = [column_Sma_Cad_Adm]
+list_columns_Sma_Cad_AdmVenc_n_Parc = [column_Sma_Cad_Adm]
+
+list_columns_ATA_Cad_AdmPag_n_Parc = [column_ATA_Cad_Adm]
+list_columns_ATA_Cad_AdmVenc_n_Parc = [column_ATA_Cad_Adm]
+
+list_columns_Sma_EntregaPag_n_Parc = [column_Sma_Entrega]
+list_columns_Sma_EntregaVenc_n_Parc = [column_Sma_Entrega]
+
+list_columns_ATA_EntregaPag_n_Parc = [column_ATA_Entrega]
+list_columns_ATA_EntregaVenc_n_Parc = [column_ATA_Entrega]
+
 list_columns_cliente = [
     column_CEP, column_Nascimento, column_Telefone,
     column_Celular, column_WhatsApp, column_EMail,
@@ -491,10 +501,10 @@ list_columns_end = [
     column_Data_de_Entrega,
     column_Cliente,
     column_Credito,
-    column_Porcentagem,
+    column_porc,
     column_Comissao,
     column_Adimplencia,
-    column_ATA_Venc_pag
+    column_ATA_Venc_n_Parc
 ]
 list_columns_Escala_ATA_Entrega = [
     column_Escala_ATA_Entrega_Vendedor,
