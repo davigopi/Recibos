@@ -6,19 +6,17 @@ import numpy as np
 import re
 import sys
 import locale
+import numbers
+import numpy as np
+import warnings
 # from components import date_weekly
 # from components import renomear
 from components.fileManip import FileManip
 from components.date_month import Date_month
 from components.renomear import Renomear
-
 from path_file import Path_file
 from datetime import datetime
 from components.variables import *
-
-import numbers
-
-import numpy as np
 
 
 def convert_str_float(value):
@@ -60,8 +58,10 @@ class TableManip:
         self.list_one_two = list_one_two
         self.list_name_change = list_name_change
         self.list_one_two_three = list_one_two_three
-        self.list_list_column_orden_total = list_list_column_orden_total
+        self.list_list_order_columns_total = list_list_order_columns_total
+        self.list_list_columns_PK_Vend_ATA_n_Parc = list_list_columns_PK_Vend_ATA_n_Parc
         self.dict_duplicate_sum = dict_duplicate_sum
+        self.dict_duplicate_total = dict_duplicate_total
         self.dict_duplicate_count = dict_duplicate_count
         self.column_clone = column_clone
         self.value_fixed_column = value_fixed_column
@@ -396,18 +396,25 @@ class TableManip:
         self.table.at[line, column_Total] = (locale.format_string("%.2f", sum_profession, grouping=True))  # noqa
         return sum_profession
 
-    def creat_data_columns_Porcentagem(self, num_ata_pag, column_num_ata_nparc, PK_Vend_ATA_Entrega):  # noqa
-        key_prof_ata = str(num_ata_pag) + str(column_num_ata_nparc) + str(PK_Vend_ATA_Entrega)  # noqa
+    def creat_data_columns_Porcentagem(self, num_ata_pag, column_Num_ATA_n_Parc, PK_Vend_ATA_Entrega, column_PK_Vend_ATA_n_Parc):  # noqa
+        key_prof_ata = str(num_ata_pag) + str(column_Num_ATA_n_Parc) + str(PK_Vend_ATA_Entrega)  # noqa
         # criar dicionario para evitar perda de tempo na resoma
         if key_prof_ata not in self.dict_duplicate_sum:
             sum_profession = self.table.loc[
-                (self.table[column_num_ata_nparc] <= num_ata_pag) &
-                (self.table[column_PK_Vend_ATA_Entrega] == PK_Vend_ATA_Entrega),
+                (self.table[column_Num_ATA_n_Parc] <= num_ata_pag) &
+                (self.table[column_PK_Vend_ATA_n_Parc] == PK_Vend_ATA_Entrega),
                 column_Credito
             ].apply(convert_str_float).sum()
             self.dict_duplicate_sum[key_prof_ata] = sum_profession
+        if key_prof_ata not in self.dict_duplicate_total:
+            total_profession = self.table.loc[
+                (self.table[column_PK_Vend_ATA_n_Parc] == PK_Vend_ATA_Entrega),
+                column_Credito
+            ].apply(convert_str_float).sum()
+            self.dict_duplicate_total[key_prof_ata] = total_profession
         sum_profession = self.dict_duplicate_sum[key_prof_ata]
-        return sum_profession
+        total_profession = self.dict_duplicate_total[key_prof_ata]
+        return sum_profession, total_profession
 
     def data_column_Qtd_Vendas(self, profession, ata, column_prof, column_ata_mes_sma, line, column_Qtd_Vendas):  # noqa
         key_prof_ata = str(profession) + str(ata)
@@ -484,22 +491,23 @@ class TableManip:
     def create_columns_total(self):
         for column_ata_mes_sma in list_columns_ata_mes_sma:
             list_column_total = self.create_list_columns_total(column_ata_mes_sma)  # noqa
-            self.list_list_column_orden_total.append(list_column_total)
+            self.list_list_order_columns_total.append(list_column_total)
 
     def add_value_pk_vend_ata_entrega(self):
         quantity_line = self.table.shape[0]
-        PK_Vend_ATA_Entrega = 0
-        disc_PK_Vend_ATA_Entrega = {}
-        for line in range(quantity_line):
-            ata_entrega = self.table.iloc[line][column_ATA_Entrega]
-            vendedor = self.table.iloc[line][column_Vendedor]
-            key_vend_ata = str(vendedor) + str(ata_entrega)
-            if key_vend_ata not in disc_PK_Vend_ATA_Entrega:
-                PK_Vend_ATA_Entrega += 1
-                disc_PK_Vend_ATA_Entrega[key_vend_ata] = PK_Vend_ATA_Entrega
-                # disc_PK_Vend_ATA_Entrega[key_vend_ata] = key_vend_ata
-            PK_Vend_ATA_Entrega_temp = disc_PK_Vend_ATA_Entrega[key_vend_ata]
-            self.table.loc[line, column_PK_Vend_ATA_Entrega] = PK_Vend_ATA_Entrega_temp
+        for column_ATA_Entrega_n_parc in self.list_list_columns_PK_Vend_ATA_n_Parc:
+            PK_Vend_ATA_Entrega_n_Parc = 0
+            disc_PK_Vend_ATA_Entrega_n_Parc = {}
+            for line in range(quantity_line):
+                ata_entrega = self.table.iloc[line][column_ATA_Entrega_n_parc[0]]
+                vendedor = self.table.iloc[line][column_Vendedor]
+                key_vend_ata = str(vendedor) + str(ata_entrega)
+                if key_vend_ata not in disc_PK_Vend_ATA_Entrega_n_Parc:
+                    PK_Vend_ATA_Entrega_n_Parc += 1
+                    disc_PK_Vend_ATA_Entrega_n_Parc[key_vend_ata] = PK_Vend_ATA_Entrega_n_Parc
+                    # disc_PK_Vend_ATA_Entrega_n_Parc[key_vend_ata] = key_vend_ata
+                PK_Vend_ATA_Entrega_temp = disc_PK_Vend_ATA_Entrega_n_Parc[key_vend_ata]
+                self.table.loc[line, column_ATA_Entrega_n_parc[1]] = PK_Vend_ATA_Entrega_temp
 
     @property
     def add_value_situacao_num_ATA(self):
@@ -560,15 +568,15 @@ class TableManip:
         num_ata_nparc_dict_2 = 0
         quantity_line = self.table.shape[0]
         for line in range(quantity_line):
-            PK_Vend_ATA_Entrega = str(self.table.iloc[line][column_PK_Vend_ATA_Entrega])
             for list_columns_num_ATA_atrasado in list_list_columns_num_ATA_atrasado:
+                PK_Vend_ATA_Entrega_n_Parc = str(self.table.iloc[line][list_columns_num_ATA_atrasado[2]])  # noqa
                 num_ata_nparc = self.table.iloc[line][list_columns_num_ATA_atrasado[0]]
                 if np.isnan(num_ata_nparc):
                     continue
                 num_ata_nparc = int(num_ata_nparc)
                 if num_ata_nparc <= 0:
                     continue
-                key_vend_ata = PK_Vend_ATA_Entrega + list_columns_num_ATA_atrasado[0]
+                key_vend_ata = PK_Vend_ATA_Entrega_n_Parc + list_columns_num_ATA_atrasado[0]
                 if key_vend_ata in self.dict_duplicate_vend_ata:
                     list_num_ata_nparc_dict = self.dict_duplicate_vend_ata[key_vend_ata]
                     num_ata_nparc_dict_1 = list_num_ata_nparc_dict[0]
@@ -586,9 +594,9 @@ class TableManip:
                         num_ata_nparc_dict_2 = 1
                 self.dict_duplicate_vend_ata[key_vend_ata] = [num_ata_nparc_dict_1, num_ata_nparc_dict_2]  # noqa
         for line in range(quantity_line):
-            PK_Vend_ATA_Entrega = str(self.table.iloc[line][column_PK_Vend_ATA_Entrega])
             for list_columns_num_ATA_atrasado in list_list_columns_num_ATA_atrasado:
-                key_vend_ata = PK_Vend_ATA_Entrega + list_columns_num_ATA_atrasado[0]
+                PK_Vend_ATA_Entrega_n_Parc = str(self.table.iloc[line][list_columns_num_ATA_atrasado[2]])  # noqa
+                key_vend_ata = PK_Vend_ATA_Entrega_n_Parc + list_columns_num_ATA_atrasado[0]
                 if key_vend_ata in self.dict_duplicate_vend_ata:
                     num_ata_nparc_dict_1 = str(self.dict_duplicate_vend_ata[key_vend_ata][0])
                     num_ata_nparc_dict_2 = str(self.dict_duplicate_vend_ata[key_vend_ata][1])
@@ -605,41 +613,43 @@ class TableManip:
     # name_column_3_porc_ata            2
     # name_column_num_ata,              3
     # column_num_ata_nparc_atrasado     4
-
     @add_value_porcentagem.setter
     def add_value_porcentagem(self, list_list_columns_percentage):
         quantity_line = self.table.shape[0]
         self.dict_duplicate_sum = {}
+        self.dict_duplicate_total = {}
         for line in range(quantity_line):
-            PK_Vend_ATA_Entrega = self.table.iloc[line][column_PK_Vend_ATA_Entrega]
             self.renomear.inf = self.table.iloc[line][column_Total_ATA_Entrega_Vendedor]
-            Total_ATA_Entrega_Vend = float(self.renomear.valor())
+            # Total_ATA_Entrega_Vend = float(self.renomear.valor())
             for list_columns_percentage in list_list_columns_percentage:
-                column_num_ata_nparc = list_columns_percentage[3]
-                # column_num_ata_nparc_atrasado = list_columns_percentage[4]
-                # num_ata_nparc_atrasado = self.table.iloc[line][column_num_ata_nparc_atrasado]
+                column_Num_ATA_n_Parc = list_columns_percentage[3]
+                column_PK_Vend_ATA_n_Parc = list_columns_percentage[4]
+                PK_Vend_ATA_Entrega_n_Parc = self.table.iloc[line][column_PK_Vend_ATA_n_Parc]
                 for num_ata_pag in range(3):  # 0, 1, 2
-                    sum_profession = self.creat_data_columns_Porcentagem(num_ata_pag, column_num_ata_nparc, PK_Vend_ATA_Entrega)  # noqa
-                    porcentagem = round(sum_profession / Total_ATA_Entrega_Vend * 100, 1)
+                    sum_profession, total_profession = self.creat_data_columns_Porcentagem(num_ata_pag, column_Num_ATA_n_Parc, PK_Vend_ATA_Entrega_n_Parc, column_PK_Vend_ATA_n_Parc)  # noqa
+                    porcentagem = round(sum_profession / total_profession * 100, 1)
                     self.table.loc[line, list_columns_percentage[num_ata_pag]] = porcentagem
 
     @property
-    def add_value_ata_pag_atrasados(self):
+    def add_value_ATA_Venc_n_Parc_n_ATA_Atrasada(self):
         return None
 
-    @add_value_ata_pag_atrasados.setter
-    def add_value_ata_pag_atrasados(self, list_list_columns_ata_pag_atrasado_n_ata):
+    @add_value_ATA_Venc_n_Parc_n_ATA_Atrasada.setter
+    def add_value_ATA_Venc_n_Parc_n_ATA_Atrasada(self, list_list_columns_ATA_Venc_n_Parc_n_ATA_Atrasada):  # noqa
         quantity_line = self.table.shape[0]
         for line in range(quantity_line):
-            for list_columns_ata_pag_atrasado_n_ata in list_list_columns_ata_pag_atrasado_n_ata:
-                ata_pag_parc = self.table.iloc[line][list_columns_ata_pag_atrasado_n_ata[0]]
+            for list_columns_ATA_Venc_n_Parc_n_ATA_Atrasada in list_list_columns_ATA_Venc_n_Parc_n_ATA_Atrasada:
+                ata_pag_parc = self.table.iloc[line][list_columns_ATA_Venc_n_Parc_n_ATA_Atrasada[0]]
                 if ata_pag_parc is None or isinstance(ata_pag_parc, float) or pd.isna(ata_pag_parc) or ata_pag_parc == ' - ':  # noqa
                     continue
                 list_new_ata_pag_parc = self.date_month.sum_month_ata_pag_parc(ata_pag_parc)
                 # list_new_ata_pag_parc = [str(value) if not isinstance(value, str) else value for value in list_new_ata_pag_parc]  # noqa
                 # self.table.loc[line, [column_ata_pag_atrasado_1_mes, column_ata_pag_atrasado_2_meses]] = list_new_ata_pag_parc  # noqa
-                self.table.loc[line, list_columns_ata_pag_atrasado_n_ata[1]] = str(list_new_ata_pag_parc[0])  # noqa
-                self.table.loc[line, list_columns_ata_pag_atrasado_n_ata[2]] = str(list_new_ata_pag_parc[1])  # noqa
+                # Ignora apenas avisos de performance do pandas
+                with warnings.catch_warnings():
+                    warnings.simplefilter("ignore", category=pd.errors.PerformanceWarning)
+                    self.table.loc[line, list_columns_ATA_Venc_n_Parc_n_ATA_Atrasada[1]] = str(list_new_ata_pag_parc[0])  # noqa
+                    self.table.loc[line, list_columns_ATA_Venc_n_Parc_n_ATA_Atrasada[2]] = str(list_new_ata_pag_parc[1])  # noqa
 
     @property
     def add_value_pagar_comissao(self):
@@ -655,17 +665,20 @@ class TableManip:
         quantity_line = self.table.shape[0]
         for line in range(quantity_line):
             for list_columns_comissao_atrasada in list_list_columns_comissao_atrasada:
-                porc_ata_1 = float(self.table.iloc[line][list_columns_comissao_atrasada[1]])
-                if porc_ata_1 >= porcentagem_Vendas:
-                    self.table.loc[line, list_columns_comissao_atrasada[0]] = list_columns_comissao_atrasada[1]  # noqa
-                    continue
-                porc_ata_2 = float(self.table.iloc[line][list_columns_comissao_atrasada[2]])
-                if porc_ata_2 >= porcentagem_Vendas:
-                    self.table.loc[line, list_columns_comissao_atrasada[0]] = list_columns_comissao_atrasada[2]  # noqa
-                    continue
-                porc_ata_3 = float(self.table.iloc[line][list_columns_comissao_atrasada[3]])
-                if porc_ata_3 >= porcentagem_Vendas:
-                    self.table.loc[line, list_columns_comissao_atrasada[0]] = list_columns_comissao_atrasada[3]  # noqa
+                # Ignora apenas avisos de performance do pandas
+                with warnings.catch_warnings():
+                    warnings.simplefilter("ignore", category=pd.errors.PerformanceWarning)
+                    porc_ata_1 = float(self.table.iloc[line][list_columns_comissao_atrasada[1]])
+                    if porc_ata_1 >= porcentagem_Vendas:
+                        self.table.loc[line, list_columns_comissao_atrasada[0]] = list_columns_comissao_atrasada[1]  # noqa
+                        continue
+                    porc_ata_2 = float(self.table.iloc[line][list_columns_comissao_atrasada[2]])
+                    if porc_ata_2 >= porcentagem_Vendas:
+                        self.table.loc[line, list_columns_comissao_atrasada[0]] = list_columns_comissao_atrasada[2]  # noqa
+                        continue
+                    porc_ata_3 = float(self.table.iloc[line][list_columns_comissao_atrasada[3]])
+                    if porc_ata_3 >= porcentagem_Vendas:
+                        self.table.loc[line, list_columns_comissao_atrasada[0]] = list_columns_comissao_atrasada[3]  # noqa
 
     @ property
     def del_column(self):

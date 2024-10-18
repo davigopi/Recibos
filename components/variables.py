@@ -2,37 +2,18 @@
 # pyright: # type: ignore
 
 import os
-from datetime import datetime
-
-# from components.fileManip import FileManip
-# from components.connect import Connect
-from path_file import Path_file
-# from components.creat_table_gerencia import Creat_table_gerencia
-
-# from components.tableManip import TableManip
-# from main_table import Main_table
 import pandas as pd
-# from typing import Optional
-# from selenium import webdriver
-
-# from time import ctime
 import locale
-# import sys
-# Definir a localidade para Português do Brasil
+from datetime import datetime
+from path_file import Path_file
+
 locale.setlocale(locale.LC_TIME, 'pt_BR.UTF-8')
 
-
-# class Variables:
-#     def __init__(self, *args, **kwargs) -> None:
-
-
-# main_table = Main_table()
-# connect = Connect()
-# tableManip = TableManip()
-# fileManip = FileManip()
 path_file = Path_file()
-# creat_table_gerencia = Creat_table_gerencia()
-# Variaveis
+
+siteSircon = "https://app.sistemasircon.com.br/login"
+connected = True
+start = True
 
 user = 'usuario@gmail.com'
 password = 'Senha'
@@ -44,13 +25,21 @@ new_table_Comissoes_Configuracao = False
 new_table_Comissoes_ConfigPagamento = False
 mix = False
 porcentagem_Vendas = 50
+porcentagem_Entrega = '100'
 number_Line = 0
 number_Column = 0
 
-siteSircon = "https://app.sistemasircon.com.br/login"
-connected = True
-start = True
+size_font = 8
+size_font2 = 7
+size_line = 6
+space_paragraph = 2
+begin = True
 
+text_size_head = 12
+text_size_footer = 10
+text_size_table = 6
+cell_height = 4
+space_columns = 4
 
 # para calcular maiores comissões
 comissao_anterior1 = 0
@@ -66,6 +55,9 @@ value_fixed_column = ''  # por padrao ''
 column_clone = ''
 rename_name_column_origin = ''
 
+word_profissao = ''
+word_Valor_Qtd_Vendas_Inicial_profissao = ''
+
 
 clickOk = None
 
@@ -74,18 +66,15 @@ tagFather = ''
 tagGet = ''
 tagSelected = ''
 
-#        '1' ou '2'
-model = '2'
 
 number_in_column = 0
 
 sum_comissao = 0
-sum_comissao_compliance = 0
+sum_comissao_adimplencia = 0
 sum_all_comissao = 0
 sum_all_comissao_gerente = 0
-sum_compliance = 0
+sum_credito = 0
 adimplencias = ''
-list_line_delete = []
 
 date_ata_single = 'MAIO/2024'
 date_sma_single = '1ª/MAIO/2024'
@@ -96,9 +85,8 @@ word_tables = 'tables'
 word_log = 'log'
 word_CADASTRO = 'CADASTRO'
 word_DIA_DA_SEMANA = 'DIA DA SEMANA'
-word_Situacao_ = 'Situação '
-word_Comissao = 'Comissão'
-word__Atrasada = ' Atrasada'
+
+word_Adimplencia = 'Adimplência'
 word_Acoes = 'Ações'
 word_a = 'à'
 word_Ano = 'Ano'
@@ -109,10 +97,37 @@ word_Cotas = 'Cotas'
 word_Recebera = 'Recebera'
 word_Referencia = 'Referencia'
 word_Parcela = 'Parcela'
+word_RECIBO_DE_PAGAMENTO = 'RECIBO DE PAGAMENTO'
+word_RESUMO = 'RESUMO:'
+word_PARCEIRO = 'PARCEIRO:'
+word_FUNCIONARIO = 'FUNCIONÁRIO:'
+word_TOTAL = 'TOTAL'
+word_CREDITO = 'CRÉDITO'
+word_COMISSAO = 'COMISSÃO'
+word_ADIMPLENCIA = 'ADIMPLÊNCIA'
+word_COMISSAO_ADIMPLENTE = 'COMISSÃO ADIMPLENTE'
+word_PAGAMENTOS_ATRASADOS = 'PAGAMENTOS ATRASADOS:'
+word_RESUMO_PAGAMENTOS_ATRASADOS = 'RESUMO PAGAMENTOS ATRASADOS:'
+word_PAGA = 'PAGA'
+word_NORMAL = 'NORMAL'
+word_SIM = 'SIM'
+word_ESTAGIARIO = 'ESTAGIÁRIO'
+word_ZERADO = 'ZERADO'
+word_Situacoes = 'Situações'
+
 word_ponto = '.'
+word_cifrao = ' $'
 
 word_porc = '%'
 word_porc_ = word_porc + ' '
+word_Dia = 'Dia'
+word_Dia_ = word_Dia + ' '
+word_Situacao = 'Situação'
+word_Situacao_ = word_Situacao + ' '
+word_Comissao = 'Comissão'
+word_Comissao_ = word_Comissao + ' '
+word_Atrasada = 'Atrasada'
+word__Atrasada = ' ' + word_Atrasada
 word__porc = ' ' + word_porc
 word_Escala = 'Escala'
 word_Escala_ = word_Escala + ' '
@@ -140,6 +155,8 @@ word_Mes = 'Mes'
 word_Mes_ = word_Mes + ' '
 word_Sma = 'Sma'
 word_Sma_ = word_Sma + ' '
+word_Semana = 'Semana'
+word_Semana_ = word_Semana + ' '
 word_Valor = 'Valor'
 word_Valor_ = word_Valor + ' '
 word__Valor_ = ' ' + word_Valor + ' '
@@ -147,6 +164,8 @@ word_Venda = 'Venda'
 word_Venda_ = word_Venda + ' '
 word_Vendedor = 'Vendedor'
 word__Vendedor = ' ' + word_Vendedor
+word_Vend = 'Vend' + word_ponto
+word_Vend_ = word_Vend + ' '
 word_Supervisor = 'Supervisor'
 word__Supervisor = ' ' + word_Supervisor
 word_Gerencia = 'Gerencia'
@@ -178,13 +197,14 @@ word_Valor_Qtd_Vendas_ = word_Valor_ + word_Qtd_Vendas_
 word__Valor_Qtd_Vendas_ = ' ' + word_Valor_Qtd_Vendas_
 word__Valor_Qtd_Vendas = ' ' + word_Valor_Qtd_Vendas
 
-word__1_ATA_Atrasada = ' 1 ' + word_ATA + word__Atrasada
-word__2_ATA_Atrasada = ' 2 ' + word_ATA + word__Atrasada
+word_ATA_Atrasada = word_ATA + word__Atrasada
+word__1_ATA_Atrasada = ' 1 ' + word_ATA_Atrasada
+word__2_ATA_Atrasada = ' 2 ' + word_ATA_Atrasada
 word_Data_Pag_Errada = word_Data_ + word_Pag_ + 'Errada'
-word_Pag_Comissao_ = word_Pag_ + 'Comissao '
+word_Pag_Comissao_ = word_Pag_ + word_Comissao_
 word_Pag_Mesma_ATA = word_Pag_ + 'Mesma ' + word_ATA
-word_Pag_Adiantado_ATA = word_Pag_ + word_ATA + word__Atrasada
-word_Pag_Atrasado_ATA = word_Pag_ + word_ATA + word__Atrasada
+word_Pag_Adiantado_ATA = word_Pag_ + word_ATA_Atrasada
+word_Pag_Atrasado_ATA = word_Pag_ + word_ATA_Atrasada
 
 word__Data_Inicial = word__Data_ + word_Inicial
 word__Data_Final = word__Data_ + word_Final
@@ -204,19 +224,23 @@ word_Periodo_Venda = word_Periodo_ + word_Venda
 word_Periodo_Venda2 = 'PerÃ­odo ' + word_Venda + ':'
 word__Periodo_Valor_Qtd_Vendas = word__Periodo + word__Valor_ + word_Qtd_Vendas
 
-
-word_profissao = ''
+# O programa vai setar
 seller_single = ''
 date_atasma_single = ''
 column_profissao = ''
-column_Parcela = word_Parcela
+
+# column_ATASma_EntregaCada_Adm = ''
+# colunas criadas para calculos do PDF recibo
+column_porc_ATA_Entrega = word_porc_ + word_ATA_ + word_Entrega
 column_porc = word_porc
 column_porc_Num = word_porc_ + word_Num
 column_Comissao = word_Comissao
 column_Comissao_50_porc = word_Comissao + ' 50' + word_porc
-column_Adimplencia = 'Adimplência'
-column_ATA_Venc_pag = word_ATA_ + word_Venc_ + word_Pag
+column_Parc = word_Parc + word_ponto
 column_ATA_Venc_n_Parc = word_ATA_ + word_Venc_ + 'n ' + word_Parc
+column_Adimplencia = word_Adimplencia
+column_Pag_Comissao_1_Parc = word_Pag_ + word_Pag_Comissao_ + '1º ' + word_Parc
+# column_ATA_Venc_pag = word_ATA_ + word_Venc_ + word_Pag
 
 column_Escala_ATA_Entrega_Vendedor = word_Escala_ + word_ATA_ + word_Entrega_ + word_Vendedor
 column_Escala_ATA_Entrega_Supervisor = word_Escala_ + word_ATA_ + word_Entrega_ + word_Supervisor
@@ -254,11 +278,14 @@ column_Qtd_Vendas_ATA_Entrega_Vendedor = word_Qtd_Vendas_ + word_ATA_ + word_Ent
 
 
 # COLUNAS
+column_ATA = word_ATA
 column_primary_key = word_PK
-column_Index = 'Index'
-column_Cliente = 'Cliente'
 column_Vendedor = word_Vendedor
 column_Supervisor = word_Supervisor
+column_Situacao = word_Situacao
+column_Situacoes = word_Situacoes
+column_Index = 'Index'
+column_Cliente = 'Cliente'
 column_Gerente = 'Gerente'
 column_Cargo = 'Cargo'
 column_Nome = 'Nome'
@@ -266,15 +293,9 @@ column_Administradora = 'Administradora'
 column_Grupo = 'Grupo'
 column_Cota = 'Cota'
 column_N_Contrato = 'Nº Contrato'
-column_Tabela_de_recebimento = 'Tabela de recebimento'
-column_Tipo_Pagamento = 'Tipo Pagamento'
-column_Valor_Parc_Inicial = word_Valor_ + word_Parc_ponto_ + word_Inicial
-column_Periodo_Valor_Qtd_Vendas = '1 ' + word_Periodo_ + word_Valor_ + word_Qtd_Vendas
-column_Periodo_Valor_Qtd_Vendas_Supervisor = column_Periodo_Valor_Qtd_Vendas + word_Supervisor
-column_Periodo_Valor_Qtd_Vendas_Gerencia = column_Periodo_Valor_Qtd_Vendas + word_Gerencia
-column_Qtd_Valor_Vendedor = word_Qtd_ + word_Valor_ + word_Vendedor
 column_Tabela = 'Tabela'
-column_Situacao = 'Situação'
+column_Tabela_de_recebimento = 'Tabela de recebimento'  # table comissoes configuracao
+column_Tipo_Pagamento = 'Tipo Pagamento'
 column_Credito = 'Crédito'
 column_CEP = 'CEP'
 column_Nascimento = 'Nascimento'
@@ -283,20 +304,23 @@ column_Celular = 'Celular'
 column_WhatsApp = 'WhatsApp'
 column_EMail = 'E-Mail'
 column_Bairro = 'Bairro'
+# COLUNAS MONTADAS
 column_Data_Pag_Por = word_Data_ + word_Pag_ + 'Por'
 column_Data_de_Entrega = word_Data_ + 'de ' + word_Entrega
 column_Data_Cad_Adm = word_Data_ + word_Cad_Adm
-column_N_Semana_Mes = 'N Semana ' + word_Mes
-column_Data_Semana = word_Data_ + 'Semana'
+column_N_Semana_Mes = 'N ' + word_Semana_ + word_Mes
+column_Data_Semana = word_Data_ + word_Semana
 column_Data_Pag_1_Parc = word_Data_ + word_Pag_ + '1º ' + word_Parc
-column_Dia_semana = 'Dia semana'
-column_Dia_Pag = 'Dia ' + word_Pag
+column_Dia_Semana = word_Dia_ + word_Semana
+column_Valor_Parc_Inicial = word_Valor_ + word_Parc_ponto_ + word_Inicial
+column_Periodo_Valor_Qtd_Vendas = '1 ' + word_Periodo_ + word_Valor_ + word_Qtd_Vendas
+column_Periodo_Valor_Qtd_Vendas_Supervisor = column_Periodo_Valor_Qtd_Vendas + word_Supervisor
+column_Periodo_Valor_Qtd_Vendas_Gerencia = column_Periodo_Valor_Qtd_Vendas + word_Gerencia
+column_Qtd_Valor_Vendedor = word_Qtd_ + word_Valor_ + word_Vendedor
+column_Dia_Pag = word_Dia_ + word_Pag
 column_Mes_ano = word_Mes_ + word_Ano
 column_Periodo_Inicial = word_Periodo_ + word_Inicial
 column_Periodo_Final = word_Periodo_ + word_Final
-
-column_ATA = word_ATA
-
 column_ATA_Entrega = word_ATA_ + word_Entrega
 column_Mes_Entrega = word_Mes_ + word_Entrega
 column_Sma_Entrega = word_Sma_ + word_Entrega
@@ -321,10 +345,7 @@ column_FAT_Periodo_Inicial = word_FAT_ + word_Periodo_ + word_Inicial
 column_FAT_Data_Inicial = word_FAT_ + word_Data_ + word_Inicial
 column_FAT_Periodo_Final = word_FAT_ + word_Periodo_ + word_Final
 column_FAT_Data_Final = word_FAT_ + word_Data_ + word_Final
-column_PK_Vend_ATA_Entrega = word_PK_ + word_Venda_ + word_ATA_ + word_Entrega
-
-
-# COLUNAS MONTADAS
+column_PK_Vend_ATA_Entrega = word_PK_ + word_Vend_ + word_ATA_ + word_Entrega
 column_Nome_Vendedor = column_Nome + word__Vendedor
 column_Cargo_Vendedor = column_Cargo + word__Vendedor
 column_Nome_Supervisor = column_Nome + word__Supervisor
@@ -334,20 +355,17 @@ column_Tabela_Supervisor = column_Tabela + word__Supervisor
 column_Periodo_Valor_Qtd_Vendas_Supervisor = column_Periodo_Valor_Qtd_Vendas + word__Supervisor
 column_Periodo_Valor_Qtd_Vendas_Gerencia = column_Periodo_Valor_Qtd_Vendas + word__Gerencia
 column_Cargo_Gerencia = column_Cargo + word__Gerencia
-
-# porcentagem_Vendas_1 = '1' + word__Atrasada + ' ' + str(porcentagem_Vendas)
-# porcentagem_Vendas_2 = '2' + word__Atrasada + ' ' + str(porcentagem_Vendas)
-
+# COLUNAS EDITADAS N OPROGRAMA
+column_Escala_ATAMes_EntregaCad_Adm = ''
 # LISTAS
 listValue = []
 list_list_columns_venc = []
-list_columns_Situacao_n_ATA = [column_Situacao]
 list_list_columns_situacao_num_ATA = []
-list_list_columns_ata_pag_atrasado_n_ata = []
+list_list_columns_ATA_Venc_n_Parc_n_ATA_Atrasada = []
 list_list_columns_comissao_atrasada = []
 list_list_columns_num_ATA_atrasado = []
 list_list_columns_percentage = []
-list_list_column_orden_total = []
+list_list_order_columns_total = []
 list_columns_full = []
 list_one_two = []
 list_name_change = []
@@ -360,9 +378,15 @@ list_tabela_recebiemnto_limit_exist = []
 list_columns_ATASma_Pag_n_Parc = []
 list_columns_ATASma_Venc_n_Parc = []
 list_name_columns_Pagar_Comissao_N_Parc = []
-list_columns_Pag_Comissao_n_Parc = []
+list_ata_sum_comissao_credito = []
 list_unique_information = []
 list_columns_ATASma_EntregaCad_AdmVenc_n_Parc = []
+list_tables_venc = []
+list_table_edit_all = []
+list_table_edit_atrasada = []
+list_line_delete = []
+list_keys = []
+list_key_single = []
 
 list_columns_Sma_Cad_AdmPag_n_Parc = [column_Sma_Cad_Adm]
 list_columns_Sma_Cad_AdmVenc_n_Parc = [column_Sma_Cad_Adm]
@@ -375,6 +399,17 @@ list_columns_Sma_EntregaVenc_n_Parc = [column_Sma_Entrega]
 
 list_columns_ATA_EntregaPag_n_Parc = [column_ATA_Entrega]
 list_columns_ATA_EntregaVenc_n_Parc = [column_ATA_Entrega]
+
+list_columns_ATA_n_Parc_1_Atrasada = [column_ATA_Entrega]
+list_columns_ATA_n_Parc_2_Atrasada = [column_ATA_Entrega]
+
+list_columns_porc_ATA_Venc_n_Parc = [column_porc_ATA_Entrega]
+list_columns_porc_ATA_Venc_n_Parc_1_ATA_Atrasada = [column_porc_ATA_Entrega]
+list_columns_porc_ATA_Venc_n_Parc_2_ATA_Atrasada = [column_porc_ATA_Entrega]
+
+list_columns_Situacao_n_Parc = [column_Situacao]
+
+list_columns_Pag_Comissao_n_Parc = [column_Pag_Comissao_1_Parc]
 
 list_columns_cliente = [
     column_CEP, column_Nascimento, column_Telefone,
@@ -391,10 +426,13 @@ list_list_columns_pag = [
     [column_Situacao, column_Data_Cad_Adm, column_ATA_Cad_Adm,
         column_Sma_Cad_Adm, column_Mes_Cad_Adm]
 ]
-list_list_columns_order = [
+list_list_order_columns = [
     [column_Situacao, column_Data_de_Entrega, column_Data_Cad_Adm,
         column_ATA_Entrega, column_ATA_Cad_Adm, column_Sma_Entrega,
         column_Sma_Cad_Adm, column_Mes_Entrega, column_Mes_Cad_Adm]
+]
+list_list_columns_PK_Vend_ATA_n_Parc = [
+    [column_ATA_Entrega, column_PK_Vend_ATA_Entrega]
 ]
 list_order_columns_Valor_Qtd_Vendas_Vendedor = [
     column_Escala_ATA_Entrega_Vendedor,
@@ -414,7 +452,7 @@ list_order_columns_Valor_Qtd_Vendas_Gerencia = [
     column_Escala_Mes_Entrega_Gerencia,
     column_Escala_Mes_Cad_Adm_Gerencia
 ]
-list_columns_start = [
+list_order_columns_start = [
     column_PK_Vend_ATA_Entrega,
     column_Cliente,
     column_Administradora,
@@ -491,11 +529,12 @@ list_columns_test_table_configPag_2 = [
 list_columns_date_weekly_new = [
     column_N_Semana_Mes,
     column_Data_Semana,
-    column_Dia_semana,
+    column_Dia_Semana,
     column_Mes_ano
 ]
-list_columns_end = [
-    column_Parcela,
+list_columns_end_pdf = [
+    column_Parc,
+    column_Situacoes,
     column_Administradora,
     column_N_Contrato,
     column_Data_de_Entrega,
@@ -503,8 +542,7 @@ list_columns_end = [
     column_Credito,
     column_porc,
     column_Comissao,
-    column_Adimplencia,
-    column_ATA_Venc_n_Parc
+    column_Adimplencia
 ]
 list_columns_Escala_ATA_Entrega = [
     column_Escala_ATA_Entrega_Vendedor,
@@ -526,39 +564,23 @@ list_columns_Escala_Mes_Cad_Adm = [
     column_Escala_Mes_Cad_Adm_Supervisor,
     column_Escala_Mes_Cad_Adm_Gerencia
 ]
-# list_columns_Total_Sma_Cad_Adm = [
-#     column_Total_Sma_Cad_Adm_Vendedor,
-#     column_Total_Sma_Cad_Adm_Supervisor,
-#     column_Total_Sma_Cad_Adm_Ger
-# ]
-# list_columns_Total_ATA_Cad_Adm = [
-#     column_Total_ATA_Cad_Adm_Vendedor,
-#     column_Total_ATA_Cad_Adm_Supervisor,
-#     column_Total_ATA_Cad_Adm_Ger
-# ]
-# list_columns_Total_Sma_Entrega = [
-#     column_Total_Sma_Entrega_Vendedor,
-#     column_Total_Sma_Entrega_Supervisor,
-#     column_Total_Sma_Entrega_Ger
-# ]
-# list_columns_Total_ATA_Entrega = [
-#     column_Total_ATA_Entrega_Vendedor,
-#     column_Total_ATA_Entrega_Supervisor,
-#     column_Total_ATA_Entrega_Ger
-# ]
-# list_porcentagem_vendas = [
-#     porcentagem_Vendas_1,
-#     porcentagem_Vendas_2
-# ]
+
 list_columns_ATA_EntregaCad_Adm = [column_ATA_Entrega, column_ATA_Cad_Adm]
 list_columns_Sma_EntregaCad_Adm = [column_Sma_Entrega, column_Sma_Cad_Adm]
 
 
 list_words_ATA_Venc_º_Parc = [word_ATA_ + word_Venc_, word_º_Parc]
-list_situacao_to_comission = ['NORMAL', 'PAGA']
-list_recebera_to_comission = ['SIM']
-list_cargo_not_calc_commis = ['ESTAGIÁRIO', 'ZERADO']
+list_situacao_to_comission = [word_NORMAL, word_PAGA]
+list_recebera_to_comission = [word_SIM]
+list_cargo_not_calc_commis = [word_ESTAGIARIO, word_ZERADO]
+
+disc_temp = {}
+disc_all = {}
+disc_atrasado = {}
+
+
 dict_duplicate_sum = {}
+dict_duplicate_total = {}
 dict_duplicate_count = {}
 dic_months = {
     'JANEIRO': 1, 'FEVEREIRO': 2, 'MARÇO': 3, 'ABRIL': 4,
@@ -746,6 +768,8 @@ arqDonwloadSales = pathDonwload + '\\consorciados.csv'
 arqDonwloadFunction = pathDonwload + '\\funcionarios.csv'
 
 arq_log = path_file.path_file_create_user(word_Appdata, word_log, 'log.txt')  # noqa
+
+img_select = 'img/select.jpg'
 
 
 table_Cadastro_Consorciado: pd.DataFrame = pd.DataFrame()

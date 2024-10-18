@@ -67,10 +67,11 @@ class Main_table:
         self.list_list_columns_situacao_num_ATA = list_list_columns_situacao_num_ATA
         self.list_list_columns_num_ATA_atrasado = list_list_columns_num_ATA_atrasado
         self.list_list_columns_percentage = list_list_columns_percentage
-        self.list_list_columns_ata_pag_atrasado_n_ata = list_list_columns_ata_pag_atrasado_n_ata
+        self.list_list_columns_ATA_Venc_n_Parc_n_ATA_Atrasada = list_list_columns_ATA_Venc_n_Parc_n_ATA_Atrasada
         self.list_list_columns_comissao_atrasada = list_list_columns_comissao_atrasada
-        self.list_list_columns_order = list_list_columns_order
-        self.list_columns_start = list_columns_start.copy()
+        self.list_list_columns_PK_Vend_ATA_n_Parc = list_list_columns_PK_Vend_ATA_n_Parc
+        self.list_list_order_columns = list_list_order_columns
+        self.list_order_columns_start = list_order_columns_start.copy()
         self.salve_first = salve_first
         self.start = start
 
@@ -86,7 +87,7 @@ class Main_table:
         self.table_Comissoes_Configuracao_supervisor = table_Comissoes_Configuracao_supervisor
         self.table_full = table_full
         self.table_duplicate = table_duplicate
-        self.list_list_column_orden_total = list_list_column_orden_total
+        self.list_list_order_columns_total = list_list_order_columns_total
 
     def openSite(self):
         ''' defined '''
@@ -96,9 +97,19 @@ class Main_table:
         options.add_argument('--ignore-certificate-errors')
         options.add_experimental_option('excludeSwitches', ['enable-automation'])
         options.add_experimental_option('excludeSwitches', ['enable-logging'])
-        service = Service(ChromeDriverManager().install())
-        self.driver = webdriver.Chrome(service=service, options=options)
-        self.driver.maximize_window()
+        try:
+            chromedriver_path = ChromeDriverManager().install()
+            if not chromedriver_path.endswith('chromedriver.exe'):
+                chromedriver_path = os.path.join(
+                    os.path.dirname(chromedriver_path), 'chromedriver.exe')
+
+            service = Service(chromedriver_path)
+            print(f'chromedriver_path: {chromedriver_path}')
+            self.driver = webdriver.Chrome(service=service, options=options)
+            self.driver.maximize_window()
+        except Exception as e:
+            print(f"Ocorreu um erro ao iniciar o ChromeDriver: {e}")
+
         self.connect = Connect(driver=self.driver)
         self.connect.month = self.month
         self.connect.user = self.user
@@ -126,14 +137,14 @@ class Main_table:
         text = 'Unir todas Tabelas: '
         if self.mix is False:
             text += 'Não'
-            self.table_full = load_table(self.arqTableMerge)
+            self.table_full = load_table(arqTableMerge)
         else:
             text += 'Sim'
         self.father.prog1(text)
 
     def create_list_columns_total(self):
         self.tableManip.create_columns_total()
-        self.list_list_column_orden_total = self.tableManip.list_list_column_orden_total
+        self.list_list_order_columns_total = self.tableManip.list_list_order_columns_total
 
     def limited_search_administradoras(self):
         self.connect.valueExistAdministradora = self.table_Cadastro_Consorciado
@@ -178,7 +189,7 @@ class Main_table:
             if self.driver:
                 self.driver.quit()
                 self.driver = None
-            arqTableMerge(self.table_Cadastro_Consorciado, arqTableCadastroConsorciado)
+            create_table(self.table_Cadastro_Consorciado, arqTableCadastroConsorciado)
         else:
             text_te = 'Ler a tabela de ' + text_lc + ' dos arquivos já salvos.'
             self.father.prog1(text_te)
@@ -424,8 +435,7 @@ class Main_table:
         self.tableManip.edit_data_column_3 = cols_comConf_rept
         self.tableManip.del_column = column_Index
         self.table_Comissoes_Configuracao = self.tableManip.table
-        self.table_Comissoes_Configuracao.rename(
-            columns={column_Tabela_de_recebimento: column_Tabela}, inplace=True)
+        self.table_Comissoes_Configuracao.rename(columns={column_Tabela_de_recebimento: column_Tabela}, inplace=True)  # noqa
 
     def table_manip_Cadastro_funcionario_supervisor(self):
         text_te = 'Manipular a tabela de cadastro de funcionario'
@@ -539,8 +549,8 @@ class Main_table:
         while True:
             i += 1
             n_Parc = str(i) + word_º_Parc
-            column_situacao = word_Situacao_ + n_Parc
-            if column_situacao not in self.table_full.columns:
+            column_Situacao_n_Parc = word_Situacao_ + n_Parc
+            if column_Situacao_n_Parc not in self.table_full.columns:
                 break
 
             column_Data_Pag_n_Parc = word_Data_ + word_Pag_ + n_Parc
@@ -557,26 +567,27 @@ class Main_table:
             column_porc_ATA_Pag = word_porc_ + column_ATA_Pag_n_Parc
             column_porc_ATA_Pag_n_Parc_1_ATA_Atrasada = word_porc_ + column_ATA_Pag_n_Parc + word__1_ATA_Atrasada
             column_porc_ATA_Pag_n_Parc_2_ATA_Atrasada = word_porc_ + column_ATA_Pag_n_Parc + word__2_ATA_Atrasada
-            column_ATA_Pag_n_Parc_1_ATA_Atrasada = column_ATA_Pag_n_Parc + word__1_ATA_Atrasada
-            column_ATA_Pag_n_Parc_2_ATA_Atrasada = column_ATA_Pag_n_Parc + word__2_ATA_Atrasada
+            column_ATA_Venc_n_Parc_1_ATA_Atrasada = column_ATA_Venc_n_Parc + word__1_ATA_Atrasada
+            column_ATA_Venc_n_Parc_2_ATA_Atrasada = column_ATA_Venc_n_Parc + word__2_ATA_Atrasada
             column_Pag_Comissao_n_Parc = word_Pag_Comissao_ + n_Parc
+            column_PK_Vend_ATA_n_Parc = word_PK_ + word_Vend_ + word_ATA_ + n_Parc
 
             self.list_list_columns_pag.append([
-                column_situacao,
+                column_Situacao_n_Parc,
                 column_Data_Pag_n_Parc,
                 column_ATA_Pag_n_Parc,
                 column_Sma_Pag_n_Parc,
                 column_Mes_Pag_n_Parc
             ])
             self.list_list_columns_venc.append([
-                column_situacao,
+                column_Situacao_n_Parc,
                 column_Data_Venc_n_Parc,
                 column_ATA_Venc_n_Parc,
                 column_Sma_Venc_n_Parc,
                 column_Mes_Venc_n_Parc
             ])
             self.list_list_columns_situacao_num_ATA.append([
-                column_situacao,
+                column_Situacao_n_Parc,
                 column_Data_Pag_n_Parc,
                 column_Data_Venc_n_Parc,
                 column_ATA_Pag_n_Parc,
@@ -586,18 +597,20 @@ class Main_table:
             ])
             self.list_list_columns_num_ATA_atrasado.append([
                 column_Num_ATA_n_Parc,
-                column_Num_ATA_n_Parc_Atrasado
+                column_Num_ATA_n_Parc_Atrasado,
+                column_PK_Vend_ATA_n_Parc
             ])
             self.list_list_columns_percentage.append([
                 column_porc_ATA_Pag,
                 column_porc_ATA_Pag_n_Parc_1_ATA_Atrasada,
                 column_porc_ATA_Pag_n_Parc_2_ATA_Atrasada,
-                column_Num_ATA_n_Parc
+                column_Num_ATA_n_Parc,
+                column_PK_Vend_ATA_n_Parc
             ])
-            self.list_list_columns_ata_pag_atrasado_n_ata.append([
+            self.list_list_columns_ATA_Venc_n_Parc_n_ATA_Atrasada.append([
                 column_ATA_Venc_n_Parc,
-                column_ATA_Pag_n_Parc_1_ATA_Atrasada,
-                column_ATA_Pag_n_Parc_2_ATA_Atrasada
+                column_ATA_Venc_n_Parc_1_ATA_Atrasada,
+                column_ATA_Venc_n_Parc_2_ATA_Atrasada
             ])
             self.list_list_columns_comissao_atrasada.append([
                 column_Pag_Comissao_n_Parc,
@@ -605,8 +618,13 @@ class Main_table:
                 column_porc_ATA_Pag_n_Parc_1_ATA_Atrasada,
                 column_porc_ATA_Pag_n_Parc_2_ATA_Atrasada
             ])
-            self.list_list_columns_order.append([
-                column_situacao,
+            self.list_list_columns_PK_Vend_ATA_n_Parc.append([
+                column_ATA_Venc_n_Parc,
+                column_PK_Vend_ATA_n_Parc
+            ])
+            self.list_list_order_columns.append([
+                column_PK_Vend_ATA_n_Parc,
+                column_Situacao_n_Parc,
                 column_Situacao_ATA_n_Parc,
                 column_Data_Pag_n_Parc,
                 column_Data_Venc_n_Parc,
@@ -617,9 +635,9 @@ class Main_table:
                 column_porc_ATA_Pag,
                 column_ATA_Venc_n_Parc,
                 column_porc_ATA_Pag_n_Parc_1_ATA_Atrasada,
-                column_ATA_Pag_n_Parc_1_ATA_Atrasada,
+                column_ATA_Venc_n_Parc_1_ATA_Atrasada,
                 column_porc_ATA_Pag_n_Parc_2_ATA_Atrasada,
-                column_ATA_Pag_n_Parc_2_ATA_Atrasada,
+                column_ATA_Venc_n_Parc_2_ATA_Atrasada,
                 column_Mes_Pag_n_Parc,
                 column_Mes_Venc_n_Parc,
                 column_Sma_Pag_n_Parc,
@@ -635,21 +653,21 @@ class Main_table:
             return
         self.tableManip.table = self.table_date_weekly.copy()
         # deixar apenas as duas colunas 'N Semanda Mes e Data semana'
-        self.tableManip.del_column = column_Dia_semana
+        self.tableManip.del_column = column_Dia_Semana
         self.tableManip.del_column = column_Mes_ano
         self.tableManip.del_column = column_ATA
         table_weekly = self.tableManip.table
 
         self.tableManip.table = self.table_date_weekly.copy()
         # deixar apenas as duas colunas 'Mes ano e Data semana'
-        self.tableManip.del_column = column_Dia_semana
+        self.tableManip.del_column = column_Dia_Semana
         self.tableManip.del_column = column_N_Semana_Mes
         self.tableManip.del_column = column_ATA
         table_month = self.tableManip.table
 
         self.tableManip.table = self.table_date_weekly.copy()
         # deixar apenas as duas colunas 'Mes ano e Data semana'
-        self.tableManip.del_column = column_Dia_semana
+        self.tableManip.del_column = column_Dia_Semana
         self.tableManip.del_column = column_N_Semana_Mes
         self.tableManip.del_column = column_Mes_ano
         table_ata = self.tableManip.table
@@ -708,17 +726,18 @@ class Main_table:
         self.tableManip.alter_value_line_total_sum()
         self.table_full = self.tableManip.table
 
-    def create_column_pk_vend_ata_entrega(self):
+    def create_columns_pk_Vend_ATA_Entrega_n_Parc(self):
         text_te = 'Criar coluna com chaves primaira que identifique '
         text_te += 'o vendedor e a ATA únicas.'
         self.father.prog1(text_te)
         if self.mix is False or self.table_full.empty:
             return
+        self.tableManip.list_list_columns_PK_Vend_ATA_n_Parc = self.list_list_columns_PK_Vend_ATA_n_Parc
         self.tableManip.table = self.table_full
         self.tableManip.add_value_pk_vend_ata_entrega()
         self.table_full = self.tableManip.table
 
-    def create_columns_ata_atrasada_adiantada_igual(self):
+    def create_columns_Situacao_ATA_n_Parc(self):
         text_te = 'Criar coluna de numero e situação de quantidade '
         text_te += 'de ata atrasada ou adiantada ou no prazo'
         self.father.prog1(text_te)
@@ -728,7 +747,7 @@ class Main_table:
         self.tableManip.add_value_situacao_num_ATA = self.list_list_columns_situacao_num_ATA
         self.table_full = self.tableManip.table
 
-    def create_columns_ata_atrasadas(self):
+    def create_columns_Num_ATA_n_Parc_Atrasada(self):
         text_te = 'Criar coluna ATAs atrasadas '
         self.father.prog1(text_te)
         if self.mix is False or self.table_full.empty:
@@ -737,7 +756,7 @@ class Main_table:
         self.tableManip.add_value_num_ATA_atrasada = self.list_list_columns_num_ATA_atrasado
         self.table_full = self.tableManip.table
 
-    def create_columns_calc_percentual(self):
+    def create_columns_porc_ATA_Pag_n_Parc_n_ATA_Atrasada(self):
         text_te = 'Criar coluna porcentagem da ATA 1º, 2º e 3º '
         self.father.prog1(text_te)
         if self.mix is False or self.table_full.empty:
@@ -746,13 +765,13 @@ class Main_table:
         self.tableManip.add_value_porcentagem = self.list_list_columns_percentage
         self.table_full = self.tableManip.table
 
-    def create_columns_ata_pag_atrasado_n_ata(self):
+    def create_columns_ATA_Venc_n_Parc_n_ATA_Atrasada(self):
         text_te = 'Criar coluna ATA pagamento atrasados '
         self.father.prog1(text_te)
         if self.mix is False or self.table_full.empty:
             return
         self.tableManip.table = self.table_full
-        self.tableManip.add_value_ata_pag_atrasados = self.list_list_columns_ata_pag_atrasado_n_ata
+        self.tableManip.add_value_ATA_Venc_n_Parc_n_ATA_Atrasada = self.list_list_columns_ATA_Venc_n_Parc_n_ATA_Atrasada
         self.table_full = self.tableManip.table
 
     def create_columns_comissao_atrasada(self):
@@ -772,7 +791,7 @@ class Main_table:
         list_columns_Sma = []
         list_columns_1Parcela_Demais_FAT = []
         for column_full in list_columns_full:
-            if column_full in list_columns_start:
+            if column_full in list_order_columns_start:
                 continue
             elif word_Cliente in column_full:
                 list_columns_cliente.append(column_full)
@@ -792,13 +811,15 @@ class Main_table:
         list_columns_full = self.table_full.columns.to_list()
         list_columns_are_not_conlumns_start = []
         for column_full in list_columns_full:
-            if column_full not in self.list_columns_start:
+            if column_full not in self.list_order_columns_start:
                 list_columns_are_not_conlumns_start.append(column_full)
         return list_columns_are_not_conlumns_start
 
     def alter_order_columns(self):
         list_columns_end = []
-        for column_start in self.list_columns_start:
+        cout = 0
+        for column_start in self.list_order_columns_start:
+            cout += 1
             if column_start == column_Periodo_Valor_Qtd_Vendas:
                 for column_Valor_Qtd_Vendas in list_order_columns_Valor_Qtd_Vendas_Vendedor:
                     if column_Valor_Qtd_Vendas in list_columns_end:
@@ -817,24 +838,24 @@ class Main_table:
             list_columns_end.append(column_start)
         return list_columns_end
 
-    def add_columns_list_columns_start(self, list_columns):
+    def add_order_columns_list_start(self, list_columns):
         for column in list_columns:
-            if column in self.list_columns_start:
-                self.list_columns_start.remove(column)
-            self.list_columns_start.append(column)
+            if column in self.list_order_columns_start:
+                self.list_order_columns_start.remove(column)
+            self.list_order_columns_start.append(column)
 
-    def order_column(self):
+    def order_columns(self):
         ''' Ordenar colunas da tabela para a forma que quiser'''
         text_te = 'Ordenar as colunas, colocando as mais importantes no início '
         self.father.prog1(text_te)
-        for list_columns_ata in self.list_list_columns_order:
-            self.add_columns_list_columns_start(list_columns_ata)
-        for list_column_orden_total in self.list_list_column_orden_total:
-            self.add_columns_list_columns_start(list_column_orden_total)
+        for list_columns_ata in self.list_list_order_columns:
+            self.add_order_columns_list_start(list_columns_ata)
+        for list_column_orden_total in self.list_list_order_columns_total:
+            self.add_order_columns_list_start(list_column_orden_total)
         list_all = self.create_list_order_columns()
-        self.add_columns_list_columns_start(list_all)
+        self.add_order_columns_list_start(list_all)
         list_columns_are_not_conlumns_start = self.discover_columns_are_not_conlumns_start()
-        self.add_columns_list_columns_start(list_columns_are_not_conlumns_start)
+        self.add_order_columns_list_start(list_columns_are_not_conlumns_start)
         list_columns_end = self.alter_order_columns()
         self.table_full = self.table_full[list_columns_end]
 

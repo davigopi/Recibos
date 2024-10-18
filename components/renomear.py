@@ -1,5 +1,9 @@
+# flake8: noqa
+# pyright: # type: ignore
+
 # import re
 import unicodedata
+from components.variables import *
 # import bs4
 
 
@@ -220,6 +224,32 @@ class Renomear:
                     text1 = x + text1
         # text2 = Renomear(inf=text2).valor()
         return text1, text2
+
+    def n_ata(self, model):
+        self.inf = self.inf.replace(word_ATA_, '')
+        self.inf = self.inf.replace(word_Sma_, '')
+        self.inf = self.inf.replace(word_Parc, '')
+        self.inf = self.inf.replace(word_Pag_, '')
+        self.inf = self.inf.replace(word_Venc_, '')
+        self.inf = self.inf.replace(word_Comissao, '')
+        self.inf = self.inf.replace(word_Supervisor, '')
+        self.inf = self.inf.replace(word_Gerencia, '')
+        if model == 'mod1':
+            self.inf = self.inf.replace('º', '')
+            self.inf = self.inf.replace(word_Entrega, '1')
+            self.inf = self.inf.replace(word_Cad_Adm, '1')
+        elif model == 'mod2':
+            self.inf = self.inf.replace('º', 'ª')
+            self.inf = self.inf.replace(word_Entrega, '1ª')
+            self.inf = self.inf.replace(word_Cad_Adm, '1ª')
+        self.inf = self.inf.replace(' ', '')
+        return self.inf
+
+    def situacao_pag(self):
+        self.inf = self.inf.replace(' ', '')
+        self.inf = self.inf.replace('EM', '')
+        self.inf = self.inf.replace('ELADA', '.')
+        return self.inf
 
 
 # if __name__ == '__main__':

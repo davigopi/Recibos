@@ -8,6 +8,7 @@ from components.generat_payroll import Generat_payroll
 # import main_window
 from path_file import Path_file
 from components.variables import *
+from components.renomear import Renomear
 
 
 def load_table(path):
@@ -22,6 +23,7 @@ class Main_recibo:
         self.father = kwargs.get('father')
         self.generat_payroll = Generat_payroll(father=self.father)
         self.path_file = Path_file()
+        self.renomear = Renomear()
         # variaveis alteradas:
         self.is_vendedores = False
         self.is_supervisores = False
@@ -71,6 +73,8 @@ class Main_recibo:
             self.error = True
             return
         self.date_ata_single = month_written + '/' + year
+        # self.date_ata_single = 'FEVEREIRO/2024'
+        # self.date_ata_single = 'AGOSTO/2024'
         # semana
         table_datas_semanais = load_table(arqTableDatasSemanais)
         data = self.data_semana.strftime('%d/%m/%Y')
@@ -165,16 +169,11 @@ class Main_recibo:
     #     num_regras = self.generat_payroll.number  # ncol->{N}Qtd.CotIn
     #     self.generat_payroll.find_number_in_column = [str(num_regras) + word__Parc_, '']
     #     num_parcelas = self.generat_payroll.number  # ncol->Parc {N}
-    #     print('===============')
-    #     print(num_regras)
-    #     print(num_parcelas)
-    #     print('===============')
 
     def commission_bigger(self, comissao, vendedor):
         # apenas para saber qual as 3 maiores  comissões é a maior
-        comissao = comissao.replace('R$', '').replace(' ', '')
-        comissao = comissao.replace('.', '').replace(',', '.')
-        comissao = float(comissao)
+        self.renomear.inf = comissao
+        comissao = float(self.renomear.valor())
         if comissao >= self.comissao_anterior1:
             self.comissao_anterior3 = self.comissao_anterior2
             self.vendedor_anterior3 = self.vendedor_anterior2
@@ -202,18 +201,19 @@ class Main_recibo:
     def generate_employee(self):
         if self.error:
             return
-        # self.generate_variable_for_specific()
         if self.start:
             self.table_full = pd.read_csv(arqTableMergeOrder, sep=';', encoding='utf-8', dtype=str)
-            self.generat_payroll.generate_columns_for_all()
+            self.generat_payroll.generate_columns_for_all()  # 1º
             self.generat_payroll.date_sma_single = self.date_sma_single
             self.generat_payroll.date_ata_single = self.date_ata_single
+            self.generat_payroll.word_Valor_Qtd_Vendas_Inicial_profissao = self.word_Valor_Qtd_Vendas_Inicial_profissao
             self.start = False
 
         self.generat_payroll.word_profissao = self.word_profissao
         self.generat_payroll.column_profissao = self.column_profissao
         list_seller_single = self.create_list_all_sellers()
-        self.seller_single_unit = 'LUCIANE MARIA MATOS PIMENTEL'
+        # self.seller_single_unit = 'MARIA JESSICA PEREIRA PLACIDO'
+        self.seller_single_unit = 'MARIA ILLYEDJA RODRIGUES DE SOUZA'
         for self.seller_single in list_seller_single:
             # Foi escolhido um vededor?
             if self.seller_single_unit:
@@ -222,30 +222,21 @@ class Main_recibo:
                     continue
             self.generat_payroll.seller_single = self.seller_single
             # Saber se o vendedor parceiro é data smana
-            sair = self.generat_payroll.columns_ata_full_seller_single()
+            sair = self.generat_payroll.columns_ata_full_seller_single()  # 2º
             if sair:
                 continue
-            self.generat_payroll.tables_columns_ata_seller_single()
-
+            self.generat_payroll.create_list_tables_venc()  # 3º
             # saber se é para para o programa
             text_seller = self.format_name_profissional()
-            stop_program = self.generat_payroll.is_to_stop_program()
+            stop_program = self.generat_payroll.is_to_stop_program()  # 4º
             if stop_program:
                 text = text_seller + ' -> Não existe venda ou cargo não gera comissão.'
                 self.father.prog2(text)
                 continue
-            # self.generat_payroll.create_dictionary_datas()
-            # self.generat_payroll.table_list_administradora_add_line()
-
-            # self.generat_payroll.table_list_administradora_line_add_sum()
-
-            # self.generat_payroll.table_list_administradora_sum_add_qtdcotasinicial()
-            # self.generat_payroll.table_list_administradora_sum_add_full()
-            self.generat_payroll.add_column_Comissao()
-            # self.generat_payroll.table_columns_end()
-            # self.generat_payroll.edit_table()
-
-            comissao = self.generat_payroll.table_convert_pdf()
+            self.generat_payroll.add_column_Comissao()  # 5º
+            if self.word_profissao == word_Vendedor:
+                self.generat_payroll.create_table_atrasada()  # 6º
+            comissao = self.generat_payroll.table_convert_pdf()  # 7º
             if comissao == '0':
                 text = text_seller + ' -> Comissão zerada.'
                 self.father.prog2(text)
