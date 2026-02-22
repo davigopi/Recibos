@@ -132,7 +132,7 @@ if defined GIT_NAME (
     echo Usuario atual: !GIT_NAME!
     echo Email atual:   !GIT_EMAIL!
     echo.
-    set /p TROCAR="Deseja alterar? S/N: "
+    set /p TROCAR="Deseja alterar o usuário !GIT_NAME! ou o email !GIT_EMAIL! já configurado?  S: "
 
     if /I "!TROCAR!"=="S" (
         echo.
