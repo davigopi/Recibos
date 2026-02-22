@@ -115,8 +115,9 @@ word_ESTAGIARIO = 'ESTAGIÁRIO'
 word_ZERADO = 'ZERADO'
 word_Situacoes = 'Situações'
 
+
 word_ponto = '.'
-word_cifrao = ' $'
+word_cifrao = '$$$ '
 
 word_porc = '%'
 word_porc_ = word_porc + ' '
@@ -188,7 +189,11 @@ word_Inicial = 'Inicial'
 word_Inicial_ = word_Inicial + ' '
 word_Final = 'Final'
 word_Final_ = word_Final + ' '
+word_Nao = 'Não'
+word_Nao_ = word_Nao + ' '
+word_Encontrada = 'Encontrada'
 
+word_ATA_Nao_Encontrada = word_ATA_ + word_Nao_ + word_Encontrada
 word_Parc_ponto_ = word_Parc + word_ponto + ' '
 word_Qtd_Vendas = word_Qtd_ + word_Vendas
 word_Qtd_Vendas_ = word_Qtd_Vendas + ' '
@@ -286,6 +291,7 @@ column_Situacao = word_Situacao
 column_Situacoes = word_Situacoes
 column_Index = 'Index'
 column_Cliente = 'Cliente'
+# column_Cliente_25 = 'Cliente 25' 
 column_Gerente = 'Gerente'
 column_Cargo = 'Cargo'
 column_Nome = 'Nome'
@@ -403,9 +409,9 @@ list_columns_ATA_EntregaVenc_n_Parc = [column_ATA_Entrega]
 list_columns_ATA_n_Parc_1_Atrasada = [column_ATA_Entrega]
 list_columns_ATA_n_Parc_2_Atrasada = [column_ATA_Entrega]
 
-list_columns_porc_ATA_Venc_n_Parc = [column_porc_ATA_Entrega]
-list_columns_porc_ATA_Venc_n_Parc_1_ATA_Atrasada = [column_porc_ATA_Entrega]
-list_columns_porc_ATA_Venc_n_Parc_2_ATA_Atrasada = [column_porc_ATA_Entrega]
+list_columns_porc_ATA_Pag_n_Parc = [column_porc_ATA_Entrega]
+list_columns_porc_ATA_Pag_n_Parc_1_ATA_Atrasada = [column_porc_ATA_Entrega]
+list_columns_porc_ATA_Pag_n_Parc_2_ATA_Atrasada = [column_porc_ATA_Entrega]
 
 list_columns_Situacao_n_Parc = [column_Situacao]
 
@@ -748,26 +754,27 @@ listXpathMinutes = [
 ]
 
 
-arqTableCadastroConsorciado = path_file.path_file_create_user(word_Appdata, word_tables, 'table_Cadastro_Consorciado.csv')  # noqa
-arqTableCadastroFuncionario = path_file.path_file_create_user(word_Appdata, word_tables, 'table_Cadastro_Funcionario.csv')  # noqa
-arqTableCadastroAta = path_file.path_file_create_user(word_Appdata, word_tables, 'table_Cadastro_Ata.csv')  # noqa
-arqTableComissoesConfiguracao = path_file.path_file_create_user(word_Appdata, word_tables, 'table_Comissoes_Configuracao.csv')  # noqa
-arqTableComissoesConfigPag = path_file.path_file_create_user(word_Appdata, word_tables, 'table_Comissoes_ConfigPagamento.csv')  # noqa
-# arqTableComissoesConfigPagTratada = path_file.path_file_create_user(word_Appdata, word_tables, 'table_Comissoes_ConfigPagTratada.csv')  # noqa
-arqTesteDuplTableComissoesConfigPag = path_file.path_file_create_user(word_Appdata, word_tables, 'Teste_Dupl_table_Comissoes_ConfigPagamento.csv')  # noqa
-arqTableGerencia = path_file.path_file_create_user(word_Appdata, word_tables, 'table_Gerencia.csv')  # noqa
-arqTableComissoesConfigPagSupervisor = path_file.path_file_create_user(word_Appdata, word_tables, 'table_Comissoes_ConfigPagamento_supervisor.csv')  # noqa
-arqTableMerge = path_file.path_file_create_user(word_Appdata, word_tables, 'tableMerge.csv')  # noqa
-arqTableMergeOrder = path_file.path_file_create_user(word_Appdata, word_tables, 'tableMergeOrder.csv')  # noqa
-arqTableDatasSemanais = path_file.path_file_create_user(word_Appdata, word_tables, 'table_datas_semanais.csv')  # noqa
-arqTableTeste1 = path_file.path_file_create_user(word_Appdata, word_tables, 'table_teste1.csv')  # noqa
-arqTableTeste2 = path_file.path_file_create_user(word_Appdata, word_tables, 'table_teste2.csv')  # noqa
-arqTableTeste3 = path_file.path_file_create_user(word_Appdata, word_tables, 'table_teste3.csv')  # noqa
+arqTableCadastroConsorciado = path_file.path_file_create_user(word_Appdata, word_tables, 'table_Cadastro_Consorciado.csv')  
+arqTableCadastroFuncionario = path_file.path_file_create_user(word_Appdata, word_tables, 'table_Cadastro_Funcionario.csv')  
+arqTableCadastroAta = path_file.path_file_create_user(word_Appdata, word_tables, 'table_Cadastro_Ata.csv')  
+arqTableComissoesConfiguracao = path_file.path_file_create_user(word_Appdata, word_tables, 'table_Comissoes_Configuracao.csv')  
+arqTableComissoesConfigPag = path_file.path_file_create_user(word_Appdata, word_tables, 'table_Comissoes_ConfigPagamento.csv')  
+# arqTableComissoesConfigPagTratada = path_file.path_file_create_user(word_Appdata, word_tables, 'table_Comissoes_ConfigPagTratada.csv')  
+arqTesteDuplTableComissoesConfigPag = path_file.path_file_create_user(word_Appdata, word_tables, 'Teste_Dupl_table_Comissoes_ConfigPagamento.csv')  
+arqTableGerencia = path_file.path_file_create_user(word_Appdata, word_tables, 'table_Gerencia.csv')  
+arqTableComissoesConfigPagSupervisor = path_file.path_file_create_user(word_Appdata, word_tables, 'table_Comissoes_ConfigPagamento_supervisor.csv')  
+arqTableMerge = path_file.path_file_create_user(word_Appdata, word_tables, 'tableMerge.csv')  
+arqTableMergeOrder = path_file.path_file_create_user(word_Appdata, word_tables, 'tableMergeOrder.csv')  
+arqTableDatasSemanais = path_file.path_file_create_user(word_Appdata, word_tables, 'table_datas_semanais.csv')  
+arqTableDatasSemanaisInicial = path_file.path_file_create_user(word_Appdata, word_tables, 'table_datas_semanaisInicial.csv')  
+arqTableTeste1 = path_file.path_file_create_user(word_Appdata, word_tables, 'table_teste1.csv')  
+arqTableTeste2 = path_file.path_file_create_user(word_Appdata, word_tables, 'table_teste2.csv')  
+arqTableTeste3 = path_file.path_file_create_user(word_Appdata, word_tables, 'table_teste3.csv')  
 pathDonwload = os.environ['USERPROFILE'] + '\\Downloads'
 arqDonwloadSales = pathDonwload + '\\consorciados.csv'
 arqDonwloadFunction = pathDonwload + '\\funcionarios.csv'
 
-arq_log = path_file.path_file_create_user(word_Appdata, word_log, 'log.txt')  # noqa
+arq_log = path_file.path_file_create_user(word_Appdata, word_log, 'log.txt')  
 
 img_select = 'img/select.jpg'
 
@@ -791,14 +798,14 @@ class Variables:
 
     def date_file(self):
         text_te = 'Datas das tabelas de: \n'
-        date_table_Cadastro_Consorciado = datetime.fromtimestamp(os.path.getmtime(arqTableCadastroConsorciado)).strftime('%c')  # noqa
+        date_table_Cadastro_Consorciado = datetime.fromtimestamp(os.path.getmtime(arqTableCadastroConsorciado)).strftime('%c')  
         text_te += f'Cadastro de consorciado: {date_table_Cadastro_Consorciado} \n'
-        date_table_Cadastro_Funcionario = datetime.fromtimestamp(os.path.getmtime(arqTableCadastroFuncionario)).strftime('%c')  # noqa
+        date_table_Cadastro_Funcionario = datetime.fromtimestamp(os.path.getmtime(arqTableCadastroFuncionario)).strftime('%c')  
         text_te += f'Cadastro de funcionario: {date_table_Cadastro_Funcionario} \n'
-        date_table_Cadastro_Ata = datetime.fromtimestamp(os.path.getmtime(arqTableCadastroAta)).strftime('%c')  # noqa
+        date_table_Cadastro_Ata = datetime.fromtimestamp(os.path.getmtime(arqTableCadastroAta)).strftime('%c')  
         text_te += f'Cadastro de ATAs: {date_table_Cadastro_Ata} \n'
-        date_table_Comissoes_Configuracao = datetime.fromtimestamp(os.path.getmtime(arqTableComissoesConfiguracao)).strftime('%c')  # noqa
+        date_table_Comissoes_Configuracao = datetime.fromtimestamp(os.path.getmtime(arqTableComissoesConfiguracao)).strftime('%c')  
         text_te += f'Comissões configuração: {date_table_Comissoes_Configuracao} \n'
-        date_table_Comissoes_ConfigPagamento = datetime.fromtimestamp(os.path.getmtime(arqTableComissoesConfigPag)).strftime('%c')  # noqa
+        date_table_Comissoes_ConfigPagamento = datetime.fromtimestamp(os.path.getmtime(arqTableComissoesConfigPag)).strftime('%c')  
         text_te += f'Comissões configuração de pagamento: {date_table_Comissoes_ConfigPagamento} \n'
         return (text_te)

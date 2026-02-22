@@ -21,6 +21,7 @@ from path_file import Path_file
 import locale
 from components.variables import *
 import sys
+from PySide6.QtWidgets import QApplication
 # Definir a localidade para Português do Brasil
 locale.setlocale(locale.LC_TIME, 'pt_BR.UTF-8')
 
@@ -90,6 +91,19 @@ class Main_table:
         self.list_list_order_columns_total = list_list_order_columns_total
 
     def openSite(self):
+        # Finaliza o driver do Selenium
+        # try:
+        #     self.driver.quit()
+        #     print("ChromeDriver finalizado com sucesso.")
+        # except Exception as e:
+        #     print(f"[ERRO] ao finalizar o driver: {e}")
+        # # Encerra a thread com segurança
+        # try:
+        #     self.thread.quit()
+        #     self.thread.wait()
+        #     print("Thread encerrada com sucesso.")
+        # except Exception as e:
+        #     print(f"[ERRO] ao encerrar a thread: {e}")
         ''' defined '''
         text_te = f'Abrindo site: {siteSircon}'
         self.father.prog1(text_te)
@@ -104,7 +118,7 @@ class Main_table:
                     os.path.dirname(chromedriver_path), 'chromedriver.exe')
 
             service = Service(chromedriver_path)
-            print(f'chromedriver_path: {chromedriver_path}')
+            # print(f'chromedriver_path: {chromedriver_path}')
             self.driver = webdriver.Chrome(service=service, options=options)
             self.driver.maximize_window()
         except Exception as e:
@@ -370,8 +384,8 @@ class Main_table:
         self.date_weekly.edit_weekYear_week_date_separate_weekMonth = None
         self.date_weekly.edit_weekMonth_week_date = None
         self.date_weekly.create_table_weekMonth_week_date = list_columns_date_weekly_new
-
         self.table_date_weekly = self.date_weekly.return_table
+        create_table(self.table_date_weekly, arqTableDatasSemanaisInicial)
 
     def merge_table_Cadastro_Ata_table_date_weekly(self):
         if self.mix is False:
@@ -737,6 +751,12 @@ class Main_table:
         self.tableManip.add_value_pk_vend_ata_entrega()
         self.table_full = self.tableManip.table
 
+    def error_system(self, text_log):
+        self.fileManip.writeLog = text_log
+        self.save_full_teste(1)
+        QApplication.quit()
+        sys.exit()  
+
     def create_columns_Situacao_ATA_n_Parc(self):
         text_te = 'Criar coluna de numero e situação de quantidade '
         text_te += 'de ata atrasada ou adiantada ou no prazo'
@@ -745,6 +765,8 @@ class Main_table:
             return
         self.tableManip.table = self.table_full
         self.tableManip.add_value_situacao_num_ATA = self.list_list_columns_situacao_num_ATA
+        if self.tableManip.error:
+            self.error_system(self.tableManip.log_error)
         self.table_full = self.tableManip.table
 
     def create_columns_Num_ATA_n_Parc_Atrasada(self):
@@ -766,7 +788,7 @@ class Main_table:
         self.table_full = self.tableManip.table
 
     def create_columns_ATA_Venc_n_Parc_n_ATA_Atrasada(self):
-        text_te = 'Criar coluna ATA pagamento atrasados '
+        text_te = 'Criar coluna ATA vencimento atrasados '
         self.father.prog1(text_te)
         if self.mix is False or self.table_full.empty:
             return

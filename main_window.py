@@ -1,17 +1,23 @@
 # flake8: noqa
 # pyright: # type: ignore
 
+import sys
+import os
+import time
+
+# Definir as regras de logging do Qt antes de importar qualquer parte do PySide6
+os.environ['QT_LOGGING_RULES'] = '*.debug=false;*.warning=false;*.critical=false'
+
 from PySide6.QtWidgets import QApplication, QMainWindow
 from PySide6.QtCore import QDate, QObject, QThread, Signal
 from PySide6.QtGui import QIcon, QPixmap
 # from components import fileManip
 from ui_main import Ui_MainWindow
-import sys
-import os
 from main_table import Main_table
 from components.variables import Variables
 from main_recibo import Main_recibo
-import time
+
+
 
 
 def resource_path(relative_path):
@@ -38,6 +44,8 @@ class Worker1(QObject):
         self.started1.emit()
         user = kwargs.get('user')
         password = kwargs.get('password')
+        user = 'davigopi@gmail.com'
+        password = '36vad28'
         months = kwargs.get('months')
         cadastro_consorciado = kwargs.get('cadastro_consorciado')
         cadastro_funcionaio = kwargs.get('cadastro_funcionaio')
@@ -96,7 +104,9 @@ class Worker1(QObject):
         main_table.create_columns_Situacao_ATA_n_Parc()
         main_table.create_columns_Num_ATA_n_Parc_Atrasada()
         main_table.create_columns_porc_ATA_Pag_n_Parc_n_ATA_Atrasada()
+        main_table.save_full_teste(2)
         main_table.create_columns_ATA_Venc_n_Parc_n_ATA_Atrasada()
+        main_table.save_full_teste(3)
         main_table.create_columns_comissao_atrasada()
         main_table.save_full()
         main_table.order_columns()
@@ -126,47 +136,80 @@ class Worker2(QObject):
         selecionado_funcionario = kwargs.get('selecionado_funcionario')
         data_ata = kwargs.get('data_ata')
         data_semana = kwargs.get('data_semana')
-        main_gerar = Main_recibo(father=self)
+        main_recibo = Main_recibo(father=self)
         if vendedores is not None:
-            main_gerar.is_vendedores = vendedores
+            main_recibo.is_vendedores = vendedores
         if supervisores is not None:
-            main_gerar.is_supervisores = supervisores
+            main_recibo.is_supervisores = supervisores
         if gerentes is not None:
-            main_gerar.is_gerentes = gerentes
+            main_recibo.is_gerentes = gerentes
         if parceiros is not None:
-            main_gerar.is_parceiros = parceiros
+            main_recibo.is_parceiros = parceiros
         if selecionado_funcionario is not None:
             if selecionado_funcionario != 'TODOS OS FUNCIONÁRIOS':
-                main_gerar.seller_single_unit = selecionado_funcionario
+                main_recibo.seller_single_unit = selecionado_funcionario
         if data_ata is not None and data_semana is not None:
-            data_ata = data_ata.toPython()
+            # data_ata = data_ata.toPython()
             data_semana = data_semana.toPython()
-            main_gerar.data_ata = data_ata
-            main_gerar.data_semana = data_semana
-            main_gerar.generate_date_ata()
+            main_recibo.data_ata = data_ata
+            main_recibo.data_semana = data_semana
+            main_recibo.generate_date_ata()
 
-        main_gerar.generate_is_vendedores()
-        main_gerar.generate_is_supervisores()
-        main_gerar.generate_is_gerentes()
-        main_gerar.generate_is_parceiros()
+        main_recibo.generate_is_vendedores()
+        main_recibo.generate_is_supervisores()
+        main_recibo.generate_is_gerentes()
+        main_recibo.generate_is_parceiros()
         self.finished2.emit()
         self.prog2('Finalizado.')
 
+# class MonthYearCalendar(QCalendarWidget):
+#     def __init__(self, parent=None):
+#         super().__init__(parent)
+
+#         # Interceptar a navegação do calendário para evitar exibir os dias
+#         self.activated.connect(self.handle_date_selection)
+
+#     def handle_date_selection(self, date):
+#         # A função será chamada quando uma data for selecionada
+#         # Redirecionar a seleção para mostrar o mês e o ano somente
+#         # O que você pode fazer aqui é simplesmente trabalhar com o mês e o ano
+
+#         # Defina o comportamento desejado ao selecionar o mês/ano
+#         print(f"Selecionado mês/ano: {date.month()}/{date.year()}")
 
 class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
-        main_gerar = Main_recibo()
+        main_recibo = Main_recibo()
         # super(MainWindow, self).__init__()
         self.setupUi(self)
         self.setWindowTitle("Select carregar informações e gerar recibos")
         self.adjust_image_paths()
         # Inicializar QDateEdit com a data atual
-        self.data_inicial.setDate(QDate.currentDate().addYears(-1))
-        self.data_ata.setDate(QDate.currentDate())
+
+
+        # Criar um QCalendarWidget personalizado para mostrar apenas mês/ano
+        # self.month_year_calendar = MonthYearCalendar()
+
+
+        list_month_year = main_recibo.generate_list_month_year(QDate.currentDate())
+        self.data_inicial.addItems(list_month_year)
+        self.data_inicial.setCurrentIndex(12)
+        # self.data_inicial.setDate(QDate.currentDate().addYears(-1))
+        # self.data_inicial.setCalendarWidget(self.month_year_calendar)
+
+
+
+
+        # self.data_ata.setDate(QDate.currentDate())
+        list_ATA_month_year = main_recibo.generate_list_ATA_month_year(QDate.currentDate())
+        self.data_ata.addItems(list_ATA_month_year)
+        self.data_ata.setCurrentIndex(0)
+
+
         self.data_semana.setDate(QDate.currentDate())
         # Adiciona itens ao QComboBox
-        list_seller = main_gerar.generate_list_seller()
+        list_seller = main_recibo.generate_list_seller()
         # Mostra todos os funcionarios no programa
         self.cbb_funcionario.addItems(list_seller)
         # paguinaas do sistema
@@ -206,6 +249,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def carregar_btn(self):
         self.worker1 = Worker1()
         self.thread1 = QThread()
+        main_recibo = Main_recibo()
         # Move o worker para a thread.
         self.worker1.moveToThread(self.thread1)
         self.te_table.clear()
@@ -214,7 +258,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.thread1.started.connect(lambda: self.worker1.scall_main_table1(
             user=self.le_usuario.text(),
             password=self.le_senha.text(),
-            months=self.calculate_month(self.data_inicial.date()),
+            months=main_recibo.calculate_n_months(self.data_inicial.currentText(), QDate.currentDate()),
             cadastro_consorciado=self.cb_cadastro_consorciado.isChecked(),
             cadastro_funcionaio=self.cb_cadastro_funcionaio.isChecked(),
             cadastro_ata=self.cb_cadastro_ata.isChecked(),
@@ -245,8 +289,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             supervisores=self.cb_supervisor.isChecked(),
             gerentes=self.cb_gerente.isChecked(),
             parceiros=self.cb_parceiro.isChecked(),
+
+
             selecionado_funcionario=self.cbb_funcionario.currentText(),
-            data_ata=self.data_ata.date(),
+
+            data_ata=self.data_ata.currentText(),
+            
+            # data_ata=self.data_ata.date(),
             data_semana=self.data_semana.date(),
         ))
         self.worker2.finished2.connect(self.thread2.quit)
@@ -300,14 +349,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         QApplication.processEvents()
         print('worker finalizado')
 
-    def calculate_month(self, date_start):
-        date_end = QDate.currentDate()
-        total_years = date_end.year() - date_start.year()
-        total_months = date_end.month() - date_start.month()
-        months = total_years * 12 + total_months
-        if months == 0:
-            months = 1
-        return (months)
+    # def calculate_month(self, date_start):
+    #     date_end = QDate.currentDate()
+    #     total_years = date_end.year() - date_start.year()
+    #     total_months = date_end.month() - date_start.month()
+    #     months = total_years * 12 + total_months
+    #     if months == 0:
+    #         months = 1
+    #     return (months)
 
     def date_path_file(self):
         variables = Variables()

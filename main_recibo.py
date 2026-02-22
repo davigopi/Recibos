@@ -4,6 +4,7 @@
 from datetime import datetime
 import pandas as pd
 # from pathlib import Path
+from components.date_month import Date_month
 from components.generat_payroll import Generat_payroll
 # import main_window
 from path_file import Path_file
@@ -24,6 +25,7 @@ class Main_recibo:
         self.generat_payroll = Generat_payroll(father=self.father)
         self.path_file = Path_file()
         self.renomear = Renomear()
+        self.date_month = Date_month()
         # variaveis alteradas:
         self.is_vendedores = False
         self.is_supervisores = False
@@ -33,7 +35,7 @@ class Main_recibo:
         self.date_ata_single = date_ata_single
         self.data_semana = datetime.now()
         self.date_sma_single = date_sma_single
-        self.data_ata = datetime.now()
+        self.data_ata = ''
         # variaveis
         self.column_profissao = column_profissao
         # para calcular maiores comissões
@@ -60,19 +62,39 @@ class Main_recibo:
         list_seller = [item for item in list_seller if item and item.strip()]
         list_seller.sort()
         return list_seller
+    
+
+    def generate_list_month_year(self, date):
+        list_month_year = self.date_month.list_month_year(date)
+        return list_month_year
+
+    def generate_list_ATA_month_year(self, date):
+        list_month_year = self.date_month.list_month_year(date)
+        list_ATA_month_year = []
+        for month_year in list_month_year:
+            ata_month_year = 'ATA de ' + month_year
+            list_ATA_month_year.append(ata_month_year)
+        return list_ATA_month_year
+    
+    def calculate_n_months(self, month_year, date):
+        n_months = self.date_month.discover_n_months(month_year, date)
+        return n_months
 
     def generate_date_ata(self):
         if self.error:
             return
-        month = self.data_ata.strftime('%m')
-        year = self.data_ata.strftime('%Y')
+        data_ata = self.data_ata.replace('ATA de ', '')
+        data_ata = data_ata.replace(' de ', ' ')
+        month, year = self.date_month.discover_month_year(data_ata)
+        # month = data_ata.strftime('%m')
+        # year = data_ata.strftime('%Y')
         # ATA
         month = int(month)
         month_written = inverted_dic_months.get(month, None)
         if month_written is None:
             self.error = True
             return
-        self.date_ata_single = month_written + '/' + year
+        self.date_ata_single = month_written + '/' + str(year)
         # self.date_ata_single = 'FEVEREIRO/2024'
         # self.date_ata_single = 'AGOSTO/2024'
         # semana
@@ -213,7 +235,7 @@ class Main_recibo:
         self.generat_payroll.column_profissao = self.column_profissao
         list_seller_single = self.create_list_all_sellers()
         # self.seller_single_unit = 'MARIA JESSICA PEREIRA PLACIDO'
-        self.seller_single_unit = 'MARIA ILLYEDJA RODRIGUES DE SOUZA'
+        # self.seller_single_unit = 'MARIA ILLYEDJA RODRIGUES DE SOUZA'
         for self.seller_single in list_seller_single:
             # Foi escolhido um vededor?
             if self.seller_single_unit:

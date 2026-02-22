@@ -1,3 +1,6 @@
+import time
+
+
 class Date_month:
     def __init__(self, *args, **kwargs) -> None:
 
@@ -14,6 +17,21 @@ class Date_month:
             10: 'OUTUBRO',
             11: 'NOVEMBRO',
             12: 'DEZEMBRO'
+        }
+
+        self.meses_ext = {
+            'JANEIRO': 1,
+            'FEVEREIRO': 2,
+            'MARÇO': 3,
+            'ABRIL': 4,
+            'MAIO': 5,
+            'JUNHO': 6,
+            'JULHO': 7,
+            'AGOSTO': 8,
+            'SETEMBRO': 9,
+            'OUTUBRO': 10,
+            'NOVEMBRO': 11,
+            'DEZEMBRO': 12
         }
 
     def sum_less_month(self, valor_sum_less, ata_pag, ata_venc):
@@ -64,3 +82,66 @@ class Date_month:
                 continue
             break
         return list_new_ata_pag_parc
+    
+    def list_month_year(self, date):
+        list_month_year = []
+        month = int(date.month())
+        year = int(date.year())
+        n_months = 60
+        while True:
+            word_month_year = self.meses_int[month] + ' de ' + str(year)
+            list_month_year.append(word_month_year)
+            month -= 1
+            if month == 0:
+                month = 12
+                year -= 1
+            n_months -= 1
+            if n_months == 0:
+                break
+        return list_month_year
+
+    def discover_n_months(self, month_year, date):
+        n_months = 0
+        month_ext = ''
+        year_ext = ''
+        n_space = 0
+        for letter in month_year:
+            if letter == ' ':
+                break
+            month_ext += letter
+        for letter in month_year:
+            if letter == ' ':
+                n_space += 1
+                continue
+            if n_space <= 1:
+                continue
+            year_ext += letter
+        month_int = self.meses_ext[month_ext]
+        year_int = int(year_ext)
+        month =date.month()
+        year = date.year()
+        while True:
+            if month == month_int and year == year_int:
+                break
+            n_months += 1
+            month_int += 1
+            if month_int > 12:
+                month_int = 1
+                year_int += 1
+        return n_months
+
+    def discover_month_year(self, ata_month_year):
+        month_condition = False
+        year_ext = ''
+        month_ext = ''
+        for letter in ata_month_year:
+            if letter == ' ':
+                month_condition = True
+                continue
+            if month_condition:
+                year_ext += letter
+            else:
+                month_ext += letter
+        month_int = self.meses_ext[month_ext]
+        year_int = int(year_ext)
+        return month_int, year_int

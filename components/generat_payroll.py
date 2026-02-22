@@ -110,9 +110,9 @@ class Generat_payroll:
         self.list_columns_ATA_n_Parc_1_Atrasada = list_columns_ATA_n_Parc_1_Atrasada
         self.list_columns_ATA_n_Parc_2_Atrasada = list_columns_ATA_n_Parc_2_Atrasada
 
-        self.list_columns_porc_ATA_Venc_n_Parc = list_columns_porc_ATA_Venc_n_Parc
-        self.list_columns_porc_ATA_Venc_n_Parc_1_ATA_Atrasada = list_columns_porc_ATA_Venc_n_Parc_1_ATA_Atrasada
-        self.list_columns_porc_ATA_Venc_n_Parc_2_ATA_Atrasada = list_columns_porc_ATA_Venc_n_Parc_2_ATA_Atrasada
+        self.list_columns_porc_ATA_Pag_n_Parc = list_columns_porc_ATA_Pag_n_Parc
+        self.list_columns_porc_ATA_Pag_n_Parc_1_ATA_Atrasada = list_columns_porc_ATA_Pag_n_Parc_1_ATA_Atrasada
+        self.list_columns_porc_ATA_Pag_n_Parc_2_ATA_Atrasada = list_columns_porc_ATA_Pag_n_Parc_2_ATA_Atrasada
 
         # self.list_ata = list_ata
         # self.list_sum_credito = list_sum_credito
@@ -333,7 +333,16 @@ class Generat_payroll:
         table_[column_Parc] = str(num) + 'ª'
         return table_
 
-    # 5º 10  / 6º 11
+
+    # 5º 9  /  6º 11
+    def create_column_Cliente_25(self, table_venc):
+        quantity_line_table = table_venc.shape[0]
+        for line in range(quantity_line_table):
+            table_venc.loc[line, column_Cliente] = str(table_venc.iloc[line][column_Cliente])[:25] 
+        return table_venc
+    
+
+    # 5º 11  / 6º 12
     def delete_lines_comissao_zero(self, table_):
         self.list_line_delete = []
         quantity_line_table = table_.shape[0]
@@ -426,7 +435,7 @@ class Generat_payroll:
             table_venc.loc[line, column_ATA_Venc_n_Parc] = str(table_venc.iloc[line][column_ATASma_EntregaCad_AdmVenc_n_Parc])  # noqa
         return table_venc
 
-    # 5º 9
+    # 5º 10
     def delete_lines_different_ATA_Venc_n_Parc(self, table_venc):
         self.list_line_delete = []
         quantity_line_table = table_venc.shape[0]
@@ -438,16 +447,15 @@ class Generat_payroll:
         table_venc.reset_index(drop=True, inplace=True)
         return table_venc
 
-    # 5º 11
+    # 5º 12
     def create_column_adimplencia(self, table_venc, key):
         self.adimplencias = ''
         list_adimplencias_all = []
         # column_porc_ATA_Pag_n_Parc = word_porc_ + word_ATA_ + word_Pag_ + num + word_º_Parc
-        column_porc_ATA_Pag_n_Parc = self.list_columns_porc_ATA_Venc_n_Parc[key]
+        column_porc_ATA_Pag_n_Parc = self.list_columns_porc_ATA_Pag_n_Parc[key]
         # column_ATA_Pag_n_Parc = self.list_columns_ATA_Pag_n_Parc[key]
         quantity_line_table = table_venc.shape[0]
         for line in range(quantity_line_table):
-            print('############ alterar por aqui ####################')
             porc_ATA_Pag_n_Parc = table_venc.iloc[line][column_porc_ATA_Pag_n_Parc]
             valor = str(porc_ATA_Pag_n_Parc) + word__porc
             table_venc.loc[line, column_Adimplencia] = valor
@@ -504,7 +512,7 @@ class Generat_payroll:
                 table_atrasada.loc[line, column_Comissao_50_porc] = 0
         return table_atrasada
 
-    # 6º 9
+    # 6º 10
     def create_column_ata_venc_n_parc_atrasada(self, table_atrasada, column_Pag_Comissao_n_Parc):  # noqa
         quantity_line_table = table_atrasada.shape[0]
         for line in range(quantity_line_table):
@@ -513,19 +521,19 @@ class Generat_payroll:
             table_atrasada.loc[line, column_ATA_Venc_n_Parc] = table_atrasada.iloc[line][column_ATA_Venc_n_Parc_n_ATA_Atrasada]  # noqa
         return table_atrasada
 
-    # 6º 10
+    # 6º 13
     def create_column_adimplencia_atrasada(self, table_atrasada, column_Pag_Comissao_n_Parc, num):
         self.adimplencias = ''
         list_adimplencias_all = []
         # column_porc_ATA_Pag_n_Parc = word_porc_ + word_ATA_ + word_Pag_ + num + word_º_Parc
-        # column_porc_ATA_Pag_n_Parc = self.list_columns_porc_ATA_Venc_n_Parc[key]
+        # column_porc_ATA_Pag_n_Parc = self.list_columns_porc_ATA_Pag_n_Parc[key]
         quantity_line_table = table_atrasada.shape[0]
         for line in range(quantity_line_table):
             column_porc_ATA__Pag_n_Parc_n_ATA_Atrasada = table_atrasada.iloc[line][column_Pag_Comissao_n_Parc]  # noqa
-            print(f'antes: {column_porc_ATA__Pag_n_Parc_n_ATA_Atrasada}')
+            # print(f'antes: {column_porc_ATA__Pag_n_Parc_n_ATA_Atrasada}')
             if column_porc_ATA__Pag_n_Parc_n_ATA_Atrasada == '':
                 column_porc_ATA__Pag_n_Parc_n_ATA_Atrasada = word_porc_ + word_ATA + num + 'º ' + word_Parc
-                print(f'depois: {column_porc_ATA__Pag_n_Parc_n_ATA_Atrasada}')
+                # print(f'depois: {column_porc_ATA__Pag_n_Parc_n_ATA_Atrasada}')
             porc_ATA_Pag_n_Parc = table_atrasada.iloc[line][column_porc_ATA__Pag_n_Parc_n_ATA_Atrasada]  # noqa
             valor = str(porc_ATA_Pag_n_Parc) + word__porc
             table_atrasada.loc[line, column_Adimplencia] = valor
@@ -591,9 +599,9 @@ class Generat_payroll:
             self.list_columns_ATA_n_Parc_1_Atrasada.append(word_Num_ + word_ATA_ + n_Parc + ' 1' + word__Atrasada)  # noqa
             self.list_columns_ATA_n_Parc_2_Atrasada.append(word_Num_ + word_ATA_ + n_Parc + ' 2' + word__Atrasada)  # noqa
 
-            self.list_columns_porc_ATA_Venc_n_Parc.append(word_porc_ + word_ATA_ + word_Venc_ + n_Parc)  # noqa
-            self.list_columns_porc_ATA_Venc_n_Parc_1_ATA_Atrasada.append(word_porc_ + word_ATA_ + word_Venc_ + n_Parc + ' 1 ' + word_ATA + word__Atrasada)  # noqa
-            self.list_columns_porc_ATA_Venc_n_Parc_2_ATA_Atrasada.append(word_porc_ + word_ATA_ + word_Venc_ + n_Parc + ' 2 ' + word_ATA + word__Atrasada)  # noqa
+            self.list_columns_porc_ATA_Pag_n_Parc.append(word_porc_ + word_ATA_ + word_Pag_ + n_Parc)  # noqa
+            self.list_columns_porc_ATA_Pag_n_Parc_1_ATA_Atrasada.append(word_porc_ + word_ATA_ + word_Pag_ + n_Parc + ' 1 ' + word_ATA + word__Atrasada)  # noqa
+            self.list_columns_porc_ATA_Pag_n_Parc_2_ATA_Atrasada.append(word_porc_ + word_ATA_ + word_Pag_ + n_Parc + ' 2 ' + word_ATA + word__Atrasada)  # noqa
 
             self.list_columns_Situacao_n_Parc.append(word_Situacao_ + n_Parc)
 
@@ -657,20 +665,21 @@ class Generat_payroll:
             table_venc = self.list_tables_venc[key]
             column_Situacao_n_Parc = self.list_columns_Situacao_n_Parc[key]
             column_ATASma_EntregaCad_AdmVenc_n_Parc = self.list_columns_ATASma_EntregaCad_AdmVenc_n_Parc[key]  # noqa
-            column_porc_ATA_Pag_n_Parc = self.list_columns_porc_ATA_Venc_n_Parc[key]
-            num = self.find_num_column_ATASma_Pag_n_Parc(column_ATASma_EntregaCad_AdmVenc_n_Parc)
-            table_venc = self.creat_column_porc_ATA_Entrega(table_venc)
+            column_porc_ATA_Pag_n_Parc = self.list_columns_porc_ATA_Pag_n_Parc[key]
+            num = self.find_num_column_ATASma_Pag_n_Parc(column_ATASma_EntregaCad_AdmVenc_n_Parc)  # 1
+            table_venc = self.creat_column_porc_ATA_Entrega(table_venc)  # 2
             if table_venc.empty:
                 continue
-            table_venc = self.create_columns_sit_pag(table_venc, column_Situacao_n_Parc, key)
-            table_venc = self.create_columns_porc_num(table_venc, num, key)
-            table_venc = self.create_colunm_comissao(table_venc, key, column_ATASma_EntregaCad_AdmVenc_n_Parc)  # noqa
-            table_venc = self.create_column_comissao_50_porc(table_venc, column_porc_ATA_Pag_n_Parc)
-            table_venc = self.create_column_parc(table_venc, num)
-            table_venc = self.create_column_ata_venc_n_parc(table_venc, column_ATASma_EntregaCad_AdmVenc_n_Parc)  # noqa
-            table_venc = self.create_column_adimplencia(table_venc, key)
-            table_venc = self.delete_lines_different_ATA_Venc_n_Parc(table_venc)
-            table_venc = self.delete_lines_comissao_zero(table_venc)
+            table_venc = self.create_columns_sit_pag(table_venc, column_Situacao_n_Parc, key)  # 3
+            table_venc = self.create_columns_porc_num(table_venc, num, key)  # 4
+            table_venc = self.create_colunm_comissao(table_venc, key, column_ATASma_EntregaCad_AdmVenc_n_Parc)   # 5 # noqa
+            table_venc = self.create_column_comissao_50_porc(table_venc, column_porc_ATA_Pag_n_Parc)  # 6
+            table_venc = self.create_column_parc(table_venc, num)  # 7
+            table_venc = self.create_column_ata_venc_n_parc(table_venc, column_ATASma_EntregaCad_AdmVenc_n_Parc)  # 8 # noqa
+            table_venc = self.create_column_Cliente_25(table_venc)  # 9
+            table_venc = self.delete_lines_different_ATA_Venc_n_Parc(table_venc)   # 10
+            table_venc = self.delete_lines_comissao_zero(table_venc)   # 11
+            table_venc = self.create_column_adimplencia(table_venc, key)   # 12
             self.set_sum_comissoes(table_venc)
             self.concat_tables(table_venc)
             self.list_table_edit_all.append([
@@ -681,6 +690,8 @@ class Generat_payroll:
                 self.sum_credito,
                 self.adimplencias
             ])
+            if key == 1:
+                create_table(self.table_all_temp, arqTableTeste2)
         self.set_list_sum_comissão(self.list_table_edit_all)
         self.disc_all = self.disc_temp.copy()
         self.table_all = self.table_all_temp.copy()
@@ -700,20 +711,21 @@ class Generat_payroll:
             column_Situacao_n_Parc = self.list_columns_Situacao_n_Parc[key]
             if key == 0:  # ATA de entrega
                 continue
-            table_atrasada = self.delete_lines_pag_comissao_n_parc(column_Pag_Comissao_n_Parc)
+            table_atrasada = self.delete_lines_pag_comissao_n_parc(column_Pag_Comissao_n_Parc)  # 1
             if table_atrasada.empty:
                 continue
-            table_atrasada = self.delete_lines_pag_porc_n_parc_n_ata_atrasada(table_atrasada, column_Pag_Comissao_n_Parc)  # noqa
-            num = self.find_num_column_ATASma_Pag_n_Parc(column_Pag_Comissao_n_Parc)
-            table_atrasada = self.creat_column_porc_ATA_Entrega(table_atrasada)
-            table_atrasada = self.create_columns_sit_pag(table_atrasada, column_Situacao_n_Parc, key)  # noqa
-            table_atrasada = self.create_columns_porc_num(table_atrasada, num, key)
-            table_atrasada = self.create_colunm_comissao(table_atrasada, key, column_ATASma_EntregaCad_AdmVenc_n_Parc)  # noqa
-            table_atrasada = self.create_column_comissao_50_porc_atrasada(table_atrasada, column_Pag_Comissao_n_Parc)  # noqa
-            table_atrasada = self.create_column_parc(table_atrasada, num)
-            table_atrasada = self.create_column_ata_venc_n_parc_atrasada(table_atrasada, column_Pag_Comissao_n_Parc)  # noqa
-            table_atrasada = self.create_column_adimplencia_atrasada(table_atrasada, column_Pag_Comissao_n_Parc, num)  # noqa
-            table_atrasada = self.delete_lines_comissao_zero(table_atrasada)
+            table_atrasada = self.delete_lines_pag_porc_n_parc_n_ata_atrasada(table_atrasada, column_Pag_Comissao_n_Parc)  # 2 # noqa
+            num = self.find_num_column_ATASma_Pag_n_Parc(column_Pag_Comissao_n_Parc)  # 3
+            table_atrasada = self.creat_column_porc_ATA_Entrega(table_atrasada)  # 4
+            table_atrasada = self.create_columns_sit_pag(table_atrasada, column_Situacao_n_Parc, key)  # 5 # noqa
+            table_atrasada = self.create_columns_porc_num(table_atrasada, num, key)  # 6
+            table_atrasada = self.create_colunm_comissao(table_atrasada, key, column_ATASma_EntregaCad_AdmVenc_n_Parc)  # 7 # noqa
+            table_atrasada = self.create_column_comissao_50_porc_atrasada(table_atrasada, column_Pag_Comissao_n_Parc)  # 8 # noqa
+            table_atrasada = self.create_column_parc(table_atrasada, num)  # 9
+            table_atrasada = self.create_column_ata_venc_n_parc_atrasada(table_atrasada, column_Pag_Comissao_n_Parc)  # 10 # noqa
+            table_atrasada = self.create_column_Cliente_25(table_atrasada)  # 11
+            table_atrasada = self.delete_lines_comissao_zero(table_atrasada)  # 12
+            table_atrasada = self.create_column_adimplencia_atrasada(table_atrasada, column_Pag_Comissao_n_Parc, num)  # 13 # noqa
             self.set_sum_comissoes(table_atrasada)
             self.concat_tables(table_atrasada)
             self.list_table_edit_atrasada.append([
@@ -777,6 +789,7 @@ class Generat_payroll:
         df = pd.DataFrame(self.disc_all)
         pdf.add_table(df)
         if not self.table_atrasado.empty:
+            print(self.seller_single)
             pdf.ln(space_paragraph * 2)
             pdf.add_underlined_text(word_RESUMO_PAGAMENTOS_ATRASADOS, size_font, size_line)
             pdf.set_font('Arial', '', size_font2)
@@ -798,7 +811,7 @@ class Generat_payroll:
             atrasado_text = word_cifrao
         name_ata = self.creat_name_ata()
         text_seller = self.creat_text_seller()
-        name_file = f'RP {self.word_profissao} {name_ata} {text_seller}{atrasado_text}.pdf'
+        name_file = f'RP {self.word_profissao} {name_ata} {atrasado_text} {text_seller}.pdf'
         arqRecibos = path_file.path_file_create_user(path_user="Documentos", path_origin="RECIBO", name_file=name_file)  # noqa
         # path_file = os.path.join(new_folder, name_file)
         pdf.output(arqRecibos)

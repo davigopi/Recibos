@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'ui_main.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.7.2
+## Created by: Qt User Interface Compiler version 6.8.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -16,10 +16,10 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QAbstractScrollArea, QApplication, QCheckBox, QComboBox,
-    QDateEdit, QDateTimeEdit, QFrame, QHBoxLayout,
-    QLabel, QLineEdit, QMainWindow, QPushButton,
-    QRadioButton, QSizePolicy, QSpacerItem, QStackedWidget,
-    QStatusBar, QTextEdit, QVBoxLayout, QWidget)
+    QDateEdit, QFrame, QHBoxLayout, QLabel,
+    QLineEdit, QMainWindow, QPushButton, QRadioButton,
+    QSizePolicy, QSpacerItem, QStackedWidget, QStatusBar,
+    QTextEdit, QVBoxLayout, QWidget)
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -339,7 +339,7 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_6 = QHBoxLayout()
         self.horizontalLayout_6.setObjectName(u"horizontalLayout_6")
-        self.horizontalSpacer_5 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+        self.horizontalSpacer_5 = QSpacerItem(20, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout_6.addItem(self.horizontalSpacer_5)
 
@@ -351,18 +351,19 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_6.addWidget(self.label_3)
 
-        self.data_ata = QDateEdit(self.pg_recibo)
+        self.data_ata = QComboBox(self.pg_recibo)
         self.data_ata.setObjectName(u"data_ata")
+        sizePolicy4.setHeightForWidth(self.data_ata.sizePolicy().hasHeightForWidth())
+        self.data_ata.setSizePolicy(sizePolicy4)
         self.data_ata.setFont(font)
-        self.data_ata.setAlignment(Qt.AlignmentFlag.AlignRight|Qt.AlignmentFlag.AlignTrailing|Qt.AlignmentFlag.AlignVCenter)
-        self.data_ata.setAccelerated(True)
-        self.data_ata.setCalendarPopup(True)
+        self.data_ata.setCursor(QCursor(Qt.CursorShape.SplitVCursor))
+        self.data_ata.setEditable(False)
 
         self.horizontalLayout_6.addWidget(self.data_ata)
 
-        self.horizontalLayout_6.setStretch(0, 2)
-        self.horizontalLayout_6.setStretch(1, 11)
-        self.horizontalLayout_6.setStretch(2, 26)
+        self.horizontalLayout_6.setStretch(0, 1)
+        self.horizontalLayout_6.setStretch(1, 10)
+        self.horizontalLayout_6.setStretch(2, 14)
 
         self.verticalLayout_12.addLayout(self.horizontalLayout_6)
 
@@ -543,8 +544,8 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_6.addLayout(self.horizontalLayout_5)
 
-        self.horizontalLayout_16 = QHBoxLayout()
-        self.horizontalLayout_16.setObjectName(u"horizontalLayout_16")
+        self.horizontalLayout_13 = QHBoxLayout()
+        self.horizontalLayout_13.setObjectName(u"horizontalLayout_13")
         self.label_26 = QLabel(self.pg_table)
         self.label_26.setObjectName(u"label_26")
         sizePolicy2.setHeightForWidth(self.label_26.sizePolicy().hasHeightForWidth())
@@ -552,25 +553,17 @@ class Ui_MainWindow(object):
         self.label_26.setFont(font)
         self.label_26.setAlignment(Qt.AlignmentFlag.AlignRight|Qt.AlignmentFlag.AlignTrailing|Qt.AlignmentFlag.AlignVCenter)
 
-        self.horizontalLayout_16.addWidget(self.label_26)
+        self.horizontalLayout_13.addWidget(self.label_26)
 
-        self.data_inicial = QDateEdit(self.pg_table)
+        self.data_inicial = QComboBox(self.pg_table)
         self.data_inicial.setObjectName(u"data_inicial")
-        sizePolicy6.setHeightForWidth(self.data_inicial.sizePolicy().hasHeightForWidth())
-        self.data_inicial.setSizePolicy(sizePolicy6)
         self.data_inicial.setFont(font)
-        self.data_inicial.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
-        self.data_inicial.setAlignment(Qt.AlignmentFlag.AlignRight|Qt.AlignmentFlag.AlignTrailing|Qt.AlignmentFlag.AlignVCenter)
-        self.data_inicial.setReadOnly(False)
-        self.data_inicial.setAccelerated(False)
-        self.data_inicial.setDateTime(QDateTime(QDate(2001, 1, 1), QTime(0, 0, 0)))
-        self.data_inicial.setCurrentSection(QDateTimeEdit.Section.MonthSection)
-        self.data_inicial.setCalendarPopup(True)
+        self.data_inicial.setEditable(False)
 
-        self.horizontalLayout_16.addWidget(self.data_inicial)
+        self.horizontalLayout_13.addWidget(self.data_inicial)
 
 
-        self.verticalLayout_6.addLayout(self.horizontalLayout_16)
+        self.verticalLayout_6.addLayout(self.horizontalLayout_13)
 
         self.horizontalLayout_10 = QHBoxLayout()
         self.horizontalLayout_10.setObjectName(u"horizontalLayout_10")
@@ -783,6 +776,7 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
 
         self.pages.setCurrentIndex(1)
+        self.data_ata.setCurrentIndex(-1)
 
 
         QMetaObject.connectSlotsByName(MainWindow)
@@ -804,7 +798,7 @@ class Ui_MainWindow(object):
 
         self.cbb_funcionario.setCurrentText(QCoreApplication.translate("MainWindow", u"TODOS OS FUNCION\u00c1RIOS", None))
         self.label_3.setText(QCoreApplication.translate("MainWindow", u"Per\u00edodo ATA:   ", None))
-        self.data_ata.setDisplayFormat(QCoreApplication.translate("MainWindow", u"'ATA  de '  MMMM   'de'   yyyy   ", None))
+        self.data_ata.setCurrentText("")
         self.label_15.setText(QCoreApplication.translate("MainWindow", u"Per\u00edodo semanal:   ", None))
         self.data_semana.setDisplayFormat(QCoreApplication.translate("MainWindow", u"'Um dos dias da semana \u00e9 o dia 'd' de 'MMMM' de ' yyyy   ", None))
         self.btn_gerar.setText(QCoreApplication.translate("MainWindow", u"Gerar", None))
@@ -816,8 +810,7 @@ class Ui_MainWindow(object):
         self.label_25.setText(QCoreApplication.translate("MainWindow", u"Senha:", None))
         self.le_senha.setText("")
         self.label_26.setText(QCoreApplication.translate("MainWindow", u"M\u00eas de in\u00edcio das vendas: ", None))
-        self.data_inicial.setSpecialValueText("")
-        self.data_inicial.setDisplayFormat(QCoreApplication.translate("MainWindow", u"MMMM  /  yyyy   ", None))
+        self.data_inicial.setCurrentText("")
         self.label_2.setText(QCoreApplication.translate("MainWindow", u"Selecione as tabelas que ser\u00e3o carregadas:", None))
         self.label_5.setText(QCoreApplication.translate("MainWindow", u"Cadastro:", None))
         self.cb_cadastro_funcionaio.setText(QCoreApplication.translate("MainWindow", u"Funcion\u00e1rio", None))

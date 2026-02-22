@@ -39,10 +39,10 @@ class Login(QWidget, Ui_login):
         image_path = resource_path('img/login1.png')
         self.label.setPixmap(QPixmap(image_path))
 
-    def keyPressEvent(self, event):
-        # if event.key() in [Qt.Key_Return, Qt.Key_Enter]:
-        if event.key() in [16777220, 16777221]:
-            self.open_system()
+    # def keyPressEvent(self, event):
+    #     # if event.key() in [Qt.Key_Return, Qt.Key_Enter]:
+    #     if event.key() in [16777220, 16777221]:
+    #         self.open_system()
 
     def open_system(self):
         inf = 'Processando'

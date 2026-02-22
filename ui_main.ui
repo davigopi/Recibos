@@ -469,7 +469,7 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
             </layout>
            </item>
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_6" stretch="2,11,26">
+            <layout class="QHBoxLayout" name="horizontalLayout_6" stretch="1,10,14">
              <item>
               <spacer name="horizontalSpacer_5">
                <property name="orientation">
@@ -477,7 +477,7 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
                </property>
                <property name="sizeHint" stdset="0">
                 <size>
-                 <width>40</width>
+                 <width>20</width>
                  <height>20</height>
                 </size>
                </property>
@@ -503,24 +503,30 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
               </widget>
              </item>
              <item>
-              <widget class="QDateEdit" name="data_ata">
+              <widget class="QComboBox" name="data_ata">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
                <property name="font">
                 <font>
                  <family>Gabriola</family>
                  <pointsize>18</pointsize>
                 </font>
                </property>
-               <property name="alignment">
-                <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+               <property name="cursor">
+                <cursorShape>SplitVCursor</cursorShape>
                </property>
-               <property name="accelerated">
-                <bool>true</bool>
+               <property name="editable">
+                <bool>false</bool>
                </property>
-               <property name="displayFormat">
-                <string>'ATA  de '  MMMM   'de'   yyyy   </string>
+               <property name="currentText">
+                <string/>
                </property>
-               <property name="calendarPopup">
-                <bool>true</bool>
+               <property name="currentIndex">
+                <number>-1</number>
                </property>
               </widget>
              </item>
@@ -883,7 +889,7 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
             </layout>
            </item>
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_16">
+            <layout class="QHBoxLayout" name="horizontalLayout_13">
              <item>
               <widget class="QLabel" name="label_26">
                <property name="sizePolicy">
@@ -907,52 +913,18 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
               </widget>
              </item>
              <item>
-              <widget class="QDateEdit" name="data_inicial">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
+              <widget class="QComboBox" name="data_inicial">
                <property name="font">
                 <font>
                  <family>Gabriola</family>
                  <pointsize>18</pointsize>
                 </font>
                </property>
-               <property name="cursor">
-                <cursorShape>PointingHandCursor</cursorShape>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
-               </property>
-               <property name="readOnly">
+               <property name="editable">
                 <bool>false</bool>
                </property>
-               <property name="specialValueText">
+               <property name="currentText">
                 <string/>
-               </property>
-               <property name="accelerated">
-                <bool>false</bool>
-               </property>
-               <property name="dateTime">
-                <datetime>
-                 <hour>0</hour>
-                 <minute>0</minute>
-                 <second>0</second>
-                 <year>2001</year>
-                 <month>1</month>
-                 <day>1</day>
-                </datetime>
-               </property>
-               <property name="currentSection">
-                <enum>QDateTimeEdit::Section::MonthSection</enum>
-               </property>
-               <property name="displayFormat">
-                <string>MMMM  /  yyyy   </string>
-               </property>
-               <property name="calendarPopup">
-                <bool>true</bool>
                </property>
               </widget>
              </item>

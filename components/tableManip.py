@@ -9,6 +9,7 @@ import locale
 import numbers
 import numpy as np
 import warnings
+import time
 # from components import date_weekly
 # from components import renomear
 from components.fileManip import FileManip
@@ -67,6 +68,8 @@ class TableManip:
         self.value_fixed_column = value_fixed_column
         self.number_Line = number_Line
         self.number_Column = number_Column
+        self.error = False
+        self.log_error = ''
 
     def printVariaveis(self):
         print('###################### INICIO ##########################')
@@ -189,7 +192,7 @@ class TableManip:
 
     @add_column_clone_two_columns.setter
     def add_column_clone_two_columns(self, list_name_column):
-        name_ata = self.table[list_name_column[1]] + '/' + self.table[list_name_column[2]].astype(str)  # noqa
+        name_ata = self.table[list_name_column[1]] + '/' + self.table[list_name_column[2]].astype(str)
         self.table[list_name_column[0]] = name_ata
 
     @property
@@ -231,7 +234,7 @@ class TableManip:
             column_dt_final = str(cont) + column_data_final[cont_column]
             # column existe na lista de colunas da tabela
             if column_qtd_inical in self.table.columns:
-                list_qtd_data_temp.append([column_qtd_inical, column_qtd_final, column_dt_inicial, column_dt_final])  # noqa
+                list_qtd_data_temp.append([column_qtd_inical, column_qtd_final, column_dt_inicial, column_dt_final])
                 cont += 1
             else:
                 # é vendedor?
@@ -307,9 +310,9 @@ class TableManip:
         column_Escala_ATAMes_Gerencia = column_Escala_ATAMes + word__Gerencia
 
         list_column_total = [
-            column_Total_ATAMes_Vendedor, column_Qtd_Vendas_ATAMes_Vendedor, column_Escala_ATAMes_Vendedor,  # noqa
-            column_Total_ATAMes_Supervisor, column_Qtd_Vendas_ATAMes_Supervisor, column_Escala_ATAMes_Supervisor,  # noqa
-            column_Total_ATAMes_Gerencia, column_Qtd_Vendas_ATAMes_Gerencia, column_Escala_ATAMes_Gerencia  # noqa
+            column_Total_ATAMes_Vendedor, column_Qtd_Vendas_ATAMes_Vendedor, column_Escala_ATAMes_Vendedor,
+            column_Total_ATAMes_Supervisor, column_Qtd_Vendas_ATAMes_Supervisor, column_Escala_ATAMes_Supervisor,
+            column_Total_ATAMes_Gerencia, column_Qtd_Vendas_ATAMes_Gerencia, column_Escala_ATAMes_Gerencia
         ]
         return list_column_total
 
@@ -362,14 +365,14 @@ class TableManip:
     def data_column_Qtd_Valor_Vendedor(self, line, periodo_valor_qtd_vendas):
         #  se variavel for interavel
         if not isinstance(periodo_valor_qtd_vendas, (str, list, tuple)):
-            periodo_valor_qtd_vendas = self.table.iloc[line][column_Periodo_Valor_Qtd_Vendas_Supervisor]  # noqa
+            periodo_valor_qtd_vendas = self.table.iloc[line][column_Periodo_Valor_Qtd_Vendas_Supervisor]
             if not isinstance(periodo_valor_qtd_vendas, (str, list, tuple)):
                 self.table.at[line, column_Qtd_Valor_Vendedor] = 'Periodo Nulo'
                 return
         #      'Qtd Vendas'
         if word_Qtd_Vendas in periodo_valor_qtd_vendas:
             #                       'Qtd Valor Vend'
-            self.table.at[line, column_Qtd_Valor_Vendedor] = word_Qtd_Vendas  # noqa
+            self.table.at[line, column_Qtd_Valor_Vendedor] = word_Qtd_Vendas
         else:
             self.table.at[line, column_Qtd_Valor_Vendedor] = 'Valor Vendas'
 
@@ -380,7 +383,7 @@ class TableManip:
         list_professional = [Vendedor, Supervisor, cargo_Gerencia]
         return list_professional
 
-    def data_column_Total(self, profession, ata, column_prof, column_ata_mes_sma, line, column_Total):  # noqa
+    def data_column_Total(self, profession, ata, column_prof, column_ata_mes_sma, line, column_Total):
         key_prof_ata = str(profession) + str(ata)
         # evitar perda de tempo na resoma
         if key_prof_ata in self.dict_duplicate_sum:
@@ -393,13 +396,16 @@ class TableManip:
 
             self.dict_duplicate_sum[key_prof_ata] = sum_profession
         #         Total ATA Entrega  0  |  Total ATA Entrega Ger  2
-        self.table.at[line, column_Total] = (locale.format_string("%.2f", sum_profession, grouping=True))  # noqa
+        self.table.at[line, column_Total] = (locale.format_string("%.2f", sum_profession, grouping=True))
         return sum_profession
 
-    def creat_data_columns_Porcentagem(self, num_ata_pag, column_Num_ATA_n_Parc, PK_Vend_ATA_Entrega, column_PK_Vend_ATA_n_Parc):  # noqa
-        key_prof_ata = str(num_ata_pag) + str(column_Num_ATA_n_Parc) + str(PK_Vend_ATA_Entrega)  # noqa
+    def creat_data_columns_Porcentagem(self, num_ata_pag, column_Num_ATA_n_Parc, PK_Vend_ATA_Entrega, column_PK_Vend_ATA_n_Parc):
+        key_prof_ata = str(num_ata_pag) + str(column_Num_ATA_n_Parc) + str(PK_Vend_ATA_Entrega)
         # criar dicionario para evitar perda de tempo na resoma
         if key_prof_ata not in self.dict_duplicate_sum:
+            # print('###############################################################################')
+            # print(f'self.table[column_Num_ATA_n_Parc]: {self.table[column_Num_ATA_n_Parc]} <= num_ata_pag: {num_ata_pag}')
+            # print('###############################################################################')
             sum_profession = self.table.loc[
                 (self.table[column_Num_ATA_n_Parc] <= num_ata_pag) &
                 (self.table[column_PK_Vend_ATA_n_Parc] == PK_Vend_ATA_Entrega),
@@ -416,7 +422,7 @@ class TableManip:
         total_profession = self.dict_duplicate_total[key_prof_ata]
         return sum_profession, total_profession
 
-    def data_column_Qtd_Vendas(self, profession, ata, column_prof, column_ata_mes_sma, line, column_Qtd_Vendas):  # noqa
+    def data_column_Qtd_Vendas(self, profession, ata, column_prof, column_ata_mes_sma, line, column_Qtd_Vendas):
         key_prof_ata = str(profession) + str(ata)
         if key_prof_ata in self.dict_duplicate_count:
             count_profession = self.dict_duplicate_count[key_prof_ata]
@@ -442,7 +448,7 @@ class TableManip:
         # 4     column_mes_cad_adm =    'Mes Cad Adm'
         # 5     column_sma_cad_adm =    'Sma Cad Adm'
         for column_ata_mes_sma in list_columns_ata_mes_sma:
-            list_column_ata, list_column_qtd_vendas, list_column_qtd_cotas = self.create_list_columns_ata_qtd_cotas_vendas(column_ata_mes_sma)  # noqa
+            list_column_ata, list_column_qtd_vendas, list_column_qtd_cotas = self.create_list_columns_ata_qtd_cotas_vendas(column_ata_mes_sma)
             self.dict_duplicate_sum = {}
             self.dict_duplicate_count = {}
             # pecorrera linha por linha da tabela
@@ -454,23 +460,23 @@ class TableManip:
                     column_Qtd_Vendas = list_column_qtd_vendas[key_prof]
                     if key_prof == 0:  # vendedor
                         column_prof = column_Vendedor
-                        periodo_valor_qtd_vendas = self.table.iloc[line][column_Periodo_Valor_Qtd_Vendas]  # noqa
+                        periodo_valor_qtd_vendas = self.table.iloc[line][column_Periodo_Valor_Qtd_Vendas]
                         self.data_column_Qtd_Valor_Vendedor(line, periodo_valor_qtd_vendas)
                     elif key_prof == 1:  # supervisro
                         column_prof = column_Supervisor
-                        periodo_valor_qtd_vendas = self.table.iloc[line][column_Periodo_Valor_Qtd_Vendas_Supervisor]  # noqa
+                        periodo_valor_qtd_vendas = self.table.iloc[line][column_Periodo_Valor_Qtd_Vendas_Supervisor]
                     elif key_prof == 2:  # gerencia
                         column_prof = column_Cargo_Gerencia
-                        periodo_valor_qtd_vendas = self.table.iloc[line][column_Periodo_Valor_Qtd_Vendas_Gerencia]  # noqa
+                        periodo_valor_qtd_vendas = self.table.iloc[line][column_Periodo_Valor_Qtd_Vendas_Gerencia]
                     # descobrir se é por quantidade ou valor
                     periodo_valor_qtd_vendas = str(periodo_valor_qtd_vendas)
 
-                    sum_profession = self.data_column_Total(profession, ata, column_prof, column_ata_mes_sma, line, column_Total)  # noqa
+                    sum_profession = self.data_column_Total(profession, ata, column_prof, column_ata_mes_sma, line, column_Total)
 
                     # 'Sma' tem na coluna ata? se sim retornar
                     if word_Sma_ in column_ata_mes_sma:
                         continue
-                    count_profession = self.data_column_Qtd_Vendas(profession, ata, column_prof, column_ata_mes_sma, line, column_Qtd_Vendas)  # noqa
+                    count_profession = self.data_column_Qtd_Vendas(profession, ata, column_prof, column_ata_mes_sma, line, column_Qtd_Vendas)
                     # se exitri palavra 'Qtd. Vendas' em periodo_valor_qtd_vendas
                     if word_Qtd_Vendas in periodo_valor_qtd_vendas:
                         value_compare = count_profession
@@ -481,7 +487,7 @@ class TableManip:
                     # gerente 1  5 Qtd. Cotas Inicial_Gerente', '4.. '1 Qtd
                     # gerente 2  5 Qtd. Cotas Inicial_Gerente_Geral',.. 1 Q
                     for column_qtd_data in list_qtd_data_full[key_prof]:
-                        num_qtd_cotas, num_qtd_cotas_temp = self.discover_num_qtd_cotas(line, value_compare, num_qtd_cotas_temp, column_qtd_data)  # noqa
+                        num_qtd_cotas, num_qtd_cotas_temp = self.discover_num_qtd_cotas(line, value_compare, num_qtd_cotas_temp, column_qtd_data)
                         if num_qtd_cotas is not None:
                             break
                     # ATA Entrega qtd cotas 1 | ATA Entrega qtd costa Ger 3
@@ -490,7 +496,7 @@ class TableManip:
 
     def create_columns_total(self):
         for column_ata_mes_sma in list_columns_ata_mes_sma:
-            list_column_total = self.create_list_columns_total(column_ata_mes_sma)  # noqa
+            list_column_total = self.create_list_columns_total(column_ata_mes_sma)
             self.list_list_order_columns_total.append(list_column_total)
 
     def add_value_pk_vend_ata_entrega(self):
@@ -525,8 +531,9 @@ class TableManip:
     def add_value_situacao_num_ATA(self, list_list_columns_situacao_num_ATA):
         quantity_line = self.table.shape[0]
         for line in range(quantity_line):
+            if self.error:
+                break
             # ata_entrega = self.table.iloc[line]['ATA Entrega']
-            # cliente = self.table.iloc[line]['Cliente']
             for list_columns_percentage in list_list_columns_situacao_num_ATA:
                 situacao = self.table.iloc[line][list_columns_percentage[0]]
                 if 'PAGA' not in situacao:
@@ -534,15 +541,29 @@ class TableManip:
                     self.table.loc[line, list_columns_percentage[6]] = np.nan
                     continue
                 ata_pag = self.table.iloc[line][list_columns_percentage[3]]
+                ata_venc = self.table.iloc[line][list_columns_percentage[4]] 
+                data_null_num_ata_n_parc = True
+                if ata_pag == word_ATA_Nao_Encontrada or ata_venc == word_ATA_Nao_Encontrada:
+                    self.table.loc[line, list_columns_percentage[6]] = np.nan
+                    data_null_num_ata_n_parc = False
                 # verificar se existe ata_pag se não a data pag esta errada
                 if pd.isna(ata_pag) or ata_pag is None:
                     self.table.loc[line, list_columns_percentage[5]] = word_Data_Pag_Errada
-                    self.table.loc[line, list_columns_percentage[6]] = np.nan
+                    if data_null_num_ata_n_parc:
+                        self.table.loc[line, list_columns_percentage[6]] = np.nan
                     continue
-                ata_venc = self.table.iloc[line][list_columns_percentage[4]]
+                if pd.isna(ata_venc):
+                    var_cliente = self.table.iloc[line]['Cliente']
+                    text = f"Verificar table_teste1 a ata_venc é {ata_venc} na line: {int(line)+2} "
+                    text += f"com a coluna: {list_columns_percentage[4]} e o cliente: {var_cliente}"
+                    print(text)
+                    self.log_error = text
+                    self.error = True
+                    break
                 if ata_pag == ata_venc:
                     self.table.loc[line, list_columns_percentage[5]] = word_Pag_Mesma_ATA
-                    self.table.loc[line, list_columns_percentage[6]] = 0
+                    if data_null_num_ata_n_parc:
+                        self.table.loc[line, list_columns_percentage[6]] = 0
                     continue
                 data_pag = self.table.iloc[line][list_columns_percentage[1]]
                 data_venc = self.table.iloc[line][list_columns_percentage[2]]
@@ -550,12 +571,15 @@ class TableManip:
                 data_venc = datetime.strptime(data_venc, '%d/%m/%Y')
                 if data_pag <= data_venc:
                     self.table.loc[line, list_columns_percentage[5]] = word_Pag_Adiantado_ATA
-                    num_month_full = self.date_month.sum_less_month(1, ata_pag, ata_venc)
+                    valor_sum_less = 1
+                else:
+                    self.table.loc[line, list_columns_percentage[5]] = word_Pag_Atrasado_ATA
+                    valor_sum_less = -1
+                if data_null_num_ata_n_parc:
+                    # print(f'ata_venc: {ata_venc}  ata_pag: {ata_pag}  linha: {int(line)+2}  coluna: {list_columns_percentage[3]}')
+                    num_month_full = self.date_month.sum_less_month(valor_sum_less, ata_pag, ata_venc)
                     self.table.loc[line, list_columns_percentage[6]] = num_month_full
-                    continue
-                self.table.loc[line, list_columns_percentage[5]] = word_Pag_Atrasado_ATA
-                num_month_full = self.date_month.sum_less_month(-1, ata_pag, ata_venc)
-                self.table.loc[line, list_columns_percentage[6]] = num_month_full
+
 
     @property
     def add_value_num_ATA_atrasada(self):
@@ -569,8 +593,10 @@ class TableManip:
         quantity_line = self.table.shape[0]
         for line in range(quantity_line):
             for list_columns_num_ATA_atrasado in list_list_columns_num_ATA_atrasado:
-                PK_Vend_ATA_Entrega_n_Parc = str(self.table.iloc[line][list_columns_num_ATA_atrasado[2]])  # noqa
+                PK_Vend_ATA_Entrega_n_Parc = str(self.table.iloc[line][list_columns_num_ATA_atrasado[2]])
                 num_ata_nparc = self.table.iloc[line][list_columns_num_ATA_atrasado[0]]
+                if num_ata_nparc == word_ATA_Nao_Encontrada:
+                    continue
                 if np.isnan(num_ata_nparc):
                     continue
                 num_ata_nparc = int(num_ata_nparc)
@@ -592,17 +618,17 @@ class TableManip:
                         num_ata_nparc_dict_1 = 1
                     elif num_ata_nparc == 2:
                         num_ata_nparc_dict_2 = 1
-                self.dict_duplicate_vend_ata[key_vend_ata] = [num_ata_nparc_dict_1, num_ata_nparc_dict_2]  # noqa
+                self.dict_duplicate_vend_ata[key_vend_ata] = [num_ata_nparc_dict_1, num_ata_nparc_dict_2]
         for line in range(quantity_line):
             for list_columns_num_ATA_atrasado in list_list_columns_num_ATA_atrasado:
-                PK_Vend_ATA_Entrega_n_Parc = str(self.table.iloc[line][list_columns_num_ATA_atrasado[2]])  # noqa
+                PK_Vend_ATA_Entrega_n_Parc = str(self.table.iloc[line][list_columns_num_ATA_atrasado[2]])
                 key_vend_ata = PK_Vend_ATA_Entrega_n_Parc + list_columns_num_ATA_atrasado[0]
                 if key_vend_ata in self.dict_duplicate_vend_ata:
                     num_ata_nparc_dict_1 = str(self.dict_duplicate_vend_ata[key_vend_ata][0])
                     num_ata_nparc_dict_2 = str(self.dict_duplicate_vend_ata[key_vend_ata][1])
                     num_ata_nparc_dict = num_ata_nparc_dict_1 + ' 2º ATA. '
                     num_ata_nparc_dict += num_ata_nparc_dict_2 + ' 3º ATA. '
-                    self.table.loc[line, list_columns_num_ATA_atrasado[1]] = num_ata_nparc_dict  # noqa
+                    self.table.loc[line, list_columns_num_ATA_atrasado[1]] = num_ata_nparc_dict
 
     @property
     def add_value_porcentagem(self):
@@ -626,7 +652,9 @@ class TableManip:
                 column_PK_Vend_ATA_n_Parc = list_columns_percentage[4]
                 PK_Vend_ATA_Entrega_n_Parc = self.table.iloc[line][column_PK_Vend_ATA_n_Parc]
                 for num_ata_pag in range(3):  # 0, 1, 2
-                    sum_profession, total_profession = self.creat_data_columns_Porcentagem(num_ata_pag, column_Num_ATA_n_Parc, PK_Vend_ATA_Entrega_n_Parc, column_PK_Vend_ATA_n_Parc)  # noqa
+                    # print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
+                    # print(f'num_ata_pag: {num_ata_pag}, column_Num_ATA_n_Parc: {column_Num_ATA_n_Parc}, PK_Vend_ATA_Entrega_n_Parc: {PK_Vend_ATA_Entrega_n_Parc}, column_PK_Vend_ATA_n_Parc: {column_PK_Vend_ATA_n_Parc}')
+                    sum_profession, total_profession = self.creat_data_columns_Porcentagem(num_ata_pag, column_Num_ATA_n_Parc, PK_Vend_ATA_Entrega_n_Parc, column_PK_Vend_ATA_n_Parc)
                     porcentagem = round(sum_profession / total_profession * 100, 1)
                     self.table.loc[line, list_columns_percentage[num_ata_pag]] = porcentagem
 
@@ -635,21 +663,22 @@ class TableManip:
         return None
 
     @add_value_ATA_Venc_n_Parc_n_ATA_Atrasada.setter
-    def add_value_ATA_Venc_n_Parc_n_ATA_Atrasada(self, list_list_columns_ATA_Venc_n_Parc_n_ATA_Atrasada):  # noqa
+    def add_value_ATA_Venc_n_Parc_n_ATA_Atrasada(self, list_list_columns_ATA_Venc_n_Parc_n_ATA_Atrasada):
         quantity_line = self.table.shape[0]
         for line in range(quantity_line):
             for list_columns_ATA_Venc_n_Parc_n_ATA_Atrasada in list_list_columns_ATA_Venc_n_Parc_n_ATA_Atrasada:
                 ata_pag_parc = self.table.iloc[line][list_columns_ATA_Venc_n_Parc_n_ATA_Atrasada[0]]
-                if ata_pag_parc is None or isinstance(ata_pag_parc, float) or pd.isna(ata_pag_parc) or ata_pag_parc == ' - ':  # noqa
+                if ata_pag_parc is None or isinstance(ata_pag_parc, float) or pd.isna(ata_pag_parc) or ata_pag_parc == ' - ' or ata_pag_parc == word_ATA_Nao_Encontrada:
                     continue
+                # print(f'ata_pag_parc: {ata_pag_parc}')
                 list_new_ata_pag_parc = self.date_month.sum_month_ata_pag_parc(ata_pag_parc)
-                # list_new_ata_pag_parc = [str(value) if not isinstance(value, str) else value for value in list_new_ata_pag_parc]  # noqa
-                # self.table.loc[line, [column_ata_pag_atrasado_1_mes, column_ata_pag_atrasado_2_meses]] = list_new_ata_pag_parc  # noqa
+                # list_new_ata_pag_parc = [str(value) if not isinstance(value, str) else value for value in list_new_ata_pag_parc]
+                # self.table.loc[line, [column_ata_pag_atrasado_1_mes, column_ata_pag_atrasado_2_meses]] = list_new_ata_pag_parc
                 # Ignora apenas avisos de performance do pandas
                 with warnings.catch_warnings():
                     warnings.simplefilter("ignore", category=pd.errors.PerformanceWarning)
-                    self.table.loc[line, list_columns_ATA_Venc_n_Parc_n_ATA_Atrasada[1]] = str(list_new_ata_pag_parc[0])  # noqa
-                    self.table.loc[line, list_columns_ATA_Venc_n_Parc_n_ATA_Atrasada[2]] = str(list_new_ata_pag_parc[1])  # noqa
+                    self.table.loc[line, list_columns_ATA_Venc_n_Parc_n_ATA_Atrasada[1]] = str(list_new_ata_pag_parc[0])
+                    self.table.loc[line, list_columns_ATA_Venc_n_Parc_n_ATA_Atrasada[2]] = str(list_new_ata_pag_parc[1])
 
     @property
     def add_value_pagar_comissao(self):
@@ -670,15 +699,15 @@ class TableManip:
                     warnings.simplefilter("ignore", category=pd.errors.PerformanceWarning)
                     porc_ata_1 = float(self.table.iloc[line][list_columns_comissao_atrasada[1]])
                     if porc_ata_1 >= porcentagem_Vendas:
-                        self.table.loc[line, list_columns_comissao_atrasada[0]] = list_columns_comissao_atrasada[1]  # noqa
+                        self.table.loc[line, list_columns_comissao_atrasada[0]] = list_columns_comissao_atrasada[1]
                         continue
                     porc_ata_2 = float(self.table.iloc[line][list_columns_comissao_atrasada[2]])
                     if porc_ata_2 >= porcentagem_Vendas:
-                        self.table.loc[line, list_columns_comissao_atrasada[0]] = list_columns_comissao_atrasada[2]  # noqa
+                        self.table.loc[line, list_columns_comissao_atrasada[0]] = list_columns_comissao_atrasada[2]
                         continue
                     porc_ata_3 = float(self.table.iloc[line][list_columns_comissao_atrasada[3]])
                     if porc_ata_3 >= porcentagem_Vendas:
-                        self.table.loc[line, list_columns_comissao_atrasada[0]] = list_columns_comissao_atrasada[3]  # noqa
+                        self.table.loc[line, list_columns_comissao_atrasada[0]] = list_columns_comissao_atrasada[3]
 
     @ property
     def del_column(self):
@@ -694,7 +723,7 @@ class TableManip:
 
     @ rename_name_column_destiny.setter
     def rename_name_column_destiny(self, name_column):
-        self.table = self.table.rename(columns={word_Periodo: name_column})  # noqa
+        self.table = self.table.rename(columns={word_Periodo: name_column})
 
     @ property
     def rename_value_column_before(self):
@@ -783,6 +812,7 @@ class TableManip:
             data_weekly = self.table.iloc[line_weekly][column_Data_Semana]
             data_weekly = datetime.strptime(data_weekly, '%d/%m/%Y')
             nun_line_ATA = len(table_ata)
+            date_find = False
             for line_ATA in range(nun_line_ATA):
                 data_ATA_final = table_ata.iloc[line_ATA][column_Periodo_Final]
                 data_ATA_final = datetime.strptime(data_ATA_final, '%d/%m/%Y')
@@ -794,6 +824,10 @@ class TableManip:
                     continue
                 dado_ATA = table_ata.iloc[line_ATA][column_ATA]
                 self.table.loc[line_weekly, column_ATA] = dado_ATA
+                date_find = True
+            if not date_find:
+                self.table.loc[line_weekly, column_ATA] = word_ATA_Nao_Encontrada
+
 
     @ property
     def add_columns_full(self):
@@ -809,7 +843,7 @@ class TableManip:
         list_columns_add = []
         # add colunas na table_full
         for name_column in name_columns:
-            if name_column in [column_Cargo, column_Administradora, column_Tipo_Pagamento]:  # noqa
+            if name_column in [column_Cargo, column_Administradora, column_Tipo_Pagamento]:
                 continue
             self.add_value_fixed_column = name_column
             # todas as cols configPagamento menos cargo, admin, tipoPag e index
