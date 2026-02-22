@@ -1,18 +1,79 @@
 @echo off
-setlocal
+setlocal EnableDelayedExpansion
 
-REM ===== PEGAR NOME DA PASTA (PROJETO) =====
-for %%I in (.) do set PROJETO=%%~nxI
+REM ===== VERIFICAR CONFIG GLOBAL DO GIT =====
+for /f "delims=" %%A in ('git config --global user.name') do set GIT_NAME=%%A
+for /f "delims=" %%A in ('git config --global user.email') do set GIT_EMAIL=%%A
+
+echo ================================
+echo   CONFIGURACAO GLOBAL DO GIT
+echo ================================
+
+if defined GIT_NAME (
+    echo Usuario atual: !GIT_NAME!
+    echo Email atual:   !GIT_EMAIL!
+    echo.
+    set /p TROCAR=Deseja alterar? S/N:
+
+    if /I "!TROCAR!"=="S" (
+        echo.
+        echo Exemplo:
+        echo Usuario: davigopi
+        echo Email:   davigopi@gmail.com
+        echo.
+        set /p NOVO_NOME=Digite o novo user.name: 
+        set /p NOVO_EMAIL=Digite o novo user.email: 
+
+        git config --global user.name "!NOVO_NOME!"
+        git config --global user.email "!NOVO_EMAIL!"
+
+        echo Configuracao atualizada com sucesso.
+        echo.
+    ) else (
+        echo Mantendo configuracao atual.
+        echo.
+    )
+
+) else (
+    echo Git ainda nao esta configurado globalmente.
+    echo.
+    echo Exemplo:
+    echo Usuario: davigopi
+    echo Email:   davigopi@gmail.com
+    echo.
+    set /p NOVO_NOME=Digite o user.name: 
+    set /p NOVO_EMAIL=Digite o user.email: 
+
+    git config --global user.name "!NOVO_NOME!"
+    git config --global user.email "!NOVO_EMAIL!"
+
+    echo Configuracao aplicada com sucesso.
+    echo.
+)
+
+REM ===== PEGAR NOME DA PASTA =====
+for %%I in (.) do set PROJETO_LOCAL=%%~nxI
+
+echo Projeto local detectado: %PROJETO_LOCAL%
+echo.
+
+REM ===== PEDIR NOME DO PROJETO NO GITHUB =====
+set /p PROJETO_GITHUB=Digite o nome do projeto no GitHub (Enter para usar o nome no github %PROJETO_LOCAL%): 
+
+if "%PROJETO_GITHUB%"=="" (
+    set PROJETO=%PROJETO_LOCAL%
+) else (
+    set PROJETO=%PROJETO_GITHUB%
+)
 
 REM ===== CONFIGURACOES =====
 set BRANCH=main
 set REMOTE=origin
 set COMMIT_MSG=Atualizacao automatica
+set REPO_URL=https://github.com/!GIT_NAME!/%PROJETO%.git
 
-REM ===== URL DO REPOSITORIO =====
-set REPO_URL=https://github.com/davigopi/%PROJETO%.git
-
-echo Projeto: %PROJETO%
+echo.
+echo Projeto que sera usado: %PROJETO%
 echo Repositorio: %REPO_URL%
 echo.
 
@@ -24,16 +85,9 @@ if not exist ".git" (
     git remote add %REMOTE% %REPO_URL%
 )
 
-REM ===== STATUS =====
 git status
-
-REM ===== ADICIONAR ARQUIVOS =====
 git add .
-
-REM ===== COMMIT =====
 git commit -m "%COMMIT_MSG%"
-
-REM ===== PUSH =====
 git push -u %REMOTE% %BRANCH%
 
 echo.
