@@ -2,6 +2,124 @@
 chcp 65001 >nul
 setlocal EnableDelayedExpansion
 
+
+REM ===== CRIAR OU SUBSTITUIR .gitignore =====
+echo.
+if exist ".gitignore" (
+    echo .gitignore encontrado. Substituindo...
+) else (
+    echo .gitignore nao encontrado. Criando...
+)
+
+(
+echo # OSX
+echo .DS_Store
+echo.
+echo # Xcode
+echo build/
+echo *.pbxuser
+echo !default.pbxuser
+echo *.mode1v3
+echo !default.mode1v3
+echo *.mode2v3
+echo !default.mode2v3
+echo *.perspectivev3
+echo !default.perspectivev3
+echo xcuserdata
+echo *.xccheckout
+echo *.moved-aside
+echo DerivedData
+echo *.hmap
+echo *.ipa
+echo *.xcuserstate
+echo **/.xcode.env.local
+echo.
+echo # Android/IntelliJ
+echo build/
+echo .idea
+echo .gradle
+echo local.properties
+echo *.iml
+echo *.hprof
+echo .cxx/
+echo *.keystore
+echo !debug.keystore
+echo .kotlin/
+echo.
+echo # node.js
+echo node_modules/
+echo npm-debug.log
+echo yarn-error.log
+echo.
+echo # fastlane
+echo **/fastlane/report.xml
+echo **/fastlane/Preview.html
+echo **/fastlane/screenshots
+echo **/fastlane/test_output
+echo.
+echo # Bundle artifact
+echo *.jsbundle
+echo.
+echo # Ruby / CocoaPods
+echo **/Pods/
+echo /vendor/bundle/
+echo.
+echo # Metro temporary files
+echo .metro-health-check*
+echo.
+echo # testing
+echo /coverage
+echo.
+echo # Yarn
+echo .yarn/*
+echo !.yarn/patches
+echo !.yarn/plugins
+echo !.yarn/releases
+echo !.yarn/sdks
+echo !.yarn/versions
+echo.
+echo # IDEs e Editores
+echo .vscode/
+echo *.swp
+echo *.go
+echo.
+echo # Artefatos de Build do iOS
+echo ios/build/
+echo ios/DerivedData/
+echo.
+echo # Python Virtual Environments
+echo venv/
+echo .venv/
+echo env/
+echo scripts/pyvenv.cfg
+echo.
+echo # Variaveis de Ambiente (Seguranca)
+echo .env
+echo .env.local
+echo .env.development.local
+echo .env.test.local
+echo .env.production.local
+echo.
+echo # --- Regras adicionais do segundo arquivo ---
+echo Tabelas/bkp/
+echo driver/
+echo Logs/
+echo Old/
+echo chromedriver.exe
+echo .mypy_cache/
+echo __pycache__/
+echo *.pyc
+echo *.log
+echo *.rar
+echo senha.txt
+echo senha.json
+echo config/senha.json
+) > .gitignore
+
+echo .gitignore atualizado com sucesso.
+echo.
+
+
 REM ===== VERIFICAR CONFIG GLOBAL DO GIT =====
 for /f "delims=" %%A in ('git config --global user.name') do set GIT_NAME=%%A
 for /f "delims=" %%A in ('git config --global user.email') do set GIT_EMAIL=%%A
