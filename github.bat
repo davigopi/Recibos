@@ -5,11 +5,15 @@ setlocal EnableDelayedExpansion
 
 REM ===== CRIAR OU SUBSTITUIR .gitignore =====
 echo.
+
 if exist ".gitignore" (
     echo .gitignore encontrado. Substituindo...
 ) else (
     echo .gitignore nao encontrado. Criando...
 )
+
+REM Desativar delayed expansion temporariamente
+setlocal DisableDelayedExpansion
 
 (
 echo # OSX
@@ -100,7 +104,7 @@ echo .env.development.local
 echo .env.test.local
 echo .env.production.local
 echo.
-echo # --- Regras adicionais do segundo arquivo ---
+echo # --- Regras adicionais ---
 echo Tabelas/bkp/
 echo driver/
 echo Logs/
@@ -115,6 +119,8 @@ echo senha.txt
 echo senha.json
 echo config/senha.json
 ) > .gitignore
+
+endlocal
 
 echo .gitignore atualizado com sucesso.
 echo.
@@ -132,9 +138,12 @@ if defined GIT_NAME (
     echo Usuario atual: !GIT_NAME!
     echo Email atual:   !GIT_EMAIL!
     echo.
-    set /p TROCAR="Deseja alterar o usuário !GIT_NAME! ou o email !GIT_EMAIL! já configurado?  S: "
+    set /p TROCAR="Deseja alterar o usuário !GIT_NAME! ou o email !GIT_EMAIL! já configurado? (Deixe vazio para não): "
 
-    if /I "!TROCAR!"=="S" (
+    if /I "!TROCAR!"=="" (
+        echo Mantendo configuracao atual.
+        echo.
+    ) else (
         echo.
         echo Exemplo:
         echo Usuario: davigopi
@@ -150,9 +159,7 @@ if defined GIT_NAME (
 
         echo Configuracao atualizada com sucesso.
         echo.
-    ) else (
-        echo Mantendo configuracao atual.
-        echo.
+        
     )
 ) else (
     echo Git ainda nao esta configurado globalmente.
