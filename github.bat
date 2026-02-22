@@ -1,4 +1,5 @@
 @echo off
+chcp 65001 >nul
 setlocal EnableDelayedExpansion
 
 REM ===== VERIFICAR CONFIG GLOBAL DO GIT =====
@@ -13,7 +14,7 @@ if defined GIT_NAME (
     echo Usuario atual: !GIT_NAME!
     echo Email atual:   !GIT_EMAIL!
     echo.
-    set /p TROCAR=Deseja alterar? S/N:
+    set /p TROCAR="Deseja alterar? S/N: "
 
     if /I "!TROCAR!"=="S" (
         echo.
@@ -21,11 +22,13 @@ if defined GIT_NAME (
         echo Usuario: davigopi
         echo Email:   davigopi@gmail.com
         echo.
-        set /p NOVO_NOME=Digite o novo user.name: 
-        set /p NOVO_EMAIL=Digite o novo user.email: 
+        set /p NOVO_NOME="Digite o novo user.name: "
+        set /p NOVO_EMAIL="Digite o novo user.email: "
 
         git config --global user.name "!NOVO_NOME!"
         git config --global user.email "!NOVO_EMAIL!"
+
+        set GIT_NAME=!NOVO_NOME!
 
         echo Configuracao atualizada com sucesso.
         echo.
@@ -33,7 +36,6 @@ if defined GIT_NAME (
         echo Mantendo configuracao atual.
         echo.
     )
-
 ) else (
     echo Git ainda nao esta configurado globalmente.
     echo.
@@ -41,11 +43,13 @@ if defined GIT_NAME (
     echo Usuario: davigopi
     echo Email:   davigopi@gmail.com
     echo.
-    set /p NOVO_NOME=Digite o user.name: 
-    set /p NOVO_EMAIL=Digite o user.email: 
+    set /p NOVO_NOME="Digite o user.name: "
+    set /p NOVO_EMAIL="Digite o user.email: "
 
     git config --global user.name "!NOVO_NOME!"
     git config --global user.email "!NOVO_EMAIL!"
+
+    set GIT_NAME=!NOVO_NOME!
 
     echo Configuracao aplicada com sucesso.
     echo.
@@ -58,7 +62,7 @@ echo Projeto local detectado: %PROJETO_LOCAL%
 echo.
 
 REM ===== PEDIR NOME DO PROJETO NO GITHUB =====
-set /p PROJETO_GITHUB=Digite o nome do projeto no GitHub (Enter para usar o nome no github %PROJETO_LOCAL%): 
+set /p PROJETO_GITHUB="Digite o nome do projeto no GitHub (Enter para usar %PROJETO_LOCAL%): "
 
 if "%PROJETO_GITHUB%"=="" (
     set PROJETO=%PROJETO_LOCAL%
@@ -83,13 +87,24 @@ if not exist ".git" (
     git init
     git branch -M %BRANCH%
     git remote add %REMOTE% %REPO_URL%
+) else (
+    REM Se ja existir remote, atualiza automaticamente
+    git remote set-url %REMOTE% %REPO_URL% >nul 2>&1
 )
 
-git status
+REM ===== VERIFICAR SE EXISTEM ALTERACOES =====
 git add .
-git commit -m "%COMMIT_MSG%"
+
+git diff --cached --quiet
+if %errorlevel%==0 (
+    echo Nenhuma alteracao para commit.
+) else (
+    git commit -m "%COMMIT_MSG%"
+)
+
+REM ===== PUSH =====
 git push -u %REMOTE% %BRANCH%
 
 echo.
-echo ✔ Upload concluido com sucesso!
+echo Upload concluido com sucesso!
 pause
